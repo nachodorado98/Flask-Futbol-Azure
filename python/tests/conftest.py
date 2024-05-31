@@ -7,6 +7,7 @@ import pytest
 from src.scrapers.scraper import Scraper
 from src.scrapers.scraper_equipos_liga import ScraperEquiposLiga
 from src.scrapers.scraper_equipo import ScraperEquipo
+from src.scrapers.scraper_equipo_estadio import ScraperEquipoEstadio
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
 @pytest.fixture
@@ -23,3 +24,8 @@ def scraper_equipos_liga():
 def scraper_equipo():
 
 	return ScraperEquipo("atletico-madrid")
+
+@pytest.fixture
+def scraper_equipo_estadio():
+
+	return ScraperEquipoEstadio("atletico-madrid")

@@ -6,3 +6,6 @@ class EquiposLigaError(Exception):
 
 class EquipoError(Exception):
     pass
+
+class EquipoEstadioError(Exception):
+    pass
