@@ -3,3 +3,6 @@ class PaginaError(Exception):
 
 class EquiposLigaError(Exception):
     pass
+
+class EquipoError(Exception):
+    pass
