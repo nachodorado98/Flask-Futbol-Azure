@@ -1,5 +1,5 @@
 from src.etl_equipos_liga import extraerDataEquiposLiga, limpiarDataEquiposLiga
-from src.extraer_equipo import extraerDataEquipoDetalle
+from src.etl_equipo import extraerDataEquipoDetalle, limpiarDataEquipoDetalle
 from src.extraer_equipo_estadio import extraerDataEquipoEstadio
 from src.extraer_equipo_entrenador import extraerDataEquipoEntrenador
 
@@ -15,7 +15,9 @@ for equipo in ["atletico-madrid", "liverpool", "barcelona", "fc-porto", "fulham"
 
 	data_equipo=extraerDataEquipoDetalle(equipo)
 
-	print(data_equipo)
+	data_limpia_equipo=limpiarDataEquipoDetalle(data_equipo)
+
+	print(data_limpia_equipo)
 
 	data_estadio=extraerDataEquipoEstadio(equipo)
 
