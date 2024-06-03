@@ -9,3 +9,6 @@ class EquipoError(Exception):
 
 class EquipoEstadioError(Exception):
     pass
+
+class EquipoEntrenadorError(Exception):
+    pass
