@@ -119,5 +119,3 @@ def test_scraper_equipo_entrenador_obtener_entrenador_equipo(equipo):
 	df_entrenador=scraper.obtenerEntrenadorEquipo()
 
 	assert isinstance(df_entrenador, pd.DataFrame)
-
-	print(df_entrenador)
