@@ -102,13 +102,15 @@ class ScraperEquipoEstadio(Scraper):
 
     def __obtenerDataLimpia(self, tabla_estadio:bs4)->pd.DataFrame:
 
+        codigo_estadio=self.__imagen_estadio(tabla_estadio)
+
         nombre, ciudad, direccion=self.__informacion_nombre_ubicacion(tabla_estadio)
 
         datos_tecnicos=self.__informacion_datos_tecnicos(tabla_estadio)
 
-        fila_datos_unificados=[nombre, ciudad, direccion]+datos_tecnicos
+        fila_datos_unificados=[codigo_estadio, nombre, ciudad, direccion]+datos_tecnicos
 
-        columnas=["Nombre", "Ciudad", "Direccion", "Capacidad", "Fax", "Fecha construccion", "Tamaño",
+        columnas=["Codigo_Estadio", "Nombre", "Ciudad", "Direccion", "Capacidad", "Fax", "Fecha construccion", "Tamaño",
                     "Telefono", "Cesped"]
 
         return pd.DataFrame([fila_datos_unificados], columns=columnas)
