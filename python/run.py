@@ -1,9 +1,13 @@
 from src.etl_equipos_liga import extraerDataEquiposLiga, limpiarDataEquiposLiga
 from src.etl_equipo import extraerDataEquipoDetalle, limpiarDataEquipoDetalle
 from src.etl_equipo_estadio import extraerDataEquipoEstadio, limpiarDataEquipoEstadio
-from src.extraer_equipo_entrenador import extraerDataEquipoEntrenador
+from src.etl_equipo_entrenador import extraerDataEquipoEntrenador, limpiarDataEquipoEntrenador
 
-for liga in ["primera", "segunda", "bundesliga", "premier", "ligue_1", "portugal"]:
+ligas=["primera", "segunda",
+		"bundesliga", "premier",
+		"ligue_1", "portugal"]
+
+for liga in ligas:
 
 	data_equipos=extraerDataEquiposLiga(liga)
 
@@ -11,7 +15,12 @@ for liga in ["primera", "segunda", "bundesliga", "premier", "ligue_1", "portugal
 
 	print(data_limpia_equipos)
 
-for equipo in ["atletico-madrid", "liverpool", "barcelona", "fc-porto", "fulham"]:
+
+equipos=["atletico-madrid", "liverpool", "barcelona",
+		"fc-porto", "fulham", "paris-saint-germain-fc",
+		"borussia-dortmund", "rayo-vallecano", "ca-boca-juniors"]
+
+for equipo in equipos:
 
 	data_equipo=extraerDataEquipoDetalle(equipo)
 
@@ -27,4 +36,6 @@ for equipo in ["atletico-madrid", "liverpool", "barcelona", "fc-porto", "fulham"
 
 	data_entrenador=extraerDataEquipoEntrenador(equipo)
 
-	print(data_entrenador)
+	data_limpia_entrenador=limpiarDataEquipoEntrenador(data_entrenador)
+
+	print(data_limpia_entrenador)
