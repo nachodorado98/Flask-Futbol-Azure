@@ -2,7 +2,7 @@ from src.etl_equipos_liga import extraerDataEquiposLiga, limpiarDataEquiposLiga
 from src.etl_equipo import extraerDataEquipoDetalle, limpiarDataEquipoDetalle
 from src.etl_equipo_estadio import extraerDataEquipoEstadio, limpiarDataEquipoEstadio
 from src.etl_equipo_entrenador import extraerDataEquipoEntrenador, limpiarDataEquipoEntrenador
-from src.etl_equipo_escudo import extraerDataEquipoEscudo
+from src.etl_equipo_escudo import extraerDataEquipoEscudo, limpiarDataEquipoEscudo
 
 ligas=["primera", "segunda",
 		"bundesliga", "premier",
@@ -43,4 +43,6 @@ for equipo in equipos:
 
 	data_escudo=extraerDataEquipoEscudo(equipo)
 
-	print(data_escudo)
+	data_limpia_escudo=limpiarDataEquipoEscudo(data_escudo)
+
+	print(data_limpia_escudo)
