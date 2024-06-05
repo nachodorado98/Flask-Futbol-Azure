@@ -34,4 +34,4 @@ def test_limpiar_data_equipos_liga(endpoint):
 
 	assert isinstance(data_limpia, pd.DataFrame)
 	assert not data_limpia.empty
-	assert len(data_limpia.columns)==2
+	assert len(data_limpia.columns)==1

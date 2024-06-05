@@ -17,4 +17,4 @@ def limpiarDataEquiposLiga(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Codigo_Escudo"]=tabla["Escudo"].apply(limpiarCodigoImagen).apply(lambda codigo: int(codigo))
 
-	return tabla[["Nombre_URL", "Codigo_Escudo"]]
+	return tabla[["Nombre_URL"]]
