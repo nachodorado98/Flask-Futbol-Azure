@@ -12,6 +12,8 @@ from src.scrapers.scraper_equipo_entrenador import ScraperEquipoEntrenador
 from src.scrapers.scraper_equipo_escudo import ScraperEquipoEscudo
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
+from src.database.conexion import Conexion
+
 @pytest.fixture
 def scraper():
 
@@ -41,3 +43,14 @@ def scraper_equipo_entrenador():
 def scraper_equipo_escudo():
 
 	return ScraperEquipoEscudo("atletico-madrid")
+
+@pytest.fixture()
+def conexion():
+
+	con=Conexion()
+
+	con.c.execute("DELETE FROM equipos")
+
+	con.confirmar()
+
+	return con

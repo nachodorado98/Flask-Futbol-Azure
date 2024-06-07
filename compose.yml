@@ -1,0 +1,20 @@
+version: "3"
+services:
+
+  app:
+    build: ./python
+    volumes:
+     - ./python:/app
+    depends_on:
+     - bbdd
+    links:
+     - bbdd
+
+  bbdd:
+    build: ./postgres
+    ports:
+     - 5432:5432
+    volumes:
+     - ./postgres/datos_postgres:/var/lib/postgresql/data
+    environment:
+     POSTGRES_PASSWORD: password
