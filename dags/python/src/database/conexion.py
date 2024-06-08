@@ -32,7 +32,7 @@ class Conexion:
 	#Metodo para insertar un equipo
 	def insertarEquipo(self, equipo:str)->None:
 
-		self.c.execute("""INSERT INTO equipos
+		self.c.execute("""INSERT INTO equipos (Equipo_Id)
 							VALUES(%s)""",
 							(equipo,))
 
@@ -57,3 +57,29 @@ class Conexion:
 		ligas=self.c.fetchall()
 
 		return list(map(lambda liga: liga["nombre"], ligas))
+
+	# Metodo para actualizar los datos de un equipo
+	def actualizarDatosEquipo(self, datos_equipo:List[str], equipo_id:str)->None:
+
+		datos_equipo.append(equipo_id)
+
+		self.c.execute("""UPDATE equipos
+							SET Nombre_Completo=%s, Nombre=%s, Siglas=%s, Pais=%s, Codigo_Pais=%s, 
+								Ciudad=%s, Competicion=%s, Codigo_Competicion=%s, Temporadas=%s,
+								Estadio=%s, Fundacion=%s, Presidente=%s, Presidente_URL=%s,
+								Codigo_Presidente=%s
+							WHERE Equipo_Id=%s""",
+							tuple(datos_equipo))
+
+		self.confirmar()
+
+	# Metodo para obtener los equipos
+	def obtenerEquipos(self)->List[tuple]:
+
+		self.c.execute("""SELECT Equipo_Id
+						FROM equipos
+						ORDER BY Equipo_Id""")
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: equipo["equipo_id"], equipos))

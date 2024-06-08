@@ -5,6 +5,8 @@ from .scrapers.scraper_equipo import ScraperEquipo
 
 from .utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo
 
+from .database.conexion import Conexion
+
 def extraerDataEquipoDetalle(equipo:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperEquipo(equipo)
@@ -44,6 +46,30 @@ def limpiarDataEquipoDetalle(tabla:pd.DataFrame)->pd.DataFrame:
 	tabla["Fundacion"]=tabla["Fundacion"].apply(lambda fundacion: int(fundacion) if fundacion!="" else None)
 
 	columnas=["Nombre", "Alias", "Siglas", "Pais","Codigo_Pais", "Ciudad", "Categoria", "Codigo_Categoria",
-			"Temporadas", "Estadio", "Fundacion", "Presidente_Codigo", "Presidente_Nombre", "Presidente_URL"]
+			"Temporadas", "Estadio", "Fundacion", "Presidente_Nombre", "Presidente_URL", "Presidente_Codigo"]
 
 	return tabla[columnas]
+
+def cargarDataEquipoDetalle(tabla:pd.DataFrame, equipo_id:str)->None:
+
+	datos_equipo=tabla.values.tolist()[0]
+
+	con=Conexion()
+
+	if not con.existe_equipo(equipo_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar el equipo {equipo_id}. No existe")
+
+	try:
+
+		con.actualizarDatosEquipo(datos_equipo, equipo_id)
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar los datos del equipo {equipo_id}")

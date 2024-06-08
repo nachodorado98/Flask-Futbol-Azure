@@ -3,8 +3,9 @@ from datetime import datetime
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash_operator import BashOperator
 import os
+import time
 
-from python.src.etls import ETL_Equipos_Liga
+from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo
 from python.src.database.conexion import Conexion
 
 def existe_carpeta()->str:
@@ -43,6 +44,30 @@ def Pipeline_Equipos_Ligas()->None:
 
 	con.cerrarConexion()
 
+def Pipeline_Detalle_Equipos()->None:
+
+	con=Conexion()
+
+	equipos=con.obtenerEquipos()
+
+	for equipo in equipos:
+
+		try:
+			
+			ETL_Detalle_Equipo(equipo)
+
+		except Exception as e:
+
+			mensaje=f"Equipo: {equipo} - Motivo: {e}"
+
+			print(f"Error en equipo {equipo}")
+
+			crearArchivoLog(mensaje)
+
+		time.sleep(0.5)
+
+	con.cerrarConexion()
+
 
 with DAG("dag_futbol",
 		start_date=datetime(2024,6,8),
@@ -58,6 +83,8 @@ with DAG("dag_futbol",
 
 	tarea_pipeline_equipos_ligas=PythonOperator(task_id="pipeline_equipos_ligas", python_callable=Pipeline_Equipos_Ligas, trigger_rule="none_failed_min_one_success")
 
+	tarea_pipeline_detalle_equipos=PythonOperator(task_id="pipeline_detalle_equipos", python_callable=Pipeline_Detalle_Equipos)
+
 tarea_existe_carpeta >> [tarea_carpeta_logs, tarea_pipeline_equipos_ligas]
 
-tarea_carpeta_logs >> tarea_pipeline_equipos_ligas
+tarea_carpeta_logs >> tarea_pipeline_equipos_ligas >> tarea_pipeline_detalle_equipos
