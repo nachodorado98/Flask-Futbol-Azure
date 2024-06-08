@@ -47,3 +47,13 @@ class Conexion:
 							(equipo_id,))
 
 		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener las ligas
+	def obtenerLigas(self)->List[tuple]:
+
+		self.c.execute("""SELECT Nombre
+						FROM ligas""")
+
+		ligas=self.c.fetchall()
+
+		return list(map(lambda liga: liga["nombre"], ligas))

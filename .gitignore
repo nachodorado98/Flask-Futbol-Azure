@@ -185,4 +185,6 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,database
 
-*/datos_postgres
+/config
+/logs
+/plugins
