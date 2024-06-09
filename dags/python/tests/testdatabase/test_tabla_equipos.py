@@ -85,3 +85,36 @@ def test_obtener_equipos(conexion):
 	equipos=conexion.obtenerEquipos()
 
 	assert len(equipos)==10
+
+def test_actualizar_escudo_equipo_no_existe(conexion):
+
+	assert not conexion.existe_equipo("atleti-madrid")
+
+	datos=[1234, 99]
+
+	conexion.actualizarEscudoEquipo(datos, "atleti-madrid")
+
+	assert not conexion.existe_equipo("atleti-madrid")
+
+@pytest.mark.parametrize(["datos_nuevos"],
+	[
+		([1234, 99],),
+		([0, 999],),
+		([124356, 0],),
+		([1, 1],)
+	]
+)
+def test_actualizar_escudo_equipo(conexion, datos_nuevos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	assert conexion.existe_equipo("atleti-madrid")
+
+	conexion.actualizarEscudoEquipo(datos_nuevos, "atleti-madrid")
+
+	conexion.c.execute("SELECT * FROM equipos WHERE Equipo_Id='atleti-madrid'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["escudo"]==datos_nuevos[0]
+	assert datos_actualizados["puntuacion"]==datos_nuevos[1]

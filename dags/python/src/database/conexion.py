@@ -83,3 +83,15 @@ class Conexion:
 		equipos=self.c.fetchall()
 
 		return list(map(lambda equipo: equipo["equipo_id"], equipos))
+
+	# Metodo para actualizar el escudo de un equipo
+	def actualizarEscudoEquipo(self, datos_escudo:List[int], equipo_id:str)->None:
+
+		datos_escudo.append(equipo_id)
+
+		self.c.execute("""UPDATE equipos
+							SET Escudo=%s, Puntuacion=%s
+							WHERE Equipo_Id=%s""",
+							tuple(datos_escudo))
+
+		self.confirmar()
