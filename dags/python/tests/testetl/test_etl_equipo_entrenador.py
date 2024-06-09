@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from src.etl_equipo_entrenador import extraerDataEquipoEntrenador, limpiarDataEquipoEntrenador
+from src.etl_equipo_entrenador import extraerDataEquipoEntrenador, limpiarDataEquipoEntrenador, cargarDataEquipoEntrenador
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError
 
 @pytest.mark.parametrize(["endpoint"],
@@ -44,6 +44,52 @@ def test_limpiar_data_equipo_entrenador(equipo):
 
 	assert isinstance(data_limpia, pd.DataFrame)
 	assert not data_limpia.empty
-	assert len(data_limpia.columns)==8
+	assert len(data_limpia.columns)==4
 	assert len(data_limpia)==1
-	assert data_limpia.iloc[0]["Partidos"]==data_limpia.iloc[0]["Ganados"]+data_limpia.iloc[0]["Empatados"]+data_limpia.iloc[0]["Perdidos"]
+
+def test_cargar_data_equipo_entrenador_error_no_existe(conexion):
+
+	data=extraerDataEquipoEntrenador("atletico-madrid")
+
+	data_limpia=limpiarDataEquipoEntrenador(data)
+
+	with pytest.raises(Exception):
+
+		cargarDataEquipoEntrenador(data_limpia, "atletico-madrid")
+
+def test_cargar_data_equipo_entrenador_datos_error(conexion):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	data=extraerDataEquipoEntrenador("atletico-madrid")
+
+	data_limpia=limpiarDataEquipoEntrenador(data)
+
+	data_limpia["Partidos"]="numero"
+
+	with pytest.raises(Exception):
+
+		cargarDataEquipoEntrenador(data_limpia, "atletico-madrid")
+
+@pytest.mark.parametrize(["nombre_equipo"],
+	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
+	("atalanta",),("manchester-city-fc",)]
+)
+def test_cargar_data_equipo_entrenador_datos_correctos(conexion, nombre_equipo):
+
+	conexion.insertarEquipo(nombre_equipo)
+
+	data=extraerDataEquipoEntrenador(nombre_equipo)
+
+	data_limpia=limpiarDataEquipoEntrenador(data)
+
+	cargarDataEquipoEntrenador(data_limpia, nombre_equipo)
+
+	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["entrenador"] is not None
+	assert datos_actualizados["entrenador_url"] is not None
+	assert datos_actualizados["codigo_entrenador"] is not None
+	assert datos_actualizados["partidos"] is not None

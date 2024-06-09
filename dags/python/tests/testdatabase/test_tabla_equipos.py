@@ -118,3 +118,38 @@ def test_actualizar_escudo_equipo(conexion, datos_nuevos):
 
 	assert datos_actualizados["escudo"]==datos_nuevos[0]
 	assert datos_actualizados["puntuacion"]==datos_nuevos[1]
+
+def test_actualizar_entrenador_equipo_no_existe(conexion):
+
+	assert not conexion.existe_equipo("atleti-madrid")
+
+	datos=["Cholo", "cholo-simeone", 22, 1000]
+
+	conexion.actualizarEntrenadorEquipo(datos, "atleti-madrid")
+
+	assert not conexion.existe_equipo("atleti-madrid")
+
+@pytest.mark.parametrize(["datos_nuevos"],
+	[
+		(["Cholo", "cholo-simeone", 22, 1000],),
+		(["Ole ole ole", "cholo-simeone", 22, None],),
+		(["Nacho", "cholo-simeone", 13, 1000],),
+		(["Cholo", "Golden", None, 1000],)
+	]
+)
+def test_actualizar_entrenador_equipo(conexion, datos_nuevos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	assert conexion.existe_equipo("atleti-madrid")
+
+	conexion.actualizarEntrenadorEquipo(datos_nuevos, "atleti-madrid")
+
+	conexion.c.execute("SELECT * FROM equipos WHERE Equipo_Id='atleti-madrid'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["entrenador"]==datos_nuevos[0]
+	assert datos_actualizados["entrenador_url"]==datos_nuevos[1]
+	assert datos_actualizados["codigo_entrenador"]==datos_nuevos[2]
+	assert datos_actualizados["partidos"]==datos_nuevos[3]

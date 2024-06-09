@@ -1,8 +1,8 @@
 import pytest
 import pandas as pd
 
-from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
-from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
+from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
+from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError, EquipoEntrenadorError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
@@ -240,3 +240,37 @@ def test_etl_escudo_equipo_datos_correctos(conexion, nombre_equipo):
 
 	assert datos_actualizados["escudo"] is not None
 	assert datos_actualizados["puntuacion"] is not None
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
+)
+def test_etl_entrenador_equipo_error(endpoint):
+
+	with pytest.raises(EquipoEntrenadorError):
+
+		ETL_Entrenador_Equipo(endpoint)
+
+def test_etl_entrenador_equipo_no_existe_error():
+
+	with pytest.raises(Exception):
+
+		ETL_Entrenador_Equipo("atletico-madrid")
+
+@pytest.mark.parametrize(["nombre_equipo"],
+	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
+	("atalanta",),("manchester-city-fc",)]
+)
+def test_etl_entrenador_equipo_datos_correctos(conexion, nombre_equipo):
+
+	conexion.insertarEquipo(nombre_equipo)
+
+	ETL_Entrenador_Equipo(nombre_equipo)
+
+	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["entrenador"] is not None
+	assert datos_actualizados["entrenador_url"] is not None
+	assert datos_actualizados["codigo_entrenador"] is not None
+	assert datos_actualizados["partidos"] is not None

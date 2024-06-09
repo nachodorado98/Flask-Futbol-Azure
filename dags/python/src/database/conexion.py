@@ -95,3 +95,15 @@ class Conexion:
 							tuple(datos_escudo))
 
 		self.confirmar()
+
+	# Metodo para actualizar el entrenador de un equipo
+	def actualizarEntrenadorEquipo(self, datos_entrenador:List[str], equipo_id:str)->None:
+
+		datos_entrenador.append(equipo_id)
+
+		self.c.execute("""UPDATE equipos
+							SET Entrenador=%s, Entrenador_URL=%s, Codigo_Entrenador=%s, Partidos=%s
+							WHERE Equipo_Id=%s""",
+							tuple(datos_entrenador))
+
+		self.confirmar()
