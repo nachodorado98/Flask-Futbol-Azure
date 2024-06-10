@@ -153,3 +153,29 @@ def test_actualizar_entrenador_equipo(conexion, datos_nuevos):
 	assert datos_actualizados["entrenador_url"]==datos_nuevos[1]
 	assert datos_actualizados["codigo_entrenador"]==datos_nuevos[2]
 	assert datos_actualizados["partidos"]==datos_nuevos[3]
+
+def test_obtener_codigo_escudos_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoEscudos()
+
+
+
+@pytest.mark.parametrize(["datos", "numero_escudos"],
+	[
+		([("atleti-madrid", 1), ("atleti", 2), ("atm", 3)], 3),
+		([("atleti-madrid", 1), ("atleti", 2), ("atm", None)], 2),
+		([("atleti-madrid", 1), ("atleti", 2), ("atm", 3), ("equipo", None)], 3),
+		([("atleti-madrid", None), ("atleti", None), ("atm", 3)], 1)
+	]
+)
+def test_obtener_codigo_escudos(conexion, datos, numero_escudos):
+
+	for equipo, escudo in datos:
+
+		conexion.insertarEquipo(equipo)
+
+		conexion.actualizarEscudoEquipo([escudo, 100], equipo)
+
+	escudos=conexion.obtenerCodigoEscudos()
+
+	assert len(escudos)==numero_escudos

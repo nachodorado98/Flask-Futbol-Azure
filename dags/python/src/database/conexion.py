@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from typing import List
+from typing import List, Optional
 
 from .confconexion import *
 
@@ -146,3 +146,14 @@ class Conexion:
 							(equipo_id, estadio_id))
 
 		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener los codigos de los escudo
+	def obtenerCodigoEscudos(self)->Optional[List[int]]:
+
+		self.c.execute("""SELECT Escudo
+							FROM equipos
+							WHERE Escudo IS NOT NULL""")
+
+		escudos=self.c.fetchall()
+
+		return list(map(lambda escudo: escudo["escudo"], escudos)) if escudos else None

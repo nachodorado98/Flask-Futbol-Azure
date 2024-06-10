@@ -4,3 +4,4 @@ psycopg2-binary==2.9.9
 pytest==8.1.1
 requests==2.31.0
 geopy==2.4.1
+wget==3.2

@@ -2,6 +2,9 @@ from typing import Optional
 from datetime import datetime
 import unicodedata
 from geopy.geocoders import Nominatim
+import wget
+import os
+import requests
 
 def limpiarCodigoImagen(link:str)->Optional[str]:
 
@@ -70,3 +73,35 @@ def limpiarTamano(tamano:str)->tuple:
 	largo, ancho=tamano.split("x") if "x" in tamano else tamano.split("X")
 
 	return int(largo.strip()), int(ancho.split("metros")[0].strip())
+
+def url_disponible(url:str)->bool:
+
+	try:
+
+		peticion=requests.get(url)
+
+		return False if peticion.status_code!=200 else True
+
+	except Exception:
+
+		return False
+
+def realizarDescarga(url_imagen:str, ruta_imagenes:str, nombre_imagen:str)->None:
+
+	try:
+		
+		wget.download(url_imagen, os.path.join(ruta_imagenes, f"{nombre_imagen}.png"))
+	
+	except Exception as e:
+	
+		raise Exception(f"No se ha podido descargar la imagen de {nombre_imagen}")
+
+def descargarImagen(url_imagen:str, codigo_imagen:str, ruta_imagenes:str)->None:
+
+	if url_disponible(f"{url_imagen}{codigo_imagen}.png"):
+
+		realizarDescarga(f"{url_imagen}{codigo_imagen}.png", ruta_imagenes, codigo_imagen)
+
+	else:
+
+		realizarDescarga(f"{url_imagen}{codigo_imagen}.jpg", ruta_imagenes, codigo_imagen)

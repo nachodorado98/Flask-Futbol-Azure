@@ -8,20 +8,21 @@ import time
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo
 from python.src.database.conexion import Conexion
+from python.src.utils import descargarImagen
 
-def existe_carpeta()->str:
+def existe_entorno()->str:
 
-	return "pipeline_equipos_ligas" if os.path.exists(os.path.join(os.getcwd(), "dags", "logs")) else "carpeta_logs"
+	return "pipeline_equipos_ligas" if os.path.exists(os.path.join(os.getcwd(), "dags", "entorno")) else "carpeta_logs"
 
 def crearArchivoLog(motivo:str)->None:
 
 	archivo_log=f"log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
-	ruta_log=os.path.join(os.getcwd(), "dags", "logs", archivo_log)
+	ruta_log=os.path.join(os.getcwd(), "dags", "entorno", "logs", archivo_log)
 
 	with open(ruta_log, "w") as archivo:
 
-		archivo.write(f"Error en ejecucion: {motivo}")
+		archivo.write(f"Error!!! {motivo}")
 
 def Pipeline_Equipos_Ligas()->None:
 
@@ -47,47 +48,77 @@ def Pipeline_Equipos_Ligas()->None:
 
 def Pipeline(funcion):
 
-    def wrapper():
+	def wrapper():
 
-        con=Conexion()
+		con=Conexion()
 
-        equipos=con.obtenerEquipos()
+		equipos=con.obtenerEquipos()
 
-        for equipo in equipos:
+		for equipo in equipos:
 
-            try:
+			try:
 
-                funcion(equipo)
+				funcion(equipo)
 
-            except Exception as e:
+			except Exception as e:
 
-                mensaje=f"Equipo: {equipo} - Motivo: {e}"
+				mensaje=f"Equipo: {equipo} - Motivo: {e}"
 
-                print(f"Error en equipo {equipo}")
+				print(f"Error en equipo {equipo}")
 
-                crearArchivoLog(mensaje)
+				crearArchivoLog(mensaje)
 
-            time.sleep(0.5)
+			time.sleep(0.5)
 
-        con.cerrarConexion()
+		con.cerrarConexion()
 
-    return wrapper
+	return wrapper
 
 @Pipeline
 def Pipeline_Detalle_Equipos(equipo):
-    ETL_Detalle_Equipo(equipo)
+	ETL_Detalle_Equipo(equipo)
 
 @Pipeline
 def Pipeline_Escudo_Equipos(equipo):
-    ETL_Escudo_Equipo(equipo)
+	ETL_Escudo_Equipo(equipo)
 
 @Pipeline
 def Pipeline_Entrenador_Equipos(equipo):
-    ETL_Entrenador_Equipo(equipo)
+	ETL_Entrenador_Equipo(equipo)
 
 @Pipeline
 def Pipeline_Estadio_Equipos(equipo):
-    ETL_Estadio_Equipo(equipo)
+	ETL_Estadio_Equipo(equipo)
+
+def descargarEscudos()->None:
+
+	con=Conexion()
+
+	codigo_escudos=con.obtenerCodigoEscudos()
+
+	con.cerrarConexion()
+
+	ruta_imagenes=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", "escudos")
+
+	for codigo in codigo_escudos:
+
+		print(f"Descargando imagen {codigo}...")
+
+		try:
+
+			descargarImagen("https://cdn.resfu.com/img_data/equipos/", codigo, ruta_imagenes)
+
+		except Exception as e:
+
+			mensaje=f"Imagen: {codigo} - Motivo: {e}"
+
+			print(f"Error en imagen con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de escudos finalizada")
+
+
 
 with DAG("dag_futbol",
 		start_date=datetime(2024,6,8),
@@ -95,11 +126,15 @@ with DAG("dag_futbol",
 		schedule_interval=None,
 		catchup=False) as dag:
 
-	tarea_existe_carpeta=BranchPythonOperator(task_id="existe_carpeta", python_callable=existe_carpeta)
+	tarea_existe_entorno=BranchPythonOperator(task_id="existe_entorno", python_callable=existe_entorno)
 
-	comando_bash="cd ../../opt/airflow/dags && mkdir logs"
+	comando_bash_logs="cd ../../opt/airflow/dags && mkdir -p entorno/logs"
 
-	tarea_carpeta_logs=BashOperator(task_id="carpeta_logs", bash_command=comando_bash)
+	comando_bash_imagenes="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/escudos"
+
+	tarea_carpeta_logs=BashOperator(task_id="carpeta_logs", bash_command=comando_bash_logs)
+
+	tarea_carpeta_imagenes=BashOperator(task_id="carpeta_imagenes", bash_command=comando_bash_imagenes)
 
 	tarea_pipeline_equipos_ligas=PythonOperator(task_id="pipeline_equipos_ligas", python_callable=Pipeline_Equipos_Ligas, trigger_rule="none_failed_min_one_success")
 
@@ -111,10 +146,12 @@ with DAG("dag_futbol",
 
 	tarea_pipeline_estadio_equipos=PythonOperator(task_id="pipeline_estadio_equipos", python_callable=Pipeline_Estadio_Equipos)
 
-tarea_existe_carpeta >> [tarea_carpeta_logs, tarea_pipeline_equipos_ligas]
+	tarea_descargar_escudos=PythonOperator(task_id="descargar_escudos", python_callable=descargarEscudos)
 
-tarea_carpeta_logs >> tarea_pipeline_equipos_ligas >> tarea_pipeline_detalle_equipos
+tarea_existe_entorno >> [tarea_carpeta_logs, tarea_pipeline_equipos_ligas]
 
-tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos
+tarea_carpeta_logs >> tarea_carpeta_imagenes >> tarea_pipeline_equipos_ligas
 
-tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
+tarea_pipeline_equipos_ligas >> tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
+
+tarea_pipeline_estadio_equipos >> tarea_descargar_escudos

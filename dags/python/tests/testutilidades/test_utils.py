@@ -1,7 +1,8 @@
 import pytest
+import os
 
 from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normalizarNombre
-from src.utils import obtenerCoordenadasEstadio, limpiarTamano
+from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible, descargarImagen
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -94,3 +95,126 @@ def test_limpiar_tamano(tamano):
 	tamano_limpio=limpiarTamano(tamano)
 
 	assert tamano_limpio.count(None)==0
+
+@pytest.mark.parametrize(["url"],
+	[
+		("https://cdn.resfu.com/img_data/equipos/183.jpg",),
+		("https://cdn.resfu.com/img_data/equipos/1.png",),
+		("https://cdn.resfu.com/img_data/people/original/27257.png",),
+		("url",)
+	]
+)
+def test_url_disponible_no_disponible(url):
+
+	assert not url_disponible(url)
+
+@pytest.mark.parametrize(["url"],
+	[
+		("https://cdn.resfu.com/img_data/equipos/183.png",),
+		("https://cdn.resfu.com/img_data/equipos/369.png",),
+		("https://cdn.resfu.com/img_data/people/original/27257.jpg",),
+		("https://cdn.resfu.com/img_data/estadios/original_new/estadio_nofoto.png",),
+		("https://cdn.resfu.com/img_data/estadios/original_new/23.jpg",)
+	]
+)
+def test_url_disponible(url):
+
+	assert url_disponible(url)
+
+@pytest.mark.parametrize(["url"],
+	[(None,), ("url_antigua",), ("url_nueva",),("url",)]
+)
+def test_realizar_descarga_error(url):
+
+	with pytest.raises(Exception):
+
+		realizarDescarga(url, "ruta", "nombre")
+
+def borrarCarpeta(ruta:str)->None:
+
+	if os.path.exists(ruta):
+
+		os.rmdir(ruta)
+
+def crearCarpeta(ruta:str)->None:
+
+	if not os.path.exists(ruta):
+
+		os.mkdir(ruta)
+
+def vaciarCarpeta(ruta:str)->None:
+
+	if os.path.exists(ruta):
+
+		for archivo in os.listdir(ruta):
+
+			os.remove(os.path.join(ruta, archivo))
+
+@pytest.mark.parametrize(["url_imagen", "nombre_imagen"],
+	[
+		("https://cdn.resfu.com/img_data/equipos/183.png", "almeria"),
+		("https://cdn.resfu.com/img_data/equipos/369.png", "atleti"),
+		("https://cdn.resfu.com/img_data/people/original/27257.jpg", "cerezo"),
+		("https://cdn.resfu.com/img_data/estadios/original_new/estadio_nofoto.png", "sin_estadio"),
+		("https://cdn.resfu.com/img_data/estadios/original_new/23.jpg", "metropolitano"),
+		("https://cdn.resfu.com/media/img/league_logos/primera-division-ea.png", "la-liga"),
+		("https://cdn.resfu.com/media/img/flags/round/es.png", "espana")
+	]
+)
+def test_realizar_descarga(url_imagen, nombre_imagen):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Imagenes_Tests")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	realizarDescarga(url_imagen, ruta_carpeta, nombre_imagen)
+
+	assert os.path.exists(os.path.join(ruta_carpeta, f"{nombre_imagen}.png"))
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["url"],
+	[(None,), ("url_antigua",), ("url_nueva",),("url",)]
+)
+def test_descargar_imagen_error_url(url):
+
+	with pytest.raises(Exception):
+
+		descargarImagen(url, 369, "ruta")
+
+def test_descargar_imagen_error_codigo():
+
+	with pytest.raises(Exception):
+
+		descargarImagen("https://cdn.resfu.com/img_data/equipos/", 1, "ruta")
+
+@pytest.mark.parametrize(["url_imagen", "codigo_imagen"],
+	[
+		("https://cdn.resfu.com/img_data/equipos/", 183),
+		("https://cdn.resfu.com/img_data/equipos/", 369),
+		("https://cdn.resfu.com/img_data/people/original/", 27257),
+		("https://cdn.resfu.com/img_data/estadios/original_new/", "estadio_nofoto"),
+		("https://cdn.resfu.com/img_data/estadios/original_new/", 23),
+		("https://cdn.resfu.com/media/img/league_logos/", "primera-division-ea"),
+		("https://cdn.resfu.com/media/img/flags/round/", "es")
+	]
+)
+def test_descargar_imagen(url_imagen, codigo_imagen):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Imagenes_Tests")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	descargarImagen(url_imagen, codigo_imagen, ruta_carpeta)
+
+	assert os.path.exists(os.path.join(ruta_carpeta, f"{codigo_imagen}.png"))
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
