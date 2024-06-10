@@ -17,7 +17,7 @@ def limpiarDataEquipoEntrenador(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Nombre_URL"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
 
-	tabla["Codigo_Entrenador"]=tabla["Entrenador_URL"].apply(limpiarCodigoImagen).apply(lambda codigo: None if not codigo else int(codigo))
+	tabla["Codigo_Entrenador"]=tabla["Entrenador_URL"].apply(limpiarCodigoImagen).apply(lambda codigo: None if not codigo or codigo=="nofoto_jugador" else int(codigo))
 
 	tabla["Fecha"]=tabla["Fecha"].apply(limpiarFecha)
 

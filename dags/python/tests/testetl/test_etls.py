@@ -2,7 +2,9 @@ import pytest
 import pandas as pd
 
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
-from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError, EquipoEntrenadorError
+from src.etls import ETL_Estadio_Equipo
+from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
+from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
@@ -274,3 +276,124 @@ def test_etl_entrenador_equipo_datos_correctos(conexion, nombre_equipo):
 	assert datos_actualizados["entrenador_url"] is not None
 	assert datos_actualizados["codigo_entrenador"] is not None
 	assert datos_actualizados["partidos"] is not None
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
+)
+def test_etl_estadio_equipo_error(endpoint):
+
+	with pytest.raises(EquipoEstadioError):
+
+		ETL_Estadio_Equipo(endpoint)
+
+def test_etl_estadio_equipo_no_existe_error():
+
+	with pytest.raises(Exception):
+
+		ETL_Estadio_Equipo("atletico-madrid")
+
+@pytest.mark.parametrize(["nombre_equipo"],
+	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
+	("atalanta",),("manchester-city-fc",)]
+)
+def test_etl_estadio_equipo_datos_correctos(conexion, nombre_equipo):
+
+	conexion.insertarEquipo(nombre_equipo)
+
+	ETL_Estadio_Equipo(nombre_equipo)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["nombre_equipo"],
+	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
+	("atalanta",),("manchester-city-fc",)]
+)
+def test_etl_estadio_equipo_estadio_existente(conexion, nombre_equipo):
+
+	conexion.insertarEquipo(nombre_equipo)
+
+	ETL_Estadio_Equipo(nombre_equipo)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio=len(conexion.c.fetchall())
+
+	ETL_Estadio_Equipo(nombre_equipo)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevos=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio_nuevos=len(conexion.c.fetchall())
+
+	assert numero_registros_estadio==numero_registros_estadio_nuevos
+	assert numero_registros_equipo_estadio==numero_registros_equipo_estadio_nuevos
+
+def test_etl_estadio_equipo_estadio_nuevo(conexion):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.insertarEquipoEstadio(("atletico-madrid", "vicente-calderon"))
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio=len(conexion.c.fetchall())
+
+	ETL_Estadio_Equipo("atletico-madrid")
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevo=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio_nuevo=len(conexion.c.fetchall())
+
+	assert numero_registros_estadio_nuevo==numero_registros_estadio+1
+	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio+1
+
+@pytest.mark.parametrize(["equipo1", "equipo2"],
+	[
+		("flamengo-rio-janeiro", "fluminense-rio-janeiro"),
+		("milan", "internazionale"),
+		("roma", "lazio")
+	]
+)
+def test_etl_estadio_equipo_estadio_compartido(conexion, equipo1, equipo2):
+
+	conexion.insertarEquipo(equipo1)
+
+	ETL_Estadio_Equipo(equipo1)
+
+	conexion.insertarEquipo(equipo2)
+
+	ETL_Estadio_Equipo(equipo2)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	assert len(conexion.c.fetchall())==1
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	assert len(conexion.c.fetchall())==2

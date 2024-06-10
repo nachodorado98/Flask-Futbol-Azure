@@ -5,6 +5,8 @@ from .scrapers.scraper_equipo_estadio import ScraperEquipoEstadio
 
 from .utils import limpiarCodigoImagen, normalizarNombre, obtenerCoordenadasEstadio, limpiarTamano
 
+from .database.conexion import Conexion
+
 def extraerDataEquipoEstadio(equipo:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperEquipoEstadio(equipo)
@@ -35,3 +37,33 @@ def limpiarDataEquipoEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 				"Capacidad", "Fecha", "Largo", "Ancho", "Telefono", "Cesped"]
 
 	return tabla[columnas]
+
+def cargarDataEquipoEstadio(tabla:pd.DataFrame, equipo_id:str)->None:
+
+	datos_estadio=tabla.values.tolist()[0]
+
+	con=Conexion()
+
+	if not con.existe_equipo(equipo_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar el estadio del equipo {equipo_id}. No existe")
+
+	try:
+
+		if not con.existe_estadio(datos_estadio[0]):
+
+			con.insertarEstadio(datos_estadio)
+
+		if not con.existe_equipo_estadio(equipo_id, datos_estadio[0]):
+
+			con.insertarEquipoEstadio((equipo_id, datos_estadio[0]))
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar el estadio del equipo {equipo_id}")

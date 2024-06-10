@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from src.etl_equipo_estadio import extraerDataEquipoEstadio, limpiarDataEquipoEstadio
+from src.etl_equipo_estadio import extraerDataEquipoEstadio, limpiarDataEquipoEstadio, cargarDataEquipoEstadio
 from src.scrapers.excepciones_scrapers import EquipoEstadioError
 
 @pytest.mark.parametrize(["endpoint"],
@@ -47,3 +47,157 @@ def test_limpiar_data_equipo_estadio(equipo):
 	assert not data_limpia.empty
 	assert len(data_limpia.columns)==13
 	assert len(data_limpia)==1
+
+def test_cargar_data_equipo_estadio_error_no_existe(conexion):
+
+	data=extraerDataEquipoEstadio("atletico-madrid")
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	with pytest.raises(Exception):
+
+		cargarDataEquipoEstadio(data_limpia, "atletico-madrid")
+
+def test_cargar_data_equipo_estadio_datos_error(conexion):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	data=extraerDataEquipoEstadio("atletico-madrid")
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	data_limpia["Fecha"]="numero"
+
+	with pytest.raises(Exception):
+
+		cargarDataEquipoEstadio(data_limpia, "atletico-madrid")
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",)]
+)
+def test_cargar_data_equipo_estadio(conexion, equipo):
+
+	conexion.insertarEquipo(equipo)
+
+	data=extraerDataEquipoEstadio(equipo)
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, equipo)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",)]
+)
+def test_cargar_data_equipo_estadio_existente(conexion, equipo):
+
+	conexion.insertarEquipo(equipo)
+
+	data=extraerDataEquipoEstadio(equipo)
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, equipo)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio=len(conexion.c.fetchall())
+
+	data=extraerDataEquipoEstadio(equipo)
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, equipo)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevos=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio_nuevos=len(conexion.c.fetchall())
+
+	assert numero_registros_estadio==numero_registros_estadio_nuevos
+	assert numero_registros_equipo_estadio==numero_registros_equipo_estadio_nuevos
+
+def test_cargar_data_equipo_estadio_nuevo(conexion):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.insertarEquipoEstadio(("atletico-madrid", "vicente-calderon"))
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio=len(conexion.c.fetchall())
+
+	data=extraerDataEquipoEstadio("atletico-madrid")
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, "atletico-madrid")
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevo=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio_nuevo=len(conexion.c.fetchall())
+
+	assert numero_registros_estadio_nuevo==numero_registros_estadio+1
+	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio+1
+
+@pytest.mark.parametrize(["equipo1", "equipo2"],
+	[
+		("flamengo-rio-janeiro", "fluminense-rio-janeiro"),
+		("milan", "internazionale"),
+		("roma", "lazio")
+	]
+)
+def test_cargar_data_equipo_estadio_compartido(conexion, equipo1, equipo2):
+
+	conexion.insertarEquipo(equipo1)
+
+	data=extraerDataEquipoEstadio(equipo1)
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, equipo1)
+
+	conexion.insertarEquipo(equipo2)
+
+	data=extraerDataEquipoEstadio(equipo2)
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, equipo2)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	assert len(conexion.c.fetchall())==1
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	assert len(conexion.c.fetchall())==2

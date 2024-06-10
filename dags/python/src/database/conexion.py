@@ -107,3 +107,42 @@ class Conexion:
 							tuple(datos_entrenador))
 
 		self.confirmar()
+
+	#Metodo para insertar un estadio
+	def insertarEstadio(self, estadio:List[str])->None:
+
+		self.c.execute("""INSERT INTO estadios
+							VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+							tuple(estadio))
+
+		self.confirmar()
+
+	# Metodo para saber si existe el estadio
+	def existe_estadio(self, estadio_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM estadios
+							WHERE Estadio_Id=%s""",
+							(estadio_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	#Metodo para insertar un equipo estadio
+	def insertarEquipoEstadio(self, equipo_estadio:tuple)->None:
+
+		self.c.execute("""INSERT INTO equipo_estadio
+							VALUES(%s, %s)""",
+							equipo_estadio)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el equipo estadio
+	def existe_equipo_estadio(self, equipo_id:str, estadio_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM equipo_estadio
+							WHERE Equipo_Id=%s
+							AND Estadio_Id=%s""",
+							(equipo_id, estadio_id))
+
+		return False if self.c.fetchone() is None else True
