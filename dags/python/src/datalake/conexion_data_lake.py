@@ -30,21 +30,6 @@ class ConexionDataLake:
 
 		self.cliente_data_lake.close()
 
-	# Metodo para crear un contenedor
-	def crearContenedor(self, nombre_contenedor:str)->None:
-
-		if self.existe_contenedor(nombre_contenedor):
-
-			raise Exception("Error al crear el contenedor. Contenedor existente")
-
-		try:
-
-			self.cliente_data_lake.create_file_system(file_system=nombre_contenedor)
-
-		except Exception:
-
-			raise Exception("Error al crear el contenedor")
-
 	# Metodo para obtener los contenedores del data lake
 	def contenedores_data_lake(self)->Optional[List[Dict]]:
 
@@ -57,21 +42,6 @@ class ConexionDataLake:
 		except Exception:
 
 			raise Exception("Error al obtener los contenedores")
-
-	# Metodo para eliminar un contenedor
-	def eliminarContenedor(self, nombre_contenedor:str)->None:
-
-		if not self.existe_contenedor(nombre_contenedor):
-
-			raise Exception("Error al eliminar el contenedor. Contenedor no existente")
-
-		try:
-
-			self.cliente_data_lake.delete_file_system(file_system=nombre_contenedor)
-
-		except Exception:
-
-			raise Exception("Error al eliminar el contenedor")
 
 	# Metodo para comprobar que la conexion esta disponible
 	def conexion_disponible(self)->bool:
@@ -95,6 +65,36 @@ class ConexionDataLake:
 
 		return False if not contenedores_existen else True
 
+	# Metodo para crear un contenedor
+	def crearContenedor(self, nombre_contenedor:str)->None:
+
+		if self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al crear el contenedor. Contenedor existente")
+
+		try:
+
+			self.cliente_data_lake.create_file_system(file_system=nombre_contenedor)
+
+		except Exception:
+
+			raise Exception("Error al crear el contenedor")
+
+	# Metodo para eliminar un contenedor
+	def eliminarContenedor(self, nombre_contenedor:str)->None:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al eliminar el contenedor. Contenedor no existente")
+
+		try:
+
+			self.cliente_data_lake.delete_file_system(file_system=nombre_contenedor)
+
+		except Exception:
+
+			raise Exception("Error al eliminar el contenedor")
+
 	# Metodo para obtener un objeto contenedor
 	def obtenerContenedor(self, nombre_contenedor:str)->Optional[FileSystemClient]:
 
@@ -103,3 +103,76 @@ class ConexionDataLake:
 			raise Exception("Error al obtener el contenedor")
 
 		return self.cliente_data_lake.get_file_system_client(nombre_contenedor)
+
+	# Metodo para obtener los paths de un contenedor
+	def paths_contenedor(self, nombre_contenedor:str)->Optional[List[Dict]]:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al obtener los paths en el contenedor. Contenedor no existente")
+
+		objeto_contenedor=self.obtenerContenedor(nombre_contenedor)
+
+		paths=objeto_contenedor.get_paths()
+
+		return list(paths)
+
+	# Metodo para comprobar que existe una carpeta en un contenedor
+	def existe_carpeta(self, nombre_contenedor:str, nombre_carpeta:str)->bool:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al comprobar la carpeta en el contenedor. Contenedor no existente")
+
+		paths=self.paths_contenedor(nombre_contenedor)
+
+		paths_existen=list(filter(lambda path: nombre_carpeta==path["name"], paths))
+
+		return False if not paths_existen else True
+
+	# Metodo para crear una carpeta en un contenedor
+	def crearCarpeta(self, nombre_contenedor:str, nombre_carpeta:str)->None:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al crear la carpeta en el contenedor. Contenedor no existente")
+
+		if self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al crear la carpeta en el contenedor. Carpeta existente")
+
+		objeto_contenedor=self.obtenerContenedor(nombre_contenedor)
+
+		objeto_contenedor.create_directory(nombre_carpeta)
+
+	# Metodo para eliminar una carpeta en un contenedor
+	def eliminarCarpeta(self, nombre_contenedor:str, nombre_carpeta:str)->None:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al eliminar la carpeta en el contenedor. Contenedor no existente")
+
+		if not self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al eliminar la carpeta en el contenedor. Carpeta no existente")
+
+		objeto_contenedor=self.obtenerContenedor(nombre_contenedor)
+
+		objeto_contenedor.delete_directory(nombre_carpeta)
+
+	# Metodo para obtener los paths de una carpeta de un contenedor
+	def paths_carpeta_contenedor(self, nombre_contenedor:str, nombre_carpeta:str)->Optional[List[Dict]]:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al obtener los paths en el contenedor. Contenedor no existente")
+
+		if not self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al obtener los paths en el contenedor. Carpeta no existente")
+
+		objeto_contenedor=self.obtenerContenedor(nombre_contenedor)
+
+		paths=objeto_contenedor.get_paths(path=nombre_carpeta)
+
+		return list(paths)

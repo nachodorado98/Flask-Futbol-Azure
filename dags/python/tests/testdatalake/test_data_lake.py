@@ -101,6 +101,134 @@ def test_obtener_contenedor_existe(datalake):
 
 	assert isinstance(objeto_contenedor, FileSystemClient)
 
+	datalake.cerrarConexion()
+
+def test_paths_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.paths_contenedor("contenedornacho")
+
+	datalake.cerrarConexion()
+
+def test_paths_contenedor_no_paths(datalake):
+
+	assert not datalake.paths_contenedor("contenedor2")
+
+	datalake.cerrarConexion()
+
+def test_paths_contenedor(datalake):
+
+	datalake.crearCarpeta("contenedor2", "carpeta")
+
+	paths=datalake.paths_contenedor("contenedor2")
+
+	assert len(paths)==1
+
+	datalake.cerrarConexion()
+
+def test_existe_carpeta_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.existe_carpeta("contenedornacho", "carpeta")
+
+def test_existe_carpeta_no_existe(datalake):
+
+	assert not datalake.existe_carpeta("contenedor2", "carpeta_no_existe")
+
+def test_existe_carpeta(datalake):
+
+	objeto_contenedor=datalake.obtenerContenedor("contenedor2")
+
+	objeto_contenedor.create_directory("carpeta")
+
+	assert datalake.existe_carpeta("contenedor2", "carpeta")
+
+def test_crear_carpeta_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.crearCarpeta("contenedornacho", "carpeta")
+
+	datalake.cerrarConexion()
+
+def test_crear_carpeta_contenedor_carpeta_existe(datalake):
+
+	objeto_contenedor=datalake.obtenerContenedor("contenedor2")
+
+	objeto_contenedor.create_directory("carpeta")
+
+	with pytest.raises(Exception):
+
+		datalake.crearCarpeta("contenedor2", "carpeta")
+
+	datalake.cerrarConexion()
+
+def test_crear_carpeta_contenedor(datalake):
+
+	datalake.crearCarpeta("contenedor2", "carpeta_nueva")
+
+	assert datalake.existe_carpeta("contenedor2", "carpeta_nueva")
+
+	datalake.cerrarConexion()
+
+def test_eliminar_carpeta_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.eliminarCarpeta("contenedornacho", "carpeta")
+
+	datalake.cerrarConexion()
+
+def test_eliminar_carpeta_contenedor_carpeta_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.eliminarCarpeta("contenedor2", "carpeta_eliminar")
+
+	datalake.cerrarConexion()
+
+def test_eliminar_carpeta_contenedor(datalake):
+
+	datalake.crearCarpeta("contenedor2", "carpeta_eliminar")
+
+	datalake.eliminarCarpeta("contenedor2", "carpeta_eliminar")
+
+	assert not datalake.existe_carpeta("contenedor2", "carpeta_eliminar")
+
+	datalake.cerrarConexion()
+
+def test_paths_carpeta_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.paths_carpeta_contenedor("contenedornacho", "carpeta")
+
+	datalake.cerrarConexion()
+
+def test_paths_carpeta_contenedor_no_existe_carpeta(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.paths_carpeta_contenedor("contenedor2", "carpeta_no_existe")
+
+	datalake.cerrarConexion()
+
+def test_paths_carpeta_contenedor_no_paths(datalake):
+
+	assert not datalake.paths_carpeta_contenedor("contenedor2", "carpeta_nueva")
+
+	datalake.cerrarConexion()
+
+def test_paths_carpeta_contenedor(datalake):
+
+	datalake.crearCarpeta("contenedor2", "carpeta_nueva/carpeta_interna")
+
+	paths_carpeta=datalake.paths_carpeta_contenedor("contenedor2", "carpeta_nueva")
+
+	assert len(paths_carpeta)==1
+
 	datalake.eliminarContenedor("contenedor2")
 
 	datalake.cerrarConexion()
