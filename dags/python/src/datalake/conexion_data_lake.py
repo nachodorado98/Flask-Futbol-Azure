@@ -15,7 +15,13 @@ class ConexionDataLake:
 
 			self.cliente_data_lake=DataLakeServiceClient(url_data_lake, credential=clave)
 
-		except Exception as e:
+		except Exception:
+
+			raise Exception("Error al crear la conexion con cliente del data lake")
+
+		if not self.conexion_disponible():
+
+			self.cerrarConexion()
 
 			raise Exception("Error al crear la conexion con cliente del data lake")
 
@@ -27,11 +33,15 @@ class ConexionDataLake:
 	# Metodo para crear un contenedor
 	def crearContenedor(self, nombre_contenedor:str)->None:
 
+		if self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al crear el contenedor. Contenedor existente")
+
 		try:
 
 			self.cliente_data_lake.create_file_system(file_system=nombre_contenedor)
 
-		except Exception as e:
+		except Exception:
 
 			raise Exception("Error al crear el contenedor")
 
@@ -44,17 +54,52 @@ class ConexionDataLake:
 
 			return list(contenedores)
 
-		except Exception as e:
+		except Exception:
 
 			raise Exception("Error al obtener los contenedores")
 
 	# Metodo para eliminar un contenedor
 	def eliminarContenedor(self, nombre_contenedor:str)->None:
 
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al eliminar el contenedor. Contenedor no existente")
+
 		try:
 
 			self.cliente_data_lake.delete_file_system(file_system=nombre_contenedor)
 
-		except Exception as e:
+		except Exception:
 
 			raise Exception("Error al eliminar el contenedor")
+
+	# Metodo para comprobar que la conexion esta disponible
+	def conexion_disponible(self)->bool:
+
+		try:
+
+			self.contenedores_data_lake()
+
+			return True
+
+		except Exception:
+
+			return False
+
+	# Metodo para comprobar que existe un contenedor
+	def existe_contenedor(self, nombre_contenedor:str)->bool:
+
+		contenedores=self.contenedores_data_lake()
+
+		contenedores_existen=list(filter(lambda contenedor: nombre_contenedor==contenedor["name"], contenedores))
+
+		return False if not contenedores_existen else True
+
+	# Metodo para obtener un objeto contenedor
+	def obtenerContenedor(self, nombre_contenedor:str)->Optional[FileSystemClient]:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al obtener el contenedor")
+
+		return self.cliente_data_lake.get_file_system_client(nombre_contenedor)

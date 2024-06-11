@@ -14,6 +14,8 @@ from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
 from src.database.conexion import Conexion
 
+from src.datalake.conexion_data_lake import ConexionDataLake
+
 @pytest.fixture
 def scraper():
 
@@ -56,3 +58,8 @@ def conexion():
 	con.confirmar()
 
 	return con
+
+@pytest.fixture()
+def datalake():
+
+    return ConexionDataLake()

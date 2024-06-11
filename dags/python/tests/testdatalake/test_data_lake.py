@@ -1,21 +1,16 @@
 import pytest
-from azure.storage.filedatalake import DataLakeServiceClient
+from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
-def test_crear_conexion_data_lake_error():
+@pytest.mark.parametrize(["cuenta", "clave"],
+	[("", ""),("cuenta", "clave")]
+)
+def test_crear_conexion_data_lake_error(cuenta, clave):
 
 	with pytest.raises(Exception):
 
-		ConexionDataLake("", "")
-
-def test_crear_conexion_data_lake_no_error():
-
-	datalake=ConexionDataLake("cuenta", "clave")
-
-	assert isinstance(datalake.cliente_data_lake, DataLakeServiceClient)
-
-	datalake.cerrarConexion()
+		ConexionDataLake(cuenta, clave)
 
 def test_crear_conexion_data_lake():
 
@@ -25,19 +20,7 @@ def test_crear_conexion_data_lake():
 
 	datalake.cerrarConexion()
 
-def test_crear_contenedor_data_lake_error():
-
-	datalake=ConexionDataLake("cuenta", "clave")
-
-	with pytest.raises(Exception):
-
-		datalake.crearContenedor("contenedor1")
-
-	datalake.cerrarConexion()
-
-def test_crear_contenedor_data_lake():
-
-	datalake=ConexionDataLake()
+def test_crear_contenedor_data_lake(datalake):
 
 	datalake.crearContenedor("contenedor1")
 
@@ -47,9 +30,7 @@ def test_crear_contenedor_data_lake():
 
 	datalake.cerrarConexion()
 
-def test_crear_contenedor_data_lake_existe():
-
-	datalake=ConexionDataLake()
+def test_crear_contenedor_data_lake_existe_error(datalake):
 
 	with pytest.raises(Exception):
 
@@ -57,19 +38,7 @@ def test_crear_contenedor_data_lake_existe():
 
 	datalake.cerrarConexion()
 
-def test_contenedores_data_lake_error():
-
-	datalake=ConexionDataLake("cuenta", "clave")
-
-	with pytest.raises(Exception):
-
-		datalake.contenedores_data_lake()
-
-	datalake.cerrarConexion()
-
-def test_contenedores_data_lake():
-
-	datalake=ConexionDataLake()
+def test_contenedores_data_lake(datalake):
 
 	contenedores=datalake.contenedores_data_lake()
 
@@ -77,19 +46,7 @@ def test_contenedores_data_lake():
 
 	datalake.cerrarConexion()
 
-def test_eliminar_contenedor_data_lake_error():
-
-	datalake=ConexionDataLake("cuenta", "clave")
-
-	with pytest.raises(Exception):
-
-		datalake.eliminarContenedor("contenedor1")
-
-	datalake.cerrarConexion()
-
-def test_eliminar_contenedor_data_lake():
-
-	datalake=ConexionDataLake()
+def test_eliminar_contenedor_data_lake(datalake):
 
 	datalake.eliminarContenedor("contenedor1")
 
@@ -99,12 +56,51 @@ def test_eliminar_contenedor_data_lake():
 
 	datalake.cerrarConexion()
 
-def test_eliminar_contenedor_data_lake_no_existe():
-
-	datalake=ConexionDataLake()
+def test_eliminar_contenedor_data_lake_no_existe_error(datalake):
 
 	with pytest.raises(Exception):
 
 		datalake.eliminarContenedor("contenedor1")
+
+	datalake.cerrarConexion()
+
+def test_conexion_disponible(datalake):
+
+	assert datalake.conexion_disponible()
+
+	datalake.cerrarConexion()
+
+@pytest.mark.parametrize(["nombre_contenedor"],
+	[("contenedor1",),("contenedornacho",),("no_existo",)]
+)
+def test_existe_contenedor_no_existe(datalake, nombre_contenedor):
+
+	assert not datalake.existe_contenedor(nombre_contenedor)
+
+	datalake.cerrarConexion()
+
+def test_existe_contenedor_existe(datalake):
+
+	datalake.crearContenedor("contenedor2")
+
+	assert datalake.existe_contenedor("contenedor2")
+
+	datalake.cerrarConexion()
+
+def test_obtener_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.obtenerContenedor("contenedornacho")
+
+	datalake.cerrarConexion()
+
+def test_obtener_contenedor_existe(datalake):
+
+	objeto_contenedor=datalake.obtenerContenedor("contenedor2")
+
+	assert isinstance(objeto_contenedor, FileSystemClient)
+
+	datalake.eliminarContenedor("contenedor2")
 
 	datalake.cerrarConexion()
