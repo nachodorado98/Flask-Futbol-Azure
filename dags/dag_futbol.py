@@ -2,14 +2,13 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash_operator import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
 import os
 import time
 
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo
 from python.src.database.conexion import Conexion
-from python.src.utils import descargarImagen, entorno_creado, crearEntornoDataLake
+from python.src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
 from python.src.datalake.conexion_data_lake import ConexionDataLake
 
 def existe_entorno()->str:
@@ -140,7 +139,7 @@ def entorno_data_lake_creado():
 
 		return "crear_entorno_data_lake"
 
-	return "entorno_creado"
+	return "subir_data_lake"
 
 def creacion_entorno_data_lake()->None:
 
@@ -148,7 +147,11 @@ def creacion_entorno_data_lake()->None:
 
 	print("Entorno Data Lake creado")
 
+def subirEscudosDataLake()->None:
 
+	ruta_imagenes=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", "escudos")
+
+	subirArchivosDataLake("contenedorequipos", "escudos", ruta_imagenes)
 
 
 with DAG("dag_futbol",
@@ -187,7 +190,7 @@ with DAG("dag_futbol",
 
 	tarea_crear_entorno_data_lake=PythonOperator(task_id="crear_entorno_data_lake", python_callable=creacion_entorno_data_lake)
 
-	tarea_entorno_creado=DummyOperator(task_id="entorno_creado", trigger_rule="none_failed_min_one_success")
+	tarea_subir_data_lake=PythonOperator(task_id="subir_data_lake", python_callable=subirEscudosDataLake, trigger_rule="none_failed_min_one_success")
 
 tarea_existe_entorno >> [tarea_carpeta_logs, tarea_pipeline_equipos_ligas]
 
@@ -197,6 +200,6 @@ tarea_pipeline_equipos_ligas >> tarea_pipeline_detalle_equipos >> tarea_pipeline
 
 tarea_pipeline_estadio_equipos >> tarea_descargar_escudos >> tarea_data_lake_disponible >> [tarea_entorno_data_lake_creado, tarea_log_data_lake]
 
-tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_entorno_creado]
+tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_subir_data_lake]
 
-tarea_crear_entorno_data_lake >> tarea_entorno_creado
+tarea_crear_entorno_data_lake >> tarea_subir_data_lake

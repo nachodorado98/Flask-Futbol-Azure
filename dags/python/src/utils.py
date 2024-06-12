@@ -128,3 +128,25 @@ def crearEntornoDataLake(nombre_contenedor:str, nombre_carpeta:str)->None:
 	datalake.crearCarpeta(nombre_contenedor, nombre_carpeta)
 
 	datalake.cerrarConexion()
+
+def subirArchivosDataLake(nombre_contenedor:str, nombre_carpeta:str, ruta_local_carpeta:str)->None:
+
+	datalake=ConexionDataLake()
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor(nombre_contenedor, nombre_carpeta)
+
+	archivos_carpeta_contenedor_limpios=[archivo.name.split(f"{nombre_carpeta}/")[1] for archivo in archivos_carpeta_contenedor]
+
+	try:
+
+		archivos_local=os.listdir(ruta_local_carpeta)
+
+	except Exception:
+
+		raise Exception("La ruta de la carpeta local de los archivos es incorrecta")
+
+	for archivo_local in archivos_local:
+
+		if archivo_local not in archivos_carpeta_contenedor_limpios:
+
+			datalake.subirArchivo(nombre_contenedor, nombre_carpeta, ruta_local_carpeta, archivo_local)

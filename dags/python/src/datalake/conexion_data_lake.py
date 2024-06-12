@@ -1,5 +1,6 @@
-from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient
+from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient
 from typing import List, Dict, Optional
+import os
 
 from .confconexiondatalake import CUENTA, CLAVE
 
@@ -177,7 +178,7 @@ class ConexionDataLake:
 		return list(paths)
 
 	# Metodo para obtener un objeto carpeta
-	def obtenerCarpeta(self, nombre_contenedor:str, nombre_carpeta:str)->DataLakeDirectoryClient:
+	def obtenerCarpeta(self, nombre_contenedor:str, nombre_carpeta:str)->Optional[DataLakeDirectoryClient]:
 
 		if not self.existe_contenedor(nombre_contenedor):
 
@@ -190,3 +191,41 @@ class ConexionDataLake:
 		objeto_contenedor=self.obtenerContenedor(nombre_contenedor)
 
 		return objeto_contenedor.get_directory_client(nombre_carpeta)
+
+	# Metodo para obtener un objeto file
+	def obtenerFile(self, nombre_contenedor:str, nombre_carpeta:str, nombre_archivo:str)->Optional[DataLakeFileClient]:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al obtener el file en el contenedor. Contenedor no existente")
+
+		if not self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al obtener el file en el contenedor. Carpeta no existente")
+
+		objeto_carpeta=self.obtenerCarpeta(nombre_contenedor, nombre_carpeta)
+
+		return objeto_carpeta.get_file_client(nombre_archivo)
+
+	# Metodo para subir un archivo a la carpeta
+	def subirArchivo(self, nombre_contenedor:str, nombre_carpeta:str, ruta_local_carpeta:str, nombre_archivo:str)->None:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al subir el archivo en el contenedor. Contenedor no existente")
+
+		if not self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al subir el archivo en el contenedor. Carpeta no existente")
+
+		objeto_file=self.obtenerFile(nombre_contenedor, nombre_carpeta, nombre_archivo)
+
+		try:
+
+			with open(file=os.path.join(ruta_local_carpeta, nombre_archivo), mode="rb") as data:
+
+				objeto_file.upload_data(data, overwrite=True)
+
+		except Exception:
+
+			raise Exception("Error al subir el archivo al Data Lake")
