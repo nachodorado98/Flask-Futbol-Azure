@@ -5,6 +5,7 @@ from geopy.geocoders import Nominatim
 import wget
 import os
 import requests
+from .datalake.conexion_data_lake import ConexionDataLake
 
 def limpiarCodigoImagen(link:str)->Optional[str]:
 
@@ -105,3 +106,25 @@ def descargarImagen(url_imagen:str, codigo_imagen:str, ruta_imagenes:str)->None:
 	else:
 
 		realizarDescarga(f"{url_imagen}{codigo_imagen}.jpg", ruta_imagenes, codigo_imagen)
+
+def entorno_creado(nombre_contenedor:str)->bool:
+
+	datalake=ConexionDataLake()
+
+	contenedores=datalake.contenedores_data_lake()
+
+	datalake.cerrarConexion()
+
+	contenedor_existe=[contenedor for contenedor in contenedores if nombre_contenedor in contenedor["name"]]
+
+	return False if not contenedor_existe else True
+
+def crearEntornoDataLake(nombre_contenedor:str, nombre_carpeta:str)->None:
+
+	datalake=ConexionDataLake()
+
+	datalake.crearContenedor(nombre_contenedor)
+
+	datalake.crearCarpeta(nombre_contenedor, nombre_carpeta)
+
+	datalake.cerrarConexion()

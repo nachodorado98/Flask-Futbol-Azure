@@ -2,13 +2,15 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash_operator import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
 import os
 import time
 
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo
 from python.src.database.conexion import Conexion
-from python.src.utils import descargarImagen
+from python.src.utils import descargarImagen, entorno_creado, crearEntornoDataLake
+from python.src.datalake.conexion_data_lake import ConexionDataLake
 
 def existe_entorno()->str:
 
@@ -118,6 +120,35 @@ def descargarEscudos()->None:
 
 	print("Descarga de escudos finalizada")
 
+def data_lake_disponible()->str:
+
+	try:
+
+		con=ConexionDataLake()
+
+		con.cerrarConexion()
+
+		return "entorno_data_lake_creado"
+
+	except Exception:
+
+		return "log_data_lake"
+
+def entorno_data_lake_creado():
+
+	if not entorno_creado("contenedorequipos"):
+
+		return "crear_entorno_data_lake"
+
+	return "entorno_creado"
+
+def creacion_entorno_data_lake()->None:
+
+	crearEntornoDataLake("contenedorequipos", "escudos")
+
+	print("Entorno Data Lake creado")
+
+
 
 
 with DAG("dag_futbol",
@@ -148,10 +179,24 @@ with DAG("dag_futbol",
 
 	tarea_descargar_escudos=PythonOperator(task_id="descargar_escudos", python_callable=descargarEscudos)
 
+	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=data_lake_disponible)
+
+	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
+
+	tarea_entorno_data_lake_creado=BranchPythonOperator(task_id="entorno_data_lake_creado", python_callable=entorno_data_lake_creado)
+
+	tarea_crear_entorno_data_lake=PythonOperator(task_id="crear_entorno_data_lake", python_callable=creacion_entorno_data_lake)
+
+	tarea_entorno_creado=DummyOperator(task_id="entorno_creado", trigger_rule="none_failed_min_one_success")
+
 tarea_existe_entorno >> [tarea_carpeta_logs, tarea_pipeline_equipos_ligas]
 
 tarea_carpeta_logs >> tarea_carpeta_imagenes >> tarea_pipeline_equipos_ligas
 
 tarea_pipeline_equipos_ligas >> tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
 
-tarea_pipeline_estadio_equipos >> tarea_descargar_escudos
+tarea_pipeline_estadio_equipos >> tarea_descargar_escudos >> tarea_data_lake_disponible >> [tarea_entorno_data_lake_creado, tarea_log_data_lake]
+
+tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_entorno_creado]
+
+tarea_crear_entorno_data_lake >> tarea_entorno_creado

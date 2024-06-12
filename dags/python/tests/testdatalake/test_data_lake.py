@@ -1,5 +1,5 @@
 import pytest
-from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient
+from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
@@ -228,6 +228,32 @@ def test_paths_carpeta_contenedor(datalake):
 	paths_carpeta=datalake.paths_carpeta_contenedor("contenedor2", "carpeta_nueva")
 
 	assert len(paths_carpeta)==1
+
+	datalake.cerrarConexion()
+
+def test_obtener_carpeta_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.obtenerCarpeta("contenedornacho", "carpeta")
+
+	datalake.cerrarConexion()
+
+def test_obtener_carpeta_contenedor_carpeta_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.obtenerCarpeta("contenedor2", "carpeta_no_existe")
+
+	datalake.cerrarConexion()
+
+def test_obtener_carpeta_contenedor(datalake):
+
+	datalake.crearCarpeta("contenedor2", "carpeta_creada")
+
+	objeto_carpeta=datalake.obtenerCarpeta("contenedor2", "carpeta_creada")
+
+	assert isinstance(objeto_carpeta, DataLakeDirectoryClient)
 
 	datalake.eliminarContenedor("contenedor2")
 

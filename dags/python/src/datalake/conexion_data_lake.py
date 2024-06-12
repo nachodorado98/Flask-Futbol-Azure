@@ -1,5 +1,4 @@
-from azure.storage.filedatalake import DataLakeServiceClient
-from azure.storage.filedatalake import FileSystemClient
+from azure.storage.filedatalake import DataLakeServiceClient, FileSystemClient, DataLakeDirectoryClient
 from typing import List, Dict, Optional
 
 from .confconexiondatalake import CUENTA, CLAVE
@@ -176,3 +175,18 @@ class ConexionDataLake:
 		paths=objeto_contenedor.get_paths(path=nombre_carpeta)
 
 		return list(paths)
+
+	# Metodo para obtener un objeto carpeta
+	def obtenerCarpeta(self, nombre_contenedor:str, nombre_carpeta:str)->DataLakeDirectoryClient:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al obtener la carpeta en el contenedor. Contenedor no existente")
+
+		if not self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al obtener la carpeta en el contenedor. Carpeta no existente")
+
+		objeto_contenedor=self.obtenerContenedor(nombre_contenedor)
+
+		return objeto_contenedor.get_directory_client(nombre_carpeta)

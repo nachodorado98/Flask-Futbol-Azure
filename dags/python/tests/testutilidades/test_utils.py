@@ -1,8 +1,10 @@
 import pytest
 import os
+import time
 
 from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normalizarNombre
-from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible, descargarImagen
+from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
+from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -218,3 +220,29 @@ def test_descargar_imagen(url_imagen, codigo_imagen):
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
+
+def test_entorno_creado_no_creado():
+
+	assert not entorno_creado("contenedor3")
+
+def test_entorno_creado(datalake):
+
+	datalake.crearContenedor("contenedor3")
+
+	time.sleep(5)
+
+	assert entorno_creado("contenedor3")
+
+	datalake.eliminarContenedor("contenedor3")
+
+	datalake.cerrarConexion()
+
+def test_crear_entorno_data_lake(datalake):
+
+	crearEntornoDataLake("contenedor4", "carpeta4")
+
+	time.sleep(5)
+
+	assert entorno_creado("contenedor4")
+
+	datalake.eliminarContenedor("contenedor4")
