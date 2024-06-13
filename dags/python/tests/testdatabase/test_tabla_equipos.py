@@ -201,3 +201,32 @@ def test_obtener_codigo_entrenadores(conexion, datos, numero_entrenadores):
 	codigo_entrenadores=conexion.obtenerCodigoEntrenadores()
 
 	assert len(codigo_entrenadores)==numero_entrenadores
+
+def test_obtener_codigo_presidentes_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoPresidentes()
+
+@pytest.mark.parametrize(["datos", "numero_presidentes"],
+	[
+		([("atleti-madrid", 1), ("atleti", 2), ("atm", 3)], 3),
+		([("atleti-madrid", 1), ("atleti", 2), ("atm", None)], 2),
+		([("atleti-madrid", 1), ("atleti", 2), ("atm", 3), ("equipo", None)], 3),
+		([("atleti-madrid", None), ("atleti", None), ("atm", 3)], 1)
+	]
+)
+def test_obtener_codigo_presidentes(conexion, datos, numero_presidentes):
+
+	for equipo, codigo in datos:
+
+		conexion.insertarEquipo(equipo)
+
+		conexion.c.execute("""UPDATE equipos
+							SET Codigo_Presidente=%s
+							WHERE Equipo_Id=%s""",
+							(codigo, equipo))
+
+		conexion.confirmar()
+
+	codigo_presidentes=conexion.obtenerCodigoPresidentes()
+
+	assert len(codigo_presidentes)==numero_presidentes

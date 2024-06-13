@@ -1,7 +1,7 @@
 import os
 
 from utils import vaciarCarpeta, crearArchivoLog
-from config import URL_ESCUDO, URL_ENTRENADOR, ESCUDOS, ENTRENADORES
+from config import URL_ESCUDO, URL_ENTRENADOR, URL_PRESIDENTE, ESCUDOS, ENTRENADORES, PRESIDENTES
 
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
@@ -31,7 +31,7 @@ def entorno_data_lake_creado():
 
 def creacion_entorno_data_lake()->None:
 
-	crearEntornoDataLake("contenedorequipos", [ESCUDOS, ENTRENADORES])
+	crearEntornoDataLake("contenedorequipos", [ESCUDOS, ENTRENADORES, PRESIDENTES])
 
 	print("Entorno Data Lake creado")
 
@@ -118,3 +118,45 @@ def subirEntrenadoresDataLake()->None:
 			crearArchivoLog(mensaje)
 
 	vaciarCarpeta(ruta_entrenadores)
+
+def subirPresidentesDataLake()->None:
+
+	con=Conexion()
+
+	codigo_presidentes=con.obtenerCodigoPresidentes()
+
+	con.cerrarConexion()
+
+	ruta_presidentes=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PRESIDENTES)
+
+	for codigo in codigo_presidentes:
+
+		print(f"Descargando presidente {codigo}...")
+
+		try:
+
+			descargarImagen(URL_PRESIDENTE, codigo, ruta_presidentes)
+
+		except Exception as e:
+
+			mensaje=f"Presidente: {codigo} - Motivo: {e}"
+
+			print(f"Error en presidente con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de presidentes finalizada")
+
+	try:
+
+		subirArchivosDataLake("contenedorequipos", PRESIDENTES, ruta_presidentes)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los presidentes al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_presidentes)

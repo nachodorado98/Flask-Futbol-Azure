@@ -7,13 +7,13 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from utils import existe_entorno, crearArchivoLog
 
-from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES
+from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES
 
 from pipelines import Pipeline_Equipos_Ligas
 from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipeline_Entrenador_Equipos, Pipeline_Estadio_Equipos
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import subirEscudosDataLake, subirEntrenadoresDataLake
+from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake
 
 
 with DAG("dag_futbol",
@@ -21,6 +21,8 @@ with DAG("dag_futbol",
 		description="DAG para obtener datos de la web de futbol",
 		schedule_interval=None,
 		catchup=False) as dag:
+
+
 
 	with TaskGroup("entorno") as tareas_entorno:
 
@@ -32,11 +34,16 @@ with DAG("dag_futbol",
 
 		tarea_carpeta_entrenadores=BashOperator(task_id="carpeta_entrenadores", bash_command=BASH_ENTRENADORES)
 
+		tarea_carpeta_presidentes=BashOperator(task_id="carpeta_presidentes", bash_command=BASH_PRESIDENTES)
+
 		tarea_entorno_creado=DummyOperator(task_id="entorno_creado")
+
 
 		tarea_existe_entorno >> [tarea_carpeta_logs, tarea_entorno_creado]
 
-		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores
+		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes
+
+
 
 	with TaskGroup("pipelines_equipos") as tareas_pipelines_equipos:
 
@@ -48,9 +55,12 @@ with DAG("dag_futbol",
 
 		tarea_pipeline_estadio_equipos=PythonOperator(task_id="pipeline_estadio_equipos", python_callable=Pipeline_Estadio_Equipos)
 
+
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
 		#tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
+
+
 
 	with TaskGroup("datalake") as tareas_datalake:
 
@@ -60,7 +70,10 @@ with DAG("dag_futbol",
 
 		tarea_no_crear_entorno_data_lake=DummyOperator(task_id="no_crear_entorno_data_lake")
 
+
 		tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_no_crear_entorno_data_lake]
+
+
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
@@ -68,9 +81,14 @@ with DAG("dag_futbol",
 
 		tarea_subir_entrenadores_data_lake=PythonOperator(task_id="subir_entrenadores_data_lake", python_callable=subirEntrenadoresDataLake, trigger_rule="none_failed_min_one_success")
 
+		tarea_subir_presidentes_data_lake=PythonOperator(task_id="subir_presidentes_data_lake", python_callable=subirPresidentesDataLake, trigger_rule="none_failed_min_one_success")
+
+
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
-		#tarea_subir_escudos_data_lake >> tarea_subir_entrenadores_data_lake
+		#tarea_subir_escudos_data_lake >> tarea_subir_entrenadores_data_lake >> tarea_subir_presidentes_data_lake
+
+
 
 	tarea_pipeline_equipos_ligas=PythonOperator(task_id="pipeline_equipos_ligas", python_callable=Pipeline_Equipos_Ligas, trigger_rule="none_failed_min_one_success")
 
@@ -78,6 +96,8 @@ with DAG("dag_futbol",
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
 	
+
+
 tareas_entorno >> tarea_pipeline_equipos_ligas >> tareas_pipelines_equipos >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
 
 tareas_datalake >> tareas_subir_data_lake

@@ -152,7 +152,8 @@ class Conexion:
 
 		self.c.execute("""SELECT Escudo
 							FROM equipos
-							WHERE Escudo IS NOT NULL""")
+							WHERE Escudo IS NOT NULL
+							ORDER BY Escudo""")
 
 		escudos=self.c.fetchall()
 
@@ -163,8 +164,21 @@ class Conexion:
 
 		self.c.execute("""SELECT Codigo_Entrenador
 							FROM equipos
-							WHERE Codigo_Entrenador IS NOT NULL""")
+							WHERE Codigo_Entrenador IS NOT NULL
+							ORDER BY Codigo_Entrenador""")
 
 		codigo_entrenadores=self.c.fetchall()
 
 		return list(map(lambda codigo_entrenador: codigo_entrenador["codigo_entrenador"], codigo_entrenadores)) if codigo_entrenadores else None
+
+	# Metodo para obtener los codigos de los presidentes
+	def obtenerCodigoPresidentes(self)->Optional[List[int]]:
+
+		self.c.execute("""SELECT Codigo_Presidente
+							FROM equipos
+							WHERE Codigo_Presidente IS NOT NULL
+							ORDER BY Codigo_Presidente""")
+
+		codigo_presidentes=self.c.fetchall()
+
+		return list(map(lambda codigo_presidente: codigo_presidente["codigo_presidente"], codigo_presidentes)) if codigo_presidentes else None
