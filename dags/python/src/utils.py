@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 import unicodedata
 from geopy.geocoders import Nominatim
@@ -119,13 +119,15 @@ def entorno_creado(nombre_contenedor:str)->bool:
 
 	return False if not contenedor_existe else True
 
-def crearEntornoDataLake(nombre_contenedor:str, nombre_carpeta:str)->None:
+def crearEntornoDataLake(nombre_contenedor:str, nombres_carpetas:List[str])->None:
 
 	datalake=ConexionDataLake()
 
 	datalake.crearContenedor(nombre_contenedor)
 
-	datalake.crearCarpeta(nombre_contenedor, nombre_carpeta)
+	for nombre_carpeta in nombres_carpetas:
+
+		datalake.crearCarpeta(nombre_contenedor, nombre_carpeta)
 
 	datalake.cerrarConexion()
 

@@ -1,0 +1,7 @@
+BASH_LOGS="cd ../../opt/airflow/dags && mkdir -p entorno/logs"
+BASH_ESCUDOS="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/escudos"
+BASH_ENTRENADORES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/entrenadores"
+URL_ESCUDO="https://cdn.resfu.com/img_data/equipos/"
+URL_ENTRENADOR="https://cdn.resfu.com/img_data/people/original/"
+ESCUDOS="escudos"
+ENTRENADORES="entrenadores"

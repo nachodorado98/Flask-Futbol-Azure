@@ -147,7 +147,7 @@ class Conexion:
 
 		return False if self.c.fetchone() is None else True
 
-	# Metodo para obtener los codigos de los escudo
+	# Metodo para obtener los codigos de los escudos
 	def obtenerCodigoEscudos(self)->Optional[List[int]]:
 
 		self.c.execute("""SELECT Escudo
@@ -157,3 +157,14 @@ class Conexion:
 		escudos=self.c.fetchall()
 
 		return list(map(lambda escudo: escudo["escudo"], escudos)) if escudos else None
+
+	# Metodo para obtener los codigos de los entrenadores
+	def obtenerCodigoEntrenadores(self)->Optional[List[int]]:
+
+		self.c.execute("""SELECT Codigo_Entrenador
+							FROM equipos
+							WHERE Codigo_Entrenador IS NOT NULL""")
+
+		codigo_entrenadores=self.c.fetchall()
+
+		return list(map(lambda codigo_entrenador: codigo_entrenador["codigo_entrenador"], codigo_entrenadores)) if codigo_entrenadores else None

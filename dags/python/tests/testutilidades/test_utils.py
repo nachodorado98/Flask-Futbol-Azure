@@ -237,13 +237,30 @@ def test_entorno_creado(datalake):
 
 	datalake.cerrarConexion()
 
-def test_crear_entorno_data_lake(datalake):
+@pytest.mark.parametrize(["carpetas", "contenedor"],
+	[
+		(["carpeta4", "carpeta5"], 1),
+		(["carpeta6"], 2),
+		(["carpeta7", "carpeta8", "carpeta9"], 3),
+		(["carpeta10", "carpeta11", "carpeta12", "carpeta13", "carpeta14"], 4)
+	]
+)
+def test_crear_entorno_data_lake(datalake, carpetas, contenedor):
 
-	crearEntornoDataLake("contenedor4", "carpeta4")
+	crearEntornoDataLake(f"contenedornuevo{contenedor}", carpetas)
 
 	time.sleep(2)
 
-	assert entorno_creado("contenedor4")
+	assert entorno_creado(f"contenedornuevo{contenedor}")
+	assert len(datalake.paths_contenedor(f"contenedornuevo{contenedor}"))==len(carpetas)
+
+	for carpeta in carpetas:
+
+		datalake.eliminarCarpeta(f"contenedornuevo{contenedor}", carpeta)
+
+	datalake.eliminarContenedor(f"contenedornuevo{contenedor}")
+
+	time.sleep(1)
 
 	datalake.cerrarConexion()
 
@@ -261,7 +278,7 @@ def test_subir_archivo_data_lake_carpeta_no_existe():
 
 def test_subir_archivo_data_lake_local_no_existe(datalake):
 
-	datalake.crearCarpeta("contenedor4", "carpeta_creada")
+	crearEntornoDataLake("contenedor4", ["carpeta_creada"])
 
 	with pytest.raises(Exception):
 
@@ -313,7 +330,7 @@ def test_subir_archivo_data_lake(datalake):
 
 def test_subir_archivo_data_lake_archivo_existente(datalake):
 
-	crearEntornoDataLake("contenedor5", "carpeta")
+	crearEntornoDataLake("contenedor5", ["carpeta"])
 
 	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
 
@@ -341,7 +358,7 @@ def test_subir_archivo_data_lake_archivo_existente(datalake):
 
 def test_subir_archivo_data_lake_archivos_existentes_no_existentes(datalake):
 
-	crearEntornoDataLake("contenedor6", "carpeta")
+	crearEntornoDataLake("contenedor6", ["carpeta"])
 
 	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
 
