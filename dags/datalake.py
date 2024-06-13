@@ -1,7 +1,7 @@
 import os
 
 from utils import vaciarCarpeta, crearArchivoLog
-from config import URL_ESCUDO, URL_ENTRENADOR, URL_PRESIDENTE, ESCUDOS, ENTRENADORES, PRESIDENTES
+from config import URL_ESCUDO, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS
 
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
@@ -31,7 +31,7 @@ def entorno_data_lake_creado():
 
 def creacion_entorno_data_lake()->None:
 
-	crearEntornoDataLake("contenedorequipos", [ESCUDOS, ENTRENADORES, PRESIDENTES])
+	crearEntornoDataLake("contenedorequipos", [ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS])
 
 	print("Entorno Data Lake creado")
 
@@ -160,3 +160,45 @@ def subirPresidentesDataLake()->None:
 			crearArchivoLog(mensaje)
 
 	vaciarCarpeta(ruta_presidentes)
+
+def subirEstadiosDataLake()->None:
+
+	con=Conexion()
+
+	codigo_estadios=con.obtenerCodigoEstadios()
+
+	con.cerrarConexion()
+
+	ruta_estadios=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ESTADIOS)
+
+	for codigo in codigo_estadios:
+
+		print(f"Descargando estadios {codigo}...")
+
+		try:
+
+			descargarImagen(URL_ESTADIO, codigo, ruta_estadios)
+
+		except Exception as e:
+
+			mensaje=f"Estadio: {codigo} - Motivo: {e}"
+
+			print(f"Error en estadio con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de estadios finalizada")
+
+	try:
+
+		subirArchivosDataLake("contenedorequipos", ESTADIOS, ruta_estadios)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los estadios al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_estadios)

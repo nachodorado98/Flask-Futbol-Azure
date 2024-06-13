@@ -182,3 +182,15 @@ class Conexion:
 		codigo_presidentes=self.c.fetchall()
 
 		return list(map(lambda codigo_presidente: codigo_presidente["codigo_presidente"], codigo_presidentes)) if codigo_presidentes else None
+
+	# Metodo para obtener los codigos de los estadios
+	def obtenerCodigoEstadios(self)->Optional[List[int]]:
+
+		self.c.execute("""SELECT Codigo_Estadio
+							FROM estadios
+							WHERE Codigo_Estadio IS NOT NULL
+							ORDER BY Codigo_Estadio""")
+
+		codigo_estadios=self.c.fetchall()
+
+		return list(map(lambda codigo_estadio: codigo_estadio["codigo_estadio"], codigo_estadios)) if codigo_estadios else None

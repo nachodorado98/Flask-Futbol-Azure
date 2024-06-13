@@ -7,13 +7,13 @@ from airflow.operators.dummy_operator import DummyOperator
 
 from utils import existe_entorno, crearArchivoLog
 
-from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES
+from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 
 from pipelines import Pipeline_Equipos_Ligas
 from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipeline_Entrenador_Equipos, Pipeline_Estadio_Equipos
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake
+from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake
 
 
 with DAG("dag_futbol",
@@ -36,12 +36,14 @@ with DAG("dag_futbol",
 
 		tarea_carpeta_presidentes=BashOperator(task_id="carpeta_presidentes", bash_command=BASH_PRESIDENTES)
 
+		tarea_carpeta_estadios=BashOperator(task_id="carpeta_estadios", bash_command=BASH_ESTADIOS)
+
 		tarea_entorno_creado=DummyOperator(task_id="entorno_creado")
 
 
 		tarea_existe_entorno >> [tarea_carpeta_logs, tarea_entorno_creado]
 
-		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes
+		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes >> tarea_carpeta_estadios
 
 
 
@@ -58,7 +60,7 @@ with DAG("dag_futbol",
 
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
-		#tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
+		tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
 
 
 
@@ -83,10 +85,12 @@ with DAG("dag_futbol",
 
 		tarea_subir_presidentes_data_lake=PythonOperator(task_id="subir_presidentes_data_lake", python_callable=subirPresidentesDataLake, trigger_rule="none_failed_min_one_success")
 
+		tarea_subir_estadios_data_lake=PythonOperator(task_id="subir_estadios_data_lake", python_callable=subirEstadiosDataLake, trigger_rule="none_failed_min_one_success")
+
 
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
-		#tarea_subir_escudos_data_lake >> tarea_subir_entrenadores_data_lake >> tarea_subir_presidentes_data_lake
+		tarea_subir_escudos_data_lake >> tarea_subir_entrenadores_data_lake >> tarea_subir_presidentes_data_lake >> tarea_subir_estadios_data_lake
 
 
 
