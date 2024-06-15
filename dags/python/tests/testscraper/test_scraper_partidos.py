@@ -54,8 +54,9 @@ def test_scraper_partidos_obtener_partidos_panel(scraper_partidos):
 
 		for partido_panel in partidos_panel:
 
-			assert len(partido_panel)==6
-			assert partido_panel[0].startswith("https://es.besoccer.com/partido/")
+			assert len(partido_panel)==9
+			assert partido_panel[0].startswith("match-")
+			assert partido_panel[1].startswith("https://es.besoccer.com/partido/")
 
 def test_scraper_partidos_obtener_partidos(scraper_partidos):
 
@@ -67,7 +68,7 @@ def test_scraper_partidos_obtener_partidos(scraper_partidos):
 
 	for partido in partidos:
 
-		assert len(partido)==6
+		assert len(partido)==9
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000)]

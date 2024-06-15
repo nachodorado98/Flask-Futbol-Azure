@@ -152,3 +152,49 @@ def subirArchivosDataLake(nombre_contenedor:str, nombre_carpeta:str, ruta_local_
 		if archivo_local not in archivos_carpeta_contenedor_limpios:
 
 			datalake.subirArchivo(nombre_contenedor, nombre_carpeta, ruta_local_carpeta, archivo_local)
+
+def limpiarFechaInicio(fecha_inicio:str)->tuple:
+
+	try:
+
+		objeto_fecha=datetime.strptime(fecha_inicio, "%Y-%m-%dT%H:%M:%S%z")
+
+		return objeto_fecha.strftime("%Y-%m-%d"), objeto_fecha.strftime("%H:%M")
+
+	except Exception:
+
+		return None, None
+
+def ganador_goles(goles:str)->str:
+
+	try:
+
+		goles_local, goles_visitante=map(int, goles.split("-"))
+
+		if goles_local>goles_visitante:
+
+			return "Victoria Local"
+
+		elif goles_local<goles_visitante:
+
+			return "Victoria Visitante"
+
+		else:
+
+			return "Empate"
+
+	except Exception:
+
+		return "Sin Resultado"
+
+def obtenerResultado(marcador:str)->str:
+
+	if "(" not in marcador or ")" not in marcador:
+
+		return ganador_goles(marcador)
+
+	else:
+
+		marcador_penaltis=marcador.split("(")[1].split(")")[0]
+
+		return ganador_goles(marcador_penaltis)+" Penaltis"

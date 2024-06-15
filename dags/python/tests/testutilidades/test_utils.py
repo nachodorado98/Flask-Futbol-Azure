@@ -5,6 +5,7 @@ import time
 from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normalizarNombre
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
+from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -394,3 +395,54 @@ def test_subir_archivo_data_lake_archivos_existentes_no_existentes(datalake):
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["fecha_inicio"],
+	[("",),("fecha",),("2019-06-22",),("22/6/19",),("22/13/2019",),("2019-06-2222:22",)]
+)
+def test_limpiar_fecha_inicio_incorrecta(fecha_inicio):
+
+	assert limpiarFechaInicio(fecha_inicio)==(None, None)
+
+@pytest.mark.parametrize(["fecha_inicio", "resultado"],
+	[
+		("2024-03-23T16:15:00+01:00", ("2024-03-23", "16:15")),
+		("2024-06-22T10:00:00+03:00", ("2024-06-22", "10:00")),
+		("2019-04-13T00:00:00+01:00", ("2019-04-13", "00:00"))
+	]
+)
+def test_limpiar_fecha_inicio(fecha_inicio, resultado):
+
+	assert limpiarFechaInicio(fecha_inicio)==resultado
+
+def test_ganador_goles_erroneo():
+
+	assert ganador_goles("resultado goles")=="Sin Resultado"
+
+@pytest.mark.parametrize(["goles", "ganador"],
+	[
+		("0-0", "Empate"),
+		("1-0", "Victoria Local"),
+		("1-3", "Victoria Visitante")
+	]
+)
+def test_ganador_goles(goles, ganador):
+
+	assert ganador_goles(goles)==ganador
+
+def test_obtener_resultado_erroneo():
+
+	assert obtenerResultado("000")=="Sin Resultado"
+
+@pytest.mark.parametrize(["marcador", "ganador"],
+	[
+		("0-0", "Empate"),
+		("1-0", "Victoria Local"),
+		("1-3", "Victoria Visitante"),
+		("1(3-4)1", "Victoria Visitante Penaltis"),
+		("1(10-4)1", "Victoria Local Penaltis"),
+		("1(2-2)1", "Empate Penaltis")
+	]
+)
+def test_obtener_resultado(marcador, ganador):
+
+	assert obtenerResultado(marcador)==ganador

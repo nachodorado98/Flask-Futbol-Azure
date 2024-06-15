@@ -55,11 +55,17 @@ class ScraperPartidos:
 
     def __obtenerPartidosPanel(self, panel:bs4)->List[List[str]]:
 
-        partidos=panel.find_all("a", href=True)
+        partidos=panel.find_all("a")
 
         def limpiarPartido(partido:bs4)->List[str]:
 
+            partido_id=partido["id"]
+
             link=partido["href"]
+
+            estado=partido["data-status"]
+
+            fecha_inicio=partido["starttime"]
 
             info=partido.find("div", class_="info-head").find("div", class_="middle-info").text
 
@@ -67,9 +73,9 @@ class ScraperPartidos:
 
             marcador=partido.find("div", class_="marker").text.strip()
 
-            fecha=partido.find("div", class_="date").text.strip()
+            fecha_str=partido.find("div", class_="date").text.strip()
 
-            return [link, info]+equipos+[marcador, fecha]
+            return [partido_id, link, estado, fecha_inicio, info]+equipos+[marcador, fecha_str]
 
         return list(map(limpiarPartido, partidos))
 
@@ -83,7 +89,8 @@ class ScraperPartidos:
 
         partidos=self.__obtenerPartidos(paneles)
 
-        columnas=["Link", "Competicion", "Local", "Visitante", "Marcador", "Fecha"]
+        columnas=["Partido_Id", "Link", "Estado", "Fecha_Inicio", "Competicion",
+                    "Local", "Visitante", "Marcador", "Fecha_Str"]
 
         return pd.DataFrame(partidos, columns=columnas)
 
