@@ -25,7 +25,7 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 
 	tabla_filtrada=tabla_filtrada.reset_index(drop=True)
 
-	tabla_filtrada["Partido_Id"]=tabla_filtrada["Partido_Id"].apply(lambda partido_id: int(partido_id.split("-")[1]))
+	tabla_filtrada["Partido_Id"]=tabla_filtrada["Partido_Id"].apply(lambda partido_id: partido_id.split("-")[1])
 
 	tabla_filtrada[["Fecha", "Hora"]]=tabla_filtrada["Fecha_Inicio"].apply(lambda fecha_inicio: pd.Series(limpiarFechaInicio(fecha_inicio)))
 
@@ -68,7 +68,13 @@ def cargarDataPartidosEquipo(tabla:pd.DataFrame)->None:
 
 		if not con.existe_partido(partido[0]):
 
-			con.insertarPartido(partido)
+			try:
+
+				con.insertarPartido(partido)
+
+			except Exception:
+
+				print(f"Error en partido {partido}")
 
 		con.cerrarConexion()
 
