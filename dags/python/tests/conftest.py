@@ -56,6 +56,8 @@ def conexion():
 
 	con.c.execute("DELETE FROM estadios")
 
+	con.c.execute("DELETE FROM partidos")
+
 	con.confirmar()
 
 	return con

@@ -11,3 +11,5 @@ ESCUDOS="escudos"
 ENTRENADORES="entrenadores"
 PRESIDENTES="presidentes"
 ESTADIOS="estadios"
+EQUIPO_ID=369
+TEMPORADA=2024

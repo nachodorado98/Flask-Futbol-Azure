@@ -12,6 +12,7 @@ def test_conexion(conexion):
 	assert "equipos" in tablas
 	assert "estadios" in tablas
 	assert "equipo_estadio" in tablas
+	assert "partidos" in tablas
 
 def test_cerrar_conexion(conexion):
 

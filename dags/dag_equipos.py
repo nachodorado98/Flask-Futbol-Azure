@@ -16,9 +16,9 @@ from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_en
 from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake
 
 
-with DAG("dag_futbol",
+with DAG("dag_equipos",
 		start_date=datetime(2024,6,13),
-		description="DAG para obtener datos de la web de futbol",
+		description="DAG para obtener datos de los equipos de la web de futbol",
 		schedule_interval=None,
 		catchup=False) as dag:
 

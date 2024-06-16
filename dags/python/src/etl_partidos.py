@@ -5,6 +5,8 @@ from .scrapers.scraper_partidos import ScraperPartidos
 
 from .utils import limpiarFechaInicio, obtenerResultado
 
+from .database.conexion import Conexion
+
 def extraerDataPartidosEquipo(equipo_id:int, ano:int)->Optional[pd.DataFrame]:
 
 	scraper=ScraperPartidos(equipo_id, ano)
@@ -20,6 +22,8 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 	if tabla_filtrada.empty:
 
 		raise Exception("No hay partidos jugados disponibles")
+
+	tabla_filtrada=tabla_filtrada.reset_index(drop=True)
 
 	tabla_filtrada["Partido_Id"]=tabla_filtrada["Partido_Id"].apply(lambda partido_id: int(partido_id.split("-")[1]))
 
@@ -39,3 +43,35 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 				"Hora", "Competicion", "Marcador", "Resultado"]
 
 	return tabla_filtrada[columnas]
+
+def cargarDataPartidosEquipo(tabla:pd.DataFrame)->None:
+
+	partidos=tabla.values.tolist()
+
+	def agregarEquipos(equipo_id:str)->None:
+
+		con=Conexion()
+
+		if not con.existe_equipo(equipo_id):
+
+			con.insertarEquipo(equipo_id)
+
+		con.cerrarConexion()
+
+	for partido in partidos:
+
+		agregarEquipos(partido[1])
+
+		agregarEquipos(partido[2])
+
+		con=Conexion()
+
+		if not con.existe_partido(partido[0]):
+
+			con.insertarPartido(partido)
+
+		con.cerrarConexion()
+
+		
+
+	

@@ -48,3 +48,14 @@ CREATE TABLE equipo_estadio (Equipo_Id VARCHAR(255),
 							PRIMARY KEY (Equipo_Id, Estadio_Id),
 							FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
 							FOREIGN KEY (Estadio_Id) REFERENCES estadios (Estadio_Id) ON DELETE CASCADE);
+
+CREATE TABLE partidos (Partido_Id INTEGER PRIMARY KEY,
+						Equipo_Id_Local VARCHAR(255),
+						Equipo_Id_Visitante VARCHAR(255),
+						Fecha DATE,
+						Hora CHAR(5),
+						Competicion VARCHAR(255),
+						Marcador VARCHAR(255),
+						Resultado VARCHAR(255),
+						FOREIGN KEY (Equipo_Id_Local) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
+						FOREIGN KEY (Equipo_Id_Visitante) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE)

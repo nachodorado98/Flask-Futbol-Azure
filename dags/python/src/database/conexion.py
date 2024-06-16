@@ -194,3 +194,22 @@ class Conexion:
 		codigo_estadios=self.c.fetchall()
 
 		return list(map(lambda codigo_estadio: codigo_estadio["codigo_estadio"], codigo_estadios)) if codigo_estadios else None
+
+	#Metodo para insertar un partido
+	def insertarPartido(self, partido:List[str])->None:
+
+		self.c.execute("""INSERT INTO partidos
+							VALUES(%s, %s, %s, %s, %s, %s, %s, %s)""",
+							tuple(partido))
+
+		self.confirmar()
+
+	# Metodo para saber si existe el partido
+	def existe_partido(self, partido_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partidos
+							WHERE Partido_Id=%s""",
+							(partido_id,))
+
+		return False if self.c.fetchone() is None else True
