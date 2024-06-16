@@ -198,3 +198,13 @@ def obtenerResultado(marcador:str)->str:
 		marcador_penaltis=marcador.split("(")[1].split(")")[0]
 
 		return ganador_goles(marcador_penaltis)+" Penaltis"
+
+def generarTemporadas(ano_inicio:int, mes_limite:int=7)->List[Optional[int]]:
+
+	hoy=datetime.now()
+	ano_actual=hoy.year
+	mes_actual=hoy.month
+
+	ano_final=ano_actual if mes_actual<=mes_limite else ano_actual+1
+	
+	return list(range(ano_inicio, ano_final+1))

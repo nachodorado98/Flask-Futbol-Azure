@@ -1,3 +1,5 @@
+import pytest
+
 def test_conexion(conexion):
 
 	conexion.c.execute("SELECT current_database();")
@@ -21,3 +23,20 @@ def test_cerrar_conexion(conexion):
 	conexion.cerrarConexion()
 
 	assert conexion.bbdd.closed
+
+def test_tabla_vacia_no_existe(conexion):
+
+	with pytest.raises(Exception):
+
+		conexion.tabla_vacia("hola")
+
+def test_tabla_vacia_llena(conexion):
+
+	assert not conexion.tabla_vacia("ligas")
+
+@pytest.mark.parametrize(["tabla"],
+	[("equipos",),("estadios",),("equipo_estadio",),("partidos",)]
+)
+def test_tabla_vacia(conexion, tabla):
+
+	assert conexion.tabla_vacia(tabla)

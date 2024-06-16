@@ -1,9 +1,12 @@
 import time
 
 from utils import crearArchivoLog
+from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
+
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
-from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo
+from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.database.conexion import Conexion
+from python.src.utils import generarTemporadas
 
 def Pipeline_Equipos_Ligas()->None:
 
@@ -70,3 +73,43 @@ def Pipeline_Entrenador_Equipos(equipo):
 @Pipeline
 def Pipeline_Estadio_Equipos(equipo):
 	ETL_Estadio_Equipo(equipo)
+
+def ETL_Partidos_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQUIPO_ID)->None:
+
+	temporadas=generarTemporadas(temporada, MES_FIN_TEMPORADA)
+
+	for temporada in temporadas:
+
+		try:
+			
+			ETL_Partidos_Equipo(equipo, temporada)
+
+		except Exception as e:
+
+			mensaje=f"Equipo: {equipo} Temporada: {temporada} - Motivo: {e}"
+		
+			print(f"Error en equipo {equipo} en temporada {temporada}")
+
+			crearArchivoLog(mensaje)
+
+def Pipeline_Partidos_Equipo()->None:
+
+	con=Conexion()
+
+	if con.tabla_vacia("partidos"):
+
+		print(f"Obtencion total de los partidos desde {TEMPORADA_INICIO}")
+
+		con.cerrarConexion()
+
+		ETL_Partidos_Temporadas_Equipo()
+
+	else:
+
+		ano_mas_reciente=con.ultimo_ano()
+
+		print(f"Obtencion de los datos desde {ano_mas_reciente}")
+
+		con.cerrarConexion()
+
+		ETL_Partidos_Temporadas_Equipo(temporada=ano_mas_reciente)

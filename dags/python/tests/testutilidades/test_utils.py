@@ -1,11 +1,13 @@
 import pytest
 import os
 import time
+from datetime import datetime
+from unittest.mock import patch
 
 from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normalizarNombre
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
-from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado
+from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -307,7 +309,7 @@ def crearArchivoTXT(ruta:str, nombre:str)->None:
 
 	with open(ruta_archivo, "w") as file:
 
-	    file.write("Nacho")
+		file.write("Nacho")
 
 def test_subir_archivo_data_lake(datalake):
 
@@ -446,3 +448,69 @@ def test_obtener_resultado_erroneo():
 def test_obtener_resultado(marcador, ganador):
 
 	assert obtenerResultado(marcador)==ganador
+
+def test_generar_temporadas_ano_actual():
+
+	ano_actual=datetime.now().year
+
+	with patch("src.utils.datetime") as mock_datetime:
+
+		mock_datetime.now.return_value=datetime(ano_actual, 1, 1)
+
+		mock_datetime.side_effect=lambda *args, **kw: datetime(*args, **kw)
+
+		temporadas=generarTemporadas(ano_actual)
+
+	assert len(temporadas)==1
+	assert temporadas[0]==ano_actual
+
+@pytest.mark.parametrize(["numero"],
+	[(1,),(3,),(2,),(10,),(5,),(100,),(22,)]
+)
+def test_generar_temporadas_vacio(numero):
+
+	ano_actual=datetime.now().year
+
+	with patch("src.utils.datetime") as mock_datetime:
+
+		mock_datetime.now.return_value=datetime(ano_actual, 1, 1)
+
+		mock_datetime.side_effect=lambda *args, **kw: datetime(*args, **kw)
+
+		assert not generarTemporadas(ano_actual+numero)
+
+@pytest.mark.parametrize(["ano_inicio", "mes_anterior_limite"],
+	[(2023, 6),(2019, 1),(1998, 5),(1999, 4),(1900, 2),(1800, 1),(1950, 7),(1922, 3)]
+)
+def test_generar_temporadas_mes_anterior_limite(ano_inicio, mes_anterior_limite):
+
+	ano_actual=datetime.now().year
+
+	with patch("src.utils.datetime") as mock_datetime:
+
+		mock_datetime.now.return_value=datetime(ano_actual, mes_anterior_limite, 28)
+
+		mock_datetime.side_effect=lambda *args, **kw: datetime(*args, **kw)
+
+		temporadas=generarTemporadas(ano_inicio)
+
+	assert len(temporadas)==ano_actual+1-ano_inicio
+	assert temporadas[0]==ano_inicio
+
+@pytest.mark.parametrize(["ano_inicio", "mes_superior_limite"],
+	[(2023, 8),(2019, 10),(1998, 9),(1999, 11),(1900, 12),(1800, 8),(1950, 12),(1922, 9)]
+)
+def test_generar_temporadas_mes_superior_limite(ano_inicio, mes_superior_limite):
+
+	ano_actual=datetime.now().year
+
+	with patch("src.utils.datetime") as mock_datetime:
+
+		mock_datetime.now.return_value=datetime(ano_actual, mes_superior_limite, 1)
+
+		mock_datetime.side_effect=lambda *args, **kw: datetime(*args, **kw)
+
+		temporadas=generarTemporadas(ano_inicio)
+
+	assert len(temporadas)==ano_actual+2-ano_inicio
+	assert temporadas[0]==ano_inicio

@@ -5,29 +5,11 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 
-from utils import existe_entorno, crearArchivoLog
+from utils import existe_entorno
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
-from config import EQUIPO_ID, TEMPORADA
 
-from python.src.etls import ETL_Partidos_Equipo
-
-
-
-def Pipeline_Partidos_Equipo()->None:
-
-	try:
-		
-		ETL_Partidos_Equipo(EQUIPO_ID, TEMPORADA)
-
-	except Exception as e:
-
-		mensaje=f"Equipo: {EQUIPO_ID} Temporada: {TEMPORADA} - Motivo: {e}"
-	
-		print(f"Error en equipo {EQUIPO_ID} en temporada {TEMPORADA}")
-
-		crearArchivoLog(mensaje)
-
+from pipelines import Pipeline_Partidos_Equipo
 
 
 with DAG("dag_partidos",

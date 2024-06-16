@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import List, Optional
+from datetime import datetime
 
 from .confconexion import *
 
@@ -213,3 +214,31 @@ class Conexion:
 							(partido_id,))
 
 		return False if self.c.fetchone() is None else True
+
+	# Metodo para saber si una tabla esta vacia
+	def tabla_vacia(self, tabla:str)->bool:
+
+		try:
+
+			self.c.execute(f"SELECT * FROM {tabla}")
+
+			return True if not self.c.fetchall() else False
+
+		except Exception:
+
+			raise Exception("Tabla no existente")
+
+	# Metodo para obtener la fecha mas reciente de los partidos
+	def fecha_mas_reciente(self)->Optional[datetime]:
+
+		self.c.execute("""SELECT MAX(fecha) AS fecha_mas_reciente
+							FROM partidos""")
+
+		return self.c.fetchone()["fecha_mas_reciente"]
+
+	# Metodo para obtener el ultimo ano de los partidos
+	def ultimo_ano(self)->Optional[int]:
+
+		fecha=self.fecha_mas_reciente()
+
+		return None if fecha is None else fecha.year
