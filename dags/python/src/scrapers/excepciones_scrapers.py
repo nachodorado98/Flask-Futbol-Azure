@@ -18,3 +18,6 @@ class EquipoEscudoError(Exception):
 
 class PartidosEquipoError(Exception):
     pass
+
+class PartidoEstadioError(Exception):
+    pass

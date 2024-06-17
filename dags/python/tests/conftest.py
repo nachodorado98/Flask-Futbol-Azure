@@ -11,6 +11,7 @@ from src.scrapers.scraper_equipo_estadio import ScraperEquipoEstadio
 from src.scrapers.scraper_equipo_entrenador import ScraperEquipoEntrenador
 from src.scrapers.scraper_equipo_escudo import ScraperEquipoEscudo
 from src.scrapers.scraper_partidos import ScraperPartidos
+from src.scrapers.scraper_partido_estadio import ScraperPartidoEstadio
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
 from src.database.conexion import Conexion
@@ -71,3 +72,8 @@ def datalake():
 def scraper_partidos():
 
 	return ScraperPartidos(369, 2019)
+
+@pytest.fixture
+def scraper_partido_estadio():
+
+	return ScraperPartidoEstadio("atletico-madrid", "betis", "202220871")
