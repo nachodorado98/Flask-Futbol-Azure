@@ -242,3 +242,39 @@ class Conexion:
 		fecha=self.fecha_mas_reciente()
 
 		return None if fecha is None else fecha.year
+
+	#Metodo para insertar un partido estadio
+	def insertarPartidoEstadio(self, partido_estadio:tuple)->None:
+
+		self.c.execute("""INSERT INTO partido_estadio
+							VALUES(%s, %s)""",
+							partido_estadio)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el partido estadio
+	def existe_partido_estadio(self, partido_id:str, estadio_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partido_estadio
+							WHERE Partido_Id=%s
+							AND Estadio_Id=%s""",
+							(partido_id, estadio_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener los partidos que no tienen estadio
+	def obtenerPartidosSinEstadio(self)->List[tuple]:
+
+		self.c.execute("""SELECT p.Partido_Id, p.Equipo_Id_Local, p.Equipo_Id_Visitante
+						FROM partidos p
+						LEFT JOIN partido_estadio pe
+						USING (Partido_Id)
+						WHERE pe.Partido_Id IS NULL
+						ORDER BY Fecha""")
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["equipo_id_local"],
+											partido["equipo_id_visitante"]), partidos))

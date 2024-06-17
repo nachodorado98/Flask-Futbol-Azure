@@ -15,6 +15,7 @@ def test_conexion(conexion):
 	assert "estadios" in tablas
 	assert "equipo_estadio" in tablas
 	assert "partidos" in tablas
+	assert "partido_estadio" in tablas
 
 def test_cerrar_conexion(conexion):
 
@@ -35,7 +36,7 @@ def test_tabla_vacia_llena(conexion):
 	assert not conexion.tabla_vacia("ligas")
 
 @pytest.mark.parametrize(["tabla"],
-	[("equipos",),("estadios",),("equipo_estadio",),("partidos",)]
+	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("partido_estadio",)]
 )
 def test_tabla_vacia(conexion, tabla):
 

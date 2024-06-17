@@ -9,7 +9,7 @@ from utils import existe_entorno
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 
-from pipelines import Pipeline_Partidos_Equipo
+from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio
 
 
 with DAG("dag_partidos",
@@ -43,6 +43,8 @@ with DAG("dag_partidos",
 
 	tarea_pipeline_partidos_equipo=PythonOperator(task_id="pipeline_partidos_equipo", python_callable=Pipeline_Partidos_Equipo, trigger_rule="none_failed_min_one_success")
 
+	tarea_pipeline_partidos_estadio=PythonOperator(task_id="pipeline_partidos_estadio", python_callable=Pipeline_Partidos_Estadio)
 
 
-tareas_entorno >> tarea_pipeline_partidos_equipo
+
+tareas_entorno >> tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio

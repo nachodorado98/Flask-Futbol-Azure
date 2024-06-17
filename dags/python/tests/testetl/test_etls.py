@@ -2,9 +2,10 @@ import pytest
 import pandas as pd
 
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
-from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo
+from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
+from src.scrapers.excepciones_scrapers import PartidoEstadioError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
@@ -488,3 +489,118 @@ def test_etl_partidos_equipo_partidos_nuevos(conexion, equipo_id, temporada, nue
 	partidos_nuevos=conexion.c.fetchall()
 
 	assert len(partidos_nuevos)==len(partidos)+nuevos_partidos
+
+def test_etl_partido_estadio_error():
+
+	with pytest.raises(PartidoEstadioError):
+
+		ETL_Partido_Estadio("equipo1", "equipo2", "partido_id")
+
+def test_etl_partido_estadio_no_existe_error():
+
+	with pytest.raises(PartidoEstadioError):
+
+		ETL_Partido_Estadio("seleccion-santa-amalia", "cd-valdehornillo-a-senior", "2023350130")
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "202429286"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("seleccion-holanda", "seleccion-espanola", "201094287")
+	]
+)
+def test_etl_partido_estadio_datos_correctos(conexion, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Estadio(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_estadio")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "202429286"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("seleccion-holanda", "seleccion-espanola", "201094287")
+	]
+)
+def test_etl_partido_estadio_estadio_existente(conexion, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Estadio(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_estadio")
+
+	numero_registros_partido_estadio=conexion.c.fetchall()
+
+	ETL_Partido_Estadio(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_estadio")
+
+	numero_registros_partido_estadio_nuevos=conexion.c.fetchall()
+
+	assert numero_registros_estadio==numero_registros_estadio_nuevos
+	assert numero_registros_partido_estadio==numero_registros_partido_estadio_nuevos
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id_ida", "partido_id_vuelta"],
+	[
+		("milan", "internazionale", "2024103419", "2024103133"),
+		("roma", "lazio", "2024103401", "2024662727")
+	]
+)
+def test_etl_partido_estadio_estadio_compartido(conexion, local, visitante, partido_id_ida, partido_id_vuelta):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id_ida, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Estadio(local, visitante, partido_id_ida)
+
+	partido=[partido_id_vuelta, visitante, local, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Estadio(visitante, local, partido_id_vuelta)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	assert len(conexion.c.fetchall())==1
+
+	conexion.c.execute("SELECT * FROM partido_estadio")
+
+	assert len(conexion.c.fetchall())==2

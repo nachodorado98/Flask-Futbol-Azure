@@ -1,3 +1,5 @@
+import pytest
+
 def test_tabla_partidos_vacia(conexion):
 
 	conexion.c.execute("SELECT * FROM partidos")
@@ -71,3 +73,71 @@ def test_ultimo_ano(conexion):
 		conexion.insertarPartido(partido)
 
 	assert conexion.ultimo_ano()==2024
+
+def test_obtener_partidos_sin_estadio_tabla_vacia(conexion):
+
+	assert not conexion.obtenerPartidosSinEstadio()
+
+def test_obtener_partidos_sin_estadio_todos_existen(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 21)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+		estadio=[f"estadio-{partido[0]}", 1, "Calderon", "Paseo de los Melancolicos",
+					40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+		conexion.insertarEstadio(estadio)
+
+		conexion.insertarPartidoEstadio((partido[0], f"estadio-{partido[0]}"))
+
+	assert not conexion.obtenerPartidosSinEstadio()
+
+@pytest.mark.parametrize(["numero_partidos"],
+	[(3,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_estadio_ninguno_existe(conexion, numero_partidos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, numero_partidos+1)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+		estadio=[f"estadio-{partido[0]}", 1, "Calderon", "Paseo de los Melancolicos",
+					40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+		conexion.insertarEstadio(estadio)
+
+	assert len(conexion.obtenerPartidosSinEstadio())==numero_partidos
+
+@pytest.mark.parametrize(["faltantes"],
+	[(1,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_estadio_faltantes(conexion, faltantes):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 201)]
+
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	for partido in partidos[:-faltantes]:
+
+		estadio=[f"estadio-{partido[0]}", 1, "Calderon", "Paseo de los Melancolicos",
+					40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+		conexion.insertarEstadio(estadio)
+
+		conexion.insertarPartidoEstadio((partido[0], f"estadio-{partido[0]}"))
+
+	assert len(conexion.obtenerPartidosSinEstadio())==faltantes
