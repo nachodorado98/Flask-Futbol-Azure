@@ -14,7 +14,7 @@ def test_extraer_data_equipos_liga_error_endpoint(endpoint):
 		extraerDataEquiposLiga(endpoint)
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/1996",),("/primera/2019",), ("bundesliga",),("premier",)]
+	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",)]
 )
 def test_extraer_data_equipos_liga(endpoint):
 
@@ -24,7 +24,7 @@ def test_extraer_data_equipos_liga(endpoint):
 	assert not data.empty
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/1996",),("/primera/2019",), ("bundesliga",),("premier",)]
+	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",)]
 )
 def test_limpiar_data_equipos_liga(endpoint):
 
@@ -37,7 +37,7 @@ def test_limpiar_data_equipos_liga(endpoint):
 	assert len(data_limpia.columns)==1
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/2019",), ("bundesliga",),("premier",),("/primera/1996",),("/segunda/1990",)]
+	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",)]
 )
 def test_cargar_data_equipos_liga(conexion, endpoint):
 
@@ -52,7 +52,7 @@ def test_cargar_data_equipos_liga(conexion, endpoint):
 	assert conexion.c.fetchall()
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/2019",), ("bundesliga",),("premier",),("/primera/1996",),("/segunda/1990",)]
+	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",)]
 )
 def test_cargar_data_equipos_liga_existentes(conexion, endpoint):
 
@@ -79,8 +79,8 @@ def test_cargar_data_equipos_liga_existentes(conexion, endpoint):
 	assert numero_registros==numero_registros_nuevos
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/2019",),("bundesliga",),
-	("premier",),("/primera/1996",),("/segunda/1990",)]
+	[("primera/2024",),("segunda/2024",),("/primera/2019",),("bundesliga/2024",),
+	("premier/2024",),("/primera/1996",),("/segunda/1990",)]
 )
 def test_cargar_data_equipos_liga_nuevo_equipo(conexion, endpoint):
 

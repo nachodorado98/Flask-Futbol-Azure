@@ -5,8 +5,7 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 
-from utils import existe_entorno, crearArchivoLog
-
+from utils import existe_entorno, crearArchivoLog, actualizarVariable
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 
 from pipelines import Pipeline_Equipos_Ligas
@@ -14,7 +13,6 @@ from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipelin
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake
-
 
 with DAG("dag_equipos",
 		start_date=datetime(2024,6,13),
@@ -99,9 +97,11 @@ with DAG("dag_equipos",
 	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=data_lake_disponible)
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
+
+	tarea_dag_equipos_completado=PythonOperator(task_id="dag_equipos_completado", python_callable=lambda: actualizarVariable("DAG_EQUIPOS_EJECUTADO", "True"))
 	
 
 
 tareas_entorno >> tarea_pipeline_equipos_ligas >> tareas_pipelines_equipos >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
 
-tareas_datalake >> tareas_subir_data_lake
+tareas_datalake >> tareas_subir_data_lake >> tarea_dag_equipos_completado

@@ -7,7 +7,7 @@ from unittest.mock import patch
 from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normalizarNombre
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
-from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
+from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas, obtenerBoolCadena
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -514,3 +514,23 @@ def test_generar_temporadas_mes_superior_limite(ano_inicio, mes_superior_limite)
 
 	assert len(temporadas)==ano_actual+2-ano_inicio
 	assert temporadas[0]==ano_inicio
+
+def test_obtener_bool_cadena_true():
+
+	valor=obtenerBoolCadena("True")
+
+	assert valor is True
+	assert isinstance(valor, bool)
+
+def test_obtener_bool_cadena_false():
+
+	valor=obtenerBoolCadena("False")
+
+	assert valor is False
+	assert isinstance(valor, bool)
+
+def test_obtener_bool_cadena_error():
+
+	with pytest.raises(Exception):
+
+		obtenerBoolCadena("no_soy_bool")

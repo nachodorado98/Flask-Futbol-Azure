@@ -17,8 +17,8 @@ def test_etl_equipos_liga_error(endpoint):
 		ETL_Equipos_Liga(endpoint)
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/2019",), ("bundesliga",),
-	("premier",),("/primera/1996",),("/segunda/1990",)]
+	[("primera/2024",),("segunda/2024",),("/primera/2019",), ("bundesliga/2024",),
+	("premier/2024",),("/primera/1996",),("/segunda/1990",)]
 )
 def test_etl_equipos_liga(conexion, endpoint):
 
@@ -29,7 +29,7 @@ def test_etl_equipos_liga(conexion, endpoint):
 	assert conexion.c.fetchall()
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/2019",), ("bundesliga",),("premier",),
+	[("primera/2024",),("segunda/2024",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",),
 	("/primera/1996",),("/segunda/1990",)]
 )
 def test_etl_equipos_liga_equipos_existentes(conexion, endpoint):
@@ -50,11 +50,11 @@ def test_etl_equipos_liga_equipos_existentes(conexion, endpoint):
 
 @pytest.mark.parametrize(["endpoint", "nuevos_equipos"],
 	[
-		("primera",12),
-		("segunda",4),
+		("primera/2024",12),
+		("segunda/2024",4),
 		("/primera/2019",2),
-		("bundesliga",5),
-		("premier",3),
+		("bundesliga/2024",5),
+		("premier/2024",3),
 		("/primera/1996",7),
 		("/segunda/1990",1)
 	]

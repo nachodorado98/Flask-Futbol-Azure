@@ -208,3 +208,13 @@ def generarTemporadas(ano_inicio:int, mes_limite:int=7)->List[Optional[int]]:
 	ano_final=ano_actual if mes_actual<=mes_limite else ano_actual+1
 	
 	return list(range(ano_inicio, ano_final+1))
+
+def obtenerBoolCadena(cadena_bool:str)->bool:
+
+	try:
+
+		return eval(cadena_bool)
+
+	except Exception:
+
+		raise Exception("No es bool")

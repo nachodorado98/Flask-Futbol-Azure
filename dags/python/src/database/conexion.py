@@ -149,7 +149,7 @@ class Conexion:
 		return False if self.c.fetchone() is None else True
 
 	# Metodo para obtener los codigos de los escudos
-	def obtenerCodigoEscudos(self)->Optional[List[int]]:
+	def obtenerCodigoEscudos(self)->List[int]:
 
 		self.c.execute("""SELECT Escudo
 							FROM equipos
@@ -158,10 +158,10 @@ class Conexion:
 
 		escudos=self.c.fetchall()
 
-		return list(map(lambda escudo: escudo["escudo"], escudos)) if escudos else None
+		return list(map(lambda escudo: escudo["escudo"], escudos))
 
 	# Metodo para obtener los codigos de los entrenadores
-	def obtenerCodigoEntrenadores(self)->Optional[List[int]]:
+	def obtenerCodigoEntrenadores(self)->List[int]:
 
 		self.c.execute("""SELECT Codigo_Entrenador
 							FROM equipos
@@ -170,10 +170,10 @@ class Conexion:
 
 		codigo_entrenadores=self.c.fetchall()
 
-		return list(map(lambda codigo_entrenador: codigo_entrenador["codigo_entrenador"], codigo_entrenadores)) if codigo_entrenadores else None
+		return list(map(lambda codigo_entrenador: codigo_entrenador["codigo_entrenador"], codigo_entrenadores))
 
 	# Metodo para obtener los codigos de los presidentes
-	def obtenerCodigoPresidentes(self)->Optional[List[int]]:
+	def obtenerCodigoPresidentes(self)->List[int]:
 
 		self.c.execute("""SELECT Codigo_Presidente
 							FROM equipos
@@ -182,10 +182,10 @@ class Conexion:
 
 		codigo_presidentes=self.c.fetchall()
 
-		return list(map(lambda codigo_presidente: codigo_presidente["codigo_presidente"], codigo_presidentes)) if codigo_presidentes else None
+		return list(map(lambda codigo_presidente: codigo_presidente["codigo_presidente"], codigo_presidentes))
 
 	# Metodo para obtener los codigos de los estadios
-	def obtenerCodigoEstadios(self)->Optional[List[int]]:
+	def obtenerCodigoEstadios(self)->List[int]:
 
 		self.c.execute("""SELECT Codigo_Estadio
 							FROM estadios
@@ -194,7 +194,7 @@ class Conexion:
 
 		codigo_estadios=self.c.fetchall()
 
-		return list(map(lambda codigo_estadio: codigo_estadio["codigo_estadio"], codigo_estadios)) if codigo_estadios else None
+		return list(map(lambda codigo_estadio: codigo_estadio["codigo_estadio"], codigo_estadios))
 
 	#Metodo para insertar un partido
 	def insertarPartido(self, partido:List[str])->None:
@@ -278,3 +278,25 @@ class Conexion:
 		return list(map(lambda partido: (partido["partido_id"],
 											partido["equipo_id_local"],
 											partido["equipo_id_visitante"]), partidos))
+
+	# Metodo para obtener el valor de una variable
+	def obtenerValorVariable(self, nombre_variable:str)->Optional[str]:
+
+		self.c.execute("""SELECT Valor
+							FROM variables
+							WHERE Nombre=%s""",
+							(nombre_variable,))
+
+		valor=self.c.fetchone()
+
+		return None if valor is None else valor["valor"]
+
+	# Metodo para actualizar el valor de una variable
+	def actualizarValorVariable(self, nombre_variable:str, valor_variable:str)->None:
+
+		self.c.execute("""UPDATE variables
+							SET Valor=%s
+							WHERE Nombre=%s""",
+							(valor_variable, nombre_variable))
+
+		self.confirmar()

@@ -5,11 +5,13 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 
-from utils import existe_entorno
+from utils import existe_entorno, ejecutarDagPartidos, actualizarVariable
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 
 from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio
+
+
 
 
 with DAG("dag_partidos",
@@ -41,10 +43,13 @@ with DAG("dag_partidos",
 		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes >> tarea_carpeta_estadios
 
 
+	tarea_ejecutar_dag_partidos=PythonOperator(task_id="ejecutar_dag_partidos", python_callable=ejecutarDagPartidos)
+
 	tarea_pipeline_partidos_equipo=PythonOperator(task_id="pipeline_partidos_equipo", python_callable=Pipeline_Partidos_Equipo, trigger_rule="none_failed_min_one_success")
 
 	tarea_pipeline_partidos_estadio=PythonOperator(task_id="pipeline_partidos_estadio", python_callable=Pipeline_Partidos_Estadio)
 
+	tarea_dag_partidos_completado=PythonOperator(task_id="dag_partidos_completado", python_callable=lambda: actualizarVariable("DAG_PARTIDOS_EJECUTADO", "True"))
 
 
-tareas_entorno >> tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio
+tarea_ejecutar_dag_partidos >> tareas_entorno >>  tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_dag_partidos_completado

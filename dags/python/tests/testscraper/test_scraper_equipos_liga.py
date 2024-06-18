@@ -125,7 +125,7 @@ def test_scraper_equipos_liga_obtener_clasificacion_liga_error(endpoint):
 		scraper.obtenerClasificacionLiga()
 
 @pytest.mark.parametrize(["endpoint"],
-	[("primera",),("segunda",),("/primera/1996",),("/primera/2019",)]
+	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",)]
 )
 def test_scraper_equipos_liga_obtener_clasificacion_liga(endpoint):
 

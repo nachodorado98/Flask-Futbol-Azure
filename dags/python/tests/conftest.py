@@ -21,12 +21,12 @@ from src.datalake.conexion_data_lake import ConexionDataLake
 @pytest.fixture
 def scraper():
 
-	return Scraper(f"{ENDPOINT_COMPETICION}/primera")
+	return Scraper(f"{ENDPOINT_COMPETICION}/primera/2024")
 
 @pytest.fixture
 def scraper_equipos_liga():
 
-	return ScraperEquiposLiga("primera")
+	return ScraperEquiposLiga("primera/2024")
 
 @pytest.fixture
 def scraper_equipo():
