@@ -13,12 +13,12 @@ from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio
 
 
 
-
 with DAG("dag_partidos",
 		start_date=datetime(2024,6,15),
 		description="DAG para obtener datos de los partidos de la web de futbol",
-		schedule_interval=None,
+		schedule_interval="@weekly",
 		catchup=False) as dag:
+
 
 
 	with TaskGroup("entorno") as tareas_entorno:

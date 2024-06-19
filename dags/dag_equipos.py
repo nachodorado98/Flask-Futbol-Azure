@@ -14,10 +14,12 @@ from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipelin
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake
 
+
+
 with DAG("dag_equipos",
 		start_date=datetime(2024,6,13),
 		description="DAG para obtener datos de los equipos de la web de futbol",
-		schedule_interval=None,
+		schedule_interval="@monthly",
 		catchup=False) as dag:
 
 

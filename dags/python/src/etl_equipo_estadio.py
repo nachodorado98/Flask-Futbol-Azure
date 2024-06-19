@@ -25,7 +25,7 @@ def limpiarDataEquipoEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla[["Latitud", "Longitud"]]=tabla["Nombre"].apply(lambda estadio: pd.Series(obtenerCoordenadasEstadio(estadio)))
 
-	tabla["Capacidad"]=tabla["Capacidad"].apply(lambda capacidad: int(capacidad.replace(".","")) if capacidad!="" else None)
+	tabla["Capacidad"]=tabla["Capacidad"].apply(lambda capacidad: int(capacidad.replace(".","").replace(" ","")) if capacidad!="" else None)
 
 	tabla["Fecha"]=tabla["Fecha construccion"].apply(lambda fecha: int(fecha) if fecha!="" else None)
 

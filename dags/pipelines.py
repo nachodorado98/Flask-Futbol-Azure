@@ -53,7 +53,7 @@ def Pipeline(funcion):
 
 				crearArchivoLog(mensaje)
 
-			time.sleep(1)
+			time.sleep(0.25)
 
 		con.cerrarConexion()
 
@@ -129,12 +129,22 @@ def Pipeline_Partidos_Estadio()->None:
 
 		except Exception as e:
 
-			mensaje=f"Partido_Id: {partido_id} - Motivo: {e}"
-		
-			print(f"Error en partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+			if con.existe_estadio_equipo(equipo_local):
 
-			crearArchivoLog(mensaje)
+				estadio_equipo_local=con.obtenerEstadioEquipo(equipo_local)
 
-		time.sleep(1)
+				con.insertarPartidoEstadio((partido_id, estadio_equipo_local))
+
+				print(f"Estadio {estadio_equipo_local} del partido {partido_id} del equipo local {equipo_local} agregado correctamente")
+
+			else:
+
+				mensaje=f"Partido_Id: {partido_id} - Motivo: {e}"
+
+				print(f"Error en partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+
+				crearArchivoLog(mensaje)
+
+		time.sleep(0.25)
 
 	con.cerrarConexion()

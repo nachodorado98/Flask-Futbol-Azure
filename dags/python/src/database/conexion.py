@@ -300,3 +300,25 @@ class Conexion:
 							(valor_variable, nombre_variable))
 
 		self.confirmar()
+
+	# Metodo para saber si existe el estadio de un equipo
+	def existe_estadio_equipo(self, equipo_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM equipo_estadio
+							WHERE Equipo_Id=%s""",
+							(equipo_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener el estadio del equipo
+	def obtenerEstadioEquipo(self, equipo_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT Estadio_Id
+							FROM equipo_estadio
+							WHERE Equipo_Id=%s""",
+							(equipo_id,))
+
+		estadio=self.c.fetchone()
+
+		return None if estadio is None else estadio["estadio_id"]
