@@ -7,7 +7,8 @@ from unittest.mock import patch
 from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normalizarNombre
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
-from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas, obtenerBoolCadena
+from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
+from src.utils import obtenerBoolCadena, subirTablaDataLake
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -534,3 +535,56 @@ def test_obtener_bool_cadena_error():
 	with pytest.raises(Exception):
 
 		obtenerBoolCadena("no_soy_bool")
+
+def test_subir_tabla_data_lake_tabla_no_existe():
+
+	with pytest.raises(Exception):
+
+		subirTablaDataLake("no_existo", "contenedor", "carpeta")
+
+def test_subir_tabla_data_lake_tabla_vacia(conexion):
+
+	with pytest.raises(Exception):
+
+		subirTablaDataLake("equipos", "contenedor", "carpeta")
+
+def test_subir_tabla_data_lake_contenedor_no_existe(conexion):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	with pytest.raises(Exception):
+
+		subirTablaDataLake("equipos", "contenedor", "carpeta")
+
+def test_subir_tabla_data_lake_carpeta_no_existe(conexion, datalake):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	datalake.crearContenedor("contenedor7")
+
+	with pytest.raises(Exception):
+
+		subirTablaDataLake("equipos", "contenedor7", "carpeta")
+
+	datalake.eliminarContenedor("contenedor7")
+
+	datalake.cerrarConexion()
+
+def test_subir_tabla_data_lake(conexion, datalake):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	crearEntornoDataLake("contenedor8", ["carpeta/tabla"])
+
+	time.sleep(5)
+
+	subirTablaDataLake("equipos", "contenedor8", "carpeta/tabla")
+
+	archivo=datalake.paths_carpeta_contenedor("contenedor8", "carpeta/tabla")[0]["name"]
+
+	assert archivo.startswith("carpeta/tabla/tabla_equipos_backup_")
+	assert archivo.endswith(".csv")
+
+	datalake.eliminarContenedor("contenedor8")
+
+	datalake.cerrarConexion()

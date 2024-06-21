@@ -11,9 +11,13 @@ class ConexionDataLake:
 
 		try:
 
-			url_data_lake=f"https://{cuenta}.dfs.core.windows.net"
+			self.cuenta=cuenta
 
-			self.cliente_data_lake=DataLakeServiceClient(url_data_lake, credential=clave)
+			self.clave=clave
+
+			self.url_data_lake=f"https://{self.cuenta}.dfs.core.windows.net"
+
+			self.cliente_data_lake=DataLakeServiceClient(self.url_data_lake, credential=self.clave)
 
 		except Exception:
 
