@@ -4,6 +4,7 @@ BASH_ENTRENADORES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/entren
 BASH_PRESIDENTES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/presidentes"
 BASH_ESTADIOS="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/estadios"
 URL_ESCUDO="https://cdn.resfu.com/img_data/equipos/"
+URL_ESCUDO_ALTERNATIVA="https://cdn.resfu.com/img_data/escudos/medium/"
 URL_ENTRENADOR="https://cdn.resfu.com/img_data/people/original/"
 URL_PRESIDENTE="https://cdn.resfu.com/img_data/people/original/"
 URL_ESTADIO="https://cdn.resfu.com/img_data/estadios/original_new/"

@@ -15,7 +15,8 @@ def test_extraer_data_equipo_escudo_error_endpoint(endpoint):
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
-	("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("seleccion-santa-amalia",)]
+	("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("seleccion-santa-amalia",),
+	("merida-cp",),("cf-extremadura",)]
 )
 def test_extraer_data_equipo_escudo(equipo):
 
@@ -27,7 +28,8 @@ def test_extraer_data_equipo_escudo(equipo):
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
-	("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("seleccion-santa-amalia",)]
+	("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("seleccion-santa-amalia",),
+	("merida-cp",),("cf-extremadura",)]
 )
 def test_limpiar_data_equipo_escudo(equipo):
 

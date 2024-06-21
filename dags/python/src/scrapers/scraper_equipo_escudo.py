@@ -33,7 +33,9 @@ class ScraperEquipoEscudo(Scraper):
 
     def __obtener_puntuacion(self, tabla_cabecera:bs4)->List[str]:
 
-        return tabla_cabecera.find("div", class_="data-boxes ta-c").find("span").text
+        puntuacion=tabla_cabecera.find("div", class_="data-boxes ta-c").find("span")
+
+        return "0" if not puntuacion else puntuacion.text
 
     def __obtenerDataLimpia(self, tabla_cabecera:bs4)->pd.DataFrame:
 

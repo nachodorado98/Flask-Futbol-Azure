@@ -37,7 +37,7 @@ def test_scraper_equipo_escudo_obtener_tabla_cabecera(equipo):
 	assert tabla_cabecera is not None
 
 @pytest.mark.parametrize(["equipo"],
-	[("atletico-madrid",),("liverpool",),("sporting-gijon",)]
+	[("atletico-madrid",),("liverpool",),("sporting-gijon",),("merida-cp",),("cf-extremadura",)]
 )
 def test_scraper_equipo_escudo_obtener_escudo(equipo):
 
@@ -50,10 +50,10 @@ def test_scraper_equipo_escudo_obtener_escudo(equipo):
 	imagen_escudo=scraper_equipo_escudo._ScraperEquipoEscudo__obtener_escudo(tabla_cabecera)
 
 	assert imagen_escudo.endswith(".png") or imagen_escudo.endswith(".jpg")
-	assert imagen_escudo.startswith("https://cdn.resfu.com/img_data/equipos")
+	assert imagen_escudo.startswith("https://cdn.resfu.com/img_data/equipos") or imagen_escudo.startswith("https://cdn.resfu.com/img_data/escudos/medium")
 
 @pytest.mark.parametrize(["equipo"],
-	[("atletico-madrid",),("liverpool",),("sporting-gijon",)]
+	[("atletico-madrid",),("liverpool",),("sporting-gijon",),("merida-cp",),("cf-extremadura",)]
 )
 def test_scraper_equipo_escudo_obtener_puntuacion(equipo):
 

@@ -1,7 +1,8 @@
 import os
 
 from utils import vaciarCarpeta, crearArchivoLog
-from config import URL_ESCUDO, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS
+from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO
+from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS
 
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
@@ -53,13 +54,21 @@ def subirEscudosDataLake()->None:
 
 			descargarImagen(URL_ESCUDO, codigo, ruta_escudos)
 
-		except Exception as e:
+		except Exception as e1:
 
-			mensaje=f"Escudo: {codigo} - Motivo: {e}"
+			print(f"Error en escudo con codigo {codigo} en la primera URL: {URL_ESCUDO}")
 
-			print(f"Error en escudo con codigo {codigo}")
+			try:
 
-			crearArchivoLog(mensaje)
+				descargarImagen(URL_ESCUDO_ALTERNATIVA, codigo, ruta_escudos)
+
+			except Exception as e2:
+
+				mensaje=f"Escudo: {codigo} - Motivo: {e2}"
+
+				print(f"Error en escudo con codigo {codigo} en la segunda URL: {URL_ESCUDO_ALTERNATIVA}")
+
+				crearArchivoLog(mensaje)
 
 	print("Descarga de escudos finalizada")
 
