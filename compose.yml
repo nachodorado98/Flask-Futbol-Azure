@@ -225,6 +225,15 @@ services:
       - bash
       - -c
       - airflow
+
+  web:
+    build: ./web
+    ports:
+     - 5000:5000
+    volumes:
+     - ./web:/app
+    depends_on:
+      <<: *airflow-common-depends-on
       
 volumes:
   postgres-db-volume:
