@@ -5,4 +5,4 @@ def test_pagina_inicio(cliente):
 	contenido=respuesta.data.decode()
 
 	respuesta.status_code==200
-	assert "Hola Mundo" in contenido
+	assert "<h1>Iniciar Sesión</h1>" in contenido

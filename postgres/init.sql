@@ -77,6 +77,6 @@ CREATE TABLE usuarios (Usuario_Id SERIAL PRIMARY KEY,
 						Contrasena VARCHAR(255),
 						Nombre VARCHAR(255),
 						Apellido VARCHAR(255),
-						Edad INT,
+						Fecha_Nacimiento DATE,
 						Equipo_Id VARCHAR(255),
 						FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE);
