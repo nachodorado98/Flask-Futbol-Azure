@@ -1,4 +1,4 @@
-def test_pagina_inicial(cliente):
+def test_pagina_inicio(cliente):
 
 	respuesta=cliente.get("/")
 

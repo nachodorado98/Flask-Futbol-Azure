@@ -4,6 +4,7 @@ sys.path.append("..")
 
 import pytest
 from src import crear_app
+from src.database.conexion import Conexion
 from confmain import config
 
 @pytest.fixture()
@@ -19,3 +20,8 @@ def app():
 def cliente(app):
 
 	return app.test_client()
+
+@pytest.fixture()
+def conexion():
+
+	return Conexion()

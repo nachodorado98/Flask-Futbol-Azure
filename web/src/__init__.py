@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .blueprints.blueprint import bp
+from .blueprints.inicio import bp_inicio
 
 # Funcion para crear la instancia de la aplicacion
 def crear_app(configuracion:object)->Flask:
@@ -9,6 +9,6 @@ def crear_app(configuracion:object)->Flask:
 
 	app.config.from_object(configuracion)
 
-	app.register_blueprint(bp)
+	app.register_blueprint(bp_inicio)
 
 	return app
