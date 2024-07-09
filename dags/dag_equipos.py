@@ -4,6 +4,7 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.utils.dates import days_ago
 
 from utils import existe_entorno, crearArchivoLog, actualizarVariable
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
@@ -17,7 +18,7 @@ from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresi
 
 
 with DAG("dag_equipos",
-		start_date=datetime(2024,6,13),
+		start_date=days_ago(1),
 		description="DAG para obtener datos de los equipos de la web de futbol",
 		schedule_interval="@monthly",
 		catchup=False) as dag:

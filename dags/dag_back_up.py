@@ -1,6 +1,7 @@
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator
+from airflow.utils.dates import days_ago
 
 from utils import ejecutarDagBackUp
 
@@ -9,7 +10,7 @@ from datalake import subirBackUpTablasDataLake
 
 
 with DAG("dag_back_up",
-		start_date=datetime(2024,6,21),
+		start_date=days_ago(1),
 		description="DAG para realizar un backup de las tablas de los datos de la web de futbol",
 		schedule_interval="@monthly",
 		catchup=False) as dag:

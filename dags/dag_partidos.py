@@ -4,6 +4,7 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.utils.dates import days_ago
 
 from utils import existe_entorno, ejecutarDagPartidos, actualizarVariable
 
@@ -14,7 +15,7 @@ from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio
 
 
 with DAG("dag_partidos",
-		start_date=datetime(2024,6,15),
+		start_date=days_ago(1),
 		description="DAG para obtener datos de los partidos de la web de futbol",
 		schedule_interval="@weekly",
 		catchup=False) as dag:
