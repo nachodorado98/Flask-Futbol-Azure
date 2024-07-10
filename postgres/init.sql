@@ -72,8 +72,7 @@ CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,
 INSERT INTO variables (Nombre, Valor)
 VALUES ('DAG_EQUIPOS_EJECUTADO', 'False'), ('DAG_PARTIDOS_EJECUTADO', 'False');
 
-CREATE TABLE usuarios (Usuario_Id SERIAL PRIMARY KEY,
-    					Usuario VARCHAR(255),
+CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						Contrasena VARCHAR(255),
 						Nombre VARCHAR(255),
 						Apellido VARCHAR(255),

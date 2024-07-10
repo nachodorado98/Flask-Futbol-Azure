@@ -1,0 +1,16 @@
+{% extends "inicio.html" %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/registro.css') }}">
+{% endblock link %}
+
+{% block principal %}
+
+<div class="contenedor-bienvenida">
+    <h1>Bienvenido/a</h1>
+    <p>Gracias por registrarte en nuestra plataforma, {{ nombre.title() }}.</p>
+    <p>¡Esperamos que disfrutes de la experiencia!</p>
+    <a href="/" class="btn-login">Iniciar Sesión</a>
+</div>
+
+{% endblock principal %}

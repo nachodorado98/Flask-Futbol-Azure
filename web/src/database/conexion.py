@@ -28,3 +28,24 @@ class Conexion:
 	def confirmar(self)->None:
 
 		self.bbdd.commit()
+
+	# Metodo para insertar un usuario
+	def insertarUsuario(self, usuario:str, contrasena:str, nombre:str, apellido:str, fecha_nacimiento:str, equipo:str)->None:
+
+		self.c.execute("""INSERT INTO usuarios
+							VALUES (%s, %s, %s, %s, %s, %s)""",
+							(usuario, contrasena, nombre, apellido, fecha_nacimiento, equipo))
+
+		self.confirmar()
+
+	# Metodo para comprobar si ya existe un usuario
+	def existe_usuario(self, usuario:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM usuarios
+						WHERE usuario=%s""",
+						(usuario,))
+
+		usuario=self.c.fetchone()
+
+		return False if usuario is None else True

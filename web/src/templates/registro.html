@@ -10,13 +10,14 @@
 
     <h1>Crear Una Cuenta</h1>
 
-    <form id="formulario" method="POST" action="#" autocomplete="off">
+    <form id="formulario" method="POST" action="/singin" autocomplete="off" novalidate>
 
         <label for="username">Usuario:</label>
         <input type="text" id="usuario" name="usuario" autocomplete="off" required>
 
         <label for="password">Contraseña:</label>
         <input type="password" id="contrasena" name="contrasena" autocomplete="off" required>
+        <span class="tooltip" id="tooltipContrasena">Minimo 8 caracteres, mayuscula, minuscula, numero y caracter especial</span>
 
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" autocomplete="off" required>
@@ -28,8 +29,7 @@
         <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
 
         <label for="equipo">Equipo:</label>
-        <select id="equipo" name="ciudad" required>
-            <option value="" selected disabled hidden>Selecciona un equipo</option>
+        <select id="equipo" name="equipo" required>
             <option value="atletico-madrid">Atletico de Madrid</option>
         </select>
 
@@ -42,5 +42,6 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/fecha_nacimiento.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tooltips.js') }}"></script>
 
 {% endblock principal %}

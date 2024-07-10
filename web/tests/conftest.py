@@ -24,4 +24,16 @@ def cliente(app):
 @pytest.fixture()
 def conexion():
 
-	return Conexion()
+	con=Conexion()
+
+	con.c.execute("DELETE FROM equipos")
+
+	con.c.execute("DELETE FROM estadios")
+
+	con.c.execute("DELETE FROM partidos")
+
+	con.c.execute("DELETE FROM usuarios")
+
+	con.confirmar()
+
+	return con
