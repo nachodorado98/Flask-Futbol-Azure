@@ -21,8 +21,9 @@ def singin():
 	contrasena=request.form.get("contrasena")
 	fecha_nacimiento=request.form.get("fecha-nacimiento")
 	equipo=request.form.get("equipo")
+	correo=request.form.get("correo")
 
-	if not datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+	if not datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo, correo):
 
 		return redirect("/registro")
 
@@ -34,7 +35,7 @@ def singin():
 
 		return redirect("/registro")
 
-	con.insertarUsuario(usuario, generarHash(contrasena), nombre, apellido, fecha_nacimiento, equipo)
+	con.insertarUsuario(usuario, correo, generarHash(contrasena), nombre, apellido, fecha_nacimiento, equipo)
 
 	con.cerrarConexion()
 

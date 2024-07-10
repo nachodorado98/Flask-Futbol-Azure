@@ -1,7 +1,7 @@
 import pytest
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
-from src.utilidades.utils import fecha_correcta, equipo_correcto, datos_correctos
+from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
 from src.utilidades.utils import generarHash, comprobarHash
 
 @pytest.mark.parametrize(["usuario"],
@@ -90,35 +90,52 @@ def test_equipo_correcto(equipo):
 
     assert equipo_correcto(equipo)
 
-@pytest.mark.parametrize(["usuario", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
+@pytest.mark.parametrize(["correo"],
+	[("correo_sin_arroba.com",),("usuario@sin_punto",),("correo@falta_punto_com",),("sin_local_part@.com",),("@falta_local_part.com",)]
+)
+def test_correo_incorrecto(correo):
+
+    assert not correo_correcto(correo)
+
+@pytest.mark.parametrize(["correo"],
+	[("usuario@gmail.com",),("ejemplo123@yahoo.com",),("mi_correo-123@dominio.com",),
+	("usuario+etiqueta@dominio.com",), ("ejemplo.123@subdominio.dominio.co.uk",)]
+)
+def test_correo_correcto(correo):
+
+    assert correo_correcto(correo)
+
+@pytest.mark.parametrize(["usuario", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo", "correo"],
 	[
-		(None, "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", None, "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho", None, "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho", "dorado", None, "1998-02-16", "atleti"),
-		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", None, "atleti"),
-		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", None),
-		("carlos_456", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho1", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho", "dorado2", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho", "dorado", "12345678", "1998-02-16", "atleti"),
-		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "2098-02-16", "atleti"),
-		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti?co")
+		(None, "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", None, "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", None, "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado", None, "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", None, "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", None, "correo@correo.es"),
+		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", None),
+		("carlos_456", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho1", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado2", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado", "12345678", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "2098-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti?co", "correo@correo.es"),
+		("golden98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atletico", "correo@.es")
 	]
 )
-def test_datos_incorrectos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+def test_datos_incorrectos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo, correo):
 
-	assert not datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo)
+	assert not datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo, correo)
 
-@pytest.mark.parametrize(["usuario", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
+@pytest.mark.parametrize(["usuario", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo", "correo"],
 	[
-		("nacho98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
+		("nacho98", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@correo.es"),
+		("golden98", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti", "correo@gmail.es"),
 	]
 )
-def test_datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+def test_datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo, correo):
 
-	assert datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo)
+	assert datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo, correo)
 
 @pytest.mark.parametrize(["contrasena"],
 	[("contrasena1234",),("123456789",),("contrasena_secreta",)]

@@ -30,11 +30,12 @@ class Conexion:
 		self.bbdd.commit()
 
 	# Metodo para insertar un usuario
-	def insertarUsuario(self, usuario:str, contrasena:str, nombre:str, apellido:str, fecha_nacimiento:str, equipo:str)->None:
+	def insertarUsuario(self, usuario:str, correo:str, contrasena:str, nombre:str,
+						apellido:str, fecha_nacimiento:str, equipo:str)->None:
 
 		self.c.execute("""INSERT INTO usuarios
-							VALUES (%s, %s, %s, %s, %s, %s)""",
-							(usuario, contrasena, nombre, apellido, fecha_nacimiento, equipo))
+							VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+							(usuario, correo, contrasena, nombre, apellido, fecha_nacimiento, equipo))
 
 		self.confirmar()
 

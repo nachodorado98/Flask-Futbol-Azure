@@ -37,3 +37,12 @@ def conexion():
 	con.confirmar()
 
 	return con
+
+@pytest.fixture()
+def conexion_entorno(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	return conexion

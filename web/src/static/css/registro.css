@@ -34,15 +34,15 @@ label {
 
 input {
     width: 100%;
-    padding: 7px;
-    margin-top: 5px;
+    padding: 5px;
+    margin-top: 3px;
     box-sizing: border-box;
 }
 
 select {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
+    padding: 6px;
+    margin-top: 3px;
     box-sizing: border-box;
 }
 

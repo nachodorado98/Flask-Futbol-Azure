@@ -20,7 +20,7 @@ def contrasena_correcta(contrasena:str)->bool:
 
         return None
 
-    patron=re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+    patron=r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 
     return bool(re.match(patron, contrasena))
 
@@ -54,16 +54,27 @@ def equipo_correcto(equipo:str)->bool:
 
         return False
 
-    return bool(re.fullmatch(r'[a-zA-Z0-9-]+', equipo))
+    return bool(re.fullmatch(r"[a-zA-Z0-9-]+", equipo))
 
-def datos_correctos(usuario:str, nombre:str, apellido:str, contrasena:str, fecha_nacimiento:str, equipo:str)->bool:
+def correo_correcto(correo:str)->bool:
+
+    if not correo:
+
+        return False
+
+    patron=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+
+    return bool(re.match(patron, correo))
+
+def datos_correctos(usuario:str, nombre:str, apellido:str, contrasena:str, fecha_nacimiento:str, equipo:str, correo:str)->bool:
 
     return (usuario_correcto(usuario) and
             nombre_correcto(nombre) and
             apellido_correcto(apellido) and
             contrasena_correcta(contrasena) and
             fecha_correcta(fecha_nacimiento) and
-            equipo_correcto(equipo))
+            equipo_correcto(equipo) and
+            correo_correcto(correo))
 
 def generarHash(contrasena:str)->str:
 
