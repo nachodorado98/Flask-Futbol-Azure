@@ -9,6 +9,10 @@
 <div class="contenedor-bienvenida">
     <h1>Bienvenido/a</h1>
     <p>Gracias por registrarte en nuestra plataforma, {{ nombre.title() }}.</p>
+    <p>Se han registrado tus datos junto con tu equipo favorito <img src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" height="40"></p>
+    {% if correo_correcto %}
+        <p>Se ha enviado un correo de confirmacion de la creacion de la cuenta.</p>
+    {% endif %}
     <p>¡Esperamos que disfrutes de la experiencia!</p>
     <a href="/" class="btn-login">Iniciar Sesión</a>
 </div>

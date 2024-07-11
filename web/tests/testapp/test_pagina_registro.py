@@ -83,6 +83,8 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, usuario, correo, nomb
 	assert respuesta.status_code==200
 	assert "<h1>Bienvenido/a</h1>" in contenido
 	assert f"<p>Gracias por registrarte en nuestra plataforma, {nombre.title()}.</p>" in contenido
+	assert "<p>Se han registrado tus datos junto con tu equipo favorito" in contenido
+	assert f'<img src="/static/imagenes/favoritos/{equipo}.png'in contenido
 	assert "<p>¡Esperamos que disfrutes de la experiencia!</p>" in contenido
 
 	conexion_entorno.c.execute("SELECT * FROM usuarios")

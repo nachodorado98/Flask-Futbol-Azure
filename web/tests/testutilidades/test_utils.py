@@ -2,49 +2,49 @@ import pytest
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
-from src.utilidades.utils import generarHash, comprobarHash
+from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
 )
 def test_usuario_incorrecto(usuario):
 
-    assert not usuario_correcto(usuario)
+	assert not usuario_correcto(usuario)
 
 @pytest.mark.parametrize(["usuario"],
 	[("juan123",),("usuario1",),("12345",)]
 )
 def test_usuario_correcto(usuario):
 
-    assert usuario_correcto(usuario)
+	assert usuario_correcto(usuario)
 
 @pytest.mark.parametrize(["nombre"],
 	[("123",),("Juan Maria",),(None,),("",),("Nacho1998",)]
 )
 def test_nombre_incorrecto(nombre):
 
-    assert not nombre_correcto(nombre)
+	assert not nombre_correcto(nombre)
 
 @pytest.mark.parametrize(["nombre"],
 	[("Nacho",),("Pérez",),("Ana",),("López",),("Carlos",),("González",),("Amanda",)]
 )
 def test_nombre_correcto(nombre):
 
-    assert nombre_correcto(nombre)
+	assert nombre_correcto(nombre)
 
 @pytest.mark.parametrize(["apellido"],
 	[("123",),("Aranda Gonzalez",),(None,),("",),("Dorado1998",)]
 )
 def test_apellido_incorrecto(apellido):
 
-    assert not apellido_correcto(apellido)
+	assert not apellido_correcto(apellido)
 
 @pytest.mark.parametrize(["apellido"],
 	[("Nacho",),("Pérez",),("Ana",),("López",),("Carlos",),("González",),("Amanda",)]
 )
 def test_apellido_correcto(apellido):
 
-    assert apellido_correcto(apellido)
+	assert apellido_correcto(apellido)
 
 @pytest.mark.parametrize(["contrasena"],
 	[("clave",),("CONTRASENA",),("12345678",),("Abcdefg",),("",),("A1b2C3d4",),("abcd",),("1234",),
@@ -53,49 +53,49 @@ def test_apellido_correcto(apellido):
 )
 def test_contrasena_incorrecta(contrasena):
 
-    assert not contrasena_correcta(contrasena)
+	assert not contrasena_correcta(contrasena)
 
 @pytest.mark.parametrize(["contrasena"],
 	[("Ab!CdEfGhIJK3LMN",),("Abcd1234!",),("22&NachoD&19",)]
 )
 def test_contrasena_correcta(contrasena):
 
-    assert contrasena_correcta(contrasena)
+	assert contrasena_correcta(contrasena)
 
 @pytest.mark.parametrize(["fecha"],
 	[("1800-01-01",),("2100-01-01",),("1900-02-29",),("01-01-2000",),("2000/01/01",)]
 )
 def test_fecha_incorrecta(fecha):
 
-    assert not fecha_correcta(fecha)
+	assert not fecha_correcta(fecha)
 
 @pytest.mark.parametrize(["fecha"],
 	[("1900-01-01",),("2005-01-01",),("2004-02-29",),("1998-02-16",),("1999-08-06",)]
 )
 def test_fecha_correcta(fecha):
 
-    assert fecha_correcta(fecha)
+	assert fecha_correcta(fecha)
 
 @pytest.mark.parametrize(["equipo"],
 	[("equipo_1",),("atleti?co",),("6jfd-8%",),(None,),("",)]
 )
 def test_equipo_incorrecto(equipo):
 
-    assert not equipo_correcto(equipo)
+	assert not equipo_correcto(equipo)
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("barcelona",),("1-fc-koln",)]
 )
 def test_equipo_correcto(equipo):
 
-    assert equipo_correcto(equipo)
+	assert equipo_correcto(equipo)
 
 @pytest.mark.parametrize(["correo"],
 	[("correo_sin_arroba.com",),("usuario@sin_punto",),("correo@falta_punto_com",),("sin_local_part@.com",),("@falta_local_part.com",)]
 )
 def test_correo_incorrecto(correo):
 
-    assert not correo_correcto(correo)
+	assert not correo_correcto(correo)
 
 @pytest.mark.parametrize(["correo"],
 	[("usuario@gmail.com",),("ejemplo123@yahoo.com",),("mi_correo-123@dominio.com",),
@@ -103,7 +103,7 @@ def test_correo_incorrecto(correo):
 )
 def test_correo_correcto(correo):
 
-    assert correo_correcto(correo)
+	assert correo_correcto(correo)
 
 @pytest.mark.parametrize(["usuario", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo", "correo"],
 	[
@@ -168,3 +168,31 @@ def test_comprobar_hash_contrasena_correcta(contrasena):
 	contrasena_hash=generarHash(contrasena)
 
 	assert comprobarHash(contrasena, contrasena_hash)
+
+def HTML()->str:
+
+	return 	"""<html>
+					<body>
+						<h1>¡Hola!</h1>
+						<p>Este es un <b>correo electrónico</b> enviado desde un script</p>
+					</body>
+				</html>
+			"""
+
+def test_enviar_correo_error():
+
+	with pytest.raises(Exception):
+
+		enviarCorreo("ignaciodoradoruiz@gmail.com", "asunto", HTML(), "ignaciodoradoruiz@gmail.com", "1234")
+
+def test_enviar_correo():
+
+	assert not enviarCorreo("ignaciodoradoruiz@gmail.com", "asunto", HTML())
+
+def test_correo_enviado_no_enviado():
+
+	assert not correo_enviado("ignaciodoradoruiz@gmail.com", "nombre", "ignaciodoradoruiz@gmail.com", "1234")
+
+def test_correo_enviado():
+
+	assert correo_enviado("ignaciodoradoruiz@gmail.com", "nombre")

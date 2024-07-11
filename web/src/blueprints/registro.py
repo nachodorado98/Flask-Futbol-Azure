@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect
 
-from src.utilidades.utils import datos_correctos, generarHash
+from src.utilidades.utils import datos_correctos, generarHash, correo_enviado
 
 from src.database.conexion import Conexion
 
@@ -39,4 +39,4 @@ def singin():
 
 	con.cerrarConexion()
 
-	return render_template("singin.html", nombre=nombre)
+	return render_template("singin.html", nombre=nombre, correo_correcto=correo_enviado(correo, nombre), equipo=equipo)
