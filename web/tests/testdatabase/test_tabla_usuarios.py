@@ -53,3 +53,23 @@ def test_existe_usuario_existen_existente(conexion_entorno):
 	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	assert conexion_entorno.existe_usuario("nacho98")
+
+def test_obtener_contrasena_usuario_no_existe(conexion):
+
+	assert conexion.obtenerContrasenaUsuario("nacho98") is None
+
+def test_obtener_contrasena_usuario_existen(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert conexion_entorno.obtenerContrasenaUsuario("nacho98")=="1234"
+
+def test_obtener_nombre_usuario_no_existe(conexion):
+
+	assert conexion.obtenerNombre("nacho98") is None
+
+def test_obtener_nombre_usuario_existen(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert conexion_entorno.obtenerNombre("nacho98")=="nacho"

@@ -1,5 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from typing import Optional
 
 from .confconexion import *
 
@@ -50,3 +51,27 @@ class Conexion:
 		usuario=self.c.fetchone()
 
 		return False if usuario is None else True
+
+	# Metodo para obtener la contrasena de un usuario
+	def obtenerContrasenaUsuario(self, usuario:str)->Optional[str]:
+
+		self.c.execute("""SELECT contrasena
+						FROM usuarios
+						WHERE usuario=%s""",
+						(usuario,))
+
+		contrasena=self.c.fetchone()
+
+		return None if contrasena is None else contrasena["contrasena"]
+
+	# Metodo para obtener el nombre de usuario
+	def obtenerNombre(self, usuario:str)->Optional[str]:
+
+		self.c.execute("""SELECT nombre
+						FROM usuarios
+						WHERE usuario=%s""",
+						(usuario,))
+
+		nombre=self.c.fetchone()
+
+		return None if nombre is None else nombre["nombre"]
