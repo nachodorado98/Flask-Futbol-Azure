@@ -60,6 +60,22 @@ def test_pagina_singin_usuario_existente(cliente, conexion_entorno, usuario):
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
+@pytest.mark.parametrize(["equipo"],
+	[("atm",),("atleti",),("equipo",),("atleticomadrid",),("atletico madrid",),("atleti-madrid",)]
+)
+def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, equipo):
+
+	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+											"fecha-nacimiento":"1998-02-16",
+											"equipo":equipo})
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==302
+	assert respuesta.location=="/registro"
+	assert "<h1>Redirecting...</h1>" in contenido
+
 @pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
 	[
 		("nacho98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1999-07-16", "atletico-madrid"),

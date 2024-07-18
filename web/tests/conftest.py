@@ -41,7 +41,11 @@ def conexion():
 @pytest.fixture()
 def conexion_entorno(conexion):
 
-	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id)
+						VALUES('atletico-madrid')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
 
 	conexion.confirmar()
 

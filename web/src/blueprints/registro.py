@@ -29,7 +29,7 @@ def singin():
 
 	con=Conexion()
 
-	if con.existe_usuario(usuario):
+	if con.existe_usuario(usuario) or not con.existe_equipo(equipo):
 
 		con.cerrarConexion()
 

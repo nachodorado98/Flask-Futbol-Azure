@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect
+from flask import Blueprint, request, redirect, render_template
 from flask_login import login_user, login_required, current_user, logout_user
 from typing import Optional
 
@@ -65,14 +65,22 @@ def login():
 
 	siguiente=request.args.get("next")
 
-	return redirect(siguiente or "/inicio")
+	return redirect(siguiente or "/partidos")
 
 
-@bp_login.route("/inicio")
+@bp_login.route("/partidos")
 @login_required
-def pagina_inicio():
+def pagina_partidos():
 
-	return f"Bienvenido de nuevo: {current_user.nombre.title()}"
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	partidos=con.obtenerPartidosEquipo(equipo)
+
+	con.cerrarConexion()
+
+	return partidos
 
 
 @bp_login.route("/logout")

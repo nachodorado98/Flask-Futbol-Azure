@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from typing import Optional
+from typing import Optional, List
 
 from .confconexion import *
 
@@ -48,9 +48,17 @@ class Conexion:
 						WHERE usuario=%s""",
 						(usuario,))
 
-		usuario=self.c.fetchone()
+		return False if self.c.fetchone() is None else True
 
-		return False if usuario is None else True
+	# Metodo para comprobar si ya existe un equipo
+	def existe_equipo(self, equipo:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM equipos
+						WHERE equipo_id=%s""",
+						(equipo,))
+
+		return False if self.c.fetchone() is None else True
 
 	# Metodo para obtener la contrasena de un usuario
 	def obtenerContrasenaUsuario(self, usuario:str)->Optional[str]:
@@ -64,7 +72,7 @@ class Conexion:
 
 		return None if contrasena is None else contrasena["contrasena"]
 
-	# Metodo para obtener el nombre de usuario
+	# Metodo para obtener el nombre del usuario
 	def obtenerNombre(self, usuario:str)->Optional[str]:
 
 		self.c.execute("""SELECT nombre
@@ -75,3 +83,32 @@ class Conexion:
 		nombre=self.c.fetchone()
 
 		return None if nombre is None else nombre["nombre"]
+
+	# Metodo para obtener el equipo del usuario
+	def obtenerEquipo(self, usuario:str)->Optional[str]:
+
+		self.c.execute("""SELECT equipo_id
+						FROM usuarios
+						WHERE usuario=%s""",
+						(usuario,))
+
+		equipo=self.c.fetchone()
+
+		return None if equipo is None else equipo["equipo_id"]
+
+	# Metodo para obtener los partidos de un equipo
+	def obtenerPartidosEquipo(self, equipo:str)->List[tuple]:
+
+		self.c.execute("""SELECT partido_id, equipo_id_local, equipo_id_visitante, marcador, TO_CHAR(fecha, 'DD-MM-YYYY') as fecha
+						FROM partidos
+						WHERE equipo_id_local=%s OR equipo_id_visitante=%s
+						ORDER BY fecha""",
+						(equipo, equipo))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["equipo_id_local"],
+											partido["equipo_id_visitante"],
+											partido["marcador"],
+											partido["fecha"]), partidos))

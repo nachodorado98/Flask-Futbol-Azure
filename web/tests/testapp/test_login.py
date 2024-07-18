@@ -2,7 +2,7 @@ import pytest
 
 def test_pagina_inicio_sin_login(cliente):
 
-	respuesta=cliente.get("/inicio", follow_redirects=True)
+	respuesta=cliente.get("/partidos", follow_redirects=True)
 
 	contenido=respuesta.data.decode()
 
@@ -40,7 +40,11 @@ def test_pagina_inicio_con_login_usuario_existe_contrasena_error(cliente, conexi
 	assert respuesta.location=="/"
 	assert "<h1>Redirecting...</h1>" in contenido
 
-def test_pagina_inicio_con_login(cliente, conexion_entorno):
+def test_pagina_inicio_con_login_sin_partidos(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.confirmar()
 
 	cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 									"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
@@ -52,4 +56,18 @@ def test_pagina_inicio_con_login(cliente, conexion_entorno):
 	contenido=respuesta.data.decode()
 
 	assert respuesta.status_code==200
-	assert "Bienvenido de nuevo: Nacho" in contenido
+	assert "[]" in contenido
+
+def test_pagina_inicio_con_login_con_partido(cliente, conexion_entorno):
+
+	cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+									"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+									"fecha-nacimiento":"1998-02-16",
+									"equipo":"atletico-madrid"})
+
+	respuesta=cliente.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert "[]" not in contenido
