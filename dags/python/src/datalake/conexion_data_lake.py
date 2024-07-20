@@ -78,7 +78,7 @@ class ConexionDataLake:
 
 		try:
 
-			self.cliente_data_lake.create_file_system(file_system=nombre_contenedor)
+			self.cliente_data_lake.create_file_system(file_system=nombre_contenedor, public_access="blob")
 
 		except Exception:
 

@@ -10,6 +10,8 @@ from src.database.conexion import Conexion
 
 from src.utilidades.utils import comprobarHash
 
+from src.config import URL_DATALAKE
+
 
 bp_login=Blueprint("login", __name__)
 
@@ -86,7 +88,8 @@ def pagina_partidos():
 							usuario=current_user.id,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
-							partidos=partidos)
+							partidos=partidos,
+							url_imagen=URL_DATALAKE)
 
 
 @bp_login.route("/logout")

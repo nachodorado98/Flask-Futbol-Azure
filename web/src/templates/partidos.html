@@ -33,16 +33,35 @@
 
         {% if partidos %}
 
-            <div class="tarjetas">
+            <div class="tarjetas-partidos">
+                <div class="tarjetas-partidos-wrapper">
 
                 {% for partido in partidos %}
 
-                    <div class="tarjeta">
-                        <h2 class="partido">{{ partido }}</h2>
+                    <div class="tarjeta-partido">
+                        <p><strong>{{ partido[2] }}</strong></p>
+                        <div class="info-partido">
+
+                            {% if partido[5]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img src="{{ url_imagen }}{{ partido[5] }}.png" alt="Local Icon">
+                            {% endif %}
+
+                            <h4>{{ partido[4] }} {{ partido[1] }} {{ partido[7] }}</h4>
+
+                            {% if partido[8]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                            {% else %}
+                                <img src="{{ url_imagen }}{{ partido[8] }}.png" alt="Visitante Icon">
+                            {% endif %}
+
+                        </div>
                     </div>
 
                 {% endfor %}
 
+                 </div>
             </div>
 
         {% else %}

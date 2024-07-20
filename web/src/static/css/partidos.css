@@ -7,12 +7,12 @@ body {
 
 .contenido-principal {
     text-align: center;
-    margin: 50px auto;
+    margin: 30px auto;
     max-width: 1200px;
 }
 
 .contenido-principal h1 {
-    font-size: 70px;
+    font-size: 50px;
 }
 
 #toggle-navbar {
@@ -61,45 +61,89 @@ body {
     color: #000;
 }
 
-.tarjetas {
-    margin-top: 20px;
-    max-height: 500px;
+.tarjetas-partidos {
+    max-height: calc(65vh - 100px);
     overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #bdc3c7 #ecf0f1;
+    padding: 0px;
+}
+
+.tarjetas-partidos::-webkit-scrollbar {
+    width: 5px;
+}
+
+.tarjetas-partidos::-webkit-scrollbar-thumb {
+    background-color: #e74c3c;
+    border-radius: 5px;
+}
+
+.tarjetas-partidos-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 90px;
 }
 
-.tarjeta {
+.tarjeta-partido {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     background-color: #e74c3c;
     color: #fff;
-    border: 1px solid #bdc3c7;
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 80%;
-    text-align: center;
-    position: relative;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.tarjeta h2 {
-    font-size: 28px;
-    margin-top: 40px;
-    overflow: hidden;
-    word-wrap: break-word;
+.tarjeta-partido p {
+    font-size: 20px;
+    color: #fff;
+    margin: 0px;
+}
+
+.info-partido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-partido img {
+    margin-right: 10px;
+    margin-left: 10px;
+    width: 70px;
+    height: 70px;
+}
+
+.info-partido h4 {
+    font-size: 25px;
+    color: #fff;
+    margin: 0px;
+}
+
+.tarjeta-partido:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-no-partidos {
+    width: 100%;
+    max-width: 700px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #e74c3c;
+    color: #fff;
 }
 
 .mensaje-no-partidos {
     margin-top: 30px;
     margin-bottom: 30px;
-    color: #333;
+    color: #fff;
     font-size: 30px;
     text-align: center;
 }
-
 
 footer {
     margin-top: 10px;
@@ -110,7 +154,7 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    font-size: 14px;
+    font-size: 10px;
     opacity: 1;
     letter-spacing: 1px;
 }

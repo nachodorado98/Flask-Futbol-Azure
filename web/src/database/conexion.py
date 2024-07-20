@@ -111,16 +111,28 @@ class Conexion:
 	# Metodo para obtener los partidos de un equipo
 	def obtenerPartidosEquipo(self, equipo:str)->List[tuple]:
 
-		self.c.execute("""SELECT partido_id, equipo_id_local, equipo_id_visitante, marcador, TO_CHAR(fecha, 'DD-MM-YYYY') as fecha
-						FROM partidos
-						WHERE equipo_id_local=%s OR equipo_id_visitante=%s
-						ORDER BY fecha""",
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+								p.equipo_id_local as cod_local, e1.nombre_completo as local,
+								CASE WHEN e1.escudo IS NULL THEN -1 ELSE e1.escudo END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre_completo as visitante,
+								CASE WHEN e2.escudo IS NULL THEN -1 ELSE e2.escudo END as escudo_visitante
+						FROM partidos p
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						WHERE p.equipo_id_local=%s OR p.equipo_id_visitante=%s
+						ORDER BY fecha DESC""",
 						(equipo, equipo))
 
 		partidos=self.c.fetchall()
 
 		return list(map(lambda partido: (partido["partido_id"],
-											partido["equipo_id_local"],
-											partido["equipo_id_visitante"],
 											partido["marcador"],
-											partido["fecha"]), partidos))
+											partido["fecha"].strftime("%d-%m-%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"]), partidos))
