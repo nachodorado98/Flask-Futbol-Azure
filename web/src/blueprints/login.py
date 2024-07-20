@@ -76,11 +76,17 @@ def pagina_partidos():
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	nombre_equipo=con.obtenerNombreEquipo(equipo)
+
 	partidos=con.obtenerPartidosEquipo(equipo)
 
 	con.cerrarConexion()
 
-	return partidos
+	return render_template("partidos.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							nombre_equipo=nombre_equipo,
+							partidos=partidos)
 
 
 @bp_login.route("/logout")

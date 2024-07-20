@@ -1,0 +1,116 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #FFE7E5;
+}
+
+.contenido-principal {
+    text-align: center;
+    margin: 50px auto;
+    max-width: 1200px;
+}
+
+.contenido-principal h1 {
+    font-size: 70px;
+}
+
+#toggle-navbar {
+    float: right;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+.navbar {
+    display: none;
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background-color: #e74c3c;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1;
+}
+
+.navbar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar li {
+    margin-bottom: 10px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar a:hover {
+    color: #000;
+}
+
+.tarjetas {
+    margin-top: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #bdc3c7 #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 90px;
+}
+
+.tarjeta {
+    background-color: #e74c3c;
+    color: #fff;
+    border: 1px solid #bdc3c7;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 80%;
+    text-align: center;
+    position: relative;
+}
+
+.tarjeta h2 {
+    font-size: 28px;
+    margin-top: 40px;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.mensaje-no-partidos {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 30px;
+    text-align: center;
+}
+
+
+footer {
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #e74c3c;
+    color: #fff;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    opacity: 1;
+    letter-spacing: 1px;
+}

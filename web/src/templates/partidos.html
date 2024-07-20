@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% block link %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos.css') }}">
+    {% endblock link %}
+
+    <title>Partidos</title>
+</head>
+<body>
+
+    <div class="contenido-principal">
+        <h1>Partidos del {{ nombre_equipo }}</h1>
+        <div class="escudo">
+            <img src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" height="150"></p>
+        </div>
+        <button id="toggle-navbar" class="toggle-button">
+            <img src="{{ url_for('static', filename='imagenes/iconos/hamburguesa.png') }}" alt="Hamburguesa Icon" width="18" height="18">
+        </button>
+
+        <div class="navbar" id="navbar">
+            <ul>
+                <li><a href="/partidos">Partidos</a></li>
+                <li><a href="#">{{ usuario }}</a></li>
+                <li><a href="/logout">Salir</a></li>
+            </ul>
+        </div>
+
+        {% block principal %}
+
+        {% if partidos %}
+
+            <div class="tarjetas">
+
+                {% for partido in partidos %}
+
+                    <div class="tarjeta">
+                        <h2 class="partido">{{ partido }}</h2>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="contenedor-no-partidos">
+                <h2 class="mensaje-no-partidos">No hay ningun partido disponible del {{ nombre_equipo }}...</h2>
+            </div>
+
+        {% endif %}
+
+        {% endblock principal %}
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+
+    <footer>
+         <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>

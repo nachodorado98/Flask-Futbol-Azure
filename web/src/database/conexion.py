@@ -96,6 +96,18 @@ class Conexion:
 
 		return None if equipo is None else equipo["equipo_id"]
 
+	# Metodo para obtener el nombre del equipo
+	def obtenerNombreEquipo(self, equipo:str)->Optional[str]:
+
+		self.c.execute("""SELECT nombre_completo
+						FROM equipos
+						WHERE equipo_id=%s""",
+						(equipo,))
+
+		nombre_equipo=self.c.fetchone()
+
+		return None if nombre_equipo is None else nombre_equipo["nombre_completo"]
+
 	# Metodo para obtener los partidos de un equipo
 	def obtenerPartidosEquipo(self, equipo:str)->List[tuple]:
 
