@@ -112,9 +112,9 @@ class Conexion:
 	def obtenerPartidosEquipo(self, equipo:str)->List[tuple]:
 
 		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
-								p.equipo_id_local as cod_local, e1.nombre_completo as local,
+								p.equipo_id_local as cod_local, e1.nombre as local,
 								CASE WHEN e1.escudo IS NULL THEN -1 ELSE e1.escudo END as escudo_local,
-								p.equipo_id_visitante as cod_visitante, e2.nombre_completo as visitante,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
 								CASE WHEN e2.escudo IS NULL THEN -1 ELSE e2.escudo END as escudo_visitante
 						FROM partidos p
 						LEFT JOIN equipos e1

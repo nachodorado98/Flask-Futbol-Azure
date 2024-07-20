@@ -7,12 +7,25 @@ body {
 
 .contenido-principal {
     text-align: center;
-    margin: 30px auto;
+    margin: 20px auto;
     max-width: 1200px;
 }
 
-.contenido-principal h1 {
-    font-size: 50px;
+.contenedor-titulo {
+    width: 100%;
+    max-width: 850px;
+    margin: 0px auto;
+    margin-bottom: 15px;
+    padding: 0px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.1);
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.contenedor-titulo h1 {
+    font-size: 40px;
 }
 
 #toggle-navbar {
@@ -62,7 +75,7 @@ body {
 }
 
 .tarjetas-partidos {
-    max-height: calc(65vh - 100px);
+    max-height: calc(61vh - 100px);
     overflow-y: auto;
     padding: 0px;
 }
@@ -96,7 +109,7 @@ body {
 }
 
 .tarjeta-partido p {
-    font-size: 20px;
+    font-size: 18px;
     color: #fff;
     margin: 0px;
 }
@@ -108,14 +121,15 @@ body {
 }
 
 .info-partido img {
-    margin-right: 10px;
-    margin-left: 10px;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-bottom: 10px;
     width: 70px;
     height: 70px;
 }
 
 .info-partido h4 {
-    font-size: 25px;
+    font-size: 26px;
     color: #fff;
     margin: 0px;
 }
@@ -143,6 +157,33 @@ body {
     color: #fff;
     font-size: 30px;
     text-align: center;
+}
+
+.contenedor-tipo-partidos {
+    width: 100%;
+    max-width: 50px;
+    text-align: center;
+    margin: 5px auto;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.tipo-partidos-todo {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.tipo-partidos-todo:hover {
+    color: #000;
+    transform: scale(1.05);
 }
 
 footer {

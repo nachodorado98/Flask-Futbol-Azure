@@ -3,6 +3,7 @@ from flask import Flask
 from .blueprints.inicio import bp_inicio
 from .blueprints.registro import bp_registro
 from .blueprints.login import bp_login
+from .blueprints.partidos import bp_partidos
 
 from .extensiones.manager import login_manager
 
@@ -19,5 +20,6 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_inicio)
 	app.register_blueprint(bp_registro)
 	app.register_blueprint(bp_login)
+	app.register_blueprint(bp_partidos)
 
 	return app

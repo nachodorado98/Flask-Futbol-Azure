@@ -10,8 +10,6 @@ from src.database.conexion import Conexion
 
 from src.utilidades.utils import comprobarHash
 
-from src.config import URL_DATALAKE
-
 
 bp_login=Blueprint("login", __name__)
 
@@ -68,28 +66,6 @@ def login():
 	siguiente=request.args.get("next")
 
 	return redirect(siguiente or "/partidos")
-
-
-@bp_login.route("/partidos")
-@login_required
-def pagina_partidos():
-
-	con=Conexion()
-
-	equipo=con.obtenerEquipo(current_user.id)
-
-	nombre_equipo=con.obtenerNombreEquipo(equipo)
-
-	partidos=con.obtenerPartidosEquipo(equipo)
-
-	con.cerrarConexion()
-
-	return render_template("partidos.html",
-							usuario=current_user.id,
-							equipo=equipo,
-							nombre_equipo=nombre_equipo,
-							partidos=partidos,
-							url_imagen=URL_DATALAKE)
 
 
 @bp_login.route("/logout")

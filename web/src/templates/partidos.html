@@ -13,9 +13,11 @@
 <body>
 
     <div class="contenido-principal">
-        <h1>Partidos del {{ nombre_equipo }}</h1>
+        <div class="contenedor-titulo">
+            <h1>Partidos del {{ nombre_equipo }}</h1>
+        </div>
         <div class="escudo">
-            <img src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" height="150"></p>
+            <img src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" height="130"></p>
         </div>
         <button id="toggle-navbar" class="toggle-button">
             <img src="{{ url_for('static', filename='imagenes/iconos/hamburguesa.png') }}" alt="Hamburguesa Icon" width="18" height="18">
@@ -62,6 +64,10 @@
                 {% endfor %}
 
                  </div>
+            </div>
+
+            <div class="contenedor-tipo-partidos">
+                <a href="/partidos" class="tipo-partidos-todo">Todo</a>
             </div>
 
         {% else %}
