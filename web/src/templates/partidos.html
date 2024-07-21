@@ -76,6 +76,17 @@
                 <a href="/partidos?local=2" class="tipo-partidos tipo-partidos-visitante">
                     <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante" width="50" height="50">
                 </a>
+                <div class="contenedor-desplegable">
+                    <select id="temporada" name="temporada">
+                        <option value="" selected disabled hidden>
+                            Temporada {{ temporada_filtrada-1 }} - {{ temporada_filtrada }}
+                        </option>
+                        {% for temporada in temporadas %}
+                            <option value="{{ temporada }}">{{ temporada-1 }} - {{ temporada }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
             </div>
 
         {% else %}
@@ -91,6 +102,7 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/temporadas.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>

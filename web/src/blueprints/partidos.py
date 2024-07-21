@@ -13,6 +13,7 @@ bp_partidos=Blueprint("partidos", __name__)
 def pagina_partidos():
 
 	local=request.args.get("local", default=0, type=int)
+	temporada=request.args.get("temporada", default=None, type=int)
 
 	con=Conexion()
 
@@ -32,11 +33,27 @@ def pagina_partidos():
 
 		partidos=con.obtenerPartidosEquipo(equipo)
 
+	temporadas=con.obtenerTemporadasEquipo(equipo)
+
+	if partidos:
+
+		temporada_filtrada=temporadas[0] if not temporada else temporada
+
+		partidos_filtrados=list(filter(lambda partido: partido[0].startswith(str(temporada_filtrada)), partidos))
+
+	else:
+
+		temporada_filtrada=""
+
+		partidos_filtrados=partidos
+
 	con.cerrarConexion()
 
 	return render_template("partidos.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
-							partidos=partidos,
+							temporadas=temporadas,
+							temporada_filtrada=temporada_filtrada,
+							partidos=partidos_filtrados,
 							url_imagen=URL_DATALAKE)

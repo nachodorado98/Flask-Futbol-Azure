@@ -184,6 +184,20 @@ body {
     transform: scale(1.05);
 }
 
+.contenedor-desplegable {
+    display: flex;
+    align-items: center;
+}
+
+.contenedor-desplegable select {
+    padding: 5px 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
 footer {
     margin-top: 10px;
     padding: 5px;

@@ -113,15 +113,22 @@ class Conexion:
 
 		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
 								p.equipo_id_local as cod_local, e1.nombre as local,
-								CASE WHEN e1.escudo IS NULL THEN -1 ELSE e1.escudo END as escudo_local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
 								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
-								CASE WHEN e2.escudo IS NULL THEN -1 ELSE e2.escudo END as escudo_visitante
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
 						LEFT JOIN equipos e2
 						ON p.equipo_id_visitante=e2.equipo_id
-						WHERE p.equipo_id_local=%s OR p.equipo_id_visitante=%s
+						WHERE p.equipo_id_local=%s
+						OR p.equipo_id_visitante=%s
 						ORDER BY fecha DESC""",
 						(equipo, equipo))
 
@@ -150,3 +157,17 @@ class Conexion:
 		partidos=self.obtenerPartidosEquipo(equipo)
 
 		return list(filter(lambda partido: partido[6]==equipo, partidos))
+
+	# Metodo para obtener las temporadas de los partidos
+	def obtenerTemporadasEquipo(self, equipo:str)->List[tuple]:
+
+		self.c.execute("""SELECT DISTINCT CAST(LEFT(partido_id, 4) AS INTEGER) AS temporada
+						FROM partidos
+						WHERE equipo_id_local=%s
+						OR equipo_id_visitante=%s
+						ORDER BY temporada DESC""",
+						(equipo, equipo))
+
+		temporadas=self.c.fetchall()
+
+		return list(map(lambda temporada: temporada["temporada"], temporadas))
