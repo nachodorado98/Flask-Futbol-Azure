@@ -163,25 +163,23 @@ body {
     width: 100%;
     max-width: 50px;
     text-align: center;
-    margin: 5px auto;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    background-color: #e74c3c;
-    color: #fff;
+    margin: 10px auto;
+    justify-content: center;
+    display: flex;
+    gap: 30px;
 }
 
-.tipo-partidos-todo {
+.tipo-partidos {
     display: inline-block;
-    padding: 5px 15px;
-    background-color: #e74c3c;
+    padding: 1px 15px;
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
     font-size: 20px;
+    margin-right: 10px;
 }
 
-.tipo-partidos-todo:hover {
+.tipo-partidos:hover {
     color: #000;
     transform: scale(1.05);
 }

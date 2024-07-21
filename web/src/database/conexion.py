@@ -136,3 +136,17 @@ class Conexion:
 											partido["cod_visitante"],
 											partido["visitante"],
 											partido["escudo_visitante"]), partidos))
+
+	# Metodo para obtener los partidos de un equipo de local
+	def obtenerPartidosEquipoLocal(self, equipo:str)->List[tuple]:
+
+		partidos=self.obtenerPartidosEquipo(equipo)
+
+		return list(filter(lambda partido: partido[3]==equipo, partidos))
+
+	# Metodo para obtener los partidos de un equipo de visitante
+	def obtenerPartidosEquipoVisitante(self, equipo:str)->List[tuple]:
+
+		partidos=self.obtenerPartidosEquipo(equipo)
+
+		return list(filter(lambda partido: partido[6]==equipo, partidos))

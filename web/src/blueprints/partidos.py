@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
@@ -12,13 +12,25 @@ bp_partidos=Blueprint("partidos", __name__)
 @login_required
 def pagina_partidos():
 
+	local=request.args.get("local", default=0, type=int)
+
 	con=Conexion()
 
 	equipo=con.obtenerEquipo(current_user.id)
 
 	nombre_equipo=con.obtenerNombreEquipo(equipo)
 
-	partidos=con.obtenerPartidosEquipo(equipo)
+	if local==1:	
+
+		partidos=con.obtenerPartidosEquipoLocal(equipo)
+
+	elif local==2:
+
+		partidos=con.obtenerPartidosEquipoVisitante(equipo)
+
+	else:
+
+		partidos=con.obtenerPartidosEquipo(equipo)
 
 	con.cerrarConexion()
 

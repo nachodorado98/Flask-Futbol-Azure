@@ -67,7 +67,15 @@
             </div>
 
             <div class="contenedor-tipo-partidos">
-                <a href="/partidos" class="tipo-partidos-todo">Todo</a>
+                <a href="/partidos" class="tipo-partidos tipo-partidos-todo">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Todo" width="50" height="50">
+                </a>
+                <a href="/partidos?local=1" class="tipo-partidos tipo-partidos-local">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/local.png') }}" alt="Local" width="50" height="50">
+                </a>
+                <a href="/partidos?local=2" class="tipo-partidos tipo-partidos-visitante">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante" width="50" height="50">
+                </a>
             </div>
 
         {% else %}
