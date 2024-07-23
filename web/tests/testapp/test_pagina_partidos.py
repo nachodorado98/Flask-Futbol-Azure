@@ -227,7 +227,7 @@ def test_pagina_partidos_temporada_no_hay(cliente, conexion):
 		assert '<div class="tarjeta-partido">' not in contenido
 		assert '<div class="info-partido">' not in contenido
 		assert "Temporada 2018 - 2019" not in contenido
-		assert "22-06-2019" not in contenido
+		assert "22/06/2019" not in contenido
 
 def test_pagina_partidos_temporada(cliente, conexion):
 
@@ -258,7 +258,7 @@ def test_pagina_partidos_temporada(cliente, conexion):
 		assert '<div class="tarjeta-partido">' in contenido
 		assert '<div class="info-partido">' in contenido
 		assert "Temporada 2018 - 2019" in contenido
-		assert "22-06-2019" in contenido
+		assert "22/06/2019" in contenido
 
 @pytest.mark.parametrize(["temporada", "temporadas_no"],
 	[
@@ -298,12 +298,12 @@ def test_pagina_partidos_temporada_varios(cliente, conexion, temporada, temporad
 
 		assert respuesta.status_code==200
 		assert f"Temporada {temporada-1} - {temporada}" in contenido
-		assert f"22-06-{temporada}" in contenido
+		assert f"22/06/{temporada}" in contenido
 
 		for temporada_no in temporadas_no:
 
 			assert f"Temporada {temporada_no-1} - {temporada_no}" not in contenido
-			assert f"22-06-{temporada_no}" not in contenido
+			assert f"22/06/{temporada_no}" not in contenido
 
 @pytest.mark.parametrize(["temporada", "temporadas_no"],
 	[
@@ -345,12 +345,12 @@ def test_pagina_partidos_local_temporada(cliente, conexion, temporada, temporada
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' in contenido
 		assert f"Temporada {temporada-1} - {temporada}" in contenido
-		assert f"22-06-{temporada}" in contenido
+		assert f"22/06/{temporada}" in contenido
 
 		for temporada_no in temporadas_no:
 
 			assert f"Temporada {temporada_no-1} - {temporada_no}" not in contenido
-			assert f"22-06-{temporada_no}" not in contenido
+			assert f"22/06/{temporada_no}" not in contenido
 
 @pytest.mark.parametrize(["temporada", "temporadas_no"],
 	[
@@ -392,9 +392,9 @@ def test_pagina_partidos_visitante_temporada(cliente, conexion, temporada, tempo
 		assert ' atleti</h4>' in contenido
 		assert ' rival</h4>' not in contenido
 		assert f"Temporada {temporada-1} - {temporada}" in contenido
-		assert f"22-06-{temporada}" in contenido
+		assert f"22/06/{temporada}" in contenido
 
 		for temporada_no in temporadas_no:
 
 			assert f"Temporada {temporada_no-1} - {temporada_no}" not in contenido
-			assert f"22-06-{temporada_no}" not in contenido
+			assert f"22/06/{temporada_no}" not in contenido

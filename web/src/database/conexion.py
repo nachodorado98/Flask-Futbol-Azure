@@ -121,7 +121,8 @@ class Conexion:
 								CASE WHEN e2.escudo IS NULL
 										THEN -1
 										ELSE e2.escudo
-								END as escudo_visitante
+								END as escudo_visitante,
+								p.competicion
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
@@ -136,13 +137,14 @@ class Conexion:
 
 		return list(map(lambda partido: (partido["partido_id"],
 											partido["marcador"],
-											partido["fecha"].strftime("%d-%m-%Y"),
+											partido["fecha"].strftime("%d/%m/%Y"),
 											partido["cod_local"],
 											partido["local"],
 											partido["escudo_local"],
 											partido["cod_visitante"],
 											partido["visitante"],
-											partido["escudo_visitante"]), partidos))
+											partido["escudo_visitante"],
+											partido["competicion"]), partidos))
 
 	# Metodo para obtener los partidos de un equipo de local
 	def obtenerPartidosEquipoLocal(self, equipo:str)->List[tuple]:

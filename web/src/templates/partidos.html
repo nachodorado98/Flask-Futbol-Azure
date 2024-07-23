@@ -10,7 +10,7 @@
 
     <title>Partidos</title>
 </head>
-<body>
+<body class="body-equipo-{{ equipo }}">
 
     <div class="contenido-principal">
         <div class="contenedor-titulo">
@@ -33,69 +33,59 @@
 
         {% block principal %}
 
-        {% if partidos %}
+        <div class="tarjetas-partidos">
+            <div class="tarjetas-partidos-wrapper">
 
-            <div class="tarjetas-partidos">
-                <div class="tarjetas-partidos-wrapper">
+            {% for partido in partidos %}
 
-                {% for partido in partidos %}
+                <div class="tarjeta-partido">
+                    <p><strong>{{ partido[2] }} - {{ partido[9] }}</strong></p>
+                    <div class="info-partido">
 
-                    <div class="tarjeta-partido">
-                        <p><strong>{{ partido[2] }}</strong></p>
-                        <div class="info-partido">
+                        {% if partido[5]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        {% else %}
+                            <img src="{{ url_imagen }}{{ partido[5] }}.png" alt="Local Icon">
+                        {% endif %}
 
-                            {% if partido[5]==-1 %}
-                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
-                            {% else %}
-                                <img src="{{ url_imagen }}{{ partido[5] }}.png" alt="Local Icon">
-                            {% endif %}
+                        <h4>{{ partido[4] }} {{ partido[1] }} {{ partido[7] }}</h4>
 
-                            <h4>{{ partido[4] }} {{ partido[1] }} {{ partido[7] }}</h4>
+                        {% if partido[8]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                        {% else %}
+                            <img src="{{ url_imagen }}{{ partido[8] }}.png" alt="Visitante Icon">
+                        {% endif %}
 
-                            {% if partido[8]==-1 %}
-                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
-                            {% else %}
-                                <img src="{{ url_imagen }}{{ partido[8] }}.png" alt="Visitante Icon">
-                            {% endif %}
-
-                        </div>
                     </div>
-
-                {% endfor %}
-
-                 </div>
-            </div>
-
-            <div class="contenedor-tipo-partidos">
-                <a href="/partidos" class="tipo-partidos tipo-partidos-todo">
-                    <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Todo" width="50" height="50">
-                </a>
-                <a href="/partidos?local=1" class="tipo-partidos tipo-partidos-local">
-                    <img src="{{ url_for('static', filename='imagenes/iconos/local.png') }}" alt="Local" width="50" height="50">
-                </a>
-                <a href="/partidos?local=2" class="tipo-partidos tipo-partidos-visitante">
-                    <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante" width="50" height="50">
-                </a>
-                <div class="contenedor-desplegable">
-                    <select id="temporada" name="temporada">
-                        <option value="" selected disabled hidden>
-                            Temporada {{ temporada_filtrada-1 }} - {{ temporada_filtrada }}
-                        </option>
-                        {% for temporada in temporadas %}
-                            <option value="{{ temporada }}">{{ temporada-1 }} - {{ temporada }}</option>
-                        {% endfor %}
-
-                    </select>
                 </div>
+
+            {% endfor %}
+
+             </div>
+        </div>
+
+        <div class="contenedor-tipo-partidos">
+            <a href="/partidos" class="tipo-partidos tipo-partidos-todo">
+                <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Todo" width="50" height="50">
+            </a>
+            <a href="/partidos?local=1" class="tipo-partidos tipo-partidos-local">
+                <img src="{{ url_for('static', filename='imagenes/iconos/local.png') }}" alt="Local" width="50" height="50">
+            </a>
+            <a href="/partidos?local=2" class="tipo-partidos tipo-partidos-visitante">
+                <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante" width="50" height="50">
+            </a>
+            <div class="contenedor-desplegable">
+                <select id="temporada" name="temporada">
+                    <option value="" selected disabled hidden>
+                        Temporada {{ temporada_filtrada-1 }} - {{ temporada_filtrada }}
+                    </option>
+                    {% for temporada in temporadas %}
+                        <option value="{{ temporada }}">{{ temporada-1 }} - {{ temporada }}</option>
+                    {% endfor %}
+
+                </select>
             </div>
-
-        {% else %}
-
-            <div class="contenedor-no-partidos">
-                <h2 class="mensaje-no-partidos">No hay ningun partido disponible del {{ nombre_equipo }}...</h2>
-            </div>
-
-        {% endif %}
+        </div>
 
         {% endblock principal %}
 

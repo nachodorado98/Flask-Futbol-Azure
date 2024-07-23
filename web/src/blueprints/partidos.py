@@ -35,19 +35,27 @@ def pagina_partidos():
 
 	temporadas=con.obtenerTemporadasEquipo(equipo)
 
-	if partidos:
-
-		temporada_filtrada=temporadas[0] if not temporada else temporada
-
-		partidos_filtrados=list(filter(lambda partido: partido[0].startswith(str(temporada_filtrada)), partidos))
-
-	else:
-
-		temporada_filtrada=""
-
-		partidos_filtrados=partidos
-
 	con.cerrarConexion()
+
+	if not partidos:
+
+		return render_template("no_partidos.html",
+								usuario=current_user.id,
+								equipo=equipo,
+								nombre_equipo=nombre_equipo,
+								url_imagen=URL_DATALAKE)
+
+	temporada_filtrada=temporadas[0] if not temporada else temporada
+
+	partidos_filtrados=list(filter(lambda partido: partido[0].startswith(str(temporada_filtrada)), partidos))
+
+	if not partidos_filtrados:
+
+		return render_template("no_partidos.html",
+						usuario=current_user.id,
+						equipo=equipo,
+						nombre_equipo=nombre_equipo,
+						url_imagen=URL_DATALAKE)
 
 	return render_template("partidos.html",
 							usuario=current_user.id,
