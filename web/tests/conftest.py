@@ -47,6 +47,12 @@ def conexion_entorno(conexion):
 	conexion.c.execute("""INSERT INTO partidos
 						VALUES('20190622', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
+	conexion.c.execute("""INSERT INTO estadios
+						VALUES('metropolitano', '23', 'Metropolitano', 'Av Luis Aragones', '40.436', '-3.599', 'Madrid', 100000, 2017, 105, 68, 'Telefono', 'Cedped')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+						VALUES('20190622', 'metropolitano')""")
+
 	conexion.confirmar()
 
 	return conexion

@@ -173,3 +173,55 @@ class Conexion:
 		temporadas=self.c.fetchall()
 
 		return list(map(lambda temporada: temporada["temporada"], temporadas))
+
+	# Metodo para saber si existe el partido
+	def existe_partido(self, partido_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partidos
+							WHERE Partido_Id=%s""",
+							(partido_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener la informacion de un partido
+	def obtenerPartido(self, partido_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.marcador, p.fecha, p.hora, p.competicion,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								pe.estadio_id as cod_estadio, e.nombre as nombre_estadio
+						FROM partidos p
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
+						LEFT JOIN estadios e
+						ON pe.estadio_id=e.estadio_id
+						WHERE p.partido_id=%s""",
+						(partido_id,))
+
+		partido=self.c.fetchone()
+
+		return None if partido is None else (partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["hora"],
+											partido["competicion"],
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["cod_estadio"],
+											partido["nombre_estadio"])

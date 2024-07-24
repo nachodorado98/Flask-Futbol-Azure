@@ -199,3 +199,25 @@ def test_obtener_temporadas_equipo_varios_partidos(conexion_entorno, ids_partido
 	temporadas=conexion_entorno.obtenerTemporadasEquipo("atletico-madrid")
 
 	assert temporadas==temporadas_unicas
+
+@pytest.mark.parametrize(["partido_id"],
+	[("20190622",),("2023986382",),("20197589",),("2020625",),("201976809",),("20195666",),("20236517",)]
+)
+def test_existe_partido_no_existe(conexion, partido_id):
+
+	assert not conexion.existe_partido(partido_id)
+
+def test_existe_partido(conexion_entorno):
+
+	assert conexion_entorno.existe_partido("20190622")
+
+@pytest.mark.parametrize(["partido_id"],
+	[("20190622",),("2023986382",),("20197589",),("2020625",),("201976809",),("20195666",),("20236517",)]
+)
+def test_obtener_partido_no_existe(conexion, partido_id):
+
+	assert not conexion.obtenerPartido(partido_id)
+
+def test_obtener_partido(conexion_entorno):
+
+	assert conexion_entorno.obtenerPartido("20190622")

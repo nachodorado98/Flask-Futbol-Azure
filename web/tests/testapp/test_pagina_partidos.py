@@ -41,7 +41,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 	assert "No hay ningun partido disponible del None..." not in contenido
 	assert '<div class="tarjetas-partidos">' in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' in contenido
-	assert '<div class="tarjeta-partido">' in contenido
+	assert '<div class="tarjeta-partido"' in contenido
 	assert '<div class="info-partido">' in contenido
 
 @pytest.mark.parametrize(["nombre_completo"],
@@ -92,7 +92,7 @@ def test_pagina_partidos_partido_local_no_hay(cliente, conexion):
 		assert "No hay ningun partido disponible del None..." in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
-		assert '<div class="tarjeta-partido">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
 		assert '<div class="info-partido">' not in contenido
 		assert '<h4>atleti ' not in contenido
 		assert '<h4>rival ' not in contenido
@@ -125,7 +125,7 @@ def test_pagina_partidos_partido_local(cliente, conexion):
 		assert "No hay ningun partido disponible del None..." not in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
-		assert '<div class="tarjeta-partido">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
 		assert '<div class="info-partido">' in contenido
 		assert '<h4>atleti ' in contenido
 		assert '<h4>rival ' not in contenido
@@ -158,7 +158,7 @@ def test_pagina_partidos_partido_visitante_no_hay(cliente, conexion):
 		assert "No hay ningun partido disponible del None..." in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
-		assert '<div class="tarjeta-partido">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
 		assert '<div class="info-partido">' not in contenido
 		assert '<h4>atleti ' not in contenido
 		assert '<h4>rival ' not in contenido
@@ -191,7 +191,7 @@ def test_pagina_partidos_partido_visitante(cliente, conexion):
 		assert "No hay ningun partido disponible del None..." not in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
-		assert '<div class="tarjeta-partido">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
 		assert '<div class="info-partido">' in contenido
 		assert '<h4>atleti ' not in contenido
 		assert '<h4>rival ' in contenido
@@ -224,7 +224,7 @@ def test_pagina_partidos_temporada_no_hay(cliente, conexion):
 		assert "No hay ningun partido disponible del None..." in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
-		assert '<div class="tarjeta-partido">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
 		assert '<div class="info-partido">' not in contenido
 		assert "Temporada 2018 - 2019" not in contenido
 		assert "22/06/2019" not in contenido
@@ -255,7 +255,7 @@ def test_pagina_partidos_temporada(cliente, conexion):
 		assert "No hay ningun partido disponible del None..." not in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
-		assert '<div class="tarjeta-partido">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
 		assert '<div class="info-partido">' in contenido
 		assert "Temporada 2018 - 2019" in contenido
 		assert "22/06/2019" in contenido

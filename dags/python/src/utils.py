@@ -76,7 +76,7 @@ def limpiarTamano(tamano:str)->tuple:
 
 	largo, ancho=tamano.split("x") if "x" in tamano else tamano.split("X")
 
-	return int(largo.strip()), int(ancho.split("metros")[0].strip())
+	return int(largo.strip()), int(ancho.split("metros")[0].split("m")[0].strip())
 
 def url_disponible(url:str)->bool:
 
