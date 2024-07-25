@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS 
 
 bp_partido=Blueprint("partido", __name__)
 
@@ -30,4 +30,5 @@ def pagina_partido(partido_id:str):
 							usuario=current_user.id,
 							equipo=equipo,
 							partido=partido,
-							url_imagen=URL_DATALAKE)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

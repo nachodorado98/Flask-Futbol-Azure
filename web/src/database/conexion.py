@@ -198,7 +198,15 @@ class Conexion:
 										THEN -1
 										ELSE e2.escudo
 								END as escudo_visitante,
-								pe.estadio_id as cod_estadio, e.nombre as nombre_estadio
+								pe.estadio_id as cod_estadio, e.nombre as nombre_estadio,
+								CASE WHEN pe.estadio_id IS NULL
+										THEN False
+										ELSE True
+								END as estadio_existe,
+								CASE WHEN e.codigo_estadio IS NULL
+										THEN -1
+										ELSE e.codigo_estadio
+								END as estadio_partido
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
@@ -214,7 +222,7 @@ class Conexion:
 		partido=self.c.fetchone()
 
 		return None if partido is None else (partido["marcador"],
-											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["fecha"].strftime("%d-%m-%Y"),
 											partido["hora"],
 											partido["competicion"],
 											partido["cod_local"],
@@ -224,4 +232,6 @@ class Conexion:
 											partido["visitante"],
 											partido["escudo_visitante"],
 											partido["cod_estadio"],
-											partido["nombre_estadio"])
+											partido["nombre_estadio"],
+											partido["estadio_existe"],
+											partido["estadio_partido"])

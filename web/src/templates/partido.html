@@ -1,11 +1,40 @@
 {% extends "partidos.html" %}
 
-{% block partidos %}
-
-{% endblock partidos %}
+{% block partidos %}{% endblock partidos %}
 
 {% block principal %}
 
-{{ partido }}
+<div class="tarjeta-partido-detalle">
+    <p class="competicion"><strong>{{ partido[3] }} - {{ partido[1] }} - {{ partido[2] }}h</strong></p>
+    <div class="info-partido-detalle">
+
+        {% if partido[6]==-1 %}
+            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+        {% else %}
+            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido[6] }}.png" alt="Local Icon">
+        {% endif %}
+
+        <h4>{{ partido[5] }} {{ partido[0] }} {{ partido[8] }}</h4>
+
+        {% if partido[9]==-1 %}
+            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+        {% else %}
+            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido[9] }}.png" alt="Visitante Icon">
+        {% endif %}
+
+    </div>
+
+    {% if partido[12] %}
+    <div class="info-partido-estadio">
+    	<p class="nombre-estadio"><strong>{{ partido[11] }}</strong></p>
+        {% if partido[13]==-1 %}
+            <img class="estadio" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Local Icon">
+        {% else %}
+            <img class="estadio" src="{{ url_imagen_estadio }}{{ partido[13] }}.png" alt="Local Icon">
+        {% endif %}
+	</div>
+    {% endif %}
+
+</div>
 
 {% endblock principal %}

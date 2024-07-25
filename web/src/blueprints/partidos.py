@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE
+from src.config import URL_DATALAKE_ESCUDOS
 
 bp_partidos=Blueprint("partidos", __name__)
 
@@ -43,7 +43,7 @@ def pagina_partidos():
 								usuario=current_user.id,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
-								url_imagen=URL_DATALAKE)
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	temporada_filtrada=temporadas[0] if not temporada else temporada
 
@@ -55,7 +55,7 @@ def pagina_partidos():
 						usuario=current_user.id,
 						equipo=equipo,
 						nombre_equipo=nombre_equipo,
-						url_imagen=URL_DATALAKE)
+						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	return render_template("partidos.html",
 							usuario=current_user.id,
@@ -64,4 +64,4 @@ def pagina_partidos():
 							temporadas=temporadas,
 							temporada_filtrada=temporada_filtrada,
 							partidos=partidos_filtrados,
-							url_imagen=URL_DATALAKE)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

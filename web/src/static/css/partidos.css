@@ -1,3 +1,4 @@
+/*----------------------------------------------------------PARTIDOS-------------------------------------------------------------*/
 body {
     margin: 0;
     padding: 0;
@@ -177,6 +178,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
 }
 
 .body-equipo-atletico-madrid .tarjeta-partido{
@@ -356,4 +358,110 @@ footer {
 .body-equipo-rayo-vallecano footer{
     background-color: #e74c3c;
     color: #D8D337;
+}
+
+/*----------------------------------------------------------PARTIDO-------------------------------------------------------------*/
+
+.tarjeta-partido-detalle {
+    width: 100%;
+    max-width: 1000px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+    cursor: default;
+}
+
+.body-equipo-atletico-madrid .tarjeta-partido-detalle{
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.body-equipo-barcelona .tarjeta-partido-detalle{
+    background-color: #004D98;
+    color: #A50044;
+}
+
+.body-equipo-rayo-vallecano .tarjeta-partido-detalle{
+    background-color: #e74c3c;
+    color: #D8D337;
+}
+
+.tarjeta-partido-detalle .competicion {
+    font-size: 30px;
+    margin: 10px;
+}
+
+.body-equipo-atletico-madrid .tarjeta-partido-detalle .competicion{
+    color: #fff;
+}
+
+.body-equipo-barcelona .tarjeta-partido-detalle .competicion{
+    color: #A50044;
+}
+
+.body-equipo-rayo-vallecano .tarjeta-partido-detalle .competicion{
+    color: #D8D337;
+}
+
+.info-partido-detalle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-partido-detalle .escudo {
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    width: 120px;
+    height: 120px;
+}
+
+.info-partido-detalle h4 {
+    font-size: 45px;
+    color: #fff;
+    margin: 0px;
+}
+
+.body-equipo-atletico-madrid .info-partido-detalle h4{
+    color: #fff;
+}
+
+.body-equipo-barcelona .info-partido-detalle h4{
+    color: #A50044;
+}
+
+.body-equipo-rayo-vallecano .info-partido-detalle h4{
+    color: #D8D337;
+}
+
+.info-partido-estadio {
+    align-items: center;
+    justify-content: center;
+}
+
+.info-partido-estadio .nombre-estadio {
+    font-size: 35px;
+    margin: 5px;
+}
+
+.body-equipo-atletico-madrid .info-partido-estadio .nombre-estadio{
+    color: #fff;
+}
+
+.body-equipo-barcelona .info-partido-estadio .nombre-estadio{
+    color: #A50044;
+}
+
+.body-equipo-rayo-vallecano .info-partido-estadio .nombre-estadio{
+    color: #D8D337;
+}
+
+.info-partido-estadio .estadio {
+    margin-bottom: 15px;
+    width: 525px;
+    height: 350px;
 }
