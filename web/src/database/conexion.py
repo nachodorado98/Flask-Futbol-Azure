@@ -235,3 +235,10 @@ class Conexion:
 											partido["nombre_estadio"],
 											partido["estadio_existe"],
 											partido["estadio_partido"])
+
+	# Metodo para saber si un equipo esta en un partido
+	def equipo_partido(self, equipo:str, partido_id:str)->bool:
+
+		partido=self.obtenerPartido(partido_id)
+
+		return partido is not None and (partido[4]==equipo or partido[7]==equipo)

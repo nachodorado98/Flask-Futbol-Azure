@@ -221,3 +221,18 @@ def test_obtener_partido_no_existe(conexion, partido_id):
 def test_obtener_partido(conexion_entorno):
 
 	assert conexion_entorno.obtenerPartido("20190622")
+
+@pytest.mark.parametrize(["partido_id"],
+	[("20190622",),("2023986382",),("20197589",),("2020625",),("201976809",),("20195666",),("20236517",)]
+)
+def test_equipo_partido_no_existe_partido(conexion, partido_id):
+
+	assert not conexion.equipo_partido("atletico-madrid", partido_id)
+
+def test_equipo_partido_equipo_no_pertecene(conexion_entorno):
+
+	assert not conexion_entorno.equipo_partido("atm", "20190622")
+
+def test_equipo_partido(conexion_entorno):
+
+	assert conexion_entorno.equipo_partido("atletico-madrid", "20190622")

@@ -24,6 +24,12 @@ def pagina_partido(partido_id:str):
 
 	partido=con.obtenerPartido(partido_id)
 
+	if not con.equipo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
 	con.cerrarConexion()
 
 	return render_template("partido.html",
