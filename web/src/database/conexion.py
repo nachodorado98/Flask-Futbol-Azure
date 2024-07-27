@@ -48,7 +48,7 @@ class Conexion:
 						WHERE usuario=%s""",
 						(usuario,))
 
-		return False if self.c.fetchone() is None else True
+		return False if not self.c.fetchone() else True
 
 	# Metodo para comprobar si ya existe un equipo
 	def existe_equipo(self, equipo:str)->bool:
@@ -58,7 +58,7 @@ class Conexion:
 						WHERE equipo_id=%s""",
 						(equipo,))
 
-		return False if self.c.fetchone() is None else True
+		return False if not self.c.fetchone() else True
 
 	# Metodo para obtener la contrasena de un usuario
 	def obtenerContrasenaUsuario(self, usuario:str)->Optional[str]:
@@ -70,7 +70,7 @@ class Conexion:
 
 		contrasena=self.c.fetchone()
 
-		return None if contrasena is None else contrasena["contrasena"]
+		return None if not contrasena else contrasena["contrasena"]
 
 	# Metodo para obtener el nombre del usuario
 	def obtenerNombre(self, usuario:str)->Optional[str]:
@@ -82,7 +82,7 @@ class Conexion:
 
 		nombre=self.c.fetchone()
 
-		return None if nombre is None else nombre["nombre"]
+		return None if not nombre else nombre["nombre"]
 
 	# Metodo para obtener el equipo del usuario
 	def obtenerEquipo(self, usuario:str)->Optional[str]:
@@ -94,7 +94,7 @@ class Conexion:
 
 		equipo=self.c.fetchone()
 
-		return None if equipo is None else equipo["equipo_id"]
+		return None if not equipo else equipo["equipo_id"]
 
 	# Metodo para obtener el nombre del equipo
 	def obtenerNombreEquipo(self, equipo:str)->Optional[str]:
@@ -106,7 +106,7 @@ class Conexion:
 
 		nombre_equipo=self.c.fetchone()
 
-		return None if nombre_equipo is None else nombre_equipo["nombre_completo"]
+		return None if not nombre_equipo else nombre_equipo["nombre_completo"]
 
 	# Metodo para obtener los partidos de un equipo
 	def obtenerPartidosEquipo(self, equipo:str)->List[tuple]:
@@ -182,7 +182,7 @@ class Conexion:
 							WHERE Partido_Id=%s""",
 							(partido_id,))
 
-		return False if self.c.fetchone() is None else True
+		return False if not self.c.fetchone() else True
 
 	# Metodo para obtener la informacion de un partido
 	def obtenerPartido(self, partido_id:str)->Optional[tuple]:
@@ -221,7 +221,7 @@ class Conexion:
 
 		partido=self.c.fetchone()
 
-		return None if partido is None else (partido["marcador"],
+		return None if not partido else (partido["marcador"],
 											partido["fecha"].strftime("%d-%m-%Y"),
 											partido["hora"],
 											partido["competicion"],
@@ -242,3 +242,70 @@ class Conexion:
 		partido=self.obtenerPartido(partido_id)
 
 		return partido is not None and (partido[4]==equipo or partido[7]==equipo)
+
+	# Metodo para obtener los datos de un equipo
+	def obtenerDatosEquipo(self, equipo_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT e.equipo_id, e.nombre_completo, e.nombre, e.siglas,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo,
+								e.puntuacion, e.pais, e.ciudad, e.competicion, e.temporadas, e.fundacion, e.entrenador,
+								CASE WHEN e.codigo_entrenador IS NULL
+										THEN -1
+										ELSE e.codigo_entrenador
+								END as codigo_entrenador,
+								CASE WHEN e.entrenador IS NULL
+										THEN False
+										ELSE True
+								END as entrenador_existe,
+								e.presidente,
+								CASE WHEN e.codigo_presidente IS NULL
+										THEN -1
+										ELSE e.codigo_presidente
+								END as codigo_presidente,
+								CASE WHEN e.presidente IS NULL
+										THEN False
+										ELSE True
+								END as presidente_existe,
+								ee.estadio_id as cod_estadio, es.nombre as nombre_estadio,
+								CASE WHEN ee.estadio_id IS NULL
+										THEN False
+										ELSE True
+								END as estadio_existe,
+								CASE WHEN es.codigo_estadio IS NULL
+										THEN -1
+										ELSE es.codigo_estadio
+								END as estadio_equipo
+						FROM equipos e
+						LEFT JOIN equipo_estadio ee
+						ON e.equipo_id=ee.equipo_id
+						LEFT JOIN estadios es
+						ON ee.estadio_id=es.estadio_id
+						WHERE e.equipo_id=%s""",
+						(equipo_id,))
+
+		equipo=self.c.fetchone()
+
+		return None if not equipo else (equipo["equipo_id"],
+										equipo["nombre_completo"],
+										equipo["nombre"],
+										equipo["siglas"],
+										equipo["escudo"],
+										equipo["puntuacion"],
+										equipo["pais"],
+										equipo["ciudad"],
+										equipo["competicion"],
+										equipo["temporadas"],
+										equipo["fundacion"],
+										equipo["entrenador"],
+										equipo["codigo_entrenador"],
+										equipo["entrenador_existe"],
+										equipo["presidente"],
+										equipo["codigo_presidente"],
+										equipo["presidente_existe"],
+										equipo["cod_estadio"],
+										equipo["nombre_estadio"],
+										equipo["estadio_existe"],
+										equipo["estadio_equipo"])

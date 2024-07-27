@@ -18,7 +18,7 @@
         <div class="contenedor-titulo">
             <h1>Partidos del {{ nombre_equipo }}</h1>
         </div>
-        <div class="escudo">
+        <div class="escudo" onclick="window.location.href='/equipo/{{ equipo }}'" style="cursor: pointer;">
             <img src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" height="130"></p>
         </div>
         {% endblock partidos %}
@@ -97,6 +97,7 @@
 
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/temporadas.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pagina_anterior.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>

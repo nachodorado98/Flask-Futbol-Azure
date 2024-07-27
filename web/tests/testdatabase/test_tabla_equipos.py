@@ -10,7 +10,7 @@ def test_existe_equipo_no_existe(conexion):
 
 	assert not conexion.existe_equipo("atletico-madrid")
 
-def test_existe_equipo_existente(conexion_entorno):
+def test_existe_equipo(conexion_entorno):
 
 	assert conexion_entorno.existe_equipo("atletico-madrid")
 
@@ -18,9 +18,13 @@ def test_obtener_nombre_equipo_no_existe(conexion):
 
 	assert not conexion.obtenerNombreEquipo("atletico-madrid")
 
-def test_obtener_nombre_equipo_sin_nombre(conexion_entorno):
+def test_obtener_nombre_equipo_sin_nombre(conexion):
 
-	assert not conexion_entorno.obtenerNombreEquipo("atletico-madrid")
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id)  VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	assert not conexion.obtenerNombreEquipo("atletico-madrid")
 
 @pytest.mark.parametrize(["nombre_completo"],
 	[("atleti",),("atm",),("Club Atletico de Madrid",)]
@@ -33,3 +37,11 @@ def test_obtener_nombre_equipo(conexion, nombre_completo):
 	conexion.confirmar()
 
 	assert conexion.obtenerNombreEquipo("atletico-madrid")==nombre_completo
+
+def test_obtener_equipo_no_existe(conexion):
+
+	assert not conexion.obtenerDatosEquipo("atletico-madrid")
+
+def test_obtener_equipo(conexion_entorno):
+
+	assert conexion_entorno.obtenerDatosEquipo("atletico-madrid")

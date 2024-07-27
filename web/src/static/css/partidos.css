@@ -25,12 +25,10 @@ body:before, body:after {
 
 body:before {
     left: 0;
-    margin-left: 20px;
 }
 
 body:after {
     right: 0;
-    margin-right: 20px;
 }
 
 .body-equipo-atletico-madrid {
@@ -280,7 +278,7 @@ footer {
     border: 1px solid #bdc3c7;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
+    margin-top: 20px;
     cursor: default;
     background-color: var(--color-primario);
     color: var(--color-secundario) 
@@ -301,9 +299,10 @@ footer {
 .info-partido-detalle .escudo {
     margin-right: 20px;
     margin-left: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     width: 120px;
     height: 120px;
+    cursor: pointer;
 }
 
 .info-partido-detalle h4 {
@@ -330,4 +329,40 @@ footer {
     height: 350px;
     border: 3px solid black;
     display: inline-block;
+}
+
+.tarjeta-partido-detalle .button-volver-partido {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tarjeta-partido-detalle .button-volver-partido:hover {
+    transform: scale(1.05);
+}
+
+/*----------------------------------------------------------EQUIPO----------------------------------------------------------------*/
+
+.tarjeta-equipo .button-volver-equipo {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tarjeta-equipo .button-volver-equipo:hover {
+    transform: scale(1.05);
 }

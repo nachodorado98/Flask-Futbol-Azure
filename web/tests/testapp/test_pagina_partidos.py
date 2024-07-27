@@ -16,9 +16,9 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno):
 	contenido=respuesta.data.decode()
 
 	assert respuesta.status_code==200
-	assert "Partidos del None" in contenido
+	assert "Partidos del " in contenido
 	assert f'<img src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
-	assert "No hay ningun partido disponible del None..." in contenido
+	assert "No hay ningun partido disponible del " in contenido
 	assert '<div class="tarjetas-partidos">' not in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 	assert '<div class="tarjeta-partido">' not in contenido
@@ -36,9 +36,9 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 	contenido=respuesta.data.decode()
 
 	assert respuesta.status_code==200
-	assert "Partidos del None" in contenido
+	assert "Partidos del " in contenido
 	assert f'<img src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
-	assert "No hay ningun partido disponible del None..." not in contenido
+	assert "No hay ningun partido disponible del " not in contenido
 	assert '<div class="tarjetas-partidos">' in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' in contenido
 	assert '<div class="tarjeta-partido"' in contenido

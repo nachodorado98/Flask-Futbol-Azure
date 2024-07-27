@@ -9,17 +9,17 @@
     <div class="info-partido-detalle">
 
         {% if partido[6]==-1 %}
-            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon" onclick="window.location.href='/equipo/{{ partido[4] }}'">
         {% else %}
-            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido[6] }}.png" alt="Local Icon">
+            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido[6] }}.png" alt="Local Icon" onclick="window.location.href='/equipo/{{ partido[4] }}'">
         {% endif %}
 
         <h4>{{ partido[5] }} {{ partido[0] }} {{ partido[8] }}</h4>
 
         {% if partido[9]==-1 %}
-            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ partido[7] }}'">
         {% else %}
-            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido[9] }}.png" alt="Visitante Icon">
+            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido[9] }}.png" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ partido[7] }}'">
         {% endif %}
 
     </div>
@@ -34,6 +34,8 @@
         {% endif %}
 	</div>
     {% endif %}
+
+    <button class="button-volver-partido" onclick="pagina_anterior()">Volver</button>
 
 </div>
 

@@ -5,6 +5,7 @@ from .blueprints.registro import bp_registro
 from .blueprints.login import bp_login
 from .blueprints.partidos import bp_partidos
 from .blueprints.partido import bp_partido
+from .blueprints.equipo import bp_equipo
 
 from .extensiones.manager import login_manager
 
@@ -23,5 +24,6 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_login)
 	app.register_blueprint(bp_partidos)
 	app.register_blueprint(bp_partido)
+	app.register_blueprint(bp_equipo)
 
 	return app
