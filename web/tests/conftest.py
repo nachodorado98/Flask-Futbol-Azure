@@ -26,15 +26,7 @@ def conexion():
 
 	con=Conexion()
 
-	con.c.execute("DELETE FROM equipos")
-
-	con.c.execute("DELETE FROM estadios")
-
-	con.c.execute("DELETE FROM partidos")
-
-	con.c.execute("DELETE FROM usuarios")
-
-	con.confirmar()
+	con.vaciarBBDD()
 
 	return con
 
@@ -62,3 +54,17 @@ def conexion_entorno(conexion):
 	conexion.confirmar()
 
 	return conexion
+
+def pytest_sessionfinish(session, exitstatus):
+
+	con=Conexion()
+
+	con.vaciarBBDD()
+
+	con.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES ('atletico-madrid'), ('rayo-vallecano'), ('barcelona')""")
+
+	con.confirmar()
+
+	con.cerrarConexion()
+
+	print("\nLimpieza de la BBDD correcta")

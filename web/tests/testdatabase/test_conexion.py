@@ -19,3 +19,25 @@ def test_cerrar_conexion(conexion):
 	conexion.cerrarConexion()
 
 	assert conexion.bbdd.closed
+
+def test_vaciar_bbdd(conexion_entorno):
+
+	conexion_entorno.insertarUsuario(f"nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.confirmar()
+
+	tablas=["equipos", "partidos", "estadios", "usuarios"]
+
+	for tabla in tablas:
+
+		conexion_entorno.c.execute(f"SELECT * FROM {tabla}")
+
+		assert conexion_entorno.c.fetchall()
+
+	conexion_entorno.vaciarBBDD()
+
+	for tabla in tablas:
+
+		conexion_entorno.c.execute(f"SELECT * FROM {tabla}")
+
+		assert not conexion_entorno.c.fetchall()

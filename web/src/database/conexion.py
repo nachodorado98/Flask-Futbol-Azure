@@ -30,6 +30,19 @@ class Conexion:
 
 		self.bbdd.commit()
 
+	# Metodo para vaciar la BBDD
+	def vaciarBBDD(self)->None:
+
+		self.c.execute("DELETE FROM equipos")
+
+		self.c.execute("DELETE FROM estadios")
+
+		self.c.execute("DELETE FROM partidos")
+
+		self.c.execute("DELETE FROM usuarios")
+
+		self.confirmar()
+
 	# Metodo para insertar un usuario
 	def insertarUsuario(self, usuario:str, correo:str, contrasena:str, nombre:str,
 						apellido:str, fecha_nacimiento:str, equipo:str)->None:

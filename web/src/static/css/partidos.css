@@ -36,7 +36,8 @@ body:after {
     --color-secundario: #FFF;
     --color-footer: #031A77;
     --color-toogle: #031A77;
-    background-color: #FFE7E5;
+    --color-fondo: #FFE7E5;
+    background-color: var(--color-fondo);
 }
 
 .body-equipo-barcelona {
@@ -44,7 +45,8 @@ body:after {
     --color-secundario: #C20044;
     --color-footer: #004C9C;
     --color-toogle: #FEBC00;
-    background-color: #FCE1EC;
+    --color-fondo: #FCE1EC;
+    background-color: var(--color-fondo);
 }
 
 .body-equipo-rayo-vallecano {
@@ -52,7 +54,8 @@ body:after {
     --color-secundario: #C0AE33;
     --color-footer:  #E3361D;
     --color-toogle: #FFF;
-    background-color: #FFF;
+    --color-fondo: #fff;
+    background-color: var(--color-fondo);
 }
 
 .contenido-principal {
@@ -349,6 +352,108 @@ footer {
 }
 
 /*----------------------------------------------------------EQUIPO----------------------------------------------------------------*/
+
+.tarjeta-equipo {
+    width: 100%;
+    max-width: 1000px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario)
+}
+
+.tarjeta-equipo .nombre-largo {
+    font-size: 45px;
+    margin: 5px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-equipo .escudo-equipo {
+    margin-top: 15px;
+    width: 180px;
+    height: 180px;
+}
+
+.info-equipo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: var(--color-fondo);
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 20px auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-equipo p {
+    font-size: 16px;
+    color: var(--color-secundario);
+    margin: 0 15px;
+    text-align: center;
+    padding: 10px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 170px;
+}
+
+.info-equipo-imagenes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 15px;
+    background-color: var(--color-fondo);
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 20px auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-equipo-imagenes p {
+    font-size: 15px;
+    color: var(--color-secundario);
+    margin: 0 15px;
+    text-align: center;
+    padding: 10px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 170px;
+}
+
+.info-equipo-imagenes .entrenador-equipo {
+    margin-top: 10px;
+    width: 130px;
+    height: 130px;
+    border: 2px solid black;
+}
+
+.info-equipo-imagenes .estadio-equipo {
+    margin-top: 10px;
+    width: 185px;
+    height: 130px;
+    border: 2px solid black;
+}
+
+.info-equipo-imagenes .presidente-equipo {
+    margin-top: 10px;
+    width: 130px;
+    height: 130px;
+    border: 2px solid black;
+}
 
 .tarjeta-equipo .button-volver-equipo {
     background-color: var(--color-secundario);

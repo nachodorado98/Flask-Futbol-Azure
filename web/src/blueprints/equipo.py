@@ -33,4 +33,7 @@ def pagina_equipo(equipo_id:str):
 							equipo=equipo,
 							datos_equipo=datos_equipo,
 							favorito=favorito,
-							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_entrenador=URL_DATALAKE_ENTRENADORES,
+							url_imagen_presidente=URL_DATALAKE_PRESIDENTES)
