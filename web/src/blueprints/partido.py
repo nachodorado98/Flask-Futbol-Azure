@@ -30,11 +30,17 @@ def pagina_partido(partido_id:str):
 
 		return redirect("/partidos")
 
+	partido_id_anterior=con.obtenerPartidoAnterior(partido_id, equipo)
+
+	partido_id_siguiente=con.obtenerPartidoSiguiente(partido_id, equipo)
+
 	con.cerrarConexion()
 
 	return render_template("partido.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							partido=partido,
+							partido_id_anterior=partido_id_anterior,
+							partido_id_siguiente=partido_id_siguiente,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

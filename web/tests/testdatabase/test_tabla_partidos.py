@@ -236,3 +236,111 @@ def test_equipo_partido_equipo_no_pertecene(conexion_entorno):
 def test_equipo_partido(conexion_entorno):
 
 	assert conexion_entorno.equipo_partido("atletico-madrid", "20190622")
+
+def test_obtener_partido_siguiente_no_existe_partido(conexion):
+
+	assert not conexion.obtenerPartidoSiguiente("20190622", "atletico-madrid")
+
+def test_obtener_partido_siguiente_existe_uno(conexion_entorno):
+
+	assert not conexion_entorno.obtenerPartidoSiguiente("20190622", "atletico-madrid")
+
+def test_obtener_partido_siguiente_no_existe_equipo(conexion_entorno):
+
+	assert not conexion_entorno.obtenerPartidoSiguiente("20190622", "atm")
+
+def test_obtener_partido_siguiente_existe_anterior(conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190621', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	assert not conexion_entorno.obtenerPartidoSiguiente("20190622", "atletico-madrid")
+
+def test_obtener_partido_siguiente(conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	partido_id=conexion_entorno.obtenerPartidoSiguiente("20190622", "atletico-madrid")
+
+	assert partido_id=="20190623"
+
+@pytest.mark.parametrize(["data", "partido_id_siguiente"],
+	[
+		([("667658", "2019-02-19"),("664657658", "2019-06-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "20197658"),
+		([("667658", "2019-06-23"),("664657658", "2019-06-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "667658"),
+		([("667658", "2019-02-19"),("664657658", "2019-06-25"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "664657658"),
+		([("667658", "2019-02-19"),("664657658", "2019-06-19"),("20197658", "2019-07-19"),("661357658", "2019-07-18")], "661357658")
+	]
+)
+def test_obtener_partido_siguiente_varios(conexion_entorno, data, partido_id_siguiente):
+
+	for partido_id, fecha in data:
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'atletico-madrid', %s, '22:00', 'Liga', '1-0', 'Victoria')""",
+									(partido_id, fecha))
+
+	conexion_entorno.confirmar()
+
+	partido_id=conexion_entorno.obtenerPartidoSiguiente("20190622", "atletico-madrid")
+
+	assert partido_id==partido_id_siguiente
+
+def test_obtener_partido_anterior_no_existe_partido(conexion):
+
+	assert not conexion.obtenerPartidoAnterior("20190622", "atletico-madrid")
+
+def test_obtener_partido_anterior_existe_uno(conexion_entorno):
+
+	assert not conexion_entorno.obtenerPartidoAnterior("20190622", "atletico-madrid")
+
+def test_obtener_partido_anterior_no_existe_equipo(conexion_entorno):
+
+	assert not conexion_entorno.obtenerPartidoAnterior("20190622", "atm")
+
+def test_obtener_partido_anterior_existe_siguiente(conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	assert not conexion_entorno.obtenerPartidoAnterior("20190622", "atletico-madrid")
+
+def test_obtener_partido_anterior(conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190621', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	partido_id=conexion_entorno.obtenerPartidoAnterior("20190622", "atletico-madrid")
+
+	assert partido_id=="20190621"
+
+@pytest.mark.parametrize(["data", "partido_id_anterior"],
+	[
+		([("667658", "2019-02-19"),("664657658", "2019-05-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "664657658"),
+		([("667658", "2019-06-19"),("664657658", "2019-05-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "667658"),
+		([("667658", "2019-02-19"),("664657658", "2019-05-19"),("20197658", "2019-05-20"),("661357658", "2019-12-19")], "20197658"),
+		([("667658", "2019-02-19"),("664657658", "2019-05-19"),("20197658", "2019-07-19"),("661357658", "2019-06-13")], "661357658")
+	]
+)
+def test_obtener_partido_anterior_varios(conexion_entorno, data, partido_id_anterior):
+
+	for partido_id, fecha in data:
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'atletico-madrid', %s, '22:00', 'Liga', '1-0', 'Victoria')""",
+									(partido_id, fecha))
+
+	conexion_entorno.confirmar()
+
+	partido_id=conexion_entorno.obtenerPartidoAnterior("20190622", "atletico-madrid")
+
+	assert partido_id==partido_id_anterior

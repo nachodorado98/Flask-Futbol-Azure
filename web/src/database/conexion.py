@@ -219,7 +219,8 @@ class Conexion:
 								CASE WHEN e.codigo_estadio IS NULL
 										THEN -1
 										ELSE e.codigo_estadio
-								END as estadio_partido
+								END as estadio_partido,
+								LEFT(p.partido_id, 4) as temporada
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
@@ -247,7 +248,8 @@ class Conexion:
 											partido["cod_estadio"],
 											partido["nombre_estadio"],
 											partido["estadio_existe"],
-											partido["estadio_partido"])
+											partido["estadio_partido"],
+											partido["temporada"])
 
 	# Metodo para saber si un equipo esta en un partido
 	def equipo_partido(self, equipo:str, partido_id:str)->bool:
@@ -322,3 +324,39 @@ class Conexion:
 										equipo["nombre_estadio"],
 										equipo["estadio_existe"],
 										equipo["estadio_equipo"])
+
+	# Metodo para obtener el partido siguiente de un partido
+	def obtenerPartidoSiguiente(self, partido_id:str, equipo_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT partido_id
+						FROM partidos
+						WHERE fecha>(SELECT fecha
+						    		FROM partidos
+						    		WHERE partido_id=%s
+						    		AND (equipo_id_local=%s
+									OR equipo_id_visitante=%s))
+						ORDER BY fecha ASC
+						LIMIT 1""",
+						(partido_id,  equipo_id, equipo_id))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else partido["partido_id"]
+
+	# Metodo para obtener el partido anterior de un partido
+	def obtenerPartidoAnterior(self, partido_id:str, equipo_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT partido_id
+						FROM partidos
+						WHERE fecha<(SELECT fecha
+						    		FROM partidos
+						    		WHERE partido_id=%s
+						    		AND (equipo_id_local=%s
+									OR equipo_id_visitante=%s))
+						ORDER BY fecha DESC
+						LIMIT 1""",
+						(partido_id,  equipo_id, equipo_id))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else partido["partido_id"]

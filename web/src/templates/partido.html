@@ -35,7 +35,21 @@
 	</div>
     {% endif %}
 
-    <button class="button-volver-partido" onclick="window.location.href='/partidos'">Volver</button>
+    <div class="contenedor-botones">
+
+        {% if partido_id_anterior %}
+            <button class="button-partido-anterior" onclick="window.location.href='/partido/{{ partido_id_anterior }}'"><</button>
+        {% endif %}
+
+        <button class="button-volver-partido" onclick="window.location.href='/partidos?temporada={{ partido[14] }}'">
+            Volver
+        </button>
+
+        {% if partido_id_siguiente %}
+        <button class="button-partido-siguiente" onclick="window.location.href='/partido/{{ partido_id_siguiente }}'">></button>
+        {% endif %}
+
+    </div>
 
 </div>
 
