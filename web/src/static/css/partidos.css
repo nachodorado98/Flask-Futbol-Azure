@@ -323,7 +323,7 @@ footer {
     padding: 15px;
     background-color: var(--color-fondo);
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 600px;
     margin: 10px auto;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -339,6 +339,7 @@ footer {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex: 1;
     min-width: 150px;
+    cursor: pointer;
 }
 
 .info-partido-estadio .estadio {
@@ -348,6 +349,7 @@ footer {
     height: 275px;
     border: 2px solid black;
     display: inline-block;
+    cursor: pointer;
 }
 
 .tarjeta-partido-detalle .contenedor-botones {
@@ -473,6 +475,7 @@ footer {
     width: 185px;
     height: 130px;
     border: 2px solid black;
+    cursor: pointer;
 }
 
 .info-equipo-imagenes .presidente-equipo {
@@ -496,5 +499,41 @@ footer {
 }
 
 .tarjeta-equipo .button-volver-equipo:hover {
+    transform: scale(1.05);
+}
+
+/*----------------------------------------------------------ESTADIO--------------------------------------------------------------*/
+
+.tarjeta-estadio {
+    width: 100%;
+    max-width: 1000px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario)
+}
+
+.tarjeta-estadio .button-volver-estadio {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tarjeta-estadio .button-volver-estadio:hover {
     transform: scale(1.05);
 }

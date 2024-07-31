@@ -70,7 +70,7 @@ def test_pagina_partido_con_estadio(cliente, conexion_entorno):
 		assert '<div class="tarjeta-partido-detalle"' in contenido
 		assert '<p class="competicion">' in contenido
 		assert '<div class="info-partido-detalle">' in contenido
-		assert '<div class="info-partido-estadio">' in contenido
+		assert '<div class="info-partido-estadio"' in contenido
 
 def test_pagina_partido_sin_estadio(cliente, conexion_entorno):
 

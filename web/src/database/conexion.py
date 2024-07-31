@@ -360,3 +360,62 @@ class Conexion:
 		partido=self.c.fetchone()
 
 		return None if not partido else partido["partido_id"]
+
+	# Metodo para comprobar si existe un estadio
+	def existe_estadio(self, estadio:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM estadios
+						WHERE estadio_id=%s""",
+						(estadio,))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener la informacion de un estadio
+	def obtenerEstadio(self, estadio_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT nombre,
+								CASE WHEN codigo_estadio IS NULL
+										THEN -1
+										ELSE codigo_estadio
+								END as imagen_estadio,
+								direccion, latitud, longitud, ciudad, capacidad, fecha, largo, ancho, telefono, cesped
+						FROM estadios
+						WHERE estadio_id=%s""",
+						(estadio_id,))
+
+		estadio=self.c.fetchone()
+
+		return None if not estadio else (estadio["nombre"],
+											estadio["imagen_estadio"],
+											estadio["direccion"],
+											estadio["latitud"],
+											estadio["longitud"],
+											estadio["ciudad"],
+											estadio["capacidad"],
+											estadio["ciudad"],
+											estadio["fecha"],
+											estadio["largo"],
+											estadio["ancho"],
+											estadio["telefono"],
+											estadio["cesped"])
+
+	# Metodo para obtener el equipo de un estadio
+	def obtenerEquipoEstadio(self, estadio_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.equipo_id, e.nombre,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo_equipo
+							FROM equipo_estadio ee
+							JOIN equipos e
+							ON ee.equipo_id=e.equipo_id
+							WHERE ee.estadio_id=%s""",
+							(estadio_id,))
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo_id"],
+										equipo["nombre"],
+										equipo["escudo_equipo"]), equipos))
