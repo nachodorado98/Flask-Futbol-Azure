@@ -6,9 +6,37 @@
 
 <div class="tarjeta-estadio">
 
-    {{ estadio }}
+    <p class="nombre"><strong>{{ estadio[0] }}</strong></p>
 
-    {{ equipos_estadio }}
+    {% if equipos_estadio %}
+        <div class="equipo-estadio">
+
+            {% for equipo in equipos_estadio %}
+
+                {% if equipo[2]==-1 %}
+                    <img class="escudo-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+                {% else %}
+                    <img class="escudo-equipo" src="{{ url_imagen_escudo }}{{ equipo[2] }}.png" alt="Equipo Icon" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+    {% endif %}
+
+    {% if estadio[1]==-1 %}
+        <img class="imagen-estadio" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+    {% else %}
+        <img class="imagen-estadio" src="{{ url_imagen_estadio }}{{ estadio[1] }}.png" alt="Estadio Icon">
+    {% endif %}
+
+    {% if estadio[2] %}<p class="direccion"><strong>{{ estadio[2] }}</strong></p>{% endif %}
+
+    <div class="info-estadio-detalle">
+        {% if estadio[7] %}<p class="fecha-fundacion"><strong>Desde {{ estadio[7] }}</strong></p>{% endif %}
+        {% if estadio[6] %}<p class="espectadores"><strong>{{ anadirPuntos(estadio[6]) }} espectadores</strong></p>{% endif %}
+        {% if estadio[8] and estadio[9] %}<p class="dimensiones"><strong>{{ estadio[8] }} x {{ estadio[9] }} m</strong></p>{% endif %}
+    </div>
 
     <button class="button-volver-estadio" onclick="pagina_anterior()">Volver</button>
 

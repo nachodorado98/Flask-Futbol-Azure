@@ -379,7 +379,7 @@ class Conexion:
 										THEN -1
 										ELSE codigo_estadio
 								END as imagen_estadio,
-								direccion, latitud, longitud, ciudad, capacidad, fecha, largo, ancho, telefono, cesped
+								direccion, latitud, longitud, ciudad, CAST(capacidad AS TEXT) AS espectadores, fecha, largo, ancho
 						FROM estadios
 						WHERE estadio_id=%s""",
 						(estadio_id,))
@@ -392,13 +392,10 @@ class Conexion:
 											estadio["latitud"],
 											estadio["longitud"],
 											estadio["ciudad"],
-											estadio["capacidad"],
-											estadio["ciudad"],
+											estadio["espectadores"],
 											estadio["fecha"],
 											estadio["largo"],
-											estadio["ancho"],
-											estadio["telefono"],
-											estadio["cesped"])
+											estadio["ancho"])
 
 	# Metodo para obtener el equipo de un estadio
 	def obtenerEquipoEstadio(self, estadio_id:str)->List[Optional[tuple]]:

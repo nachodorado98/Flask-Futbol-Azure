@@ -5,6 +5,8 @@ from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS
 
+from src.utilidades.utils import anadirPuntos
+
 bp_estadio=Blueprint("estadio", __name__)
 
 
@@ -33,5 +35,6 @@ def pagina_estadio(estadio_id:str):
 							equipo=equipo,
 							estadio=estadio,
 							equipos_estadio=equipos_estadio,
+							anadirPuntos=anadirPuntos,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

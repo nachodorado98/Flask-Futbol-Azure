@@ -210,3 +210,17 @@ def correo_enviado(destino:str, nombre:str, origen:str=CORREO_LOGIN, contrasena:
     except Exception:
 
         return False
+
+def anadirPuntos(numero:str)->str:
+
+    numero_con_puntos=""
+
+    for indice, digito in enumerate(numero[::-1], 1):
+
+        numero_con_puntos+=digito
+
+        if indice%3==0 and indice!=len(numero[::-1]):
+
+            numero_con_puntos+="."
+
+    return numero_con_puntos[::-1]

@@ -2,7 +2,7 @@ import pytest
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
-from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado
+from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado, anadirPuntos
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -196,3 +196,16 @@ def test_correo_enviado_no_enviado():
 def test_correo_enviado():
 
 	assert correo_enviado("ignaciodoradoruiz@gmail.com", "nombre")
+
+@pytest.mark.parametrize(["numero", "numero_puntos"],
+	[
+		("100", "100"),
+		("1234", "1.234"),
+		("987654", "987.654"),
+		("1", "1"),
+		("1000000", "1.000.000")
+	]
+)
+def test_anadir_puntos(numero, numero_puntos):
+
+	assert anadirPuntos(numero)==numero_puntos
