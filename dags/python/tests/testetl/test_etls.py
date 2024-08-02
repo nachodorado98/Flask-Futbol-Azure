@@ -122,7 +122,7 @@ def test_etl_detalle_equipo_no_existe_error():
 		ETL_Detalle_Equipo("atletico-madrid")
 
 @pytest.mark.parametrize(["nombre_equipo"],
-	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
+	[("atletico-madrid",),("villarreal",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
 def test_etl_detalle_equipo_datos_correctos(conexion, nombre_equipo):
@@ -168,7 +168,7 @@ def test_etl_detalle_equipo_dato_faltante(conexion, nombre_equipo):
 	assert datos_actualizados["siglas"] is not None
 	assert datos_actualizados["pais"] is not None
 	assert datos_actualizados["codigo_pais"] is not None
-	assert datos_actualizados["ciudad"] is None
+	#assert datos_actualizados["ciudad"] is None # Antes tenia un dato faltante pero ahora han añadido el dato en la web
 	assert datos_actualizados["competicion"] is not None
 	assert datos_actualizados["codigo_competicion"] is not None
 	assert datos_actualizados["temporadas"] is not None
@@ -500,7 +500,7 @@ def test_etl_partido_estadio_no_existe_error():
 
 	with pytest.raises(PartidoEstadioError):
 
-		ETL_Partido_Estadio("seleccion-santa-amalia", "cd-valdehornillo-a-senior", "2023350130")
+		ETL_Partido_Estadio("numancia", "atletico-madrid", "2024489479")
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[

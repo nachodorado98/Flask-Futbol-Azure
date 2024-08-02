@@ -67,7 +67,7 @@ def test_cargar_data_equipo_datos_error(conexion):
 		cargarDataEquipoDetalle(data_limpia, "atletico-madrid")
 
 @pytest.mark.parametrize(["nombre_equipo"],
-	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
+	[("atletico-madrid",),("villarreal",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
 def test_cargar_data_equipo_datos_correctos(conexion, nombre_equipo):
@@ -121,7 +121,7 @@ def test_cargar_data_equipo_dato_faltante(conexion, nombre_equipo):
 	assert datos_actualizados["siglas"] is not None
 	assert datos_actualizados["pais"] is not None
 	assert datos_actualizados["codigo_pais"] is not None
-	assert datos_actualizados["ciudad"] is None
+	#assert datos_actualizados["ciudad"] is None # Antes tenia un dato faltante pero ahora han añadido el dato en la web
 	assert datos_actualizados["competicion"] is not None
 	assert datos_actualizados["codigo_competicion"] is not None
 	assert datos_actualizados["temporadas"] is not None

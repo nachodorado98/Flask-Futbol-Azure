@@ -77,3 +77,19 @@ def scraper_partidos():
 def scraper_partido_estadio():
 
 	return ScraperPartidoEstadio("atletico-madrid", "betis", "202220871")
+
+def pytest_sessionfinish(session, exitstatus):
+
+	con=Conexion()
+
+	con.c.execute("DELETE FROM equipos")
+
+	con.c.execute("DELETE FROM estadios")
+
+	con.c.execute("DELETE FROM partidos")
+
+	con.confirmar()
+
+	con.cerrarConexion()
+
+	print("\nLimpieza de la BBDD correcta")

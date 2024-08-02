@@ -14,7 +14,7 @@ def test_extraer_data_equipo_entrenador_error_endpoint(endpoint):
 		extraerDataEquipoEntrenador(endpoint)
 
 @pytest.mark.parametrize(["equipo"],
-	[("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("seleccion-santa-amalia",)]
+	[("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("k-league-all-star",)]
 )
 def test_extraer_data_equipo_entrenador_error_no_existe(equipo):
 

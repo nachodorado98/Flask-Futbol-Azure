@@ -17,7 +17,7 @@ def limpiarDataEquipoDetalle(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Codigo_Pais"]=tabla["Pais_URL"].apply(limpiarCodigoImagen)
 
-	tabla["Codigo_Categoria"]=tabla["Categoria_URL"].apply(limpiarCodigoImagen)
+	tabla["Codigo_Categoria"]=tabla["Categoria_URL"].apply(lambda url: None if url=="" else url.split("/")[-1].strip())
 
 	tabla["Presidente_Codigo"]=tabla["Presidente_URL"].apply(limpiarCodigoImagen).apply(lambda codigo: None if not codigo or codigo=="nofoto_jugador" else int(codigo))
 

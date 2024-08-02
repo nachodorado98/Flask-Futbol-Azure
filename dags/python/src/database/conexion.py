@@ -53,7 +53,7 @@ class Conexion:
 	def obtenerLigas(self)->List[tuple]:
 
 		self.c.execute("""SELECT Nombre
-						FROM ligas""")
+						FROM ligas_scrapear""")
 
 		ligas=self.c.fetchall()
 

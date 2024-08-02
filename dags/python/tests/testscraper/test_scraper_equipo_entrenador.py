@@ -24,7 +24,7 @@ def test_scraper_equipo_entrenador_realizar_peticion(scraper_equipo_entrenador):
 	assert isinstance(contenido, bs4)
 
 @pytest.mark.parametrize(["equipo"],
-	[("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("seleccion-santa-amalia",)]
+	[("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("k-league-all-star",)]
 )
 def test_scraper_equipo_entrenador_obtener_tabla_entrenador_no_existe(equipo):
 

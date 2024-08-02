@@ -67,7 +67,7 @@ class ScraperEquipo(Scraper):
 
         filas=tabla_general.find_all("div", class_="table-row")
 
-        def limpiarFilaPaisLiga(fila:bs4)->List[str]:
+        def limpiarFilaPais(fila:bs4)->List[str]:
 
             try:
 
@@ -78,6 +78,22 @@ class ScraperEquipo(Scraper):
                 imagen_contenido=fila.find("a").find("img", src=True)["src"].split("?")[0].strip()
 
                 return [contenido, imagen_contenido]
+
+            except Exception:
+
+                return ["", ""]
+
+        def limpiarFilaLiga(fila:bs4)->List[str]:
+
+            try:
+
+                cadena=fila.find("div").text
+
+                contenido=fila.find("a").text.strip()
+
+                url_contenido=fila.find("a", href=True)["href"]
+
+                return [contenido, url_contenido]
 
             except Exception:
 
@@ -99,7 +115,7 @@ class ScraperEquipo(Scraper):
 
                 return [""]
 
-        return limpiarFilaPaisLiga(filas[0])+limpiarFilaPaisLiga(filas[1])+limpiarTemporadas(filas[2])
+        return limpiarFilaPais(filas[0])+limpiarFilaLiga(filas[1])+limpiarTemporadas(filas[2])
 
     def __informacion_general(self, tabla_info:bs4)->List[str]:
 

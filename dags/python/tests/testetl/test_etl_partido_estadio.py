@@ -14,7 +14,7 @@ def test_extraer_data_partido_estadio_error_no_existe():
 
 	with pytest.raises(PartidoEstadioError):
 
-		extraerDataPartidoEstadio("seleccion-santa-amalia", "cd-valdehornillo-a-senior", "2023350130")
+		extraerDataPartidoEstadio("numancia", "atletico-madrid", "2024489479")
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[

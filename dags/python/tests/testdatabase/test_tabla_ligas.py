@@ -1,6 +1,6 @@
 def test_tabla_ligas_llena(conexion):
 
-	conexion.c.execute("SELECT * FROM ligas")
+	conexion.c.execute("SELECT * FROM ligas_scrapear")
 
 	assert conexion.c.fetchall()
 

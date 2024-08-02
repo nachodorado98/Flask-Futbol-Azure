@@ -10,7 +10,7 @@ def test_conexion(conexion):
 
 	tablas=[tabla["relname"] for tabla in conexion.c.fetchall()]
 
-	assert "ligas" in tablas
+	assert "ligas_scrapear" in tablas
 	assert "equipos" in tablas
 	assert "estadios" in tablas
 	assert "equipo_estadio" in tablas
@@ -34,7 +34,7 @@ def test_tabla_vacia_no_existe(conexion):
 
 def test_tabla_vacia_llena(conexion):
 
-	assert not conexion.tabla_vacia("ligas")
+	assert not conexion.tabla_vacia("ligas_scrapear")
 
 @pytest.mark.parametrize(["tabla"],
 	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("partido_estadio",)]
