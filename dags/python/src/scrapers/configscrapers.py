@@ -1,5 +1,6 @@
 URL="https://es.besoccer.com"
 ENDPOINT_COMPETICION="/competicion/clasificacion"
+ENDPOINT_COMPETICION_INFO="/competicion/info"
 ENDPOINT_EQUIPO="/equipo"
 ENDPOINT_PARTIDOS="/ajax/changeMatches?"
 ENDPOINT_PARTIDO="/partido/"
