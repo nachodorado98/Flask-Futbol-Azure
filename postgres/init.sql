@@ -66,11 +66,16 @@ CREATE TABLE partido_estadio (Partido_Id VARCHAR(255),
 							FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
 							FOREIGN KEY (Estadio_Id) REFERENCES estadios (Estadio_Id) ON DELETE CASCADE);
 
+CREATE TABLE competiciones (Competicion_Id VARCHAR(255) PRIMARY KEY,
+							Nombre VARCHAR(255) DEFAULT NULL,
+							Codigo_Logo VARCHAR(255) DEFAULT NULL,
+							Codigo_Pais VARCHAR(5) DEFAULT NULL);
+
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,
 						Valor VARCHAR(255));
 
 INSERT INTO variables (Nombre, Valor)
-VALUES ('DAG_EQUIPOS_EJECUTADO', 'False'), ('DAG_PARTIDOS_EJECUTADO', 'False');
+VALUES ('DAG_EQUIPOS_EJECUTADO', 'False'), ('DAG_PARTIDOS_EJECUTADO', 'False'), ('DAG_COMPETICIONES_EJECUTADO', 'False');
 
 CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						Correo VARCHAR(255),

@@ -322,3 +322,57 @@ class Conexion:
 		estadio=self.c.fetchone()
 
 		return None if estadio is None else estadio["estadio_id"]
+
+	#Metodo para insertar una competicion
+	def insertarCompeticion(self, competicion:str)->None:
+
+		self.c.execute("""INSERT INTO competiciones (Competicion_Id)
+							VALUES(%s)""",
+							(competicion,))
+
+		self.confirmar()
+
+	# Metodo para saber si existe la competicion
+	def existe_competicion(self, competicion_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM competiciones
+							WHERE Competicion_Id=%s""",
+							(competicion_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos de una competicion
+	def actualizarDatosCompeticion(self, datos_competicion:List[str], competicion_id:str)->None:
+
+		datos_competicion.append(competicion_id)
+
+		self.c.execute("""UPDATE competiciones
+							SET Nombre=%s, Codigo_Logo=%s, Codigo_Pais=%s
+							WHERE Competicion_Id=%s""",
+							tuple(datos_competicion))
+
+		self.confirmar()
+
+	# Metodo para obtener las competiciones
+	def obtenerCompeticiones(self)->List[tuple]:
+
+		self.c.execute("""SELECT Competicion_Id
+							FROM competiciones
+							ORDER BY Competicion_Id""")
+
+		competiciones=self.c.fetchall()
+
+		return list(map(lambda competicion: competicion["competicion_id"], competiciones))
+
+	# Metodo para obtener las competiciones unicas de los equipos
+	def obtenerCompeticionesEquipos(self)->List[tuple]:
+
+		self.c.execute("""SELECT DISTINCT(Codigo_Competicion) AS Competicion
+							FROM equipos
+							WHERE Codigo_Competicion IS NOT NULL
+							ORDER BY Codigo_Competicion""")
+
+		competiciones=self.c.fetchall()
+
+		return list(map(lambda competicion: competicion["competicion"], competiciones))
