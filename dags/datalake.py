@@ -1,8 +1,8 @@
 import os
 
 from utils import vaciarCarpeta, crearArchivoLog
-from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO
-from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES
+from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
+from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES
 from config import TABLA_EQUIPOS, TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO
 from config import TABLA_COMPETICIONES
 
@@ -35,7 +35,7 @@ def entorno_data_lake_creado():
 
 def creacion_entorno_data_lake()->None:
 
-	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, TABLA_EQUIPOS, TABLA_ESTADIOS,
+	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, TABLA_EQUIPOS, TABLA_ESTADIOS,
 				TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO, TABLA_COMPETICIONES]
 
 	crearEntornoDataLake(CONTENEDOR, carpetas)
@@ -240,3 +240,101 @@ def subirBackUpTablasDataLake()->None:
 			crearArchivoLog(mensaje)
 
 	print("Back Up de las tablas en el data lake finalizada")
+
+def data_lake_disponible_creado(tarea_siguiente:str)->str:
+
+	try:
+
+		con=ConexionDataLake()
+
+		con.cerrarConexion()
+
+		return tarea_siguiente
+
+	except Exception:
+
+		return "log_data_lake"
+
+def subirCompeticionesDataLake():
+	
+	con=Conexion()
+
+	codigo_logos_competiciones=con.obtenerCodigoLogoCompeticiones()
+
+	con.cerrarConexion()
+
+	ruta_logos_competiciones=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", COMPETICIONES)
+
+	for codigo in codigo_logos_competiciones:
+
+		print(f"Descargando logo competicion {codigo}...")
+
+		try:
+
+			descargarImagen(URL_COMPETICION, codigo, ruta_logos_competiciones)
+
+		except Exception as e:
+
+			mensaje=f"Logo Competicion: {codigo} - Motivo: {e}"
+
+			print(f"Error en logo competicion con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de logos de competiciones finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, COMPETICIONES, ruta_logos_competiciones)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los logos de las competiciones al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_logos_competiciones)
+
+def subirPaisesDataLake():
+	
+	con=Conexion()
+
+	codigo_paises=con.obtenerCodigoPaises()
+
+	con.cerrarConexion()
+
+	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	for codigo in codigo_paises:
+
+		print(f"Descargando pais {codigo}...")
+
+		try:
+
+			descargarImagen(URL_PAIS, codigo, ruta_paises)
+
+		except Exception as e:
+
+			mensaje=f"Pais: {codigo} - Motivo: {e}"
+
+			print(f"Error en pais con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de paises finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, PAISES, ruta_paises)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los paises al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_paises)

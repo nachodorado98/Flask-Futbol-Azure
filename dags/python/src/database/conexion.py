@@ -376,3 +376,27 @@ class Conexion:
 		competiciones=self.c.fetchall()
 
 		return list(map(lambda competicion: competicion["competicion"], competiciones))
+
+	# Metodo para obtener los codigos de los logos de las competiciones
+	def obtenerCodigoLogoCompeticiones(self)->List[str]:
+
+		self.c.execute("""SELECT Codigo_Logo
+							FROM competiciones
+							WHERE Codigo_Logo IS NOT NULL
+							ORDER BY Codigo_Logo""")
+
+		logos_competiciones=self.c.fetchall()
+
+		return list(map(lambda logo_competicion: logo_competicion["codigo_logo"], logos_competiciones))
+
+	# Metodo para obtener los codigos de los paises
+	def obtenerCodigoPaises(self)->List[str]:
+
+		self.c.execute("""SELECT DISTINCT(Codigo_Pais)
+							FROM competiciones
+							WHERE Codigo_Pais IS NOT NULL
+							ORDER BY Codigo_Pais""")
+
+		paises=self.c.fetchall()
+
+		return list(map(lambda pais: pais["codigo_pais"], paises))

@@ -7,7 +7,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
 
 from utils import existe_entorno, crearArchivoLog, actualizarVariable
-from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
+from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS, BASH_COMPETICIONES, BASH_PAISES
 
 from pipelines import Pipeline_Equipos_Ligas
 from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipeline_Entrenador_Equipos, Pipeline_Estadio_Equipos
@@ -39,6 +39,10 @@ with DAG("dag_equipos",
 
 		tarea_carpeta_estadios=BashOperator(task_id="carpeta_estadios", bash_command=BASH_ESTADIOS)
 
+		tarea_carpeta_competiciones=BashOperator(task_id="carpeta_competiciones", bash_command=BASH_COMPETICIONES)
+
+		tarea_carpeta_paises=BashOperator(task_id="carpeta_paises", bash_command=BASH_PAISES)
+
 		tarea_entorno_creado=DummyOperator(task_id="entorno_creado")
 
 
@@ -46,6 +50,7 @@ with DAG("dag_equipos",
 
 		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes >> tarea_carpeta_estadios
 
+		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises
 
 
 	with TaskGroup("pipelines_equipos") as tareas_pipelines_equipos:

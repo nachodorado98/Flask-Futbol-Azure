@@ -100,3 +100,51 @@ def test_obtener_competiciones_equipos_duplicados(conexion):
 	competiciones=conexion.obtenerCompeticionesEquipos()
 
 	assert len(competiciones)==1
+
+def test_obtener_codigo_logo_competiciones_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoLogoCompeticiones()
+
+@pytest.mark.parametrize(["datos", "numero_logos"],
+	[
+		([("primera", "primera-ea"), ("segunda", "segundadiv"), ("bundesliga", "bundes")], 3),
+		([("primera", "primera-ea"), ("segunda", "segundadiv"), ("bundesliga", None)], 2),
+		([("primera", "primera-ea"), ("segunda", "segundadiv"), ("bundesliga", None), ("premier", "logo")], 3),
+		([("primera", "primera-ea"), ("segunda", None), ("bundesliga", None)], 1)
+	]
+)
+def test_obtener_codigo_logo_competiciones(conexion, datos, numero_logos):
+
+	for competicion, logo in datos:
+
+		conexion.insertarCompeticion(competicion)
+
+		conexion.actualizarDatosCompeticion(["Nombre", logo, "Pais"], competicion)
+
+	logos=conexion.obtenerCodigoLogoCompeticiones()
+
+	assert len(logos)==numero_logos
+
+def test_obtener_codigo_paises_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoPaises()
+
+@pytest.mark.parametrize(["datos", "numero_paises"],
+	[
+		([("primera", "es"), ("segunda", "es"), ("bundesliga", "al")], 2),
+		([("primera", "es"), ("segunda", "as"), ("bundesliga", None)], 2),
+		([("primera", "es"), ("segunda", "es"), ("bundesliga", None), ("premier", "en")], 2),
+		([("primera", "es"), ("segunda", None), ("bundesliga", None)], 1)
+	]
+)
+def test_obtener_codigo_paises(conexion, datos, numero_paises):
+
+	for competicion, pais in datos:
+
+		conexion.insertarCompeticion(competicion)
+
+		conexion.actualizarDatosCompeticion(["Nombre", "Logo", pais], competicion)
+
+	paises=conexion.obtenerCodigoPaises()
+
+	assert len(paises)==numero_paises
