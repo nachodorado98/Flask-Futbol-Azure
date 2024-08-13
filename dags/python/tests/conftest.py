@@ -13,6 +13,7 @@ from src.scrapers.scraper_equipo_escudo import ScraperEquipoEscudo
 from src.scrapers.scraper_partidos import ScraperPartidos
 from src.scrapers.scraper_partido_estadio import ScraperPartidoEstadio
 from src.scrapers.scraper_competicion import ScraperCompeticion
+from src.scrapers.scraper_competicion_campeones import ScraperCompeticionCampeones
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
 from src.database.conexion import Conexion
@@ -85,6 +86,11 @@ def scraper_partido_estadio():
 def scraper_competicion():
 
 	return ScraperCompeticion("primera")
+
+@pytest.fixture
+def scraper_competicion_campeones():
+
+	return ScraperCompeticionCampeones("primera")
 
 def pytest_sessionfinish(session, exitstatus):
 

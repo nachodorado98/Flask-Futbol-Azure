@@ -24,3 +24,6 @@ class PartidoEstadioError(Exception):
 
 class CompeticionError(Exception):
     pass
+
+class CompeticionCampeonesError(Exception):
+    pass
