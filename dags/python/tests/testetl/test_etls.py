@@ -3,9 +3,10 @@ import pandas as pd
 
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
+from src.etls import ETL_Campeones_Competicion
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
-from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError
+from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
@@ -621,7 +622,8 @@ def test_etl_competicion_no_existe_error():
 		ETL_Competicion("primera")
 
 @pytest.mark.parametrize(["competicion"],
-	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",)]
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
+	("primera_division_argentina",),("primera_division_rfef",)]
 )
 def test_etl_competicion_datos_correctos(conexion, competicion):
 
@@ -636,3 +638,54 @@ def test_etl_competicion_datos_correctos(conexion, competicion):
 	assert datos_actualizados["nombre"] is not None
 	assert datos_actualizados["codigo_logo"] is not None
 	assert datos_actualizados["codigo_pais"] is not None
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
+)
+def test_etl_competicion_campeones_error(endpoint):
+
+	with pytest.raises(CompeticionCampeonesError):
+
+		ETL_Campeones_Competicion(endpoint)
+
+def test_etl_competicion_campeones_no_existe_error():
+
+	with pytest.raises(Exception):
+
+		ETL_Campeones_Competicion("primera")
+
+@pytest.mark.parametrize(["competicion"],
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
+	("primera_division_argentina",),("primera_division_rfef",),("champions",)]
+)
+def test_etl_competicion_campeones_datos_correctos(conexion, competicion):
+
+	conexion.insertarCompeticion(competicion)
+
+	ETL_Campeones_Competicion(competicion)
+
+	conexion.c.execute(f"SELECT * FROM competiciones_campeones")
+
+	assert conexion.c.fetchone()
+
+@pytest.mark.parametrize(["competicion"],
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
+	("primera_division_argentina",),("primera_division_rfef",),("champions",)]
+)
+def test_etl_competicion_campeones_existentes(conexion, competicion):
+
+	conexion.insertarCompeticion(competicion)
+
+	ETL_Campeones_Competicion(competicion)
+
+	conexion.c.execute(f"SELECT * FROM competiciones_campeones")
+
+	numero_registros=len(conexion.c.fetchone())
+
+	ETL_Campeones_Competicion(competicion)
+
+	conexion.c.execute(f"SELECT * FROM competiciones_campeones")
+
+	numero_registros_nuevos=len(conexion.c.fetchone())
+
+	assert numero_registros==numero_registros_nuevos

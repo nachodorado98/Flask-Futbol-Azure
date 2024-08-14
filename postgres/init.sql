@@ -71,6 +71,12 @@ CREATE TABLE competiciones (Competicion_Id VARCHAR(255) PRIMARY KEY,
 							Codigo_Logo VARCHAR(255) DEFAULT NULL,
 							Codigo_Pais VARCHAR(5) DEFAULT NULL);
 
+CREATE TABLE competiciones_campeones (Competicion_Id VARCHAR(255),
+										Temporada INTEGER,
+										Equipo_Id VARCHAR(255),
+										PRIMARY KEY (Competicion_Id, Temporada, Equipo_Id),
+										FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
+
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,
 						Valor VARCHAR(255));
 

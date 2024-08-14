@@ -400,3 +400,24 @@ class Conexion:
 		paises=self.c.fetchall()
 
 		return list(map(lambda pais: pais["codigo_pais"], paises))
+
+	#Metodo para insertar un campeon de competicion
+	def insertarCampeonCompeticion(self, datos_campeon:List[str])->None:
+
+		self.c.execute("""INSERT INTO competiciones_campeones
+							VALUES(%s, %s, %s)""",
+							tuple(datos_campeon))
+
+		self.confirmar()
+
+	# Metodo para saber si existe un campeon de competicion
+	def existe_campeon_competicion(self, competicion_id:str, temporada:int, equipo_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM competiciones_campeones
+							WHERE Competicion_Id=%s
+							AND Temporada=%s
+							AND Equipo_Id=%s""",
+							(competicion_id, temporada, equipo_id))
+
+		return False if self.c.fetchone() is None else True

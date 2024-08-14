@@ -5,7 +5,7 @@ from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
 
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
-from python.src.etls import ETL_Partido_Estadio, ETL_Competicion
+from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -192,6 +192,28 @@ def Pipeline_Competiciones()->None:
 			mensaje=f"Competicion: {competicion} - Motivo: {e}"
 		
 			print(f"Error en competicion {competicion}")
+
+			crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
+
+def Pipeline_Campeones_Competiciones()->None:
+
+	con=Conexion()
+
+	competiciones=con.obtenerCompeticiones()
+
+	for competicion in competiciones:
+
+		try:
+			
+			ETL_Campeones_Competicion(competicion)
+
+		except Exception as e:
+
+			mensaje=f"Campeones Competicion: {competicion} - Motivo: {e}"
+		
+			print(f"Error en los campeones de la competicion {competicion}")
 
 			crearArchivoLog(mensaje)
 

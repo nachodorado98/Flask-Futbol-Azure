@@ -10,7 +10,7 @@ from utils import existe_entorno, ejecutarDagCompeticiones, actualizarVariable, 
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS, BASH_COMPETICIONES, BASH_PAISES
 
-from pipelines import Pipeline_Competiciones_Equipos, Pipeline_Competiciones
+from pipelines import Pipeline_Competiciones_Equipos, Pipeline_Competiciones, Pipeline_Campeones_Competiciones
 
 from datalake import data_lake_disponible_creado, subirCompeticionesDataLake, subirPaisesDataLake
 
@@ -57,8 +57,10 @@ with DAG("dag_competiciones",
 
 		tarea_pipeline_competiciones=PythonOperator(task_id="pipeline_competiciones", python_callable=Pipeline_Competiciones)
 
+		tarea_pipeline_campeones_competiciones=PythonOperator(task_id="pipeline_campeones_competiciones", python_callable=Pipeline_Campeones_Competiciones)
 
-		tarea_pipeline_competiciones_equipos >> tarea_pipeline_competiciones
+
+		tarea_pipeline_competiciones_equipos >> tarea_pipeline_competiciones >> tarea_pipeline_campeones_competiciones
 
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:

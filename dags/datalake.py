@@ -4,7 +4,7 @@ from utils import vaciarCarpeta, crearArchivoLog
 from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
 from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES
 from config import TABLA_EQUIPOS, TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO
-from config import TABLA_COMPETICIONES
+from config import TABLA_COMPETICIONES, TABLA_COMPETICIONES_CAMPEONES
 
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
@@ -36,7 +36,7 @@ def entorno_data_lake_creado():
 def creacion_entorno_data_lake()->None:
 
 	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, TABLA_EQUIPOS, TABLA_ESTADIOS,
-				TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO, TABLA_COMPETICIONES]
+				TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO, TABLA_COMPETICIONES, TABLA_COMPETICIONES_CAMPEONES]
 
 	crearEntornoDataLake(CONTENEDOR, carpetas)
 
@@ -221,7 +221,8 @@ def subirEstadiosDataLake()->None:
 def subirBackUpTablasDataLake()->None:
 
 	tabla_carpetas=[("equipos", TABLA_EQUIPOS), ("estadios", TABLA_ESTADIOS), ("equipo_estadio", TABLA_EQUIPO_ESTADIO),
-					("partidos", TABLA_PARTIDOS), ("partido_estadio", TABLA_PARTIDO_ESTADIO), ("competiciones", TABLA_COMPETICIONES)]
+					("partidos", TABLA_PARTIDOS), ("partido_estadio", TABLA_PARTIDO_ESTADIO), ("competiciones", TABLA_COMPETICIONES),
+					("competiciones_campeones", TABLA_COMPETICIONES_CAMPEONES)]
 
 	for tabla, carpeta in tabla_carpetas:
 
