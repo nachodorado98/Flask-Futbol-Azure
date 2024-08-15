@@ -10,7 +10,7 @@ from utils import existe_entorno, ejecutarDagPartidos, actualizarVariable
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS, BASH_COMPETICIONES, BASH_PAISES
 
-from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio
+from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio, Pipeline_Partidos_Competicion
 
 
 
@@ -49,14 +49,21 @@ with DAG("dag_partidos",
 
 		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises
 
+	with TaskGroup("pipelines_partidos") as tareas_pipelines_partidos:
+
+		tarea_pipeline_partidos_equipo=PythonOperator(task_id="pipeline_partidos_equipo", python_callable=Pipeline_Partidos_Equipo, trigger_rule="none_failed_min_one_success")
+
+		tarea_pipeline_partidos_estadio=PythonOperator(task_id="pipeline_partidos_estadio", python_callable=Pipeline_Partidos_Estadio)
+
+		tarea_pipeline_partidos_competicion=PythonOperator(task_id="pipeline_partidos_competicion", python_callable=Pipeline_Partidos_Competicion)
+
+
+		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion
+
 
 	tarea_ejecutar_dag_partidos=PythonOperator(task_id="ejecutar_dag_partidos", python_callable=ejecutarDagPartidos)
-
-	tarea_pipeline_partidos_equipo=PythonOperator(task_id="pipeline_partidos_equipo", python_callable=Pipeline_Partidos_Equipo, trigger_rule="none_failed_min_one_success")
-
-	tarea_pipeline_partidos_estadio=PythonOperator(task_id="pipeline_partidos_estadio", python_callable=Pipeline_Partidos_Estadio)
 
 	tarea_dag_partidos_completado=PythonOperator(task_id="dag_partidos_completado", python_callable=lambda: actualizarVariable("DAG_PARTIDOS_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_partidos >> tareas_entorno >>  tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_dag_partidos_completado
+tarea_ejecutar_dag_partidos >> tareas_entorno >> tareas_pipelines_partidos >> tarea_dag_partidos_completado

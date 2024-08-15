@@ -126,7 +126,6 @@ def test_obtener_partidos_sin_estadio_faltantes(conexion, faltantes):
 
 	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 201)]
 
-
 	for partido in partidos:
 
 		conexion.insertarPartido(partido)
@@ -141,3 +140,61 @@ def test_obtener_partidos_sin_estadio_faltantes(conexion, faltantes):
 		conexion.insertarPartidoEstadio((partido[0], f"estadio-{partido[0]}"))
 
 	assert len(conexion.obtenerPartidosSinEstadio())==faltantes
+
+def test_obtener_partidos_sin_competicion_tabla_vacia(conexion):
+
+	assert not conexion.obtenerPartidosSinCompeticion()
+
+def test_obtener_partidos_sin_competicion_todos_existen(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarCompeticion("competicion")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 21)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+		conexion.insertarPartidoCompeticion((partido[0], "competicion"))
+
+	assert not conexion.obtenerPartidosSinCompeticion()
+
+@pytest.mark.parametrize(["numero_partidos"],
+	[(3,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_competicion_ninguno_existe(conexion, numero_partidos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarCompeticion("competicion")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, numero_partidos+1)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	assert len(conexion.obtenerPartidosSinCompeticion())==numero_partidos
+
+@pytest.mark.parametrize(["faltantes"],
+	[(1,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_competicion_faltantes(conexion, faltantes):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarCompeticion("competicion")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 201)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	for partido in partidos[:-faltantes]:
+
+		conexion.insertarPartidoCompeticion((partido[0], "competicion"))
+
+	assert len(conexion.obtenerPartidosSinCompeticion())==faltantes

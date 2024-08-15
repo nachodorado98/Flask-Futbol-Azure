@@ -6,6 +6,7 @@ from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
+from python.src.etls import ETL_Partido_Competicion
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -139,11 +140,35 @@ def Pipeline_Partidos_Estadio()->None:
 
 			else:
 
-				mensaje=f"Partido_Id: {partido_id} - Motivo: {e}"
+				mensaje=f"Estadio Partido_Id: {partido_id} - Motivo: {e}"
 
-				print(f"Error en partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+				print(f"Error en estadio del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
 
 				crearArchivoLog(mensaje)
+
+		time.sleep(0.25)
+
+	con.cerrarConexion()
+
+def Pipeline_Partidos_Competicion()->None:
+
+	con=Conexion()
+
+	partidos=con.obtenerPartidosSinCompeticion()
+
+	for partido_id, equipo_local, equipo_visitante in partidos:
+
+		try:
+			
+			ETL_Partido_Competicion(equipo_local, equipo_visitante, partido_id)
+
+		except Exception as e:
+
+			mensaje=f"Competicion Partido_Id: {partido_id} - Motivo: {e}"
+
+			print(f"Error en competicion del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+
+			crearArchivoLog(mensaje)
 
 		time.sleep(0.25)
 

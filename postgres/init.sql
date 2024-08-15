@@ -77,6 +77,12 @@ CREATE TABLE competiciones_campeones (Competicion_Id VARCHAR(255),
 										PRIMARY KEY (Competicion_Id, Temporada, Equipo_Id),
 										FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
 
+CREATE TABLE partido_competicion (Partido_Id VARCHAR(255),
+									Competicion_Id VARCHAR(255),
+									PRIMARY KEY (Partido_Id, Competicion_Id),
+									FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
+									FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
+
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,
 						Valor VARCHAR(255));
 

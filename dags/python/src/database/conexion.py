@@ -421,3 +421,39 @@ class Conexion:
 							(competicion_id, temporada, equipo_id))
 
 		return False if self.c.fetchone() is None else True
+
+	#Metodo para insertar un partido competicion
+	def insertarPartidoCompeticion(self, partido_competicion:tuple)->None:
+
+		self.c.execute("""INSERT INTO partido_competicion
+							VALUES(%s, %s)""",
+							partido_competicion)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el partido competicion
+	def existe_partido_competicion(self, partido_id:str, competicion_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partido_competicion
+							WHERE Partido_Id=%s
+							AND Competicion_Id=%s""",
+							(partido_id, competicion_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener los partidos que no tienen competicion
+	def obtenerPartidosSinCompeticion(self)->List[tuple]:
+
+		self.c.execute("""SELECT p.Partido_Id, p.Equipo_Id_Local, p.Equipo_Id_Visitante
+						FROM partidos p
+						LEFT JOIN partido_competicion pc
+						USING (Partido_Id)
+						WHERE pc.Partido_Id IS NULL
+						ORDER BY Fecha""")
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+										partido["equipo_id_local"],
+										partido["equipo_id_visitante"]), partidos))

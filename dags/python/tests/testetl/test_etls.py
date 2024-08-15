@@ -3,10 +3,11 @@ import pandas as pd
 
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
-from src.etls import ETL_Campeones_Competicion
+from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
 from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
+from src.scrapers.excepciones_scrapers import PartidoCompeticionError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
@@ -689,3 +690,80 @@ def test_etl_competicion_campeones_existentes(conexion, competicion):
 	numero_registros_nuevos=len(conexion.c.fetchone())
 
 	assert numero_registros==numero_registros_nuevos
+
+def test_etl_partido_competicion_error():
+
+	with pytest.raises(PartidoCompeticionError):
+
+		ETL_Partido_Competicion("equipo1", "equipo2", "partido_id")
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "202429286"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("seleccion-holanda", "seleccion-espanola", "201094287")
+	]
+)
+def test_etl_partido_competicion_datos_correctos(conexion, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Competicion(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_competicion")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "202429286"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("seleccion-holanda", "seleccion-espanola", "201094287")
+	]
+)
+def test_etl_partido_competicion_existente(conexion, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Competicion(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	numero_registros_competiciones=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM partido_competicion")
+
+	numero_registros_partido_competicion=len(conexion.c.fetchall())
+
+	ETL_Partido_Competicion(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	numero_registros_competiciones_nuevos=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM partido_competicion")
+
+	numero_registros_partido_competicion_nuevos=len(conexion.c.fetchall())
+
+	assert numero_registros_competiciones==numero_registros_competiciones_nuevos
+	assert numero_registros_partido_competicion==numero_registros_partido_competicion_nuevos

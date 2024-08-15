@@ -31,6 +31,7 @@ TABLA_ESTADIOS="tablas/estadios"
 TABLA_EQUIPO_ESTADIO="tablas/equipo_estadio"
 TABLA_PARTIDOS="tablas/partidos"
 TABLA_PARTIDO_ESTADIO="tablas/partido_estadio"
+TABLA_PARTIDO_COMPETICION="tablas/partido_competicion"
 TABLA_COMPETICIONES="tablas/competiciones"
 TABLA_COMPETICIONES_CAMPEONES="tablas/competiciones_campeones"
 
