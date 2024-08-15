@@ -12,6 +12,7 @@ from src.scrapers.scraper_equipo_entrenador import ScraperEquipoEntrenador
 from src.scrapers.scraper_equipo_escudo import ScraperEquipoEscudo
 from src.scrapers.scraper_partidos import ScraperPartidos
 from src.scrapers.scraper_partido_estadio import ScraperPartidoEstadio
+from src.scrapers.scraper_partido_competicion import ScraperPartidoCompeticion
 from src.scrapers.scraper_competicion import ScraperCompeticion
 from src.scrapers.scraper_competicion_campeones import ScraperCompeticionCampeones
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
@@ -81,6 +82,11 @@ def scraper_partidos():
 def scraper_partido_estadio():
 
 	return ScraperPartidoEstadio("atletico-madrid", "betis", "202220871")
+
+@pytest.fixture
+def scraper_partido_competicion():
+
+	return ScraperPartidoCompeticion("atletico-madrid", "betis", "202220871")
 
 @pytest.fixture
 def scraper_competicion():

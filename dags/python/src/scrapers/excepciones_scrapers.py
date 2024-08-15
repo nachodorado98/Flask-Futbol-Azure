@@ -27,3 +27,6 @@ class CompeticionError(Exception):
 
 class CompeticionCampeonesError(Exception):
     pass
+
+class PartidoCompeticionError(Exception):
+    pass
