@@ -68,7 +68,7 @@ def test_pagina_partido_con_estadio(cliente, conexion_entorno):
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-detalle"' in contenido
-		assert '<p class="competicion">' in contenido
+		assert '<p class="competicion"' in contenido
 		assert '<div class="info-partido-detalle">' in contenido
 		assert '<div class="info-partido-estadio"' in contenido
 
@@ -93,7 +93,7 @@ def test_pagina_partido_sin_estadio(cliente, conexion_entorno):
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-detalle"' in contenido
-		assert '<p class="competicion">' in contenido
+		assert '<p class="competicion"' in contenido
 		assert '<div class="info-partido-detalle">' in contenido
 		assert '<div class="info-partido-estadio">' not in contenido
 
@@ -226,3 +226,45 @@ def test_pagina_partido_si_partido_anterior_si_partido_siguiente(cliente, conexi
 		respuesta.status_code==200
 		assert '<button class="button-partido-anterior"' in contenido
 		assert '<button class="button-partido-siguiente"' in contenido
+
+def test_pagina_partido_con_competicion(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<p class="competicion" onclick="window.location.href=' in contenido
+		assert '<p class="competicion">' not in contenido
+
+def test_pagina_partido_sin_competicion(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partido_competicion""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<p class="competicion" onclick="window.location.href=' not in contenido
+		assert '<p class="competicion">' in contenido

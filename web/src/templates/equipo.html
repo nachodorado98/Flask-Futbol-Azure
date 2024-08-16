@@ -20,10 +20,39 @@
     {% endif %}
 
     <div class="info-equipo">
+
         {% if datos_equipo[10] %}<p class="fundacion"><strong>Desde {{ datos_equipo[10] }}</strong></p>{% endif %}
-        {% if datos_equipo[8] %}<p class="competicion"><strong>{{ datos_equipo[8] }}</strong></p>{% endif %}
-        {% if datos_equipo[7] and datos_equipo[6] %}<p class="ubicacion"><strong>{{ datos_equipo[7] }}, {{ datos_equipo[6] }}</strong></p>{% endif %}
+
+        {% if datos_equipo[8] %}
+
+            {% if datos_equipo[22] %}
+                <p class="competicion" onclick="window.location.href='{{ datos_equipo[21] }}'" style="cursor: pointer">
+                    <strong>{{ datos_equipo[8] }}</strong>
+                </p>
+            {% else %}
+                <p class="competicion"><strong>{{ datos_equipo[8] }}</strong></p>
+            {% endif %}
+
+        {% endif %}
+
+        {% if datos_equipo[7] and datos_equipo[6] %}
+
+            <p class="ubicacion"><strong>
+
+                {{ datos_equipo[7] }}, {{ datos_equipo[6] }}
+
+                {% if datos_equipo[23]=='-1' %}
+                    <img class="pais-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                {% else %}
+                    <img class="pais-equipo" src="{{ url_imagen_pais }}{{ datos_equipo[23] }}.png" alt="Pais Icon">
+                {% endif %}
+
+            </strong></p>
+
+        {% endif %}
+
         {% if datos_equipo[9] %}<p class="temporadas"><strong>{{ datos_equipo[9] }} temporadas</strong></p>{% endif %}
+
     </div>
 
     <div class="info-equipo-imagenes">
@@ -72,5 +101,7 @@
     <button class="button-volver-equipo" onclick="pagina_anterior()">Volver</button>
 
 </div>
+
+
 
 {% endblock principal %}

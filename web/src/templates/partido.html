@@ -5,7 +5,15 @@
 {% block principal %}
 
 <div class="tarjeta-partido-detalle">
-    <p class="competicion"><strong>{{ partido[3] }} - {{ partido[1] }} - {{ partido[2] }}h</strong></p>
+
+    {% if partido[16] %}
+        <p class="competicion" onclick="window.location.href='{{ partido[15] }}'" style="cursor: pointer">
+            <strong>{{ partido[3] }} - {{ partido[1] }} - {{ partido[2] }}h</strong>
+        </p>
+    {% else %}
+        <p class="competicion"><strong>{{ partido[3] }} - {{ partido[1] }} - {{ partido[2] }}h</strong></p>
+    {% endif %}
+
     <div class="info-partido-detalle">
 
         {% if partido[6]==-1 %}

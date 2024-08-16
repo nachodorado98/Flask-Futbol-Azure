@@ -39,6 +39,8 @@ class Conexion:
 
 		self.c.execute("DELETE FROM partidos")
 
+		self.c.execute("DELETE FROM competiciones")
+
 		self.c.execute("DELETE FROM usuarios")
 
 		self.confirmar()
@@ -220,7 +222,12 @@ class Conexion:
 										THEN -1
 										ELSE e.codigo_estadio
 								END as estadio_partido,
-								LEFT(p.partido_id, 4) as temporada
+								LEFT(p.partido_id, 4) as temporada,
+								pc.competicion_id,
+								CASE WHEN pc.competicion_id IS NULL
+										THEN False
+										ELSE True
+								END as competicion_existe
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
@@ -230,6 +237,8 @@ class Conexion:
 						ON p.partido_id=pe.partido_id
 						LEFT JOIN estadios e
 						ON pe.estadio_id=e.estadio_id
+						LEFT JOIN partido_competicion pc
+						ON p.partido_id=pc.partido_id
 						WHERE p.partido_id=%s""",
 						(partido_id,))
 
@@ -249,7 +258,9 @@ class Conexion:
 											partido["nombre_estadio"],
 											partido["estadio_existe"],
 											partido["estadio_partido"],
-											partido["temporada"])
+											partido["temporada"],
+											partido["competicion_id"],
+											partido["competicion_existe"])
 
 	# Metodo para saber si un equipo esta en un partido
 	def equipo_partido(self, equipo:str, partido_id:str)->bool:
@@ -292,12 +303,23 @@ class Conexion:
 								CASE WHEN es.codigo_estadio IS NULL
 										THEN -1
 										ELSE es.codigo_estadio
-								END as estadio_equipo
+								END as estadio_equipo,
+								e.codigo_competicion,
+								CASE WHEN c.competicion_id IS NULL
+										THEN False
+										ELSE True
+								END as competicion_existe,
+								CASE WHEN c.codigo_pais IS NULL
+										THEN '-1'
+										ELSE c.codigo_pais
+								END as equipo_pais
 						FROM equipos e
 						LEFT JOIN equipo_estadio ee
 						ON e.equipo_id=ee.equipo_id
 						LEFT JOIN estadios es
 						ON ee.estadio_id=es.estadio_id
+						LEFT JOIN competiciones c
+						ON e.codigo_competicion=c.competicion_id
 						WHERE e.equipo_id=%s""",
 						(equipo_id,))
 
@@ -323,7 +345,10 @@ class Conexion:
 										equipo["cod_estadio"],
 										equipo["nombre_estadio"],
 										equipo["estadio_existe"],
-										equipo["estadio_equipo"])
+										equipo["estadio_equipo"],
+										equipo["codigo_competicion"],
+										equipo["competicion_existe"],
+										equipo["equipo_pais"])
 
 	# Metodo para obtener el partido siguiente de un partido
 	def obtenerPartidoSiguiente(self, partido_id:str, equipo_id:str)->Optional[str]:
