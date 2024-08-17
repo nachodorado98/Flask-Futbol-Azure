@@ -605,3 +605,38 @@ footer {
 .tarjeta-estadio .button-volver-estadio:hover {
     transform: scale(1.05);
 }
+
+/*----------------------------------------------------------COMPETICION----------------------------------------------------------*/
+
+.tarjeta-competicion {
+    width: 100%;
+    max-width: 1000px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario)
+}
+
+.tarjeta-competicion .button-volver-competicion {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tarjeta-competicion .button-volver-competicion:hover {
+    transform: scale(1.05);

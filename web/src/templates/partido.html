@@ -7,7 +7,7 @@
 <div class="tarjeta-partido-detalle">
 
     {% if partido[16] %}
-        <p class="competicion" onclick="window.location.href='{{ partido[15] }}'" style="cursor: pointer">
+        <p class="competicion" onclick="window.location.href='/competicion/{{ partido[15] }}'" style="cursor: pointer">
             <strong>{{ partido[3] }} - {{ partido[1] }} - {{ partido[2] }}h</strong>
         </p>
     {% else %}

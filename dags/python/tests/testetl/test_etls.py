@@ -10,7 +10,7 @@ from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionEr
 from src.scrapers.excepciones_scrapers import PartidoCompeticionError
 
 @pytest.mark.parametrize(["endpoint"],
-	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
 )
 def test_etl_equipos_liga_error(endpoint):
 

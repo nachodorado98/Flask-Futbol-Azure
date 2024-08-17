@@ -1,0 +1,15 @@
+{% extends "partidos.html" %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-competicion">
+
+    {{ datos_competicion }}
+
+    <button class="button-volver-competicion" onclick="pagina_anterior()">Volver</button>
+
+</div>
+
+{% endblock principal %}

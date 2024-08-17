@@ -70,7 +70,13 @@ class ScraperEquiposLiga(Scraper):
 
         def stat(celda:bs4)->int:
 
-            return int(celda.text.strip(""))
+            try:
+
+                return int(celda.text.strip(""))
+
+            except Exception:
+
+                return None
 
         def obtenerFilaLimpia(fila:bs4)->tuple:
 

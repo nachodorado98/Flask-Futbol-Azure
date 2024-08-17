@@ -412,15 +412,15 @@ class Conexion:
 		estadio=self.c.fetchone()
 
 		return None if not estadio else (estadio["nombre"],
-											estadio["imagen_estadio"],
-											estadio["direccion"],
-											estadio["latitud"],
-											estadio["longitud"],
-											estadio["ciudad"],
-											estadio["espectadores"],
-											estadio["fecha"],
-											estadio["largo"],
-											estadio["ancho"])
+										estadio["imagen_estadio"],
+										estadio["direccion"],
+										estadio["latitud"],
+										estadio["longitud"],
+										estadio["ciudad"],
+										estadio["espectadores"],
+										estadio["fecha"],
+										estadio["largo"],
+										estadio["ancho"])
 
 	# Metodo para obtener el equipo de un estadio
 	def obtenerEquipoEstadio(self, estadio_id:str)->List[Optional[tuple]]:
@@ -441,3 +441,36 @@ class Conexion:
 		return list(map(lambda equipo: (equipo["equipo_id"],
 										equipo["nombre"],
 										equipo["escudo_equipo"]), equipos))
+
+	# Metodo para saber si existe la competicion
+	def existe_competicion(self, competicion_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM competiciones
+							WHERE Competicion_Id=%s""",
+							(competicion_id,))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener los datos de una competicion
+	def obtenerDatosCompeticion(self, competicion_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT competicion_id, nombre,
+								CASE WHEN codigo_logo IS NULL
+										THEN '-1'
+										ELSE codigo_logo
+								END as logo,
+								CASE WHEN codigo_pais IS NULL
+										THEN '-1'
+										ELSE codigo_pais
+								END as pais
+						FROM competiciones
+						WHERE competicion_id=%s""",
+						(competicion_id,))
+
+		competicion=self.c.fetchone()
+
+		return None if not competicion else (competicion["competicion_id"],
+											competicion["nombre"],
+											competicion["logo"],
+											competicion["pais"],)
