@@ -637,17 +637,16 @@ footer {
 }
 
 .tarjeta-competicion .logo-competicion {
-    margin-top: 10px;
-    width: 160px;
-    height: 160px;
-    margin-bottom: 10px;
+    width: 70px;
+    height: 70px;
+    margin: 5px;
 }
 
 .tarjeta-competicion .titulo-equipos-competicion {
     font-size: 25px;
     margin: 5px;
-    margin-bottom: 10px;
-    color: var(--color-secundario)
+    color: var(--color-secundario);
+    margin-top: 20px;
 }
 
 .tarjetas-equipos-competicion {
@@ -708,7 +707,7 @@ footer {
 .tarjeta-competicion .titulo-campeones-competicion {
     font-size: 25px;
     margin: 5px;
-    margin-bottom: 10px;
+    margin-top: 20px;
     color: var(--color-secundario)
 }
 
@@ -767,18 +766,76 @@ footer {
     color: var(--color-secundario) 
 }
 
-.tarjeta-competicion .button-volver-competicion {
-    background-color: var(--color-secundario);
-    color: var(--color-primario);
-    font-size: 20px;
-    padding: 10px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.tarjeta-competicion .titulo-partidos-competicion {
+    font-size: 25px;
+    margin: 5px;
+    margin-top: 20px;
+    color: var(--color-secundario)
 }
 
-.tarjeta-competicion .button-volver-competicion:hover {
-    transform: scale(1.05);
+.tarjetas-partidos-competicion {
+    max-width: calc(61vw - 100px);
+    box-sizing: border-box;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-partidos-competicion::-webkit-scrollbar {
+    display: flex;
+    height: 10px;
+}
+
+.tarjetas-partidos-competicion::-webkit-scrollbar-thumb {
+    background-color: var(--color-secundario);
+    border-radius: 5px;
+}
+
+.tarjetas-partidos-competicion-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.tarjeta-partido-competicion {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-partido-competicion p {
+    font-size: 15px;
+    margin: 0px;
+    color: var(--color-secundario) 
+}
+
+.info-partido-competicion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-partido-competicion img {
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    width: 60px;
+    height: 60px;
+}
+
+.info-partido-competicion h4 {
+    font-size: 20px;
+    color: #fff;
+    margin: 0px;
+    color: var(--color-secundario) 
+}

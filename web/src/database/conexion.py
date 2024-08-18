@@ -502,7 +502,8 @@ class Conexion:
 						LEFT JOIN equipos e
 						ON cc.equipo_id=e.equipo_id
 						WHERE competicion_id=%s
-						ORDER BY cc.temporada DESC""",
+						ORDER BY cc.temporada DESC
+						LIMIT 4""",
 						(competicion_id,))
 
 		campeones=self.c.fetchall()
@@ -512,3 +513,42 @@ class Conexion:
 										campeon["equipo_id"],
 										campeon["nombre"],
 										campeon["escudo_equipo"]), campeones))
+
+	# Metodo para obtener los partidos de una competicion
+	def obtenerPartidosCompeticion(self, competicion_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT pc.competicion_id, pc.partido_id, p.marcador, p.fecha,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante
+						FROM partido_competicion pc
+						LEFT JOIN partidos p
+						ON pc.partido_id=p.partido_id
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						WHERE pc.competicion_id=%s
+						ORDER BY p.fecha DESC
+						LIMIT 2""",
+						(competicion_id,))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["competicion_id"],
+										partido["partido_id"],
+										partido["marcador"],
+										partido["fecha"].strftime("%d/%m/%Y"),
+										partido["cod_local"],
+										partido["local"],
+										partido["escudo_local"],
+										partido["cod_visitante"],
+										partido["visitante"],
+										partido["escudo_visitante"]), partidos))

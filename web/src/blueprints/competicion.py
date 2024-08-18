@@ -28,6 +28,8 @@ def pagina_competicion(competicion_id:str):
 
 	equipos_campeones=con.obtenerCampeonesCompeticion(competicion_id)
 
+	partidos_competicion=con.obtenerPartidosCompeticion(competicion_id)
+
 	con.cerrarConexion()
 
 	return render_template("competicion.html",
@@ -36,6 +38,7 @@ def pagina_competicion(competicion_id:str):
 							datos_competicion=datos_competicion,
 							equipos_competicion=equipos_competicion,
 							equipos_campeones=equipos_campeones,
+							partidos_competicion=partidos_competicion,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

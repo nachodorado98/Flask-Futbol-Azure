@@ -7,6 +7,13 @@
 <div class="tarjeta-competicion">
 
     <p class="nombre">
+
+        {% if datos_competicion[2]=='-1' %}
+            <img class="logo-competicion" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+        {% else %}
+            <img class="logo-competicion" src="{{ url_imagen_competicion }}{{ datos_competicion[2] }}.png" alt="Competicion Icon">
+        {% endif %}
+
         <strong>{{ datos_competicion[1] }}</strong>
 
         {% if datos_competicion[3]=='-1' %}
@@ -16,12 +23,6 @@
         {% endif %}
 
     </p>
-
-    {% if datos_competicion[2]=='-1' %}
-        <img class="logo-competicion" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
-    {% else %}
-        <img class="logo-competicion" src="{{ url_imagen_competicion }}{{ datos_competicion[2] }}.png" alt="Competicion Icon">
-    {% endif %}
 
     {% if equipos_competicion %}
 
@@ -53,7 +54,7 @@
 
     {% if equipos_campeones %}
 
-        <p class="titulo-campeones-competicion"><strong>Campeones de {{ datos_competicion[1] }}</strong></p>
+        <p class="titulo-campeones-competicion"><strong>Ultimos campeones de {{ datos_competicion[1] }}</strong></p>
 
         <div class="tarjetas-campeones-competicion">
             <div class="tarjetas-campeones-competicion-wrapper">
@@ -80,7 +81,42 @@
 
     {% endif %}
 
-    <button class="button-volver-competicion" onclick="pagina_anterior()">Volver</button>
+    {% if partidos_competicion %}
+
+        <p class="titulo-partidos-competicion"><strong>Ultimos partidos de {{ datos_competicion[1] }}</strong></p>
+
+        <div class="tarjetas-partidos-competicion">
+            <div class="tarjetas-partidos-competicion-wrapper">
+
+            {% for partido in partidos_competicion %}
+
+                <div class="tarjeta-partido-competicion" onclick="window.location.href='/partido/{{ partido[1] }}'">
+                    <p><strong>{{ partido[3] }}</strong></p>
+                    <div class="info-partido-competicion">
+
+                        {% if partido[6]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        {% else %}
+                            <img src="{{ url_imagen_escudo }}{{ partido[6] }}.png" alt="Local Icon">
+                        {% endif %}
+
+                        <h4>{{ partido[5] }} {{ partido[2] }} {{ partido[8] }}</h4>
+
+                        {% if partido[9]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                        {% else %}
+                            <img src="{{ url_imagen_escudo }}{{ partido[9] }}.png" alt="Visitante Icon">
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+             </div>
+        </div>
+
+    {% endif %}
 
 </div>
 
