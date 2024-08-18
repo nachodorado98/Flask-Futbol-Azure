@@ -47,11 +47,11 @@ class Conexion:
 
 	# Metodo para insertar un usuario
 	def insertarUsuario(self, usuario:str, correo:str, contrasena:str, nombre:str,
-						apellido:str, fecha_nacimiento:str, equipo:str)->None:
+						apellido:str, fecha_nacimiento:str, equipo_id:str)->None:
 
 		self.c.execute("""INSERT INTO usuarios
 							VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-							(usuario, correo, contrasena, nombre, apellido, fecha_nacimiento, equipo))
+							(usuario, correo, contrasena, nombre, apellido, fecha_nacimiento, equipo_id))
 
 		self.confirmar()
 
@@ -66,12 +66,12 @@ class Conexion:
 		return False if not self.c.fetchone() else True
 
 	# Metodo para comprobar si ya existe un equipo
-	def existe_equipo(self, equipo:str)->bool:
+	def existe_equipo(self, equipo_id:str)->bool:
 
 		self.c.execute("""SELECT *
 						FROM equipos
 						WHERE equipo_id=%s""",
-						(equipo,))
+						(equipo_id,))
 
 		return False if not self.c.fetchone() else True
 
@@ -112,19 +112,19 @@ class Conexion:
 		return None if not equipo else equipo["equipo_id"]
 
 	# Metodo para obtener el nombre del equipo
-	def obtenerNombreEquipo(self, equipo:str)->Optional[str]:
+	def obtenerNombreEquipo(self, equipo_id:str)->Optional[str]:
 
 		self.c.execute("""SELECT nombre_completo
 						FROM equipos
 						WHERE equipo_id=%s""",
-						(equipo,))
+						(equipo_id,))
 
 		nombre_equipo=self.c.fetchone()
 
 		return None if not nombre_equipo else nombre_equipo["nombre_completo"]
 
 	# Metodo para obtener los partidos de un equipo
-	def obtenerPartidosEquipo(self, equipo:str)->List[tuple]:
+	def obtenerPartidosEquipo(self, equipo_id:str)->List[tuple]:
 
 		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
 								p.equipo_id_local as cod_local, e1.nombre as local,
@@ -146,7 +146,7 @@ class Conexion:
 						WHERE p.equipo_id_local=%s
 						OR p.equipo_id_visitante=%s
 						ORDER BY fecha DESC""",
-						(equipo, equipo))
+						(equipo_id, equipo_id))
 
 		partidos=self.c.fetchall()
 
@@ -162,28 +162,28 @@ class Conexion:
 											partido["competicion"]), partidos))
 
 	# Metodo para obtener los partidos de un equipo de local
-	def obtenerPartidosEquipoLocal(self, equipo:str)->List[tuple]:
+	def obtenerPartidosEquipoLocal(self, equipo_id:str)->List[tuple]:
 
-		partidos=self.obtenerPartidosEquipo(equipo)
+		partidos=self.obtenerPartidosEquipo(equipo_id)
 
-		return list(filter(lambda partido: partido[3]==equipo, partidos))
+		return list(filter(lambda partido: partido[3]==equipo_id, partidos))
 
 	# Metodo para obtener los partidos de un equipo de visitante
-	def obtenerPartidosEquipoVisitante(self, equipo:str)->List[tuple]:
+	def obtenerPartidosEquipoVisitante(self, equipo_id:str)->List[tuple]:
 
-		partidos=self.obtenerPartidosEquipo(equipo)
+		partidos=self.obtenerPartidosEquipo(equipo_id)
 
-		return list(filter(lambda partido: partido[6]==equipo, partidos))
+		return list(filter(lambda partido: partido[6]==equipo_id, partidos))
 
 	# Metodo para obtener las temporadas de los partidos
-	def obtenerTemporadasEquipo(self, equipo:str)->List[tuple]:
+	def obtenerTemporadasEquipo(self, equipo_id:str)->List[tuple]:
 
 		self.c.execute("""SELECT DISTINCT CAST(LEFT(partido_id, 4) AS INTEGER) AS temporada
 						FROM partidos
 						WHERE equipo_id_local=%s
 						OR equipo_id_visitante=%s
 						ORDER BY temporada DESC""",
-						(equipo, equipo))
+						(equipo_id, equipo_id))
 
 		temporadas=self.c.fetchall()
 
@@ -263,11 +263,11 @@ class Conexion:
 											partido["competicion_existe"])
 
 	# Metodo para saber si un equipo esta en un partido
-	def equipo_partido(self, equipo:str, partido_id:str)->bool:
+	def equipo_partido(self, equipo_id:str, partido_id:str)->bool:
 
 		partido=self.obtenerPartido(partido_id)
 
-		return partido is not None and (partido[4]==equipo or partido[7]==equipo)
+		return partido is not None and (partido[4]==equipo_id or partido[7]==equipo_id)
 
 	# Metodo para obtener los datos de un equipo
 	def obtenerDatosEquipo(self, equipo_id:str)->Optional[tuple]:
@@ -387,12 +387,12 @@ class Conexion:
 		return None if not partido else partido["partido_id"]
 
 	# Metodo para comprobar si existe un estadio
-	def existe_estadio(self, estadio:str)->bool:
+	def existe_estadio(self, estadio_id:str)->bool:
 
 		self.c.execute("""SELECT *
 						FROM estadios
 						WHERE estadio_id=%s""",
-						(estadio,))
+						(estadio_id,))
 
 		return False if not self.c.fetchone() else True
 
@@ -476,16 +476,39 @@ class Conexion:
 											competicion["pais"])
 
 	# Metodo para obtener los equipos de una competicion
-	def obtenerEquiposCompeticion(self, competicion:str)->List[Optional[tuple]]:
+	def obtenerEquiposCompeticion(self, competicion_id:str)->List[Optional[tuple]]:
 
 		self.c.execute("""SELECT equipo_id, nombre, escudo
 						FROM equipos
 						WHERE codigo_competicion=%s
 						ORDER BY equipo_id""",
-						(competicion,))
+						(competicion_id,))
 
 		equipos=self.c.fetchall()
 
 		return list(map(lambda equipo: (equipo["equipo_id"],
 										equipo["nombre"],
 										equipo["escudo"]), equipos))
+
+	# Metodo para obtener los campeones de una competicion
+	def obtenerCampeonesCompeticion(self, competicion_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT cc.competicion_id, cc.temporada, e.equipo_id, e.nombre,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo_equipo
+						FROM competiciones_campeones cc
+						LEFT JOIN equipos e
+						ON cc.equipo_id=e.equipo_id
+						WHERE competicion_id=%s
+						ORDER BY cc.temporada DESC""",
+						(competicion_id,))
+
+		campeones=self.c.fetchall()
+
+		return list(map(lambda campeon: (campeon["competicion_id"],
+										campeon["temporada"],
+										campeon["equipo_id"],
+										campeon["nombre"],
+										campeon["escudo_equipo"]), campeones))

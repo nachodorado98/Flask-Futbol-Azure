@@ -637,16 +637,16 @@ footer {
 }
 
 .tarjeta-competicion .logo-competicion {
-    margin-top: 15px;
-    width: 180px;
-    height: 180px;
-    margin-bottom: 15px;
+    margin-top: 10px;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 10px;
 }
 
-.tarjeta-competicion .titulo-equipos-liga {
-    font-size: 30px;
+.tarjeta-competicion .titulo-equipos-competicion {
+    font-size: 25px;
     margin: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     color: var(--color-secundario)
 }
 
@@ -660,7 +660,7 @@ footer {
 
 .tarjetas-equipos-competicion::-webkit-scrollbar {
     display: flex;
-    width: max-content;
+    height: 10px;
 }
 
 .tarjetas-equipos-competicion::-webkit-scrollbar-thumb {
@@ -677,7 +677,7 @@ footer {
 
 .tarjeta-equipo-competicion {
     width: 100%;
-    min-width: 220px;
+    min-width: 180px;
     margin: 5px auto;
     padding: 10px;
     border: 1px solid #bdc3c7;
@@ -690,22 +690,78 @@ footer {
     display: inline-block;
 }
 
-.tarjeta-equipo-competicion p {
-    font-size: 18px;
+.tarjeta-equipo-competicion img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 50px;
+    height: 50px;
+}
+
+.tarjeta-equipo-competicion h4 {
+    font-size: 20px;
+    color: #fff;
     margin: 0px;
     color: var(--color-secundario) 
 }
 
-.tarjeta-equipo-competicion img {
-    margin-right: 15px;
-    margin-left: 15px;
+.tarjeta-competicion .titulo-campeones-competicion {
+    font-size: 25px;
+    margin: 5px;
     margin-bottom: 10px;
-    width: 70px;
-    height: 70px;
+    color: var(--color-secundario)
 }
 
-.tarjeta-equipo-competicion h4 {
-    font-size: 26px;
+.tarjetas-campeones-competicion {
+    max-width: calc(61vw - 100px);
+    box-sizing: border-box;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0px;
+}
+
+.tarjetas-campeones-competicion::-webkit-scrollbar {
+    display: flex;
+    height: 10px;
+}
+
+.tarjetas-campeones-competicion::-webkit-scrollbar-thumb {
+    background-color: var(--color-secundario);
+    border-radius: 5px;
+}
+
+.tarjetas-campeones-competicion-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.tarjeta-campeon-competicion {
+    width: 100%;
+    min-width: 180px;
+    margin: 5px auto;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    display: inline-block;
+}
+
+.tarjeta-campeon-competicion img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 50px;
+    height: 50px;
+}
+
+.tarjeta-campeon-competicion h4 {
+    font-size: 20px;
     color: #fff;
     margin: 0px;
     color: var(--color-secundario) 

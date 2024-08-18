@@ -57,6 +57,9 @@ def conexion_entorno(conexion):
 	conexion.c.execute("""INSERT INTO partido_competicion
 						VALUES('20190622', 'primera')""")
 
+	conexion.c.execute("""INSERT INTO competiciones_campeones
+						VALUES('primera', 2025, 'atletico-madrid'), ('primera', 2024, 'atletico-madrid')""")
+
 	conexion.confirmar()
 
 	return conexion
