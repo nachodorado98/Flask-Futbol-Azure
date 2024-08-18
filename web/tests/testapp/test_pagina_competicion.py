@@ -25,3 +25,53 @@ def test_pagina_competicion_competicion_no_existe(cliente, conexion_entorno):
 		respuesta.status_code==302
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
+
+def test_pagina_competicion_competicion(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/competicion/primera")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-competicion">' in contenido
+		assert '<p class="nombre">' in contenido
+		assert '<img class="pais-competicion"' in contenido
+		assert '<img class="logo-competicion"' in contenido
+		assert '<p class="titulo-equipos-liga">' in contenido
+		assert '<div class="tarjetas-equipos-competicion">' in contenido
+
+def test_pagina_competicion_competicion_sin_equipos(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""UPDATE equipos SET codigo_competicion='segunda'""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/competicion/primera")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-competicion">' in contenido
+		assert '<p class="nombre">' in contenido
+		assert '<img class="pais-competicion"' in contenido
+		assert '<img class="logo-competicion"' in contenido
+		assert '<p class="titulo-equipos-liga">' not in contenido
+		assert '<div class="tarjetas-equipos-competicion">' not in contenido

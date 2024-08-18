@@ -473,4 +473,19 @@ class Conexion:
 		return None if not competicion else (competicion["competicion_id"],
 											competicion["nombre"],
 											competicion["logo"],
-											competicion["pais"],)
+											competicion["pais"])
+
+	# Metodo para obtener los equipos de una competicion
+	def obtenerEquiposCompeticion(self, competicion:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT equipo_id, nombre, escudo
+						FROM equipos
+						WHERE codigo_competicion=%s
+						ORDER BY equipo_id""",
+						(competicion,))
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo_id"],
+										equipo["nombre"],
+										equipo["escudo"]), equipos))

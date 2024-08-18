@@ -6,7 +6,50 @@
 
 <div class="tarjeta-competicion">
 
-    {{ datos_competicion }}
+    <p class="nombre">
+        <strong>{{ datos_competicion[1] }}</strong>
+
+        {% if datos_competicion[3]=='-1' %}
+            <img class="pais-competicion" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="pais-competicion" src="{{ url_imagen_pais }}{{ datos_competicion[3] }}.png" alt="Pais Icon">
+        {% endif %}
+
+    </p>
+
+    {% if datos_competicion[2]=='-1' %}
+        <img class="logo-competicion" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+    {% else %}
+        <img class="logo-competicion" src="{{ url_imagen_competicion }}{{ datos_competicion[2] }}.png" alt="Competicion Icon">
+    {% endif %}
+
+    {% if equipos_competicion %}
+
+        <p class="titulo-equipos-liga"><strong>Equipos de {{ datos_competicion[1] }}</strong></p>
+
+        <div class="tarjetas-equipos-competicion">
+            <div class="tarjetas-equipos-competicion-wrapper">
+
+            {% for equipo in equipos_competicion %}
+
+                <div class="tarjeta-equipo-competicion" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+
+                    {% if equipo[2]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ equipo[2] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4><strong>{{ equipo[1] }}</strong></h4>
+
+                </div>
+
+            {% endfor %}
+
+             </div>
+        </div>
+
+    {% endif %}
 
     <button class="button-volver-competicion" onclick="pagina_anterior()">Volver</button>
 

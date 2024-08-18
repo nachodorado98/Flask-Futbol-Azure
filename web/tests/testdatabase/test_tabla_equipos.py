@@ -45,3 +45,44 @@ def test_obtener_equipo_no_existe(conexion):
 def test_obtener_equipo(conexion_entorno):
 
 	assert conexion_entorno.obtenerDatosEquipo("atletico-madrid")
+
+def test_obtener_equipos_competicion_no_existe(conexion):
+
+	assert not conexion.obtenerEquiposCompeticion("primera")
+
+def test_obtener_equipos_competicion(conexion_entorno):
+
+	assert conexion_entorno.obtenerEquiposCompeticion("primera")
+
+@pytest.mark.parametrize(["numero_competicion", "numero_no_competicion"],
+	[(10, 5), (0, 2), (4, 8), (7, 3)]
+)
+def test_obtener_equipos_competicion_multiples_equipos(conexion_entorno, numero_competicion, numero_no_competicion):
+
+	conexion_entorno.c.execute("""DELETE FROM equipos""")
+
+	conexion_entorno.confirmar()
+
+	for numero in range(numero_competicion):
+
+		conexion_entorno.c.execute(f"""INSERT INTO equipos (Equipo_Id, Codigo_Competicion)
+										VALUES('equipo-si-{numero}', 'primera')""")
+
+		conexion_entorno.confirmar()
+
+	for numero in range(numero_no_competicion):
+
+		conexion_entorno.c.execute(f"""INSERT INTO equipos (Equipo_Id, Codigo_Competicion)
+										VALUES('equipo-no-{numero}', 'segunda')""")
+
+		conexion_entorno.confirmar()
+
+	equipos_competicion=conexion_entorno.obtenerEquiposCompeticion("primera")
+
+	assert len(equipos_competicion)==numero_competicion
+
+	conexion_entorno.c.execute("SELECT * FROM equipos")
+
+	equipo_totales=conexion_entorno.c.fetchall()
+
+	assert len(equipo_totales)==numero_competicion+numero_no_competicion

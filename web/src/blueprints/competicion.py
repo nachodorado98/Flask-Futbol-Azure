@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES
+from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_ESCUDOS
 
 bp_competicion=Blueprint("competicion", __name__)
 
@@ -24,11 +24,15 @@ def pagina_competicion(competicion_id:str):
 
 	datos_competicion=con.obtenerDatosCompeticion(competicion_id)
 
+	equipos_competicion=con.obtenerEquiposCompeticion(competicion_id)
+
 	con.cerrarConexion()
 
 	return render_template("competicion.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							datos_competicion=datos_competicion,
+							equipos_competicion=equipos_competicion,
 							url_imagen_pais=URL_DATALAKE_PAISES,
-							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
