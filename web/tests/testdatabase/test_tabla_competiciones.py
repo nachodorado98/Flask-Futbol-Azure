@@ -19,3 +19,11 @@ def test_obtener_competicion_no_existe(conexion):
 def test_obtener_competicion(conexion_entorno):
 
 	assert conexion_entorno.obtenerDatosCompeticion("primera")
+
+def test_obtener_competiciones_no_existen(conexion):
+
+	assert not conexion.obtenerDatosCompeticiones()
+
+def test_obtener_competiciones(conexion_entorno):
+
+	assert conexion_entorno.obtenerDatosCompeticiones()

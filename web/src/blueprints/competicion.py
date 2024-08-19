@@ -42,3 +42,22 @@ def pagina_competicion(competicion_id:str):
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+@bp_competicion.route("/competiciones")
+@login_required
+def pagina_competiciones():
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	datos_competiciones=con.obtenerDatosCompeticiones()
+
+	con.cerrarConexion()
+
+	return render_template("competiciones.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							datos_competiciones=datos_competiciones,
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)

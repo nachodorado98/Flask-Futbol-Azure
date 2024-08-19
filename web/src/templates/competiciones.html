@@ -1,0 +1,48 @@
+{% extends "partidos.html" %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-competiciones-totales">
+
+    <p class="titulo-pagina-competiciones"><strong>Competiciones</strong></p>
+
+    {% if datos_competiciones %}
+
+        <div class="tarjetas-competiciones-totales">
+            <div class="tarjetas-competiciones-totales-wrapper">
+
+            {% for competicion in datos_competiciones %}
+
+                <div class="tarjeta-competicion-total" onclick="window.location.href='/competicion/{{ competicion[0] }}'">
+
+                    <div class="info-competicion-total">
+
+                        {% if competicion[2]=='-1' %}
+                            <img class="competicion-competicion-total" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+                        {% else %}
+                            <img class="competicion-competicion-total" src="{{ url_imagen_competicion }}{{ competicion[2] }}.png" alt="Competicion Icon">
+                        {% endif %}
+
+                        <h4>{{ competicion[1] }}</h4>
+
+                        {% if competicion[3]=='-1' %}
+                            <img class="pais-competicion-total" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                        {% else %}
+                            <img class="pais-competicion-total" src="{{ url_imagen_pais }}{{ competicion[3] }}.png" alt="Pais Icon">
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+             </div>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock principal %}

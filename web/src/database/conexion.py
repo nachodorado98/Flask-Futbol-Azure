@@ -578,3 +578,25 @@ class Conexion:
 										equipo["escudo"],
 										equipo["equipo_pais"],
 										equipo["codigo_logo"]), equipos))
+
+	# Metodo para obtener los datos de las competiciones
+	def obtenerDatosCompeticiones(self)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT competicion_id, nombre,
+								CASE WHEN codigo_logo IS NULL
+										THEN '-1'
+										ELSE codigo_logo
+								END as logo,
+								CASE WHEN codigo_pais IS NULL
+										THEN '-1'
+										ELSE codigo_pais
+								END as pais
+						FROM competiciones
+						ORDER BY competicion_id""")
+
+		competiciones=self.c.fetchall()
+
+		return list(map(lambda competicion: (competicion["competicion_id"],
+											competicion["nombre"],
+											competicion["logo"],
+											competicion["pais"]), competiciones))
