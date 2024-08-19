@@ -86,3 +86,11 @@ def test_obtener_equipos_competicion_multiples_equipos(conexion_entorno, numero_
 	equipo_totales=conexion_entorno.c.fetchall()
 
 	assert len(equipo_totales)==numero_competicion+numero_no_competicion
+
+def test_obtener_equipos_no_existe(conexion):
+
+	assert not conexion.obtenerDatosEquipos()
+
+def test_obtener_equipos(conexion_entorno):
+
+	assert conexion_entorno.obtenerDatosEquipos()

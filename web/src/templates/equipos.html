@@ -1,0 +1,51 @@
+{% extends "partidos.html" %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-equipos-totales">
+
+    <p class="titulo-pagina-equipos"><strong>Equipos</strong></p>
+
+    <div class="tarjetas-equipos-totales">
+        <div class="tarjetas-equipos-totales-wrapper">
+
+        {% for equipo in datos_equipos %}
+
+            <div class="tarjeta-equipo-total" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+
+                <div class="info-equipo-total">
+
+                    {% if equipo[2]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ equipo[2] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4>{{ equipo[1] }}</h4>
+
+                    {% if equipo[4]=='-1' %}
+                        <img class="competicion-equipo-total" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+                    {% else %}
+                        <img class="competicion-equipo-total" src="{{ url_imagen_competicion }}{{ equipo[4] }}.png" alt="Competicion Icon">
+                    {% endif %}
+
+                    {% if equipo[3]=='-1' %}
+                        <img class="pais-equipo-total" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                    {% else %}
+                        <img class="pais-equipo-total" src="{{ url_imagen_pais }}{{ equipo[3] }}.png" alt="Pais Icon">
+                    {% endif %}
+
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+         </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
