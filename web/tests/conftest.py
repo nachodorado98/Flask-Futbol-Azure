@@ -70,7 +70,7 @@ def pytest_sessionfinish(session, exitstatus):
 
 	con.vaciarBBDD()
 
-	con.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES ('atletico-madrid'), ('rayo-vallecano'), ('barcelona')""")
+	con.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES ('atletico-madrid')""")
 
 	con.confirmar()
 

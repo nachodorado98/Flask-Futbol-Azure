@@ -12,62 +12,72 @@
 </head>
 <body class="body-equipo-{{ equipo }}">
 
+
+    <nav class="navbar-principal">
+        <div class="navbar-principal-izq">
+            <img class="navbar-escudo" src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" onclick="window.location.href='/equipo/{{ equipo }}'" style="cursor: pointer;">
+            <ul class="navbar-principal-menu">
+                <li><a href="/partidos">Partidos</a></li>
+                <li><a href="/equipos">Equipos</a></li>
+                <li><a href="/competiciones">Competiciones</a></li>
+            </ul>
+        </div>
+        <div class="navbar-principal-der">
+            <button id="toggle-navbar" class="toggle-button">
+                <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" alt="Hamburguesa Icon" height="20" class="icono-usuario">
+            </button>
+            <div class="navbar" id="navbar">
+                <ul>
+                    <li><a href="#">{{ usuario }}</a></li>
+                    <li><a href="/logout">Salir</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="contenido-principal">
 
         {% block partidos %}
         <div class="contenedor-titulo">
             <h1>Partidos del {{ nombre_equipo }}</h1>
         </div>
-        <div class="escudo" onclick="window.location.href='/equipo/{{ equipo }}'" style="cursor: pointer;">
-            <img src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" height="130"></p>
-        </div>
         {% endblock partidos %}
-
-        <button id="toggle-navbar" class="toggle-button">
-            <img src="{{ url_for('static', filename='imagenes/iconos/hamburguesa.png') }}" alt="Hamburguesa Icon" height="20">
-        </button>
-
-        <div class="navbar" id="navbar">
-            <ul>
-                <li><a href="/partidos">Partidos</a></li>
-                <li><a href="/equipos">Equipos</a></li>
-                <li><a href="/competiciones">Competiciones</a></li>
-                <li><a href="#">{{ usuario }}</a></li>
-                <li><a href="/logout">Salir</a></li>
-            </ul>
-        </div>
 
         {% block principal %}
 
-        <div class="tarjetas-partidos">
-            <div class="tarjetas-partidos-wrapper">
+        <div class="contenedor-tarjetas-partidos">
 
-            {% for partido in partidos %}
+            <div class="tarjetas-partidos">
+                <div class="tarjetas-partidos-wrapper">
 
-                <div class="tarjeta-partido" onclick="window.location.href='/partido/{{ partido[0] }}'">
-                    <p><strong>{{ partido[2] }} - {{ partido[9] }}</strong></p>
-                    <div class="info-partido">
+                {% for partido in partidos %}
 
-                        {% if partido[5]==-1 %}
-                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
-                        {% else %}
-                            <img src="{{ url_imagen_escudo }}{{ partido[5] }}.png" alt="Local Icon">
-                        {% endif %}
+                    <div class="tarjeta-partido" onclick="window.location.href='/partido/{{ partido[0] }}'">
+                        <p><strong>{{ partido[2] }} - {{ partido[9] }}</strong></p>
+                        <div class="info-partido">
 
-                        <h4>{{ partido[4] }} {{ partido[1] }} {{ partido[7] }}</h4>
+                            {% if partido[5]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img src="{{ url_imagen_escudo }}{{ partido[5] }}.png" alt="Local Icon">
+                            {% endif %}
 
-                        {% if partido[8]==-1 %}
-                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
-                        {% else %}
-                            <img src="{{ url_imagen_escudo }}{{ partido[8] }}.png" alt="Visitante Icon">
-                        {% endif %}
+                            <h4>{{ partido[4] }} {{ partido[1] }} {{ partido[7] }}</h4>
 
+                            {% if partido[8]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                            {% else %}
+                                <img src="{{ url_imagen_escudo }}{{ partido[8] }}.png" alt="Visitante Icon">
+                            {% endif %}
+
+                        </div>
                     </div>
-                </div>
 
-            {% endfor %}
+                {% endfor %}
 
-             </div>
+                 </div>
+            </div>
+
         </div>
 
         <div class="contenedor-tipo-partidos">
@@ -92,6 +102,7 @@
                 </select>
             </div>
         </div>
+
 
         {% endblock principal %}
 

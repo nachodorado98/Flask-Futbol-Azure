@@ -17,7 +17,7 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno):
 
 	assert respuesta.status_code==200
 	assert "Partidos del " in contenido
-	assert f'<img src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
+	assert f'<img class="navbar-escudo" src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
 	assert "No hay ningun partido disponible del " in contenido
 	assert '<div class="tarjetas-partidos">' not in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' not in contenido
@@ -37,7 +37,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 
 	assert respuesta.status_code==200
 	assert "Partidos del " in contenido
-	assert f'<img src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
+	assert f'<img class="navbar-escudo" src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
 	assert "No hay ningun partido disponible del " not in contenido
 	assert '<div class="tarjetas-partidos">' in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' in contenido
