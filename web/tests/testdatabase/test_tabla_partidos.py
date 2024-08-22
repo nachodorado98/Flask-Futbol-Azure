@@ -24,6 +24,83 @@ def test_obtener_partidos_equipo(conexion_entorno):
 
 	assert len(partidos)==1
 
+def test_obtener_partidos_equipo_ganado(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('1', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Visitante')""")
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	assert partidos[0][-1]==1
+
+@pytest.mark.parametrize(["resultados", "ganados"],
+	[
+		(["Victoria Visitante", "Victoria Penaltis Visitante", "Victoria Visitante", "Victoria Local"], 1),
+		(["Visitante", "Victoria Penaltis Local", "Victoria Visitante", "Local"], 2),
+		(["Victoria Local", "Victoria Penaltis Local", "Local", "Local Victoria"], 4),
+		(["Victoria", "Victoria Visitante Panaltis", "Victoria Visitante", "Empate"], 0)
+	]
+)
+def test_obtener_partidos_equipo_ganados_local(conexion_entorno, resultados, ganados):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	for numero, resultado in enumerate(resultados):
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', %s)""",
+									(numero+1, resultado))
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	partidos_ganados=list(filter(lambda partido: partido[-1]==1, partidos))
+
+	partidos_no_ganados=list(filter(lambda partido: partido[-1]==0, partidos))
+
+	assert len(partidos_ganados)==ganados
+	assert len(partidos)==len(partidos_ganados)+len(partidos_no_ganados)
+
+@pytest.mark.parametrize(["resultados", "ganados"],
+	[
+		(["Victoria Visitante", "Victoria Penaltis Visitante", "Victoria Visitante", "Victoria Local"], 3),
+		(["Visitante", "Victoria Penaltis Local", "Victoria Visitante", "Victoria Local"], 2),
+		(["Victoria Visitante", "Victoria Penaltis Visitante", "Victoria Visitante", "Visitante Victoria"], 4),
+		(["Victoria", "Victoria Local Panaltis", "Victoria Local", "Empate"], 0)
+	]
+)
+def test_obtener_partidos_equipo_ganados_visitante(conexion_entorno, resultados, ganados):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	for numero, resultado in enumerate(resultados):
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', %s)""",
+									(numero+1, resultado))
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	partidos_ganados=list(filter(lambda partido: partido[-1]==1, partidos))
+
+	partidos_no_ganados=list(filter(lambda partido: partido[-1]==0, partidos))
+
+	assert len(partidos_ganados)==ganados
+	assert len(partidos)==len(partidos_ganados)+len(partidos_no_ganados)
+
 def test_obtener_partidos_equipo_local(conexion_entorno):
 
 	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
@@ -157,6 +234,242 @@ def test_obtener_partidos_visitante_equipo_varios(conexion):
 	partidos_visitante=conexion.obtenerPartidosEquipoVisitante("atletico-madrid")
 
 	assert len(partidos_visitante)==2
+
+def test_obtener_partidos_casa_no_existe_equipo(conexion):
+
+	assert not conexion.obtenerPartidosCasa("atletico-madrid")
+
+def test_obtener_partidos_casa_no_existe_partido(conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partidos""")
+
+	conexion_entorno.confirmar()
+
+	assert not conexion_entorno.obtenerPartidosCasa("atletico-madrid")
+
+def test_obtener_partidos_casa_no_existe_estadio(conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM estadios""")
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosCasa("atletico-madrid")
+
+	assert not partidos[0][10]
+
+def test_obtener_partidos_casa_existe_estadio(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'metropolitano')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosCasa("atletico-madrid")
+
+	assert partidos[0][10]
+
+def test_obtener_partidos_casa_local_fuera_de_casa(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'estadio_rival')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosCasa("atletico-madrid")
+
+	assert len(partidos)==0
+
+def test_obtener_partidos_casa_visitante_en_casa(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'metropolitano')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosCasa("atletico-madrid")
+
+	assert len(partidos)==1
+
+def test_obtener_partidos_casa_varios(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('2', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('3', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('4', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('5', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'metropolitano'),
+									('2','estadio_rival'),
+									('3', 'metropolitano'),
+									('4','estadio_rival'),
+									('5', 'metropolitano')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosCasa("atletico-madrid")
+
+	assert len(partidos)==3
+
+def test_obtener_partidos_fuera_no_existe_equipo(conexion):
+
+	assert not conexion.obtenerPartidosFuera("atletico-madrid")
+
+def test_obtener_partidos_fuera_no_existe_partido(conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partidos""")
+
+	conexion_entorno.confirmar()
+
+	assert not conexion_entorno.obtenerPartidosFuera("atletico-madrid")
+
+def test_obtener_partidos_fuera_no_existe_estadio(conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM estadios""")
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosFuera("atletico-madrid")
+
+	assert not partidos[0][10]
+
+def test_obtener_partidos_fuera_existe_estadio(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'estadio_rival')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosFuera("atletico-madrid")
+
+	assert partidos[0][10]
+
+def test_obtener_partidos_fuera_local_fuera_de_casa(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'estadio_rival')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosFuera("atletico-madrid")
+
+	assert len(partidos)==1
+
+def test_obtener_partidos_fuera_visitante_en_casa(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'metropolitano')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosFuera("atletico-madrid")
+
+	assert len(partidos)==0
+
+def test_obtener_partidos_fuera_varios(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id)
+						VALUES('metropolitano'),('estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid', 'metropolitano'),('rival', 'estadio_rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('2', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('3', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('4', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria'),
+								('5', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio
+							VALUES('1', 'metropolitano'),
+									('2','estadio_rival'),
+									('3', 'metropolitano'),
+									('4','estadio_rival'),
+									('5','estadio_rival')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosFuera("atletico-madrid")
+
+	assert len(partidos)==3
 
 def test_obtener_temporadas_equipo_no_existe_equipo(conexion):
 

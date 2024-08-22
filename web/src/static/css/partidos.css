@@ -16,6 +16,70 @@ body {
     background-color: var(--color-fondo);
 }
 
+.contenedor-pagina {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.contenedor-lateral {
+    width: 290px;
+    position: fixed;
+    top: 60px;
+    bottom: 50px;
+    overflow-y: auto;
+}
+
+.contenedor-lateral-izq {
+    left: 0;
+    padding-top: 20px;
+}
+
+.circulo-partidos-totales,
+.circulo-partidos-ganados {
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 10px 70px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-partidos-totales .titulo-circulo-partidos-totales,
+.circulo-partidos-ganados .titulo-circulo-partidos-ganados,
+ {
+    margin: 2px 0;
+    margin-top: 30px;
+    padding: 0;
+    font-size: 18px;
+}
+
+.circulo-partidos-totales .valor-circulo-partidos-totales,
+.circulo-partidos-ganados .valor-circulo-partidos-ganados {
+    margin: 4px 0;
+    margin-top: 10px;
+    padding: 0;
+    font-size: 30px;
+}
+
+.contenedor-lateral-der {
+    right: 0;
+}
+
+.contenido-central {
+    flex-grow: 1;
+    margin: 0 100px;
+}
+
 .navbar-principal {
     display: flex;
     align-items: center;

@@ -23,11 +23,11 @@ def pagina_partidos():
 
 	if local==1:	
 
-		partidos=con.obtenerPartidosEquipoLocal(equipo)
+		partidos=con.obtenerPartidosCasa(equipo)
 
 	elif local==2:
 
-		partidos=con.obtenerPartidosEquipoVisitante(equipo)
+		partidos=con.obtenerPartidosFuera(equipo)
 
 	else:
 
@@ -49,6 +49,8 @@ def pagina_partidos():
 
 	partidos_filtrados=list(filter(lambda partido: partido[0].startswith(str(temporada_filtrada)), partidos))
 
+	partidos_ganados=len(list(filter(lambda partido: partido[-1]==1, partidos_filtrados)))
+
 	if not partidos_filtrados:
 
 		return render_template("no_partidos.html",
@@ -64,4 +66,6 @@ def pagina_partidos():
 							temporadas=temporadas,
 							temporada_filtrada=temporada_filtrada,
 							partidos=partidos_filtrados,
+							numero_partidos=len(partidos_filtrados),
+							partidos_ganados=partidos_ganados,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

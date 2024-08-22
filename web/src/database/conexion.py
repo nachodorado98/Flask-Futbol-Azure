@@ -137,16 +137,24 @@ class Conexion:
 										THEN -1
 										ELSE e2.escudo
 								END as escudo_visitante,
-								p.competicion
+								p.competicion,
+								pe.estadio_id as estadio_partido,
+								CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_ganado
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
 						LEFT JOIN equipos e2
 						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
 						WHERE p.equipo_id_local=%s
 						OR p.equipo_id_visitante=%s
 						ORDER BY fecha DESC""",
-						(equipo_id, equipo_id))
+						(r'%Local%', equipo_id, r'%Visitante%', equipo_id, equipo_id, equipo_id))
 
 		partidos=self.c.fetchall()
 
@@ -159,7 +167,9 @@ class Conexion:
 											partido["cod_visitante"],
 											partido["visitante"],
 											partido["escudo_visitante"],
-											partido["competicion"]), partidos))
+											partido["competicion"],
+											partido["estadio_partido"],
+											partido["partido_ganado"]), partidos))
 
 	# Metodo para obtener los partidos de un equipo de local
 	def obtenerPartidosEquipoLocal(self, equipo_id:str)->List[tuple]:
@@ -174,6 +184,60 @@ class Conexion:
 		partidos=self.obtenerPartidosEquipo(equipo_id)
 
 		return list(filter(lambda partido: partido[6]==equipo_id, partidos))
+
+	# Metodo para obtener el estadio de un equipo
+	def estadio_equipo(self, equipo_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT estadio_id
+							FROM equipo_estadio
+							WHERE equipo_id=%s""",
+							(equipo_id,))
+
+		estadio=self.c.fetchone()
+
+		return None if not estadio else estadio["estadio_id"]
+
+	# Metodo para obtener los partidos de un equipo en casa
+	def obtenerPartidosCasa(self, equipo_id:str)->List[tuple]:
+
+		estadio=self.estadio_equipo(equipo_id)
+
+		if not estadio:
+
+			return self.obtenerPartidosEquipoLocal(equipo_id)
+
+		partidos=self.obtenerPartidosEquipo(equipo_id)
+
+		def filtrarPartidoCasa(partido:List[str], estadio:str, equipo_id:str)->bool:
+
+			if partido[10]==estadio:
+
+				return True
+
+			return True if not partido[10] and partido[3]==equipo_id else False
+
+		return list(filter(lambda partido: filtrarPartidoCasa(partido, estadio, equipo_id), partidos))
+
+	# Metodo para obtener los partidos de un equipo fuera de casa
+	def obtenerPartidosFuera(self, equipo_id:str)->List[tuple]:
+
+		estadio=self.estadio_equipo(equipo_id)
+
+		if not estadio:
+
+			return self.obtenerPartidosEquipoVisitante(equipo_id)
+
+		partidos=self.obtenerPartidosEquipo(equipo_id)
+
+		def filtrarPartidoFuera(partido:List[str], estadio:str, equipo_id:str)->bool:
+
+			if partido[10]!=estadio and partido[10]:
+
+				return True
+
+			return True if not partido[10] and partido[6]==equipo_id else False
+
+		return list(filter(lambda partido: filtrarPartidoFuera(partido, estadio, equipo_id), partidos))
 
 	# Metodo para obtener las temporadas de los partidos
 	def obtenerTemporadasEquipo(self, equipo_id:str)->List[tuple]:

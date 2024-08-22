@@ -12,6 +12,7 @@ def test_conexion(conexion):
 	assert "equipos" in tablas
 	assert "partidos" in tablas
 	assert "estadios" in tablas
+	assert "equipo_estadio" in tablas
 	assert "competiciones" in tablas
 	assert "competiciones_campeones" in tablas
 	assert "partido_competicion" in tablas
@@ -30,7 +31,8 @@ def test_vaciar_bbdd(conexion_entorno):
 
 	conexion_entorno.confirmar()
 
-	tablas=["equipos", "partidos", "estadios", "competiciones", "competiciones_campeones", "partido_competicion", "usuarios"]
+	tablas=["equipos", "partidos", "estadios", "equipo_estadio", "competiciones", "competiciones_campeones",
+			"partido_competicion", "usuarios"]
 
 	for tabla in tablas:
 
