@@ -99,7 +99,7 @@ def test_scraper_partidos_obtener_partidos_equipo_error(equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971)]
 )
-def test_scraper_partidos_obtener_partidos_equipo_error(equipo_id, temporada):
+def test_scraper_partidos_obtener_partidos_equipo(equipo_id, temporada):
 
 	scraper=ScraperPartidos(equipo_id, temporada)
 
