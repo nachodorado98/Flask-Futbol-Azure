@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup as bs4
 import pandas as pd
 from typing import List, Optional, Dict
-import itertools
 
 from .excepciones_scrapers import PaginaError, JugadoresEquipoError
 

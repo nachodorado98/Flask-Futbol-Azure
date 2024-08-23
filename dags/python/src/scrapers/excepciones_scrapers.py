@@ -33,3 +33,6 @@ class PartidoCompeticionError(Exception):
 
 class JugadoresEquipoError(Exception):
     pass
+
+class JugadorError(Exception):
+    pass

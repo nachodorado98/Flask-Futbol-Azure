@@ -16,6 +16,7 @@ from src.scrapers.scraper_partido_competicion import ScraperPartidoCompeticion
 from src.scrapers.scraper_competicion import ScraperCompeticion
 from src.scrapers.scraper_competicion_campeones import ScraperCompeticionCampeones
 from src.scrapers.scraper_jugadores import ScraperJugadores
+from src.scrapers.scraper_jugador import ScraperJugador
 
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
@@ -108,6 +109,11 @@ def scraper_competicion_campeones():
 def scraper_jugadores():
 
 	return ScraperJugadores(369, 2019)
+
+@pytest.fixture
+def scraper_jugador():
+
+	return ScraperJugador("j-alvarez-772644")
 
 def pytest_sessionfinish(session, exitstatus):
 
