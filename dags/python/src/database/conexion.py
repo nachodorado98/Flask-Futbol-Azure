@@ -476,3 +476,31 @@ class Conexion:
 							(jugador_id,))
 
 		return False if self.c.fetchone() is None else True
+
+	#Metodo para insertar una temporada jugadores
+	def insertarTemporadaJugadores(self, temporada:int)->None:
+
+		self.c.execute("""INSERT INTO temporada_jugadores
+							VALUES(%s)""",
+							(temporada,))
+
+		self.confirmar()
+
+	# Metodo para obtener el ultimo ano de los jugadores
+	def ultimo_ano_jugadores(self)->Optional[int]:
+
+		self.c.execute("""SELECT temporada
+							FROM temporada_jugadores""")
+
+		temporada=self.c.fetchone()
+
+		return None if temporada is None else temporada["temporada"]
+
+	# Metodo para actualizar el valor de la temporada de la temporada de los jugadores
+	def actualizarTemporadaJugadores(self, temporada:int)->None:
+
+		self.c.execute("""UPDATE temporada_jugadores
+							SET Temporada=%s""",
+							(temporada,))
+
+		self.confirmar()

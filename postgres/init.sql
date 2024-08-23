@@ -85,6 +85,8 @@ CREATE TABLE partido_competicion (Partido_Id VARCHAR(255),
 
 CREATE TABLE jugadores (Jugador_Id VARCHAR(255) PRIMARY KEY);
 
+CREATE TABLE temporada_jugadores (Temporada INTEGER);
+
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,
 						Valor VARCHAR(255));
 

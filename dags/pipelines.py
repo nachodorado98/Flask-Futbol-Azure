@@ -244,16 +244,50 @@ def Pipeline_Campeones_Competiciones()->None:
 
 	con.cerrarConexion()
 
+def ETL_Jugadores_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQUIPO_ID)->None:
+
+	con=Conexion()
+
+	temporadas=generarTemporadas(temporada, MES_FIN_TEMPORADA)
+
+	for temporada_jugadores in temporadas:
+
+		try:
+
+			ETL_Jugadores_Equipo(equipo, temporada_jugadores)
+
+			con.actualizarTemporadaJugadores(temporada_jugadores)
+
+		except Exception as e:
+
+			mensaje=f"Jugadores Equipo: {equipo} Temporada: {temporada_jugadores} - Motivo: {e}"
+
+			print(f"Error en jugadores de equipo {equipo} en temporada {temporada_jugadores}")
+
+			crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
+
 def Pipeline_Jugadores_Equipo()->None:
 
-	try:
+	con=Conexion()
 
-		ETL_Jugadores_Equipo(EQUIPO_ID, TEMPORADA_INICIO)
+	if con.tabla_vacia("temporada_jugadores"):
 
-	except Exception as e:
+		print(f"Obtencion total de los jugadores desde {TEMPORADA_INICIO}")
 
-		mensaje=f"Jugadores Equipo: {EQUIPO_ID} Temporada: {TEMPORADA_INICIO} - Motivo: {e}"
+		con.insertarTemporadaJugadores(TEMPORADA_INICIO)
 
-		print(f"Error en jugadores de equipo {EQUIPO_ID} en temporada {TEMPORADA_INICIO}")
+		con.cerrarConexion()
 
-		crearArchivoLog(mensaje)
+		ETL_Jugadores_Temporadas_Equipo()
+
+	else:
+
+		ano_mas_reciente=con.ultimo_ano_jugadores()
+
+		print(f"Obtencion de los datos desde {ano_mas_reciente}")
+
+		con.cerrarConexion()
+
+		ETL_Jugadores_Temporadas_Equipo(temporada=ano_mas_reciente)

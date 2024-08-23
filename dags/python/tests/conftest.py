@@ -68,6 +68,8 @@ def conexion():
 
 	con.c.execute("DELETE FROM jugadores")
 
+	con.c.execute("DELETE FROM temporada_jugadores")
+
 	con.confirmar()
 
 	return con
@@ -120,6 +122,8 @@ def pytest_sessionfinish(session, exitstatus):
 	con.c.execute("DELETE FROM competiciones")
 
 	con.c.execute("DELETE FROM jugadores")
+
+	con.c.execute("DELETE FROM temporada_jugadores")
 
 	con.confirmar()
 
