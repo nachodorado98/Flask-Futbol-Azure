@@ -6,7 +6,7 @@ from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
-from python.src.etls import ETL_Partido_Competicion
+from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -88,9 +88,9 @@ def ETL_Partidos_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQ
 
 		except Exception as e:
 
-			mensaje=f"Equipo: {equipo} Temporada: {temporada} - Motivo: {e}"
+			mensaje=f"Partidos Equipo: {equipo} Temporada: {temporada} - Motivo: {e}"
 		
-			print(f"Error en equipo {equipo} en temporada {temporada}")
+			print(f"Error en partido de equipo {equipo} en temporada {temporada}")
 
 			crearArchivoLog(mensaje)
 
@@ -243,3 +243,17 @@ def Pipeline_Campeones_Competiciones()->None:
 			crearArchivoLog(mensaje)
 
 	con.cerrarConexion()
+
+def Pipeline_Jugadores_Equipo()->None:
+
+	try:
+
+		ETL_Jugadores_Equipo(EQUIPO_ID, TEMPORADA_INICIO)
+
+	except Exception as e:
+
+		mensaje=f"Jugadores Equipo: {EQUIPO_ID} Temporada: {TEMPORADA_INICIO} - Motivo: {e}"
+
+		print(f"Error en jugadores de equipo {EQUIPO_ID} en temporada {TEMPORADA_INICIO}")
+
+		crearArchivoLog(mensaje)

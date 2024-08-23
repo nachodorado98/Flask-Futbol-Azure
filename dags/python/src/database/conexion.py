@@ -457,3 +457,22 @@ class Conexion:
 		return list(map(lambda partido: (partido["partido_id"],
 										partido["equipo_id_local"],
 										partido["equipo_id_visitante"]), partidos))
+
+	#Metodo para insertar un jugador
+	def insertarJugador(self, jugador:str)->None:
+
+		self.c.execute("""INSERT INTO jugadores (Jugador_Id)
+							VALUES(%s)""",
+							(jugador,))
+
+		self.confirmar()
+
+	# Metodo para saber si existe el jugador
+	def existe_jugador(self, jugador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM jugadores
+							WHERE Jugador_Id=%s""",
+							(jugador_id,))
+
+		return False if self.c.fetchone() is None else True

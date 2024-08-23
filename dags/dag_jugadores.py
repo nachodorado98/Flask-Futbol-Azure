@@ -6,19 +6,18 @@ from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
 
-from utils import existe_entorno, ejecutarDagPartidos, actualizarVariable
+from utils import existe_entorno, ejecutarDagJugadores, actualizarVariable, crearArchivoLog
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
-from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio, Pipeline_Partidos_Competicion
+from pipelines import Pipeline_Jugadores_Equipo
 
 
-
-with DAG("dag_partidos",
+with DAG("dag_jugadores",
 		start_date=days_ago(1),
-		description="DAG para obtener datos de los partidos de la web de futbol",
-		schedule_interval="@weekly",
+		description="DAG para obtener datos de los jugadores de la web de futbol",
+		schedule_interval="@monthly",
 		catchup=False) as dag:
 
 
@@ -52,21 +51,18 @@ with DAG("dag_partidos",
 
 		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises >> tarea_carpeta_jugadores
 
-	with TaskGroup("pipelines_partidos") as tareas_pipelines_partidos:
 
-		tarea_pipeline_partidos_equipo=PythonOperator(task_id="pipeline_partidos_equipo", python_callable=Pipeline_Partidos_Equipo, trigger_rule="none_failed_min_one_success")
+	with TaskGroup("pipelines_jugadores") as tareas_pipelines_jugadores:
 
-		tarea_pipeline_partidos_estadio=PythonOperator(task_id="pipeline_partidos_estadio", python_callable=Pipeline_Partidos_Estadio)
-
-		tarea_pipeline_partidos_competicion=PythonOperator(task_id="pipeline_partidos_competicion", python_callable=Pipeline_Partidos_Competicion)
+		tareas_pipelines_jugadores_equipo=PythonOperator(task_id="pipelines_jugadores_equipo", python_callable=Pipeline_Jugadores_Equipo, trigger_rule="none_failed_min_one_success")
 
 
-		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion
+		tareas_pipelines_jugadores_equipo
 
 
-	tarea_ejecutar_dag_partidos=PythonOperator(task_id="ejecutar_dag_partidos", python_callable=ejecutarDagPartidos)
+	tarea_ejecutar_dag_jugadores=PythonOperator(task_id="ejecutar_dag_jugadores", python_callable=ejecutarDagJugadores)
 
-	tarea_dag_partidos_completado=PythonOperator(task_id="dag_partidos_completado", python_callable=lambda: actualizarVariable("DAG_PARTIDOS_EJECUTADO", "True"))
+	tarea_dag_jugadores_completado=PythonOperator(task_id="dag_jugadores_completado", python_callable=lambda: actualizarVariable("DAG_JUGADORES_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_partidos >> tareas_entorno >> tareas_pipelines_partidos >> tarea_dag_partidos_completado
+tarea_ejecutar_dag_jugadores >> tareas_entorno >> tareas_pipelines_jugadores >> tarea_dag_jugadores_completado

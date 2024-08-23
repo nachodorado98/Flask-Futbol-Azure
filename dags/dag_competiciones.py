@@ -8,7 +8,8 @@ from airflow.utils.dates import days_ago
 
 from utils import existe_entorno, ejecutarDagCompeticiones, actualizarVariable, crearArchivoLog
 
-from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS, BASH_COMPETICIONES, BASH_PAISES
+from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
+from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
 from pipelines import Pipeline_Competiciones_Equipos, Pipeline_Competiciones, Pipeline_Campeones_Competiciones
 
@@ -41,6 +42,8 @@ with DAG("dag_competiciones",
 
 		tarea_carpeta_paises=BashOperator(task_id="carpeta_paises", bash_command=BASH_PAISES)
 
+		tarea_carpeta_jugadores=BashOperator(task_id="carpeta_jugadores", bash_command=BASH_JUGADORES)
+
 		tarea_entorno_creado=DummyOperator(task_id="entorno_creado")
 
 
@@ -48,7 +51,7 @@ with DAG("dag_competiciones",
 
 		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes >> tarea_carpeta_estadios
 
-		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises
+		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises >> tarea_carpeta_jugadores
 
 
 	with TaskGroup("pipelines_competiciones") as tareas_pipelines_competiciones:

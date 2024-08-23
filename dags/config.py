@@ -6,6 +6,7 @@ BASH_PRESIDENTES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/preside
 BASH_ESTADIOS="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/estadios"
 BASH_COMPETICIONES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/competiciones"
 BASH_PAISES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/paises"
+BASH_JUGADORES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/jugadores"
 
 # URL para descargar las imagenes
 URL_ESCUDO="https://cdn.resfu.com/img_data/equipos/"
@@ -24,6 +25,7 @@ PRESIDENTES="presidentes"
 ESTADIOS="estadios"
 COMPETICIONES="competiciones"
 PAISES="paises"
+JUGADORES="jugadores"
 
 # Carpetas para las tablas en el datalake
 TABLA_EQUIPOS="tablas/equipos"
@@ -34,6 +36,7 @@ TABLA_PARTIDO_ESTADIO="tablas/partido_estadio"
 TABLA_PARTIDO_COMPETICION="tablas/partido_competicion"
 TABLA_COMPETICIONES="tablas/competiciones"
 TABLA_COMPETICIONES_CAMPEONES="tablas/competiciones_campeones"
+TABLA_JUGADORES="tablas/jugadores"
 
 EQUIPO_ID=369 # Atletico de Madrid. Numero del escudo realmente, no el equipo_id. La web crea asi la URL
 TEMPORADA_INICIO=2024 # Año de inicio minimo: 1921. Año de inicio maximo: Año actual

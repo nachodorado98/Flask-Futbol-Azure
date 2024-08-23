@@ -3,11 +3,11 @@ import pandas as pd
 
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
-from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion
+from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
 from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
-from src.scrapers.excepciones_scrapers import PartidoCompeticionError
+from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -767,3 +767,79 @@ def test_etl_partido_competicion_existente(conexion, local, visitante, partido_i
 
 	assert numero_registros_competiciones==numero_registros_competiciones_nuevos
 	assert numero_registros_partido_competicion==numero_registros_partido_competicion_nuevos
+
+@pytest.mark.parametrize(["equipo_id", "temporada"],
+	[(-1, -1), (0, 0), (0, 2019), (1, 2024), ("equipo", 2023)]
+)
+def test_etl_jugadores_equipo_error(equipo_id, temporada):
+
+	with pytest.raises(JugadoresEquipoError):
+
+		ETL_Jugadores_Equipo(equipo_id, temporada)
+
+@pytest.mark.parametrize(["equipo_id", "temporada"],
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+)
+def test_etl_jugadores_equipo(conexion, equipo_id, temporada):
+
+	ETL_Jugadores_Equipo(equipo_id, temporada)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["equipo_id", "temporada"],
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+)
+def test_etl_jugadores_equipo_existentes(conexion, equipo_id, temporada):
+
+	ETL_Jugadores_Equipo(equipo_id, temporada)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	jugadores=conexion.c.fetchall()
+
+	ETL_Jugadores_Equipo(equipo_id, temporada)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	jugadores_nuevos=conexion.c.fetchall()
+
+	assert len(jugadores)==len(jugadores_nuevos)
+
+@pytest.mark.parametrize(["equipo_id", "temporada", "nuevos_jugadores"],
+	[
+		(369, 2021, 1),
+		(369, 2014, 4),
+		(4, 2020, 3),
+		(449, 2017, 20),
+		(429, 1990, 11),
+		(369, 2000, 2),
+		(369, 1940, 1),
+		(449, 1971, 7),
+		(2115, 2024, 22)
+	]
+)
+def test_etl_jugadores_equipo_jugadores_nuevos(conexion, equipo_id, temporada, nuevos_jugadores):
+
+	ETL_Jugadores_Equipo(equipo_id, temporada)
+
+	conexion.c.execute(f"""DELETE FROM jugadores
+							WHERE Jugador_Id IN (SELECT Jugador_Id
+											    FROM jugadores
+											    ORDER BY RANDOM()
+											    LIMIT {nuevos_jugadores})""")
+
+	conexion.confirmar()
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	jugadores=conexion.c.fetchall()
+
+	ETL_Jugadores_Equipo(equipo_id, temporada)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	jugadores_nuevos=conexion.c.fetchall()
+
+	assert len(jugadores_nuevos)==len(jugadores)+nuevos_jugadores
