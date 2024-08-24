@@ -11,7 +11,7 @@ from utils import existe_entorno, ejecutarDagJugadores, actualizarVariable, crea
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
-from pipelines import Pipeline_Jugadores_Equipo
+from pipelines import Pipeline_Jugadores_Equipo, Pipeline_Jugadores
 
 
 with DAG("dag_jugadores",
@@ -54,15 +54,17 @@ with DAG("dag_jugadores",
 
 	with TaskGroup("pipelines_jugadores") as tareas_pipelines_jugadores:
 
-		tareas_pipelines_jugadores_equipo=PythonOperator(task_id="pipelines_jugadores_equipo", python_callable=Pipeline_Jugadores_Equipo, trigger_rule="none_failed_min_one_success")
+		tareas_pipeline_jugadores_detalle=PythonOperator(task_id="pipeline_jugadores", python_callable=Pipeline_Jugadores)
 
 
-		tareas_pipelines_jugadores_equipo
+		tareas_pipeline_jugadores_detalle
 
 
 	tarea_ejecutar_dag_jugadores=PythonOperator(task_id="ejecutar_dag_jugadores", python_callable=ejecutarDagJugadores)
 
+	tarea_pipeline_jugadores_equipo=PythonOperator(task_id="pipeline_jugadores_equipo", python_callable=Pipeline_Jugadores_Equipo, trigger_rule="none_failed_min_one_success")
+
 	tarea_dag_jugadores_completado=PythonOperator(task_id="dag_jugadores_completado", python_callable=lambda: actualizarVariable("DAG_JUGADORES_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_jugadores >> tareas_entorno >> tareas_pipelines_jugadores >> tarea_dag_jugadores_completado
+tarea_ejecutar_dag_jugadores >> tareas_entorno >> tarea_pipeline_jugadores_equipo >> tareas_pipelines_jugadores >> tarea_dag_jugadores_completado

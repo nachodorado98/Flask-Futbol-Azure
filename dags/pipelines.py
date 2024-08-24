@@ -6,7 +6,7 @@ from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
-from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo
+from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -291,3 +291,23 @@ def Pipeline_Jugadores_Equipo()->None:
 		con.cerrarConexion()
 
 		ETL_Jugadores_Temporadas_Equipo(temporada=ano_mas_reciente)
+
+def Pipeline_Jugadores()->None:
+
+	con=Conexion()
+
+	jugadores=con.obtenerJugadores()
+
+	for jugador in jugadores:
+
+		try:
+
+			ETL_Jugador(jugador)
+
+		except Exception as e:
+
+			mensaje=f"Jugador: {jugador} - Motivo: {e}"
+
+			print(f"Error en jugador {jugador}")
+
+			crearArchivoLog(mensaje)

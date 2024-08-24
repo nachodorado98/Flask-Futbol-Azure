@@ -504,3 +504,27 @@ class Conexion:
 							(temporada,))
 
 		self.confirmar()
+
+	# Metodo para actualizar los datos de un jugador
+	def actualizarDatosJugador(self, datos_jugador:List[str], jugador_id:str)->None:
+
+		datos_jugador.append(jugador_id)
+
+		self.c.execute("""UPDATE jugadores
+							SET Nombre=%s, Equipo_Id=%s, Codigo_Pais=%s, Codigo_Jugador=%s,
+							Puntuacion=%s, Valor=%s, Dorsal=%s, Posicion=%s
+							WHERE Jugador_Id=%s""",
+							tuple(datos_jugador))
+
+		self.confirmar()
+
+	# Metodo para obtener los jugadores
+	def obtenerJugadores(self)->List[tuple]:
+
+		self.c.execute("""SELECT Jugador_Id
+						FROM jugadores
+						ORDER BY Jugador_Id""")
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: jugador["jugador_id"], jugadores))

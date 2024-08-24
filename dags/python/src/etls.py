@@ -9,6 +9,7 @@ from .etl_competicion import extraerDataCompeticion, limpiarDataCompeticion, car
 from .etl_competicion_campeones import extraerDataCampeonesCompeticion, limpiarDataCampeonesCompeticion, cargarDataCampeonesCompeticion
 from .etl_partido_competicion import extraerDataPartidoCompeticion, limpiarDataPartidoCompeticion, cargarDataPartidoCompeticion
 from .etl_jugadores import extraerDataJugadoresEquipo, limpiarDataJugadoresEquipo, cargarDataJugadoresEquipo
+from .etl_jugador import extraerDataJugador, limpiarDataJugador, cargarDataJugador
 
 def ETL_Equipos_Liga(liga:str)->None:
 
@@ -119,3 +120,13 @@ def ETL_Jugadores_Equipo(equipo_id:int, temporada:int)->None:
 	data_limpia=limpiarDataJugadoresEquipo(data)
 
 	cargarDataJugadoresEquipo(data_limpia)
+
+def ETL_Jugador(jugador_id:str)->None:
+
+	print(f"ETL Jugador {jugador_id}")
+
+	data=extraerDataJugador(jugador_id)
+
+	data_limpia=limpiarDataJugador(data)
+
+	cargarDataJugador(data_limpia, jugador_id)

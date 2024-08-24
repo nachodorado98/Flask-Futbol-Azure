@@ -4,10 +4,11 @@ import pandas as pd
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
+from src.etls import ETL_Jugador
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
 from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
-from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError
+from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError, JugadorError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -843,3 +844,70 @@ def test_etl_jugadores_equipo_jugadores_nuevos(conexion, equipo_id, temporada, n
 	jugadores_nuevos=conexion.c.fetchall()
 
 	assert len(jugadores_nuevos)==len(jugadores)+nuevos_jugadores
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
+)
+def test_etl_jugador_error(endpoint):
+
+	with pytest.raises(JugadorError):
+
+		ETL_Jugador(endpoint)
+
+def test_etl_jugador_no_existe_error():
+
+	with pytest.raises(Exception):
+
+		ETL_Jugador("j-alvarez-772644")
+
+@pytest.mark.parametrize(["jugador"],
+	[("j-alvarez-772644",),("c-gallagher-367792",),("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
+)
+def test_etl_jugador_datos_correctos_con_equipo(conexion, jugador):
+
+	conexion.insertarJugador(jugador)
+
+	ETL_Jugador(jugador)
+
+	conexion.c.execute(f"SELECT * FROM jugadores WHERE Jugador_Id='{jugador}'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["nombre"] is not None
+	assert datos_actualizados["equipo_id"] is not None
+	assert datos_actualizados["codigo_pais"] is not None
+	assert datos_actualizados["codigo_jugador"] is not None
+	assert datos_actualizados["puntuacion"] is not None
+	assert datos_actualizados["valor"] is not None
+	assert datos_actualizados["dorsal"] is not None
+	assert datos_actualizados["posicion"] is not None
+
+	conexion.c.execute("SELECT * FROM equipos")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["jugador"],
+	[("f-torres-29366",),("d-villa-23386",),("f-beckenbauer-321969",)]
+)
+def test_etl_jugador_datos_correctos_sin_equipo(conexion, jugador):
+
+	conexion.insertarJugador(jugador)
+
+	ETL_Jugador(jugador)
+
+	conexion.c.execute(f"SELECT * FROM jugadores WHERE Jugador_Id='{jugador}'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["nombre"] is not None
+	assert not datos_actualizados["equipo_id"]
+	assert datos_actualizados["codigo_pais"] is not None
+	assert datos_actualizados["codigo_jugador"] is not None
+	assert datos_actualizados["puntuacion"] is not None
+	assert not datos_actualizados["valor"]
+	assert not datos_actualizados["dorsal"]
+	assert datos_actualizados["posicion"] is not None
+
+	conexion.c.execute("SELECT * FROM equipos")
+
+	assert not conexion.c.fetchall()

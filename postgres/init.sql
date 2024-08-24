@@ -83,7 +83,15 @@ CREATE TABLE partido_competicion (Partido_Id VARCHAR(255),
 									FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
 									FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
 
-CREATE TABLE jugadores (Jugador_Id VARCHAR(255) PRIMARY KEY);
+CREATE TABLE jugadores (Jugador_Id VARCHAR(255) PRIMARY KEY,
+						Nombre VARCHAR(255) DEFAULT NULL,
+						Equipo_Id VARCHAR(255) DEFAULT NULL,
+						Codigo_Pais VARCHAR(5) DEFAULT NULL,
+						Codigo_Jugador VARCHAR(15) DEFAULT NULL,
+						Puntuacion INTEGER DEFAULT NULL,
+						Valor DOUBLE PRECISION DEFAULT NULL,
+						Dorsal INTEGER DEFAULT NULL,
+						Posicion VARCHAR(5) DEFAULT NULL);
 
 CREATE TABLE temporada_jugadores (Temporada INTEGER);
 

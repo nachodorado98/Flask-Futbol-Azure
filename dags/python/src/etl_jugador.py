@@ -5,6 +5,8 @@ from .scrapers.scraper_jugador import ScraperJugador
 
 from .utils import limpiarCodigoImagen
 
+from .database.conexion import Conexion
+
 def extraerDataJugador(jugador:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperJugador(jugador)
@@ -30,3 +32,31 @@ def limpiarDataJugador(tabla:pd.DataFrame)->pd.DataFrame:
 	columnas=["Nombre", "Codigo_Equipo", "Codigo_Pais", "Codigo_Jugador", "Puntuacion", "Valor", "Dorsal", "Posicion"]
 
 	return tabla[columnas]
+
+def cargarDataJugador(tabla:pd.DataFrame, jugador_id:str)->None:
+
+	datos_jugador=tabla.values.tolist()[0]
+
+	con=Conexion()
+
+	if not con.existe_jugador(jugador_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar el jugador {jugador_id}. No existe")
+
+	try:
+
+		if datos_jugador[1] and not con.existe_equipo(datos_jugador[1]):
+
+			con.insertarEquipo(datos_jugador[1])
+
+		con.actualizarDatosJugador(datos_jugador, jugador_id)
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar los datos del jugador {jugador_id}")
