@@ -2,6 +2,7 @@ import os
 
 from utils import vaciarCarpeta, crearArchivoLog
 from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
+from config import URL_JUGADOR
 from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES
 from config import TABLA_EQUIPOS, TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO
 from config import TABLA_COMPETICIONES, TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES
@@ -305,6 +306,90 @@ def subirPaisesDataLake():
 	con=Conexion()
 
 	codigo_paises=con.obtenerCodigoPaises()
+
+	con.cerrarConexion()
+
+	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	for codigo in codigo_paises:
+
+		print(f"Descargando pais {codigo}...")
+
+		try:
+
+			descargarImagen(URL_PAIS, codigo, ruta_paises)
+
+		except Exception as e:
+
+			mensaje=f"Pais: {codigo} - Motivo: {e}"
+
+			print(f"Error en pais con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de paises finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, PAISES, ruta_paises)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los paises al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_paises)
+
+def subirJugadoresDataLake():
+	
+	con=Conexion()
+
+	codigo_jugadores=con.obtenerCodigoJugadores()
+
+	con.cerrarConexion()
+
+	ruta_jugadores=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", JUGADORES)
+
+	for codigo in codigo_jugadores:
+
+		print(f"Descargando jugador {codigo}...")
+
+		try:
+
+			descargarImagen(URL_JUGADOR, codigo, ruta_jugadores)
+
+		except Exception as e:
+
+			mensaje=f"Jugador: {codigo} - Motivo: {e}"
+
+			print(f"Error en jugador con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de jugadores finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, JUGADORES, ruta_jugadores)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los jugadores al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_jugadores)
+
+def subirPaisesJugadoresDataLake():
+	
+	con=Conexion()
+
+	codigo_paises=con.obtenerCodigoPaisesJugadores()
 
 	con.cerrarConexion()
 

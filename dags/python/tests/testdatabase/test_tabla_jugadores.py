@@ -81,3 +81,51 @@ def test_obtener_jugadores(conexion):
 	jugadores=conexion.obtenerJugadores()
 
 	assert len(jugadores)==10
+
+def test_obtener_codigo_jugadores_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoJugadores()
+
+@pytest.mark.parametrize(["datos", "numero_jugadores"],
+	[
+		([("j-alvarez-772644","772644"),("f-torres-29366","29366"),("a-griezmann-32465","32465")], 3),
+		([("j-alvarez-772644","772644"),("f-torres-29366","29366"),("a-griezmann-32465",None)], 2),
+		([("j-alvarez-772644","772644"),("f-torres-29366","29366"),("a-griezmann-32465",None),("sorloth-232186","232186")], 3),
+		([("j-alvarez-772644","772644"),("f-torres-29366",None),("a-griezmann-32465",None)], 1)
+	]
+)
+def test_obtener_codigo_jugadores(conexion, datos, numero_jugadores):
+
+	for jugador, codigo in datos:
+
+		conexion.insertarJugador(jugador)
+
+		conexion.actualizarDatosJugador(["Julian", "atletico-madrid", "ar", codigo, 100, 100.0, 19, "DEL"], jugador)
+
+	jugadores=conexion.obtenerCodigoJugadores()
+
+	assert len(jugadores)==numero_jugadores
+
+def test_obtener_codigo_paises_jugadores_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoPaisesJugadores()
+
+@pytest.mark.parametrize(["datos", "numero_paises"],
+	[
+		([("j-alvarez-772644","ar"),("f-torres-29366","es"),("a-griezmann-32465","fr")], 3),
+		([("j-alvarez-772644","ar"),("f-torres-29366","es"),("a-griezmann-32465",None)], 2),
+		([("j-alvarez-772644","ar"),("f-torres-29366","es"),("a-griezmann-32465",None),("sorloth-232186","no")], 3),
+		([("j-alvarez-772644","ar"),("f-torres-29366",None),("a-griezmann-32465",None)], 1)
+	]
+)
+def test_obtener_codigo_paises_jugadores(conexion, datos, numero_paises):
+
+	for jugador, pais in datos:
+
+		conexion.insertarJugador(jugador)
+
+		conexion.actualizarDatosJugador(["Julian", "atletico-madrid", pais, "1", 100, 100.0, 19, "DEL"], jugador)
+
+	paises=conexion.obtenerCodigoPaisesJugadores()
+
+	assert len(paises)==numero_paises

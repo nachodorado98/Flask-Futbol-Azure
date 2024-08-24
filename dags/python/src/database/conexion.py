@@ -528,3 +528,27 @@ class Conexion:
 		jugadores=self.c.fetchall()
 
 		return list(map(lambda jugador: jugador["jugador_id"], jugadores))
+
+	# Metodo para obtener los codigos de los jugadores
+	def obtenerCodigoJugadores(self)->List[str]:
+
+		self.c.execute("""SELECT Codigo_Jugador
+							FROM jugadores
+							WHERE Codigo_Jugador IS NOT NULL
+							ORDER BY Codigo_Jugador""")
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: jugador["codigo_jugador"], jugadores))
+
+	# Metodo para obtener los codigos de los paises de los jugadores
+	def obtenerCodigoPaisesJugadores(self)->List[str]:
+
+		self.c.execute("""SELECT DISTINCT(Codigo_Pais)
+							FROM jugadores
+							WHERE Codigo_Pais IS NOT NULL
+							ORDER BY Codigo_Pais""")
+
+		paises=self.c.fetchall()
+
+		return list(map(lambda pais: pais["codigo_pais"], paises))

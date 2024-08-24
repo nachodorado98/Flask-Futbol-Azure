@@ -16,6 +16,7 @@ URL_PRESIDENTE="https://cdn.resfu.com/img_data/people/original/"
 URL_ESTADIO="https://cdn.resfu.com/img_data/estadios/original_new/"
 URL_COMPETICION="https://cdn.resfu.com/media/img/league_logos/"
 URL_PAIS="https://cdn.resfu.com/media/img/flags/round/"
+URL_JUGADOR="https://cdn.resfu.com/img_data/players/medium/"
 
 # Contenedor y carpetas para el datalake
 CONTENEDOR="contenedorequipos"
