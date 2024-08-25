@@ -26,7 +26,7 @@ class ScraperPartidoEstadio(Scraper):
 
         except Exception:
 
-            raise PartidoEstadioError(f"Error en obtener el estadio del equipo: {self.equipo_local}/{self.equipo_visitante}/{self.partido_id}. No existe")
+            raise PartidoEstadioError(f"Error en obtener el estadio del partido: {self.equipo_local}/{self.equipo_visitante}/{self.partido_id}. No existe")
 
     def __imagen_estadio(self, tabla_estadio:bs4)->str:
 

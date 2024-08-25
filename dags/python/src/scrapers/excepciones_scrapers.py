@@ -36,3 +36,6 @@ class JugadoresEquipoError(Exception):
 
 class JugadorError(Exception):
     pass
+
+class PartidoGoleadoresError(Exception):
+    pass
