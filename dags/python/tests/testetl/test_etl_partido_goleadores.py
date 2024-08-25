@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from src.etl_partido_goleadores import extraerDataPartidoGoleadores
+from src.etl_partido_goleadores import extraerDataPartidoGoleadores, limpiarDataPartidoGoleadores
 from src.scrapers.excepciones_scrapers import PartidoGoleadoresError
 
 def test_extraer_data_partido_goleadores_error_endpoint():
@@ -38,3 +38,22 @@ def test_extraer_data_partido_goleadores(local, visitante, partido_id):
 	assert isinstance(data, pd.DataFrame)
 	assert not data.empty
 	assert len(data.columns)==3
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "2024664923"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("atletico-madrid", "internazionale", "2024645009")
+	]
+)
+def test_limpiar_data_partido_goleadores(local, visitante, partido_id):
+
+	data=extraerDataPartidoGoleadores(local, visitante, partido_id)
+
+	data_limpia=limpiarDataPartidoGoleadores(data)
+
+	assert isinstance(data_limpia, pd.DataFrame)
+	assert not data_limpia.empty
+	assert len(data_limpia.columns)==4

@@ -255,3 +255,9 @@ def subirTablaDataLake(tabla:str, contenedor:str, carpeta:str)->None:
 		datalake.cerrarConexion()
 
 		conexion.cerrarConexion()
+
+def limpiarMinuto(minuto:str)->tuple:
+
+	minuto_numero, anadido=minuto.split("'")
+
+	return (int(minuto_numero), 0) if anadido=="" else (int(minuto_numero), int(anadido.split("+")[-1]))

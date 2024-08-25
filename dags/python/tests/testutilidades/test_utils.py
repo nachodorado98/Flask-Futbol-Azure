@@ -8,7 +8,7 @@ from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normaliz
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
 from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
-from src.utils import obtenerBoolCadena, subirTablaDataLake
+from src.utils import obtenerBoolCadena, subirTablaDataLake, limpiarMinuto
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -588,3 +588,16 @@ def test_subir_tabla_data_lake(conexion, datalake):
 	datalake.eliminarContenedor("contenedor8")
 
 	datalake.cerrarConexion()
+
+@pytest.mark.parametrize(["minuto", "minuto_numero", "anadido_numero"],
+	[
+		("39'", 39, 0),
+		("100'", 100, 0),
+		("45'+1", 45, 1),
+		("0'", 0, 0),
+		("120'+8", 120, 8)
+	]
+)
+def test_limpiar_minuto(minuto, minuto_numero, anadido_numero):
+
+	assert limpiarMinuto(minuto)==(minuto_numero, anadido_numero)
