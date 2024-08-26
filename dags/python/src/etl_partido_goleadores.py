@@ -5,6 +5,8 @@ from .scrapers.scraper_partido_goleadores import ScraperPartidoGoleadores
 
 from .utils import limpiarCodigoImagen, limpiarMinuto
 
+from .database.conexion import Conexion
+
 def extraerDataPartidoGoleadores(equipo_local:str, equipo_visitante:str, partido_id:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperPartidoGoleadores(equipo_local, equipo_visitante, partido_id)
@@ -22,3 +24,35 @@ def limpiarDataPartidoGoleadores(tabla:pd.DataFrame)->pd.DataFrame:
 	columnas=["Codigo_Jugador", "Minuto", "Anadido", "Local"]
 
 	return tabla[columnas]
+
+def cargarDataPartidoGoleadores(tabla:pd.DataFrame, partido_id:str)->None:
+
+	datos_goleadores=tabla.values.tolist()
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar la competicion del partido {partido_id}. No existe")
+
+	try:
+
+		for goleador, minuto, anadido, local in datos_goleadores:
+
+			if not con.existe_jugador(goleador):
+
+				con.insertarJugador(goleador)
+
+			if not con.existe_partido_goleador(partido_id, goleador, minuto, anadido):
+
+				con.insertarPartidoGoleador((partido_id, goleador, minuto, anadido, local))
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar los goleadores del partido {partido_id}")

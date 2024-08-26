@@ -198,3 +198,78 @@ def test_obtener_partidos_sin_competicion_faltantes(conexion, faltantes):
 		conexion.insertarPartidoCompeticion((partido[0], "competicion"))
 
 	assert len(conexion.obtenerPartidosSinCompeticion())==faltantes
+
+def test_obtener_partidos_sin_goleadores_tabla_vacia(conexion):
+
+	assert not conexion.obtenerPartidosSinGoleadores()
+
+def test_obtener_partidos_sin_goleadores_todos_existen(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 21)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+		conexion.insertarPartidoGoleador((partido[0], "nacho", 1, 0, True))
+
+	assert not conexion.obtenerPartidosSinGoleadores()
+
+@pytest.mark.parametrize(["numero_partidos"],
+	[(3,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_goleadores_ninguno_existe(conexion, numero_partidos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, numero_partidos+1)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	assert len(conexion.obtenerPartidosSinGoleadores())==numero_partidos
+
+@pytest.mark.parametrize(["faltantes"],
+	[(1,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_goleadores_faltantes(conexion, faltantes):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 201)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	for partido in partidos[:-faltantes]:
+
+		conexion.insertarPartidoGoleador((partido[0], "nacho", 1, 0, True))
+
+	assert len(conexion.obtenerPartidosSinGoleadores())==faltantes
+
+@pytest.mark.parametrize(["numero_partidos"],
+	[(3,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_goleadores_ninguno_existe_sin_goles(conexion, numero_partidos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "0-0", "Victoria"] for numero in range(1, numero_partidos+1)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	assert not conexion.obtenerPartidosSinGoleadores()

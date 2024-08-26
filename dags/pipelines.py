@@ -7,6 +7,7 @@ from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equ
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
+from python.src.etls import ETL_Partido_Goleadores
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -167,6 +168,30 @@ def Pipeline_Partidos_Competicion()->None:
 			mensaje=f"Competicion Partido_Id: {partido_id} - Motivo: {e}"
 
 			print(f"Error en competicion del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+
+			crearArchivoLog(mensaje)
+
+		time.sleep(0.25)
+
+	con.cerrarConexion()
+
+def Pipeline_Partidos_Goleadores()->None:
+
+	con=Conexion()
+
+	partidos=con.obtenerPartidosSinGoleadores()
+
+	for partido_id, equipo_local, equipo_visitante in partidos:
+
+		try:
+			
+			ETL_Partido_Goleadores(equipo_local, equipo_visitante, partido_id)
+
+		except Exception as e:
+
+			mensaje=f"Goleadores Partido_Id: {partido_id} - Motivo: {e}"
+
+			print(f"Error en los goleadores del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
 
 			crearArchivoLog(mensaje)
 

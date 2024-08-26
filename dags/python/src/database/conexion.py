@@ -552,3 +552,42 @@ class Conexion:
 		paises=self.c.fetchall()
 
 		return list(map(lambda pais: pais["codigo_pais"], paises))
+
+	#Metodo para insertar un partido goleador
+	def insertarPartidoGoleador(self, partido_goleador:tuple)->None:
+
+		self.c.execute("""INSERT INTO partido_goleador
+							VALUES(%s, %s, %s, %s, %s)""",
+							partido_goleador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el partido goleador
+	def existe_partido_goleador(self, partido_id:str, jugador_id:str, minuto:int, anadido:int)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partido_goleador
+							WHERE Partido_Id=%s
+							AND Jugador_Id=%s
+							AND Minuto=%s
+							AND Anadido=%s""",
+							(partido_id, jugador_id, minuto, anadido))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener los partidos que no tienen goleadores
+	def obtenerPartidosSinGoleadores(self)->List[tuple]:
+
+		self.c.execute("""SELECT p.Partido_Id, p.Equipo_Id_Local, p.Equipo_Id_Visitante
+						FROM partidos p
+						LEFT JOIN partido_goleador pg
+						USING (Partido_Id)
+						WHERE pg.Partido_Id IS NULL
+						AND p.Marcador!='0-0'
+						ORDER BY p.Fecha""")
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+										partido["equipo_id_local"],
+										partido["equipo_id_visitante"]), partidos))

@@ -93,6 +93,15 @@ CREATE TABLE jugadores (Jugador_Id VARCHAR(255) PRIMARY KEY,
 						Dorsal INTEGER DEFAULT NULL,
 						Posicion VARCHAR(5) DEFAULT NULL);
 
+CREATE TABLE partido_goleador (Partido_Id VARCHAR(255),
+								Jugador_Id VARCHAR(255),
+								Minuto INTEGER,
+								Anadido INTEGER,
+								Local BOOL,
+								PRIMARY KEY (Partido_Id, Jugador_Id, Minuto, Anadido),
+								FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
+								FOREIGN KEY (Jugador_Id) REFERENCES jugadores (Jugador_Id) ON DELETE CASCADE);
+
 CREATE TABLE temporada_jugadores (Temporada INTEGER);
 
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,

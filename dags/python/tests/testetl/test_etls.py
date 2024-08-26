@@ -4,11 +4,12 @@ import pandas as pd
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
-from src.etls import ETL_Jugador
+from src.etls import ETL_Jugador, ETL_Partido_Goleadores
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
 from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
 from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError, JugadorError
+from src.scrapers.excepciones_scrapers import PartidoGoleadoresError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -911,3 +912,92 @@ def test_etl_jugador_datos_correctos_sin_equipo(conexion, jugador):
 	conexion.c.execute("SELECT * FROM equipos")
 
 	assert not conexion.c.fetchall()
+
+def test_etl_partido_goleadores_error():
+
+	with pytest.raises(PartidoGoleadoresError):
+
+		ETL_Partido_Goleadores("equipo1", "equipo2", "partido_id")
+
+def test_etl_partido_goleadores_error_no_existe():
+
+	with pytest.raises(PartidoGoleadoresError):
+
+		ETL_Partido_Goleadores("atletico-madrid", "alianza-lima", "201313927")
+
+def test_etl_partido_goleadores_error_no_hay():
+
+	with pytest.raises(PartidoGoleadoresError):
+
+		ETL_Partido_Goleadores("betis", "atletico-madrid", "202430028")
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "2024664923"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("atletico-madrid", "internazionale", "2024645009")
+	]
+)
+def test_etl_partido_goleadores_datos_correctos(conexion, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Goleadores(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_goleador")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "2024664923"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("atletico-madrid", "internazionale", "2024645009")
+	]
+)
+def test_etl_partido_goleadores_existentes(conexion, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Goleadores(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	numero_registros_jugadores=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM partido_goleador")
+
+	numero_registros_goleadores=len(conexion.c.fetchall())
+
+	ETL_Partido_Goleadores(local, visitante, partido_id)
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	numero_registros_jugadores_nuevos=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM partido_goleador")
+
+	numero_registros_goleadores_nuevos=len(conexion.c.fetchall())
+
+	assert numero_registros_jugadores==numero_registros_jugadores_nuevos
+	assert numero_registros_goleadores==numero_registros_goleadores_nuevos

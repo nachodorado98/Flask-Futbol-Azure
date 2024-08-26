@@ -12,6 +12,7 @@ from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES,
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
 from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio, Pipeline_Partidos_Competicion
+from pipelines import Pipeline_Partidos_Goleadores
 
 
 
@@ -60,8 +61,10 @@ with DAG("dag_partidos",
 
 		tarea_pipeline_partidos_competicion=PythonOperator(task_id="pipeline_partidos_competicion", python_callable=Pipeline_Partidos_Competicion)
 
+		tarea_pipeline_partidos_goleadores=PythonOperator(task_id="pipeline_partidos_goleadores", python_callable=Pipeline_Partidos_Goleadores)
 
-		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion
+
+		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion >> tarea_pipeline_partidos_goleadores
 
 
 	tarea_ejecutar_dag_partidos=PythonOperator(task_id="ejecutar_dag_partidos", python_callable=ejecutarDagPartidos)
