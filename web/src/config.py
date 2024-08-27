@@ -1,5 +1,11 @@
 CUENTA="" # Nombre del Data Lake
 CLAVE="" # Clave del Data Lake
 CONTENEDOR="contenedorequipos"
-CARPETA="escudos"
-URL_DATALAKE=f"https://{CUENTA}.blob.core.windows.net/{CONTENEDOR}/{CARPETA}/"
+URL_DATALAKE=f"https://{CUENTA}.blob.core.windows.net/{CONTENEDOR}"
+URL_DATALAKE_ESCUDOS=f"{URL_DATALAKE}/escudos/"
+URL_DATALAKE_ESTADIOS=f"{URL_DATALAKE}/estadios/"
+URL_DATALAKE_ENTRENADORES=f"{URL_DATALAKE}/entrenadores/"
+URL_DATALAKE_PRESIDENTES=f"{URL_DATALAKE}/presidentes/"
+URL_DATALAKE_PAISES=f"{URL_DATALAKE}/paises/"
+URL_DATALAKE_COMPETICIONES=f"{URL_DATALAKE}/competiciones/"
+URL_DATALAKE_JUGADORES=f"{URL_DATALAKE}/jugadores/"

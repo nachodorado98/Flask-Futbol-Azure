@@ -41,6 +41,10 @@ class Conexion:
 
 		self.c.execute("DELETE FROM competiciones")
 
+		self.c.execute("DELETE FROM jugadores")
+
+		self.c.execute("DELETE FROM temporada_jugadores")
+
 		self.c.execute("DELETE FROM usuarios")
 
 		self.confirmar()
@@ -664,3 +668,49 @@ class Conexion:
 											competicion["nombre"],
 											competicion["logo"],
 											competicion["pais"]), competiciones))
+
+	# Metodo para comprobar si ya existe un jugador
+	def existe_jugador(self, jugador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM jugadores
+						WHERE jugador_id=%s""",
+						(jugador_id,))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener los datos de un jugador
+	def obtenerDatosJugador(self, jugador_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT j.jugador_id, j.nombre,
+								CASE WHEN j.codigo_pais IS NULL
+										THEN '-1'
+										ELSE j.codigo_pais
+								END as pais,
+								CASE WHEN j.codigo_jugador IS NULL
+										THEN '-1'
+										ELSE j.codigo_jugador
+								END as jugador,
+								j.puntuacion, j.dorsal, j.valor, j.posicion, e.equipo_id,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo_equipo
+						FROM jugadores j
+						LEFT JOIN equipos e
+						ON j.equipo_id=e.equipo_id
+						WHERE j.jugador_id=%s""",
+						(jugador_id,))
+
+		jugador=self.c.fetchone()
+
+		return None if not jugador else (jugador["jugador_id"],
+										jugador["nombre"],
+										jugador["pais"],
+										jugador["jugador"],
+										jugador["puntuacion"],
+										jugador["dorsal"],
+										jugador["valor"],
+										jugador["posicion"],
+										jugador["equipo_id"],
+										jugador["escudo_equipo"])
