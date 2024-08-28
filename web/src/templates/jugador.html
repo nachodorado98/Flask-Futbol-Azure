@@ -8,7 +8,62 @@
 
 <div class="tarjeta-jugador">
 
-{{ datos_jugador }}
+	<p class="nombre">
+
+		<strong>{{ datos_jugador[1] }}</strong>
+
+		{% if datos_jugador[2]=='-1' %}
+            <img class="pais-jugador" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="pais-jugador" src="{{ url_imagen_pais }}{{ datos_jugador[2] }}.png" alt="Pais Icon">
+        {% endif %}
+
+	</p>
+
+	{% if datos_jugador[3]=='-1' %}
+        <img class="jugador" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
+    {% else %}
+        <img class="jugador" src="{{ url_imagen_jugador }}{{ datos_jugador[3] }}.png" alt="Jugador Icon">
+    {% endif %}
+
+
+    <div class="info-jugador-imagenes">
+
+        {% if datos_jugador[11] %}
+        <div class="info-jugador-equipo" onclick="window.location.href='/equipo/{{ datos_jugador[8] }}'">
+            <p><strong>{{ datos_jugador[9] }}</strong></p>
+
+            {% if datos_jugador[10]==-1 %}
+		        <img class="equipo-jugador" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+		    {% else %}
+		        <img class="equipo-jugador" src="{{ url_imagen_escudo }}{{ datos_jugador[10] }}.png" alt="Equipo Icon">
+		    {% endif %}
+
+        </div>
+        {% endif %}
+
+        {% if datos_jugador[4] %}
+        <div class="info-jugador-puntuacion">
+            <p><strong>Valoracion</strong></p>
+            <h4>{{ datos_jugador[4] }}</h4>
+        </div>
+        {% endif %}
+
+        {% if datos_jugador[5] %}
+        <div class="info-jugador-dorsal">
+            <p><strong>Dorsal</strong></p>
+            <h4>{{ datos_jugador[5] }}</h4>
+        </div>
+        {% endif %}
+
+        {% if datos_jugador[7] %}
+        <div class="info-jugador-posicion">
+            <p><strong>Posicion</strong></p>
+            <h4>{{ datos_jugador[7] }}</h4>
+        </div>
+        {% endif %}
+
+    </div>
 
 </div>
 

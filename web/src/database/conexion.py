@@ -691,11 +691,15 @@ class Conexion:
 										THEN '-1'
 										ELSE j.codigo_jugador
 								END as jugador,
-								j.puntuacion, j.dorsal, j.valor, j.posicion, e.equipo_id,
+								j.puntuacion, j.dorsal, j.valor, j.posicion, e.equipo_id, e.nombre as nombre_equipo,
 								CASE WHEN e.escudo IS NULL
 										THEN -1
 										ELSE e.escudo
-								END as escudo_equipo
+								END as escudo_equipo,
+								CASE WHEN j.equipo_id IS NULL
+										THEN False
+										ELSE True
+								END as equipo_existe
 						FROM jugadores j
 						LEFT JOIN equipos e
 						ON j.equipo_id=e.equipo_id
@@ -713,4 +717,6 @@ class Conexion:
 										jugador["valor"],
 										jugador["posicion"],
 										jugador["equipo_id"],
-										jugador["escudo_equipo"])
+										jugador["nombre_equipo"],
+										jugador["escudo_equipo"],
+										jugador["equipo_existe"])

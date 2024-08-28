@@ -1108,3 +1108,64 @@ footer {
     background-color: var(--color-primario);
     color: var(--color-secundario)
 }
+
+.tarjeta-jugador .nombre {
+    font-size: 60px;
+    margin: 5px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-jugador .pais-jugador {
+    width: 65px;
+    height: 42px;
+}
+
+.tarjeta-jugador .jugador {
+    margin-top: 15px;
+    width: 200px;
+    height: 200px;
+    border: 2px solid black;
+}
+
+.info-jugador-imagenes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 15px;
+    background-color: var(--color-fondo);
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 20px auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-jugador-imagenes p {
+    font-size: 15px;
+    color: var(--color-secundario);
+    margin: 0 15px;
+    text-align: center;
+    padding: 10px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 170px;
+}
+
+.info-jugador-imagenes h4 {
+    font-size: 90px;
+    color: var(--color-primario);
+    margin: 0 15px;
+    text-align: center;
+    padding: 10px;
+    flex: 1;
+    min-width: 170px;
+}
+
+.info-jugador-imagenes .equipo-jugador {
+    margin-top: 10px;
+    width: 130px;
+    height: 130px;
+    cursor: pointer;
+}
