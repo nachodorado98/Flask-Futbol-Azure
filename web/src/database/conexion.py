@@ -720,3 +720,32 @@ class Conexion:
 										jugador["nombre_equipo"],
 										jugador["escudo_equipo"],
 										jugador["equipo_existe"])
+
+	# Metodo para obtener los datos de los jugadores
+	def obtenerDatosJugadores(self)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT j.jugador_id, j.nombre,
+								CASE WHEN j.codigo_pais IS NULL
+										THEN '-1'
+										ELSE j.codigo_pais
+								END as pais,
+								CASE WHEN j.codigo_jugador IS NULL
+										THEN '-1'
+										ELSE j.codigo_jugador
+								END as jugador,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo_equipo
+						FROM jugadores j
+						LEFT JOIN equipos e
+						ON j.equipo_id=e.equipo_id
+						ORDER BY j.jugador_id""")
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: (jugador["jugador_id"],
+										jugador["nombre"],
+										jugador["pais"],
+										jugador["jugador"],
+										jugador["escudo_equipo"]), jugadores))

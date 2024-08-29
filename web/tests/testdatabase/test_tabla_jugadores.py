@@ -19,3 +19,11 @@ def test_obtener_jugador_no_existe(conexion):
 def test_obtener_jugador(conexion_entorno):
 
 	assert conexion_entorno.obtenerDatosJugador("julian-alvarez")
+
+def test_obtener_jugadores_no_existen(conexion):
+
+	assert not conexion.obtenerDatosJugadores()
+
+def test_obtener_jugadores(conexion_entorno):
+
+	assert conexion_entorno.obtenerDatosJugadores()

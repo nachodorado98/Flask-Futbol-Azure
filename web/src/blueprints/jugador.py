@@ -33,3 +33,23 @@ def pagina_jugador(jugador_id:str):
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES)
+
+@bp_jugador.route("/jugadores")
+@login_required
+def pagina_jugadores():
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	datos_jugadores=con.obtenerDatosJugadores()
+
+	con.cerrarConexion()
+
+	return render_template("jugadores.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							datos_jugadores=datos_jugadores,
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_jugador=URL_DATALAKE_JUGADORES)
