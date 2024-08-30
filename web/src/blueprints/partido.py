@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS 
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES
 
 bp_partido=Blueprint("partido", __name__)
 
@@ -34,6 +34,8 @@ def pagina_partido(partido_id:str):
 
 	partido_id_siguiente=con.obtenerPartidoSiguiente(partido_id, equipo)
 
+	goleadores=con.obtenerGoleadoresPartido(partido_id)
+
 	con.cerrarConexion()
 
 	return render_template("partido.html",
@@ -42,5 +44,7 @@ def pagina_partido(partido_id:str):
 							partido=partido,
 							partido_id_anterior=partido_id_anterior,
 							partido_id_siguiente=partido_id_siguiente,
+							goleadores=goleadores,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_jugador=URL_DATALAKE_JUGADORES)

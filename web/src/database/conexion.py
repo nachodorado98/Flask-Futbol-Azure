@@ -749,3 +749,53 @@ class Conexion:
 										jugador["pais"],
 										jugador["jugador"],
 										jugador["escudo_equipo"]), jugadores))
+
+	# Metodo para obtener los datos del jugador de un equipo con mayor valoracion
+	def obtenerDatosJugadorEquipoValoracion(self, equipo_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT jugador_id, nombre,
+								CASE WHEN codigo_jugador IS NULL
+										THEN '-1'
+										ELSE codigo_jugador
+								END as jugador
+						FROM jugadores
+						WHERE equipo_id=%s
+						ORDER BY puntuacion DESC
+						LIMIT 1""",
+						(equipo_id,))
+
+		jugador=self.c.fetchone()
+
+		return None if not jugador else (jugador["jugador_id"],
+										jugador["nombre"],
+										jugador["jugador"])
+
+	# Metodo para obtener los goleadores de un partido
+	def obtenerGoleadoresPartido(self, partido_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT pg.partido_id, pg.minuto, pg.anadido, pg.local, j.jugador_id, j.nombre,
+								CASE WHEN j.codigo_jugador IS NULL
+										THEN '-1'
+										ELSE j.codigo_jugador
+								END as jugador
+						FROM partido_goleador pg
+						LEFT JOIN jugadores j
+						ON pg.jugador_id=j.jugador_id
+						WHERE pg.partido_id=%s
+						ORDER BY pg.minuto, pg.anadido""",
+						(partido_id,))
+
+		goleadores=self.c.fetchall()
+
+		def formato_minuto_anadido(minuto:int, anadido:int)->str:
+
+			minuto_str=f"{minuto}'"
+
+			return minuto_str if anadido==0 else f"{minuto_str}+{anadido}"
+			
+		return list(map(lambda goleador: (goleador["partido_id"],
+											formato_minuto_anadido(goleador["minuto"], goleador["anadido"]),
+											goleador["local"],
+											goleador["jugador_id"],
+											goleador["nombre"],
+											goleador["jugador"]), goleadores))

@@ -34,6 +34,59 @@
 
     </div>
 
+
+    {% if goleadores %}
+    <div class="info-partido-goleadores">
+        <div class="goleadores-container">
+
+            <div class="columna-local">
+                {% for goleador in goleadores %}
+
+                    {% if goleador[2]==True %}
+
+                        <div class="fila-goleador-local" onclick="window.location.href='/jugador/{{ goleador[3] }}'">
+
+                            {% if goleador[5]=='-1' %}
+                                <img class="goleador-imagen-local" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
+                            {% else %}
+                                <img class="goleador-imagen-local" src="{{ url_imagen_jugador }}{{ goleador[5] }}.png" alt="Jugador Icon">
+                            {% endif %}
+
+                            <span><strong>{{ goleador[4] }}</strong></span>
+                            <span><strong>{{ goleador[1] }}</strong></span>
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+
+            <div class="columna-visitante">
+                {% for goleador in goleadores %}
+
+                    {% if goleador[2]==False %}
+
+                        <div class="fila-goleador-visitante" onclick="window.location.href='/jugador/{{ goleador[3] }}'">
+
+                            {% if goleador[5]=='-1' %}
+                                <img class="goleador-imagen-visitante" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
+                            {% else %}
+                                <img class="goleador-imagen-visitante" src="{{ url_imagen_jugador }}{{ goleador[5] }}.png" alt="Jugador Icon">
+                            {% endif %}
+
+                            <span><strong>{{ goleador[4] }}</strong></span>
+                            <span><strong>{{ goleador[1] }}</strong></span>
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
     {% if partido[12] %}
     <div class="info-partido-estadio" onclick="window.location.href='/estadio/{{ partido[10] }}'">
     	<p class="nombre-estadio"><strong>{{ partido[11] }}</strong></p>

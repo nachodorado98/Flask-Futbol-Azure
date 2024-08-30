@@ -63,6 +63,10 @@ def conexion_entorno(conexion):
 	conexion.c.execute("""INSERT INTO jugadores
 						VALUES('julian-alvarez', 'Julian', 'atletico-madrid', 'ar', '1324', 100, 100.0, 9, 'DC')""")
 
+	conexion.c.execute("""INSERT INTO partido_goleador
+						VALUES('20190622', 'julian-alvarez', 1, 0, True),
+								('20190622', 'julian-alvarez', 2, 0, False)""")
+
 	conexion.confirmar()
 
 	return conexion

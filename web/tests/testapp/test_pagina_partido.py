@@ -268,3 +268,103 @@ def test_pagina_partido_sin_competicion(cliente, conexion_entorno):
 		respuesta.status_code==200
 		assert '<p class="competicion" onclick="window.location.href=' not in contenido
 		assert '<p class="competicion">' in contenido
+
+def test_pagina_partido_sin_goleadores(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partido_goleador""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-partido-goleadores">' not in contenido
+		assert '<div class="columna-local">' not in contenido
+		assert '<div class="fila-goleador-local"' not in contenido
+		assert '<div class="columna-visitante">' not in contenido
+		assert '<div class="fila-goleador-visitante"' not in contenido
+
+def test_pagina_partido_con_goleadores(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-partido-goleadores">' in contenido
+		assert '<div class="columna-local">' in contenido
+		assert '<div class="fila-goleador-local"' in contenido
+		assert '<div class="columna-visitante">' in contenido
+		assert '<div class="fila-goleador-visitante"' in contenido
+
+def test_pagina_partido_con_goleadores_local(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partido_goleador WHERE Local=False""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-partido-goleadores">' in contenido
+		assert '<div class="columna-local">' in contenido
+		assert '<div class="fila-goleador-local"' in contenido
+		assert '<div class="columna-visitante">' in contenido
+		assert '<div class="fila-goleador-visitante"' not in contenido
+
+def test_pagina_partido_con_goleadores_visitante(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partido_goleador WHERE Local=True""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-partido-goleadores">' in contenido
+		assert '<div class="columna-local">' in contenido
+		assert '<div class="fila-goleador-local"' not in contenido
+		assert '<div class="columna-visitante">' in contenido
+		assert '<div class="fila-goleador-visitante"' in contenido

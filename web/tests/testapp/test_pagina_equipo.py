@@ -54,6 +54,7 @@ def test_pagina_equipo_equipo(cliente, conexion_entorno):
 		assert '<div class="info-entrenador">' in contenido
 		assert '<div class="info-equipo">' in contenido
 		assert '<div class="info-estadio"' in contenido
+		assert '<div class="info-jugador"' in contenido
 
 def test_pagina_equipo_equipo_sin_fundacion(cliente, conexion_entorno):
 
@@ -238,6 +239,29 @@ def test_pagina_equipo_equipo_sin_estadio(cliente, conexion_entorno):
 		respuesta.status_code==200
 		assert '<div class="info-equipo-imagenes">' in contenido
 		assert '<div class="info-estadio">' not in contenido
+
+def test_pagina_equipo_equipo_sin_jugador(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM jugadores")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/equipo/atletico-madrid")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-equipo-imagenes">' in contenido
+		assert '<div class="info-jugador">' not in contenido
 
 def test_pagina_equipo_equipo_favorito(cliente, conexion_entorno):
 

@@ -59,14 +59,14 @@
 
     <div class="info-equipo-imagenes">
 
-        {% if datos_equipo[13] %}
-        <div class="info-entrenador">
-            <p><strong>{{ datos_equipo[11] }}</strong></p>
+        {% if jugador %}
+        <div class="info-jugador" onclick="window.location.href='/jugador/{{ jugador[0] }}'">
+            <p><strong>{{ jugador[1] }}</strong></p>
 
-            {% if datos_equipo[12]==-1 %}
-                <img class="entrenador-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_entrenador.png') }}" alt="Entrenador Icon">
+            {% if jugador[2]=='-1' %}
+                <img class="jugador-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
             {% else %}
-                <img class="entrenador-equipo" src="{{ url_imagen_entrenador }}{{ datos_equipo[12] }}.png" alt="Entrenador Icon">
+                <img class="jugador-equipo" src="{{ url_imagen_jugador }}{{ jugador[2] }}.png" alt="Jugador Icon">
             {% endif %}
 
         </div>
@@ -80,6 +80,19 @@
                 <img class="estadio-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
             {% else %}
                 <img class="estadio-equipo" src="{{ url_imagen_estadio }}{{ datos_equipo[20] }}.png" alt="Estadio Icon">
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+        {% if datos_equipo[13] %}
+        <div class="info-entrenador">
+            <p><strong>{{ datos_equipo[11] }}</strong></p>
+
+            {% if datos_equipo[12]==-1 %}
+                <img class="entrenador-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_entrenador.png') }}" alt="Entrenador Icon">
+            {% else %}
+                <img class="entrenador-equipo" src="{{ url_imagen_entrenador }}{{ datos_equipo[12] }}.png" alt="Entrenador Icon">
             {% endif %}
 
         </div>
