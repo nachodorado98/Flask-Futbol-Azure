@@ -519,7 +519,7 @@ footer {
 
 .tarjeta-equipo {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -591,16 +591,16 @@ footer {
 }
 
 .info-equipo-imagenes p {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--color-secundario);
-    margin: 0 15px;
+    margin: 0 10px;
     text-align: center;
-    padding: 10px;
+    padding: 5px;
     background-color: var(--color-primario);
     border-radius: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     flex: 1;
-    min-width: 170px;
+    min-width: 150px;
 }
 
 .info-equipo-imagenes .entrenador-equipo {
@@ -631,6 +631,36 @@ footer {
     height: 130px;
     border: 2px solid black;
     cursor: pointer;
+}
+
+.info-ultimo-partido {
+    cursor: pointer;
+}
+
+.ultimo-partido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.ultimo-partido img {
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    width: 65px;
+    height: 65px;
+}
+
+.info-ultimo-partido h4 {
+    font-size: 32px;
+    margin: 0px;
+}
+
+.info-ultimo-partido h5 {
+    font-size: 15px;
+    margin: 3px;
+    color: var(--color-primario) 
 }
 
 /*----------------------------------------------------------ESTADIO--------------------------------------------------------------*/

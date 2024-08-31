@@ -85,6 +85,39 @@
         </div>
         {% endif %}
 
+        {% if ultimo_partido %}
+        <div class="info-ultimo-partido" onclick="window.location.href='/partido/{{ ultimo_partido[0] }}'">
+            <p><strong>Ultimo Partido</strong></p>
+
+            <div class="ultimo-partido">
+
+                {% if ultimo_partido[2]==-1 %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                {% else %}
+                    <img src="{{ url_imagen_escudo }}{{ ultimo_partido[2] }}.png" alt="Equipo Icon">
+                {% endif %}
+
+                {% if ultimo_partido[6]=='-1' %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+                {% else %}
+                    <img src="{{ url_imagen_competicion }}{{ ultimo_partido[6] }}.png" alt="Competicion Icon">
+                {% endif %}
+
+            </div>
+
+            {% if ultimo_partido[5]==0 %}
+                <h4 style="color: #fe0000;"><strong>{{ ultimo_partido[3] }}</strong></h4>
+            {% elif ultimo_partido[5]==1 %}
+                <h4 style="color: #1fd62d;"><strong>{{ ultimo_partido[3] }}</strong></h4>
+            {% else %}
+                <h4 style="color: #FFC300;"><strong>{{ ultimo_partido[3] }}</strong></h4>
+            {% endif %}
+
+            <h5>{{ ultimo_partido[4] }}</h5>
+
+        </div>
+        {% endif %}
+
         {% if datos_equipo[13] %}
         <div class="info-entrenador">
             <p><strong>{{ datos_equipo[11] }}</strong></p>

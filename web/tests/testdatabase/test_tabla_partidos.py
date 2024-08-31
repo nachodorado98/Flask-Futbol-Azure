@@ -657,3 +657,28 @@ def test_obtener_partido_anterior_varios(conexion_entorno, data, partido_id_ante
 	partido_id=conexion_entorno.obtenerPartidoAnterior("20190622", "atletico-madrid")
 
 	assert partido_id==partido_id_anterior
+
+def test_ultimo_partido_equipo_no_existe(conexion):
+
+	assert not conexion.ultimoPartidoEquipo("atletico-madrid")
+
+def test_ultimo_partido_equipo(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('2', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('3', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('4', 'rival', 'atletico-madrid', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('5', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+
+	conexion.c.execute("""INSERT INTO competiciones
+						VALUES('primera', 'Primera', 'primera-division-ea', 'es')""")
+
+	conexion.c.execute("""INSERT INTO partido_competicion
+						VALUES('1', 'primera'),('2', 'primera'),('3', 'primera'),('4', 'primera'),('5', 'primera')""")
+
+	conexion.confirmar()
+
+	assert conexion.ultimoPartidoEquipo("atletico-madrid")

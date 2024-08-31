@@ -799,3 +799,55 @@ class Conexion:
 											goleador["jugador_id"],
 											goleador["nombre"],
 											goleador["jugador"]), goleadores))
+
+	# Metodo para obtener el ultimo partido de un equipo
+	def ultimoPartidoEquipo(self, equipo_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.partido_id, 
+								CASE WHEN p.equipo_id_local=%s
+									THEN p.equipo_id_visitante
+									ELSE p.equipo_id_local
+								END as equipo,
+								CASE 
+									WHEN p.equipo_id_local=%s AND e2.escudo IS NULL THEN -1
+									WHEN p.equipo_id_visitante=%s AND e1.escudo IS NULL THEN -1
+									WHEN p.equipo_id_local=%s AND e2.escudo IS NOT NULL THEN e2.escudo
+									WHEN p.equipo_id_visitante=%s AND e1.escudo IS NOT NULL THEN e1.escudo
+								END as escudo,
+								p.marcador, p.fecha,
+								CASE
+									WHEN p.resultado LIKE %s AND p.equipo_id_local=%s THEN 1
+									WHEN p.resultado LIKE %s AND p.equipo_id_visitante=%s THEN 1
+									WHEN p.resultado LIKE %s AND p.equipo_id_local=%s THEN 0
+									WHEN p.resultado LIKE %s AND p.equipo_id_visitante=%s THEN 0
+									WHEN p.resultado LIKE %s THEN 2
+						       END as resultado,
+								CASE WHEN c.codigo_logo IS NULL
+										THEN '-1'
+										ELSE codigo_logo
+								END as logo
+						FROM partidos p
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN partido_competicion pc
+						ON p.partido_id=pc.partido_id
+						LEFT JOIN competiciones c
+						ON pc.competicion_id=c.competicion_id
+						WHERE p.equipo_id_local=%s
+						OR p.equipo_id_visitante=%s
+						ORDER BY p.fecha DESC
+						LIMIT 1""",
+						(equipo_id, equipo_id, equipo_id, equipo_id, equipo_id, r'%Local%', equipo_id, r'%Visitante%', equipo_id,
+						r'%Visitante%', equipo_id, r'%Local%', equipo_id, r'%Empate%', equipo_id, equipo_id))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else (partido["partido_id"],
+										partido["equipo"],
+										partido["escudo"],
+										partido["marcador"],
+										partido["fecha"].strftime("%d/%m/%Y"),
+										partido["resultado"],
+										partido["logo"])
