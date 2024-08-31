@@ -42,3 +42,25 @@ def test_obtener_equipo_estadio_compartido(conexion_entorno):
 	equipos=conexion_entorno.obtenerEquipoEstadio("metropolitano")
 
 	assert len(equipos)==2
+
+def test_obtener_estadios_no_existen(conexion):
+
+	assert not conexion.obtenerDatosEstadios()
+
+def test_obtener_estadios(conexion_entorno):
+
+	assert conexion_entorno.obtenerDatosEstadios()
+
+def test_obtener_estadios_dos_equipos(conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id, Escudo, Codigo_Pais)
+						VALUES('atletico-madrid-b', 1000, 'es')""")
+
+	conexion_entorno.c.execute("""INSERT INTO equipo_estadio
+						VALUES('atletico-madrid-b', 'metropolitano')""")
+
+	conexion_entorno.confirmar()
+
+	estadios=conexion_entorno.obtenerDatosEstadios()
+
+	assert len(estadios)==1

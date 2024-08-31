@@ -372,15 +372,15 @@ class Conexion:
 										THEN -1
 										ELSE es.codigo_estadio
 								END as estadio_equipo,
+								CASE WHEN e.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e.codigo_pais
+								END as equipo_pais,
 								e.codigo_competicion,
 								CASE WHEN c.competicion_id IS NULL
 										THEN False
 										ELSE True
-								END as competicion_existe,
-								CASE WHEN c.codigo_pais IS NULL
-										THEN '-1'
-										ELSE c.codigo_pais
-								END as equipo_pais
+								END as competicion_existe
 						FROM equipos e
 						LEFT JOIN equipo_estadio ee
 						ON e.equipo_id=ee.equipo_id
@@ -851,3 +851,35 @@ class Conexion:
 										partido["fecha"].strftime("%d/%m/%Y"),
 										partido["resultado"],
 										partido["logo"])
+
+	# Metodo para obtener los datos de los estadios
+	def obtenerDatosEstadios(self)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.estadio_id, e.nombre,
+						       CASE WHEN e.codigo_estadio IS NULL
+						            THEN -1
+						            ELSE e.codigo_estadio
+						       END as estadio,
+						       MAX(CASE WHEN eq.escudo IS NULL
+						                THEN -1
+						                ELSE eq.escudo
+						           END) as escudo_equipo,
+						       MAX(CASE WHEN eq.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE eq.codigo_pais
+						           END) as pais
+						FROM estadios e
+						LEFT JOIN equipo_estadio ee
+						ON e.estadio_id=ee.estadio_id
+						LEFT JOIN equipos eq
+						ON ee.equipo_id=eq.equipo_id
+						GROUP BY e.estadio_id, e.nombre, e.codigo_estadio
+						ORDER BY e.estadio_id""")
+
+		estadios=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["nombre"],
+										estadio["estadio"],
+										estadio["escudo_equipo"],
+										estadio["pais"]), estadios))

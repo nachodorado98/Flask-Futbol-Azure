@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
 
 from src.utilidades.utils import anadirPuntos
 
@@ -36,5 +36,25 @@ def pagina_estadio(estadio_id:str):
 							estadio=estadio,
 							equipos_estadio=equipos_estadio,
 							anadirPuntos=anadirPuntos,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+
+@bp_estadio.route("/estadios")
+@login_required
+def pagina_estadios():
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	datos_estadios=con.obtenerDatosEstadios()
+
+	con.cerrarConexion()
+
+	return render_template("estadios.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							datos_estadios=datos_estadios,
+							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

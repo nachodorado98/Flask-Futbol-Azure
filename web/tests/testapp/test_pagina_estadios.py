@@ -1,15 +1,15 @@
-def test_pagina_jugadores_sin_login(cliente):
+def test_pagina_estadios_sin_login(cliente):
 
-	respuesta=cliente.get("/jugadores", follow_redirects=True)
+	respuesta=cliente.get("/estadios", follow_redirects=True)
 
 	contenido=respuesta.data.decode()
 
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_jugadores_jugadores_no_existe(cliente, conexion_entorno):
+def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno):
 
-	conexion_entorno.c.execute("DELETE FROM jugadores")
+	conexion_entorno.c.execute("DELETE FROM estadios")
 
 	conexion_entorno.confirmar()
 
@@ -22,16 +22,16 @@ def test_pagina_jugadores_jugadores_no_existe(cliente, conexion_entorno):
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		respuesta=cliente_abierto.get("/jugadores")
+		respuesta=cliente_abierto.get("/estadios")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<div class="tarjeta-jugadores-totales"' in contenido
-		assert '<p class="titulo-pagina-jugadores">' in contenido
-		assert '<div class="tarjetas-jugadores-totales">' not in contenido
+		assert '<div class="tarjeta-estadios-totales"' in contenido
+		assert '<p class="titulo-pagina-estadios">' in contenido
+		assert '<div class="tarjetas-estadios-totales">' not in contenido
 
-def test_pagina_jugadores_jugadores(cliente, conexion_entorno):
+def test_pagina_estadios_estadios(cliente, conexion_entorno):
 
 	with cliente as cliente_abierto:
 
@@ -42,11 +42,11 @@ def test_pagina_jugadores_jugadores(cliente, conexion_entorno):
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		respuesta=cliente_abierto.get("/jugadores")
+		respuesta=cliente_abierto.get("/estadios")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<div class="tarjeta-jugadores-totales"' in contenido
-		assert '<p class="titulo-pagina-jugadores">' in contenido
-		assert '<div class="tarjetas-jugadores-totales">' in contenido
+		assert '<div class="tarjeta-estadios-totales"' in contenido
+		assert '<p class="titulo-pagina-estadios">' in contenido
+		assert '<div class="tarjetas-estadios-totales">' in contenido
