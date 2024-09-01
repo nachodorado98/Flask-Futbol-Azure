@@ -883,3 +883,66 @@ class Conexion:
 										estadio["estadio"],
 										estadio["escudo_equipo"],
 										estadio["pais"]), estadios))
+
+	# Metodo para obtener los datos de los equipos mas top
+	def obtenerDatosEquiposTop(self, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.equipo_id, e.nombre, e.puntuacion,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo,
+								CASE WHEN e.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e.codigo_pais
+								END as equipo_pais,
+								c.codigo_logo
+						FROM equipos e
+						LEFT JOIN competiciones c
+						ON e.codigo_competicion=c.competicion_id
+						WHERE e.puntuacion IS NOT NULL
+						ORDER BY e.puntuacion DESC
+						LIMIT %s""",
+						(numero,))
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo_id"],
+										equipo["nombre"],
+										equipo["puntuacion"],
+										equipo["escudo"],
+										equipo["equipo_pais"],
+										equipo["codigo_logo"]), equipos))
+
+	# Metodo para obtener los datos de los jugadores mas top
+	def obtenerDatosJugadoresTop(self, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT j.jugador_id, j.nombre, j.puntuacion,
+								CASE WHEN j.codigo_pais IS NULL
+										THEN '-1'
+										ELSE j.codigo_pais
+								END as pais,
+								CASE WHEN j.codigo_jugador IS NULL
+										THEN '-1'
+										ELSE j.codigo_jugador
+								END as jugador,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo_equipo
+						FROM jugadores j
+						LEFT JOIN equipos e
+						ON j.equipo_id=e.equipo_id
+						WHERE j.puntuacion IS NOT NULL
+						ORDER BY j.puntuacion DESC
+						LIMIT %s""",
+						(numero,))
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: (jugador["jugador_id"],
+										jugador["nombre"],
+										jugador["puntuacion"],
+										jugador["pais"],
+										jugador["jugador"],
+										jugador["escudo_equipo"]), jugadores))

@@ -58,12 +58,18 @@ def pagina_equipos():
 
 	datos_equipos=con.obtenerDatosEquipos()
 
+	numero_top=7
+
+	datos_equipos_top=con.obtenerDatosEquiposTop(numero_top)
+
 	con.cerrarConexion()
 
 	return render_template("equipos.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							datos_equipos=datos_equipos,
+							numero_top=numero_top,
+							datos_equipos_top=datos_equipos_top,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)

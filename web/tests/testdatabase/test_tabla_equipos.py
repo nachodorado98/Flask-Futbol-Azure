@@ -94,3 +94,20 @@ def test_obtener_equipos_no_existe(conexion):
 def test_obtener_equipos(conexion_entorno):
 
 	assert conexion_entorno.obtenerDatosEquipos()
+
+def test_obtener_equipos_top_no_existe(conexion):
+
+	assert not conexion.obtenerDatosEquiposTop(5)
+
+def test_obtener_equipos_top(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Puntuacion)
+									VALUES('equipo1', 10),('equipo2', 100),('equipo3', 22),('equipo4', 101),('equipo5', 5),
+											('equipo6', 15),('equipo7', 13),('equipo8', 1000),('equipo9', 11),('equipo10', 1)""")
+
+	conexion.confirmar()
+
+	equipos_top=conexion.obtenerDatosEquiposTop(5)
+
+	assert equipos_top[0][0]=="equipo8"
+	assert equipos_top[-1][0]=="equipo6"

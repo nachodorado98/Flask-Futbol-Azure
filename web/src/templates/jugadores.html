@@ -1,6 +1,60 @@
 {% extends "partidos.html" %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="tarjeta-jugadores-top-totales">
+
+        <p class="titulo-top-jugadores"><strong>Top {{ numero_top }} Jugadores</strong></p>
+
+        {% if datos_jugadores_top %}
+
+            <div class="tarjetas-jugadores-top-totales">
+                <div class="tarjetas-jugadores-totales-top-wrapper">
+
+                {% for jugador_top in datos_jugadores_top %}
+
+                    <div class="tarjeta-jugador-top-total" onclick="window.location.href='/jugador/{{ jugador_top[0] }}'">
+
+                        <div class="info-jugador-top-total">
+
+                            {% if jugador_top[4]=='-1' %}
+                                <img class="jugador-jugador-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img class="jugador-jugador-top-total" src="{{ url_imagen_jugador }}{{ jugador_top[4] }}.png" alt="Local Icon">
+                            {% endif %}
+
+                            <h4>{{ jugador_top[1] }}</h4>
+
+                            {% if jugador_top[3]=='-1' %}
+                                <img class="pais-jugador-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                            {% else %}
+                                <img class="pais-jugador-top-total" src="{{ url_imagen_pais }}{{ jugador_top[3] }}.png" alt="Pais Icon">
+                            {% endif %}
+
+                            {% if jugador_top[5]==-1 %}
+                                <img class="equipo-jugador-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% else %}
+                                <img class="equipo-jugador-top-total" src="{{ url_imagen_escudo }}{{ jugador_top[5] }}.png" alt="Equipo Icon">
+                            {% endif %}
+
+                            <h4>{{ jugador_top[2] }}</h4>
+
+                        </div>
+                        
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        {% endif %}
+        
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

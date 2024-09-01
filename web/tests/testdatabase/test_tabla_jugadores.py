@@ -50,3 +50,20 @@ def test_obtener_jugador_equipo_varios(conexion_entorno):
 	jugador=conexion_entorno.obtenerDatosJugadorEquipoValoracion("atletico-madrid")
 
 	assert jugador[0]=="nacho-2"
+
+def test_obtener_jugadores_top_no_existe(conexion):
+
+	assert not conexion.obtenerDatosJugadoresTop(5)
+
+def test_obtener_jugadores_top(conexion):
+
+	conexion.c.execute("""INSERT INTO jugadores (Jugador_Id, Puntuacion)
+									VALUES('jugador1', 100),('jugador2', 100),('jugador3', 22),('jugador4', 101),('jugador5', 5),
+											('jugador6', 15),('jugador7', 13),('jugador8', 3),('jugador9', 1011),('jugador10', 1)""")
+
+	conexion.confirmar()
+
+	jugadores_top=conexion.obtenerDatosJugadoresTop(5)
+
+	assert jugadores_top[0][0]=="jugador9"
+	assert jugadores_top[-1][0]=="jugador3"

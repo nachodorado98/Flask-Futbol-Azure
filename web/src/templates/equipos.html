@@ -1,6 +1,54 @@
 {% extends "partidos.html" %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="tarjeta-equipos-top-totales">
+
+        <p class="titulo-top-equipos"><strong>Top {{ numero_top }} Equipos</strong></p>
+
+        {% if datos_equipos_top %}
+
+            <div class="tarjetas-equipos-top-totales">
+                <div class="tarjetas-equipos-totales-top-wrapper">
+
+                {% for equipo_top in datos_equipos_top %}
+
+                    <div class="tarjeta-equipo-top-total" onclick="window.location.href='/equipo/{{ equipo_top[0] }}'">
+
+                        <div class="info-equipo-top-total">
+
+                            {% if equipo_top[3]==-1 %}
+                                <img class="equipo-equipo-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% else %}
+                                <img class="equipo-equipo-top-total" src="{{ url_imagen_escudo }}{{ equipo_top[3] }}.png" alt="Equipo Icon">
+                            {% endif %}
+
+                            <h4>{{ equipo_top[1] }}</h4>
+
+                            {% if equipo_top[4]=='-1' %}
+                                <img class="pais-equipo-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                            {% else %}
+                                <img class="pais-equipo-top-total" src="{{ url_imagen_pais }}{{ equipo_top[4] }}.png" alt="Pais Icon">
+                            {% endif %}
+
+                            <h4>{{ equipo_top[2] }}</h4>
+
+                        </div>
+                        
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

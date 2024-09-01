@@ -44,12 +44,18 @@ def pagina_jugadores():
 
 	datos_jugadores=con.obtenerDatosJugadores()
 
+	numero_top=7
+
+	datos_jugadores_top=con.obtenerDatosJugadoresTop(numero_top)
+
 	con.cerrarConexion()
 
 	return render_template("jugadores.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							datos_jugadores=datos_jugadores,
+							numero_top=numero_top,
+							datos_jugadores_top=datos_jugadores_top,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES)
