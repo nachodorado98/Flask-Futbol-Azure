@@ -50,9 +50,6 @@ def test_pagina_jugadores_jugadores(cliente, conexion_entorno):
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<div class="tarjeta-jugadores-totales"' in contenido
-		assert '<p class="titulo-pagina-jugadores">' in contenido
-		assert '<div class="tarjetas-jugadores-totales">' in contenido
 		assert '<div class="tarjeta-jugadores-top-totales">' in contenido
 		assert '<p class="titulo-top-jugadores">' in contenido
 		assert '<div class="tarjetas-jugadores-top-totales">' in contenido
@@ -77,9 +74,6 @@ def test_pagina_jugadores_jugadores_top_no_existen(cliente, conexion_entorno):
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<div class="tarjeta-jugadores-totales"' in contenido
-		assert '<p class="titulo-pagina-jugadores">' in contenido
-		assert '<div class="tarjetas-jugadores-totales">' in contenido
 		assert '<div class="tarjeta-jugadores-top-totales">' in contenido
 		assert '<p class="titulo-top-jugadores">' in contenido
 		assert '<div class="tarjetas-jugadores-top-totales">' not in contenido

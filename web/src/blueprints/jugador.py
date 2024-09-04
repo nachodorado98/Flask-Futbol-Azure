@@ -44,7 +44,7 @@ def pagina_jugadores():
 
 	datos_jugadores=con.obtenerDatosJugadores()
 
-	numero_top=7
+	numero_top=8
 
 	datos_jugadores_top=con.obtenerDatosJugadoresTop(numero_top)
 

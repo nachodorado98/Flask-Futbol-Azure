@@ -1,6 +1,52 @@
 {% extends "partidos.html" %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="tarjeta-competiciones-top-totales">
+
+        <p class="titulo-top-competiciones"><strong>Top {{ numero_top }} Competiciones</strong></p>
+
+        {% if datos_competiciones_top %}
+
+            <div class="tarjetas-competiciones-top-totales">
+                <div class="tarjetas-competiciones-totales-top-wrapper">
+
+                {% for competicion_top in datos_competiciones_top %}
+
+                    <div class="tarjeta-competicion-top-total" onclick="window.location.href='/competicion/{{ competicion_top[0] }}'">
+
+                        <div class="info-competicion-top-total">
+
+                            {% if competicion_top[2]=='-1' %}
+                                <img class="competicion-competicion-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+                            {% else %}
+                                <img class="competicion-competicion-top-total" src="{{ url_imagen_competicion }}{{ competicion_top[2] }}.png" alt="Competicion Icon">
+                            {% endif %}
+
+                            <h4>{{ competicion_top[1] }}</h4>
+
+                            {% if competicion_top[3]=='-1' %}
+                                <img class="pais-competicion-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                            {% else %}
+                                <img class="pais-competicion-top-total" src="{{ url_imagen_pais }}{{ competicion_top[3] }}.png" alt="Pais Icon">
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

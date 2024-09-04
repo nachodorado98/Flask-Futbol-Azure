@@ -64,3 +64,26 @@ def test_obtener_estadios_dos_equipos(conexion_entorno):
 	estadios=conexion_entorno.obtenerDatosEstadios()
 
 	assert len(estadios)==1
+
+def test_obtener_estadios_top_no_existe(conexion):
+
+	assert not conexion.obtenerDatosEstadiosTop(5)
+
+def test_obtener_estadios_top(conexion):
+
+	conexion.c.execute("""INSERT INTO estadios
+						VALUES('estadio1', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 13647, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio2', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 100000, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio3', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 20001, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio4', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 35000, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio5', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 66000, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio6', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 10, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio7', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 22500, 2017, 105, 68, 'Tel', 'Ces'),
+								('estadio8', '1', 'Est', 'Dir', '4.1', '-3.5', 'Madrid', 75677, 2017, 105, 68, 'Tel', 'Ces')""")
+
+	conexion.confirmar()
+
+	estadios_top=conexion.obtenerDatosEstadiosTop(5)
+
+	assert estadios_top[0][0]=="estadio2"
+	assert estadios_top[-1][0]=="estadio7"

@@ -49,12 +49,18 @@ def pagina_estadios():
 
 	datos_estadios=con.obtenerDatosEstadios()
 
+	numero_top=8
+
+	datos_estadios_top=con.obtenerDatosEstadiosTop(numero_top)
+
 	con.cerrarConexion()
 
 	return render_template("estadios.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							datos_estadios=datos_estadios,
+							numero_top=numero_top,
+							datos_estadios_top=datos_estadios_top,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

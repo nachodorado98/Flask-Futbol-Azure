@@ -53,11 +53,17 @@ def pagina_competiciones():
 
 	datos_competiciones=con.obtenerDatosCompeticiones()
 
+	numero_top=8
+
+	datos_competiciones_top=con.obtenerDatosCompeticionesTop(numero_top)
+
 	con.cerrarConexion()
 
 	return render_template("competiciones.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							datos_competiciones=datos_competiciones,
+							numero_top=numero_top,
+							datos_competiciones_top=datos_competiciones_top,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)

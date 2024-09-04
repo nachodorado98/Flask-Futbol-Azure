@@ -637,6 +637,8 @@ class Conexion:
 						FROM equipos e
 						LEFT JOIN competiciones c
 						ON e.codigo_competicion=c.competicion_id
+						WHERE e.puntuacion IS NOT NULL
+						AND e.puntuacion>55
 						ORDER BY e.equipo_id""")
 
 		equipos=self.c.fetchall()
@@ -740,6 +742,8 @@ class Conexion:
 						FROM jugadores j
 						LEFT JOIN equipos e
 						ON j.equipo_id=e.equipo_id
+						WHERE j.puntuacion IS NOT NULL
+						AND j.puntuacion>75
 						ORDER BY j.jugador_id""")
 
 		jugadores=self.c.fetchall()
@@ -873,6 +877,8 @@ class Conexion:
 						ON e.estadio_id=ee.estadio_id
 						LEFT JOIN equipos eq
 						ON ee.equipo_id=eq.equipo_id
+						WHERE e.capacidad IS NOT NULL
+						AND e.capacidad>10000
 						GROUP BY e.estadio_id, e.nombre, e.codigo_estadio
 						ORDER BY e.estadio_id""")
 
@@ -901,7 +907,7 @@ class Conexion:
 						LEFT JOIN competiciones c
 						ON e.codigo_competicion=c.competicion_id
 						WHERE e.puntuacion IS NOT NULL
-						ORDER BY e.puntuacion DESC
+						ORDER BY e.puntuacion DESC, e.equipo_id
 						LIMIT %s""",
 						(numero,))
 
@@ -934,7 +940,8 @@ class Conexion:
 						LEFT JOIN equipos e
 						ON j.equipo_id=e.equipo_id
 						WHERE j.puntuacion IS NOT NULL
-						ORDER BY j.puntuacion DESC
+						AND j.equipo_id IS NOT NULL
+						ORDER BY j.puntuacion DESC, j.jugador_id
 						LIMIT %s""",
 						(numero,))
 
@@ -946,3 +953,73 @@ class Conexion:
 										jugador["pais"],
 										jugador["jugador"],
 										jugador["escudo_equipo"]), jugadores))
+
+	# Metodo para obtener los datos de los estadios mas top
+	def obtenerDatosEstadiosTop(self, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.estadio_id, e.nombre, e.capacidad,
+						       CASE WHEN e.codigo_estadio IS NULL
+						            THEN -1
+						            ELSE e.codigo_estadio
+						       END as estadio,
+						       MAX(CASE WHEN eq.escudo IS NULL
+						                THEN -1
+						                ELSE eq.escudo
+						           END) as escudo_equipo,
+						       MAX(CASE WHEN eq.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE eq.codigo_pais
+						           END) as pais
+						FROM estadios e
+						LEFT JOIN equipo_estadio ee
+						ON e.estadio_id=ee.estadio_id
+						LEFT JOIN equipos eq
+						ON ee.equipo_id=eq.equipo_id
+						WHERE e.capacidad IS NOT NULL
+						AND e.capacidad<=200000
+						GROUP BY e.estadio_id, e.nombre, e.codigo_estadio
+						ORDER BY e.capacidad DESC, e.estadio_id
+						LIMIT %s""",
+						(numero,))
+
+		estadios=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["nombre"],
+										estadio["capacidad"],
+										estadio["estadio"],
+										estadio["escudo_equipo"],
+										estadio["pais"]), estadios))
+
+	# Metodo para obtener los datos de las competiciones mas top
+	def obtenerDatosCompeticionesTop(self, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT c.competicion_id, c.nombre,
+								CASE WHEN c.codigo_logo IS NULL
+										THEN '-1'
+										ELSE c.codigo_logo
+								END as logo,
+								CASE WHEN c.codigo_pais IS NULL
+										THEN '-1'
+										ELSE c.codigo_pais
+								END as pais,
+								COALESCE(SUM(e.puntuacion), 0) as suma_puntuacion,
+								COALESCE(COUNT(e.codigo_competicion), 0) as numero_equipos
+						FROM competiciones c
+						LEFT JOIN equipos e
+						ON c.competicion_id=e.codigo_competicion
+						WHERE e.puntuacion IS NOT NULL
+						GROUP BY c.competicion_id, c.nombre, logo, pais
+						HAVING COUNT(e.codigo_competicion)<=20
+						ORDER BY suma_puntuacion DESC, c.competicion_id
+						LIMIT %s""",
+						(numero,))
+
+		competiciones=self.c.fetchall()
+
+		return list(map(lambda competicion: (competicion["competicion_id"],
+											competicion["nombre"],
+											competicion["logo"],
+											competicion["pais"],
+											competicion["suma_puntuacion"],
+											competicion["numero_equipos"]), competiciones))

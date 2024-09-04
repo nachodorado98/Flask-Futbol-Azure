@@ -1,6 +1,59 @@
 {% extends "partidos.html" %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="tarjeta-estadios-top-totales">
+
+        <p class="titulo-top-estadios"><strong>Top {{ numero_top }} Estadios</strong></p>
+
+        {% if datos_estadios_top %}
+
+            <div class="tarjetas-estadios-top-totales">
+                <div class="tarjetas-estadios-totales-top-wrapper">
+
+                {% for estadio_top in datos_estadios_top %}
+
+                    <div class="tarjeta-estadio-top-total" onclick="window.location.href='/estadio/{{ estadio_top[0] }}'">
+
+                        <div class="info-estadio-top-total">
+
+                            {% if estadio_top[3]==-1 %}
+                                <img class="estadio-estadio-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                            {% else %}
+                                <img class="estadio-estadio-top-total" src="{{ url_imagen_estadio }}{{ estadio_top[3] }}.png" alt="Estadio Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_top[1] }}</h4>
+
+                            {% if estadio_top[4]==-1 %}
+                                <img class="equipo-estadio-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% else %}
+                                <img class="equipo-estadio-top-total" src="{{ url_imagen_escudo }}{{ estadio_top[4] }}.png" alt="Equipo Icon">
+                            {% endif %}
+
+                            {% if estadio_top[5]=='-1' %}
+                                <img class="pais-estadio-top-total" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                            {% else %}
+                                <img class="pais-estadio-top-total" src="{{ url_imagen_pais }}{{ estadio_top[5] }}.png" alt="Pais Icon">
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                    
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

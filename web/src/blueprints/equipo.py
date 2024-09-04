@@ -58,7 +58,7 @@ def pagina_equipos():
 
 	datos_equipos=con.obtenerDatosEquipos()
 
-	numero_top=7
+	numero_top=8
 
 	datos_equipos_top=con.obtenerDatosEquiposTop(numero_top)
 
