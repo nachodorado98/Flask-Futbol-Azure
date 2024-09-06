@@ -56,6 +56,9 @@ def test_pagina_equipo_equipo(cliente, conexion_entorno):
 		assert '<div class="info-estadio"' in contenido
 		assert '<div class="info-jugador"' in contenido
 		assert '<div class="info-ultimo-partido"' in contenido
+		assert '<div class="tarjeta-jugadores-equipo">' in contenido
+		assert '<p class="titulo-equipo-jugadores">' in contenido
+		assert '<div class="tarjetas-jugadores-equipo">' in contenido
 
 def test_pagina_equipo_equipo_sin_fundacion(cliente, conexion_entorno):
 
@@ -368,3 +371,27 @@ def test_pagina_equipo_equipo_sin_competiciones_existentes(cliente, conexion_ent
 		respuesta.status_code==200
 		assert '<p class="competicion" onclick="window.location.href=' not in contenido
 		assert '<p class="competicion">' in contenido
+
+def test_pagina_equipo_equipo_sin_jugadores(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM jugadores""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/equipo/atletico-madrid")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-jugadores-equipo">' in contenido
+		assert '<p class="titulo-equipo-jugadores">' in contenido
+		assert '<div class="tarjetas-jugadores-equipo">' not in contenido

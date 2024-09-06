@@ -69,3 +69,11 @@ def test_obtener_jugadores_top(conexion):
 
 	assert jugadores_top[0][0]=="jugador9"
 	assert jugadores_top[-1][0]=="jugador3"
+
+def test_obtener_jugadores_equipo_no_existe(conexion):
+
+	assert not conexion.obtenerJugadoresEquipo("atletico-madrid")
+
+def test_obtener_jugadores_equipo(conexion_entorno):
+
+	assert conexion_entorno.obtenerJugadoresEquipo("atletico-madrid")

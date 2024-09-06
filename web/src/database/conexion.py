@@ -1023,3 +1023,22 @@ class Conexion:
 											competicion["pais"],
 											competicion["suma_puntuacion"],
 											competicion["numero_equipos"]), competiciones))
+
+	# Metodo para obtener los jugadores de un equipo
+	def obtenerJugadoresEquipo(self, equipo_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT jugador_id, nombre,
+								CASE WHEN codigo_jugador IS NULL
+										THEN '-1'
+										ELSE codigo_jugador
+								END as jugador
+						FROM jugadores
+						WHERE equipo_id=%s
+						ORDER BY puntuacion DESC""",
+						(equipo_id,))
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: (jugador["jugador_id"],
+										jugador["nombre"],
+										jugador["jugador"]), jugadores))

@@ -31,6 +31,8 @@ def pagina_equipo(equipo_id:str):
 
 	ultimo_partido=con.ultimoPartidoEquipo(equipo_id)
 
+	jugadores_equipo=con.obtenerJugadoresEquipo(equipo_id)
+
 	con.cerrarConexion()
 
 	return render_template("equipo.html",
@@ -40,6 +42,7 @@ def pagina_equipo(equipo_id:str):
 							favorito=favorito,
 							jugador=jugador_equipo,
 							ultimo_partido=ultimo_partido,
+							jugadores_equipo=jugadores_equipo,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_entrenador=URL_DATALAKE_ENTRENADORES,
