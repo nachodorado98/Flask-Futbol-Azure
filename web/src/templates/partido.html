@@ -1,6 +1,93 @@
 {% extends "partidos.html" %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="tarjeta-principal-partidos-entre-equipos">
+
+        <p class="titulo-partidos-entre-equipos"><strong>Historial Equipos</strong></p>
+
+        {% if partidos_entre_equipos %}
+
+            <div class="info-historial-entre-equipos">
+                <div class="historial-container">
+                    <div class="columna-historial">
+
+                        <div class="fila-titulo-historial">
+                            <h4>Victorias</h4>
+                            <h4>Empates</h4>
+                            <h4>Victorias </h4>
+                        </div>
+
+                        <div class="fila-escudos-historial">
+
+                            {% if partido[6]==-1 %}
+                                <img class="escudo-local-historial" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img class="escudo-local-historial" src="{{ url_imagen_escudo }}{{ partido[6] }}.png" alt="Local Icon">
+                            {% endif %}
+
+                            {% if partido[9]==-1 %}
+                                <img class="escudo-visitante-historial" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img class="escudo-visitante-historial" src="{{ url_imagen_escudo }}{{ partido[9] }}.png" alt="Local Icon">
+                            {% endif %}
+
+                        </div>
+
+                        <div class="fila-datos-historial">
+                            <h4>{{ historial_entre_equipos[0][1] }}</h4>
+                            <h4>{{ historial_entre_equipos[1][1] }}</h4>
+                            <h4>{{ historial_entre_equipos[2][1] }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="titulo-partidos-entre-equipos"><strong>Ultimos Partidos</strong></p>
+
+            <div class="tarjetas-partidos-entre-equipos">
+                <div class="tarjetas-partidos-entre-equipos-wrapper">
+
+                {% for partido_entre_equipos in partidos_entre_equipos %}
+
+                    <div class="tarjeta-partido-entre-equipos" onclick="window.location.href='/partido/{{ partido_entre_equipos[0] }}'">
+
+                        <p><strong>{{ partido_entre_equipos[9] }}</strong></p>
+
+                        <div class="info-partido-entre-equipos">
+
+                            {% if partido_entre_equipos[5]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img src="{{ url_imagen_escudo }}{{ partido_entre_equipos[5] }}.png" alt="Local Icon">
+                            {% endif %}
+
+                            <h4>{{ partido_entre_equipos[1] }}</h4>
+
+                            {% if partido_entre_equipos[8]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                            {% else %}
+                                <img src="{{ url_imagen_escudo }}{{ partido_entre_equipos[8] }}.png" alt="Visitante Icon">
+                            {% endif %}
+
+                        </div>
+
+                         <p><strong>{{ partido_entre_equipos[2] }}</strong></p>
+
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

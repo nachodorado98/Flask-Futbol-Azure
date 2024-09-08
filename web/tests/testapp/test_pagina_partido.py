@@ -203,10 +203,8 @@ def test_pagina_partido_si_partido_anterior_no_partido_siguiente(cliente, conexi
 def test_pagina_partido_si_partido_anterior_si_partido_siguiente(cliente, conexion_entorno):
 
 	conexion_entorno.c.execute("""INSERT INTO partidos
-								VALUES('20245964', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria')""")
-
-	conexion_entorno.c.execute("""INSERT INTO partidos
-								VALUES('202454564', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+								VALUES('20245964', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria'),
+									('202454564', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
 	conexion_entorno.confirmar()
 
@@ -368,3 +366,75 @@ def test_pagina_partido_con_goleadores_visitante(cliente, conexion_entorno):
 		assert '<div class="fila-goleador-local"' not in contenido
 		assert '<div class="columna-visitante">' in contenido
 		assert '<div class="fila-goleador-visitante"' in contenido
+
+def test_pagina_partido_con_historial_entre_equipos(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partidos""")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival'),('otro')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190621', 'atletico-madrid', 'otro', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+										('20190622', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Empate'),
+										('20190623', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+										('20190624', 'rival', 'otro', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+										('20190625', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Visitante')""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-historial-entre-equipos">' in contenido
+		assert '<div class="historial-container">' in contenido
+		assert '<div class="columna-historial">' in contenido
+		assert '<div class="fila-titulo-historial">' in contenido
+		assert 'Victorias' in contenido
+		assert 'Empates' in contenido
+		assert '<div class="fila-datos-historial">' in contenido
+		assert '<h4>2</h4>' in contenido
+		assert '<h4>1</h4>' in contenido
+		assert '<h4>0</h4>' in contenido
+
+def test_pagina_partido_con_partidos_entre_equipos(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partidos""")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival'),('otro')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190621', 'atletico-madrid', 'otro', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+										('20190622', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Empate'),
+										('20190623', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+										('20190624', 'rival', 'otro', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+										('20190625', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Visitante')""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<p class="titulo-partidos-entre-equipos">' in contenido
+		assert '<div class="tarjetas-partidos-entre-equipos">' in contenido

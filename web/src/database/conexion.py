@@ -1042,3 +1042,82 @@ class Conexion:
 		return list(map(lambda jugador: (jugador["jugador_id"],
 										jugador["nombre"],
 										jugador["jugador"]), jugadores))
+
+	# Metodo para obtener los partidos entre equipos
+	def obtenerPartidosEntreEquipos(self, equipo_id_1:str, equipo_id_2:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								p.competicion
+						FROM partidos p
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						WHERE (p.equipo_id_local=%s AND p.equipo_id_visitante=%s)
+						OR (p.equipo_id_visitante=%s AND p.equipo_id_local=%s)
+						ORDER BY fecha DESC
+						LIMIT %s""",
+						(equipo_id_1, equipo_id_2, equipo_id_1, equipo_id_2, numero))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"]), partidos))
+
+	# Metodo para obtener las victorias de los partidos entre equipos de un equipo
+	def obtenerVictoriasEntreEquipos(self, equipo_id_1:str, equipo_id_2:str, equipo_victorias:str)->tuple:
+
+		self.c.execute("""SELECT %s as equipo, COUNT(1) as numero
+						FROM partidos
+						WHERE (equipo_id_local=%s AND equipo_id_visitante=%s AND resultado LIKE %s)
+						OR (equipo_id_visitante=%s AND equipo_id_local=%s AND resultado LIKE %s)""",
+						(equipo_victorias,
+						equipo_id_1, equipo_id_2, r'%Local%', 
+						equipo_id_1, equipo_id_2, r'%Visitante%'))
+
+		resultado=self.c.fetchone()
+
+		return resultado["equipo"], resultado["numero"]
+
+	# Metodo para obtener los empates de los partidos entre equipos
+	def obtenerEmpatesEntreEquipos(self, equipo_id_1:str, equipo_id_2:str)->tuple:
+
+		self.c.execute("""SELECT COUNT(1) as numero
+						FROM partidos
+						WHERE ((equipo_id_local=%s AND equipo_id_visitante=%s)
+						OR (equipo_id_visitante=%s AND equipo_id_local=%s))
+						AND resultado LIKE %s""",
+						(equipo_id_1, equipo_id_2, equipo_id_1, equipo_id_2, r'%Empate%'))
+
+		resultado=self.c.fetchone()
+
+		return "empate", resultado["numero"]
+
+	# Metodo para obtener el historial de los partidos entre equipos
+	def obtenerPartidosHistorialEntreEquipos(self, equipo_id_1:str, equipo_id_2:str)->List[tuple]:
+
+		victorias_1=self.obtenerVictoriasEntreEquipos(equipo_id_1, equipo_id_2, equipo_id_1)
+
+		victorias_2=self.obtenerVictoriasEntreEquipos(equipo_id_2, equipo_id_1, equipo_id_2)
+
+		empates=self.obtenerEmpatesEntreEquipos(equipo_id_1, equipo_id_2)
+
+		return [victorias_1, empates, victorias_2]

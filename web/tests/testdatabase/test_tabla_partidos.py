@@ -682,3 +682,113 @@ def test_ultimo_partido_equipo(conexion):
 	conexion.confirmar()
 
 	assert conexion.ultimoPartidoEquipo("atletico-madrid")
+
+def test_obtener_partidos_entre_equipos_no_existe(conexion):
+
+	assert not conexion.obtenerPartidosEntreEquipos("atletico-madrid", "rival", 10)
+
+def test_obtener_partidos_entre_equipos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival'),('otro')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'otro', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('2', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('3', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('4', 'rival', 'otro', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('5', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosEntreEquipos("atletico-madrid", "rival", 5)
+
+	assert len(partidos)==3
+
+	for partido in partidos:
+
+		assert "atletico-madrid" in partido
+		assert "rival" in partido
+		assert "otro" not in partido
+
+def test_obtener_victorias_entre_equipos_no_existe(conexion):
+
+	victorias=conexion.obtenerVictoriasEntreEquipos("atletico-madrid", "rival", "atletico-madrid")
+
+	assert victorias[0]=="atletico-madrid"
+	assert victorias[1]==0
+
+def test_obtener_victorias_entre_equipos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival'),('otro')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'otro', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('2', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('3', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('4', 'rival', 'otro', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('5', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	victorias=conexion.obtenerVictoriasEntreEquipos("atletico-madrid", "rival", "atletico-madrid")
+
+	assert victorias[0]=="atletico-madrid"
+	assert victorias[1]==2
+
+def test_obtener_empates_entre_equipos_no_existe(conexion):
+
+	empates=conexion.obtenerEmpatesEntreEquipos("atletico-madrid", "rival")
+
+	assert empates[0]=="empate"
+	assert empates[1]==0
+
+def test_obtener_empates_entre_equipos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival'),('otro')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'otro', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('2', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Empate'),
+								('3', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('4', 'rival', 'otro', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('5', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	empates=conexion.obtenerEmpatesEntreEquipos("atletico-madrid", "rival")
+
+	assert empates[0]=="empate"
+	assert empates[1]==1
+
+def test_obtener_partidos_historial_entre_equipos_no_existe(conexion):
+
+	historial=conexion.obtenerPartidosHistorialEntreEquipos("atletico-madrid", "rival")
+
+	assert historial[0][0]=="atletico-madrid"
+	assert historial[0][1]==0
+	assert historial[1][0]=="empate"
+	assert historial[1][1]==0
+	assert historial[2][0]=="rival"
+	assert historial[2][1]==0
+
+def test_obtener_partidos_historial_entre_equipos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival'),('otro')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES('1', 'atletico-madrid', 'otro', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('2', 'rival', 'atletico-madrid', '2019-07-22', '20:00', 'Liga', '1-0', 'Empate'),
+								('3', 'atletico-madrid', 'rival', '2024-06-22', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('4', 'rival', 'otro', '2020-12-02', '20:00', 'Liga', '1-0', 'Victoria Local'),
+								('5', 'rival', 'atletico-madrid', '2019-04-13', '20:00', 'Liga', '1-0', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	historial=conexion.obtenerPartidosHistorialEntreEquipos("atletico-madrid", "rival")
+
+	assert historial[0][0]=="atletico-madrid"
+	assert historial[0][1]==2
+	assert historial[1][0]=="empate"
+	assert historial[1][1]==1
+	assert historial[2][0]=="rival"
+	assert historial[2][1]==0
