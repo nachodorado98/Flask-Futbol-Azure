@@ -1,0 +1,88 @@
+/*-------------------------------------------------ANADIR PARTIDO ASISTIDO-------------------------------------------------------*/
+.tarjeta-anadir-partido-asistido {
+    width: 100%;
+    max-width: 870px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+}
+
+.titulo-pagina-anadir-partido-asistido {
+    font-size: 45px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 15px;
+}
+
+.formulario-anadir-partido-asistido {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    align-items: center;
+}
+
+.select-partido {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bdc3c7;
+    background-color: #fff;
+    margin-bottom: 20px;
+    font-size: 17px;
+    cursor: pointer;
+
+}
+
+.botones-formulario-anadir-partido-asistido {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+}
+
+.boton-submit-formulario-anadir-partido-asistido {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.boton-submit-formulario-anadir-partido-asistido:hover {
+    transform: scale(1.05);
+    background-color: var(--color-fondo);
+}
+
+.boton-cancelar-formulario-anadir-partido-asistido {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.boton-cancelar-formulario-anadir-partido-asistido:hover {
+    transform: scale(1.05);
+    background-color: var(--color-fondo);
+}

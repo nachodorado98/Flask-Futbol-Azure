@@ -1,0 +1,37 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/anadir_partido_asistido.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-anadir-partido-asistido">
+
+    <p class="titulo-pagina-anadir-partido-asistido"><strong>Añadir Partido</strong></p>
+
+    <form class="formulario-anadir-partido-asistido" method="POST" action="/insertar_partido_asistido" autocomplete="off" novalidate>
+
+        <select class="select-partido" id="partido_anadir" name="partido_anadir" required>
+            <option value="sin-seleccion" selected disabled hidden>Selecciona un partido</option>
+            {% for partido in partidos_no_asistidos %}
+                <option value="{{ partido[0] }}">
+                    {{ partido[3] }} - {{ partido[1] }} vs {{ partido[2] }} - {{ partido[4] }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <div class="botones-formulario-anadir-partido-asistido">
+	        <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">Añadir</button>
+	        <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">Cancelar</button>
+	    </div>
+
+    </form>
+
+</div>
+
+{% endblock principal %}

@@ -1,0 +1,80 @@
+/*----------------------------------------------------------ESTADIO--------------------------------------------------------------*/
+.tarjeta-estadio {
+    width: 100%;
+    max-width: 1000px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario)
+}
+
+.tarjeta-estadio .nombre {
+    font-size: 55px;
+    margin: 0px;
+    color: var(--color-secundario) 
+}
+
+.equipo-estadio {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0px;
+    max-width: 1000px;
+}
+
+.equipo-estadio .escudo-equipo {
+    margin-top: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.tarjeta-estadio .direccion {
+    font-size: 22px;
+    margin: 5px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-estadio .imagen-estadio {
+    margin-top: 10px;
+    width: 525px;
+    height: 350px;
+    border: 2px solid black;
+}
+
+.info-estadio-detalle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: var(--color-fondo);
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 10px auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-estadio-detalle p {
+    font-size: 16px;
+    color: var(--color-secundario);
+    margin: 0 15px;
+    text-align: center;
+    padding: 10px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 170px;
+}

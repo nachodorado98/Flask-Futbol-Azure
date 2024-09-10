@@ -18,6 +18,7 @@ def test_conexion(conexion):
 	assert "partido_competicion" in tablas
 	assert "partido_goleador" in tablas
 	assert "jugadores" in tablas
+	assert "partidos_asistidos" in tablas
 	
 def test_cerrar_conexion(conexion):
 
@@ -29,12 +30,14 @@ def test_cerrar_conexion(conexion):
 
 def test_vaciar_bbdd(conexion_entorno):
 
-	conexion_entorno.insertarUsuario(f"nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
 
 	conexion_entorno.confirmar()
 
 	tablas=["equipos", "partidos", "estadios", "equipo_estadio", "competiciones", "competiciones_campeones",
-			"partido_competicion", "jugadores", "partido_goleador", "usuarios"]
+			"partido_competicion", "jugadores", "partido_goleador", "usuarios", "partidos_asistidos"]
 
 	for tabla in tablas:
 

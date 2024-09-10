@@ -47,6 +47,8 @@ class Conexion:
 
 		self.c.execute("DELETE FROM usuarios")
 
+		self.c.execute("DELETE FROM partidos_asistidos")
+
 		self.confirmar()
 
 	# Metodo para insertar un usuario
@@ -1121,3 +1123,50 @@ class Conexion:
 		empates=self.obtenerEmpatesEntreEquipos(equipo_id_1, equipo_id_2)
 
 		return [victorias_1, empates, victorias_2]
+
+	# Metodo para insertar un partido asistido
+	def insertarPartidoAsistido(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""INSERT INTO partidos_asistidos
+							VALUES (%s, %s, %s)""",
+							(f"{partido_id}-{usuario}", partido_id, usuario))
+
+		self.confirmar()
+
+	# Metodo para comprobar si ya existe un partido asistido de un usuario
+	def existe_partido_asistido(self, partido_id:str, usuario:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM partidos_asistidos
+						WHERE partido_id=%s
+						AND usuario=%s""",
+						(partido_id, usuario))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener los partidos que no ha asistido un usuario de un equipo
+	def obtenerPartidosNoAsistidosUsuario(self, usuario:str, equipo_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT p.partido_id, e1.nombre as local, e2.nombre as visitante, p.fecha, p.competicion
+							FROM partidos p
+							LEFT JOIN equipos e1
+							ON p.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON p.equipo_id_visitante=e2.equipo_id
+							LEFT JOIN (SELECT *
+										FROM partidos_asistidos
+										WHERE usuario=%s) pa
+							ON p.partido_id=pa.partido_id
+							WHERE pa.partido_id IS NULL
+							AND (p.equipo_id_local=%s
+							OR p.equipo_id_visitante=%s)
+							ORDER BY p.fecha DESC""",
+							(usuario, equipo_id, equipo_id))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["local"],
+											partido["visitante"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["competicion"]), partidos))

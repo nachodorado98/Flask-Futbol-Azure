@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {% block link %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos.css') }}">
-    {% endblock link %}
+    
+    {% block link_especifico_pagina %}{% endblock link_especifico_pagina %}
 
     <title>Partidos</title>
 </head>
@@ -31,6 +31,7 @@
             <div class="navbar" id="navbar">
                 <ul>
                     <li><a href="#">{{ usuario }}</a></li>
+                    <li><a href="/anadir_partido_asistido">Añadir Partido</a></li>
                     <li><a href="/logout">Salir</a></li>
                 </ul>
             </div>

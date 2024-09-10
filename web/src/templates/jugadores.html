@@ -1,5 +1,9 @@
 {% extends "partidos.html" %}
 
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jugadores.css') }}">
+{% endblock link_especifico_pagina %}
+
 {% block contenedor_lateral_izq %}
 
 <div class="contenedor-lateral contenedor-lateral-izq">

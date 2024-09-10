@@ -1,0 +1,183 @@
+/*----------------------------------------------------------COMPETICIONES-------------------------------------------------------*/
+.tarjeta-competiciones-totales {
+    width: 100%;
+    max-width: 870px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario)
+}
+
+.tarjeta-competiciones-totales .titulo-pagina-competiciones {
+    font-size: 45px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 15px;
+}
+
+.tarjetas-competiciones-totales {
+    max-height: calc(84vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 15px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-competiciones-totales::-webkit-scrollbar {
+    width: 10px;
+}
+
+.tarjetas-competiciones-totales::-webkit-scrollbar-thumb {
+    background-color: var(--color-secundario);
+    border-radius: 5px;
+}
+
+.tarjetas-competiciones-totales-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-competicion-total {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.info-competicion-total {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-competicion-total h4 {
+    font-size: 28px;
+    color: #fff;
+    margin: 0px;
+    color: var(--color-secundario) 
+}
+
+.info-competicion-total .competicion-competicion-total {
+    margin-right: 30px;
+    margin-left: 40px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 60px;
+    height: 60px;
+}
+
+.info-competicion-total .pais-competicion-total {
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 70px;
+    height: 45px;
+}
+
+.tarjeta-competiciones-top-totales {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 10px 15px;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 320px;
+    position: fixed;
+    top: 71px;
+    bottom: 33px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-competiciones-top-totales .titulo-top-competiciones {
+    font-size: 23px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-competiciones-top-totales {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 0px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-competiciones-top-totales::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-competiciones-top-totales-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-competicion-top-total {
+    width: 100%;
+    max-width: 800px;
+    margin: 7px auto;
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.info-competicion-top-total {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-competicion-top-total .competicion-competicion-top-total {
+    margin-right: 10px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    width: 35px;
+    height: 35px;
+}
+
+.info-competicion-top-total h4 {
+    font-size: 18px;
+    margin: 0px;
+    color: var(--color-secundario) 
+}
+
+.info-competicion-top-total .pais-competicion-top-total {
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    width: 35px;
+    height: 22,5px;
+}
