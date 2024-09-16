@@ -16,22 +16,40 @@
 
     <form class="formulario-anadir-partido-asistido" method="POST" action="/insertar_partido_asistido" autocomplete="off" novalidate>
 
-        <select class="select-partido" id="partido_anadir" name="partido_anadir" required>
-            <option value="sin-seleccion" selected disabled hidden>Selecciona un partido</option>
-            {% for partido in partidos_no_asistidos %}
-                <option value="{{ partido[0] }}">
-                    {{ partido[3] }} - {{ partido[1] }} vs {{ partido[2] }} - {{ partido[4] }}
-                </option>
-            {% endfor %}
-        </select>
+        <div class="contenedor-select-boton">
+
+            <select class="select-partido" id="partido_anadir" name="partido_anadir" required>
+                <option value="sin-seleccion" selected disabled hidden>Selecciona un partido</option>
+                {% for partido in partidos_no_asistidos %}
+                    <option value="{{ partido[0] }}">
+                        {{ partido[3] }} - {{ partido[1] }} vs {{ partido[2] }} - {{ partido[4] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            {% if not todos %}
+                <button type="button" class="boton-todos-partidos" onclick="window.location.href='/anadir_partido_asistido?todos=True';">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/recientes.png') }}" alt="Recientes" class="imagen-boton-todos">
+                </button>
+            {% else %}
+                <button type="button" class="boton-todos-partidos" onclick="window.location.href='/anadir_partido_asistido';">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/todos.png') }}" alt="Todos" class="imagen-boton-todos">
+                </button>
+            {% endif %}
+
+            <p class="etiqueta"><strong>Total Partidos</strong></p>
+
+        </div>
 
         <div class="botones-formulario-anadir-partido-asistido">
-	        <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">Añadir</button>
-	        <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">Cancelar</button>
-	    </div>
+            <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">Añadir</button>
+            <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">Cancelar</button>
+        </div>
 
     </form>
 
 </div>
 
 {% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

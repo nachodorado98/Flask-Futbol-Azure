@@ -1067,7 +1067,7 @@ class Conexion:
 						ON p.equipo_id_visitante=e2.equipo_id
 						WHERE (p.equipo_id_local=%s AND p.equipo_id_visitante=%s)
 						OR (p.equipo_id_visitante=%s AND p.equipo_id_local=%s)
-						ORDER BY fecha DESC
+						ORDER BY p.fecha DESC
 						LIMIT %s""",
 						(equipo_id_1, equipo_id_2, equipo_id_1, equipo_id_2, numero))
 
@@ -1170,3 +1170,87 @@ class Conexion:
 											partido["visitante"],
 											partido["fecha"].strftime("%d/%m/%Y"),
 											partido["competicion"]), partidos))
+
+	# Metodo para obtener la fecha del ultimo partido asistido
+	def ultima_fecha_partido_asistido(self, usuario:str)->Optional[str]:
+
+	    self.c.execute("""SELECT MAX(p.fecha) as fecha_reciente
+	                      FROM partidos_asistidos pa
+	                      JOIN partidos p
+	                      ON pa.partido_id=p.partido_id
+	                      WHERE pa.usuario=%s""",
+	                      (usuario,))
+
+	    fecha_reciente=self.c.fetchone()
+
+	    if not fecha_reciente:
+
+	    	return None
+
+	    return None if not fecha_reciente["fecha_reciente"] else fecha_reciente["fecha_reciente"].strftime("%Y-%m-%d")
+
+	# Metodo para obtener los partidos que no ha asistido un usuario de un equipo recientes
+	def obtenerPartidosNoAsistidosUsuarioRecientes(self, usuario:str, equipo_id:str)->List[Optional[tuple]]:
+
+		fecha_mas_reciente=self.ultima_fecha_partido_asistido(usuario)
+
+		if not fecha_mas_reciente:
+
+			return self.obtenerPartidosNoAsistidosUsuario(usuario, equipo_id)
+
+		self.c.execute("""SELECT p.partido_id, e1.nombre as local, e2.nombre as visitante, p.fecha, p.competicion
+							FROM partidos p
+							LEFT JOIN equipos e1
+							ON p.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON p.equipo_id_visitante=e2.equipo_id
+							LEFT JOIN (SELECT *
+										FROM partidos_asistidos
+										WHERE usuario=%s) pa
+							ON p.partido_id=pa.partido_id
+							WHERE pa.partido_id IS NULL
+							AND (p.equipo_id_local=%s
+							OR p.equipo_id_visitante=%s)
+							AND p.fecha>%s
+							ORDER BY p.fecha DESC""",
+							(usuario, equipo_id, equipo_id, fecha_mas_reciente))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["local"],
+											partido["visitante"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["competicion"]), partidos))
+
+	# Metodo para obtener los partidos asistidos de un usuario
+	def obtenerPartidosAsistidosUsuario(self, usuario:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT pa.partido_id, p.marcador, p.fecha, p.competicion,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante
+							FROM partidos_asistidos pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN equipos e1
+							ON p.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON p.equipo_id_visitante=e2.equipo_id
+							WHERE pa.usuario=%s
+							ORDER BY p.fecha DESC""",
+							(usuario,))
+
+		asistidos=self.c.fetchall()
+
+		return list(map(lambda asistido: (asistido["partido_id"],
+											asistido["marcador"],
+											asistido["fecha"].strftime("%d/%m/%Y"),
+											asistido["competicion"],
+											asistido["escudo_local"],
+											asistido["escudo_visitante"]), asistidos))

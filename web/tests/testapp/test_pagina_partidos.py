@@ -23,6 +23,7 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno):
 	assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 	assert '<div class="tarjeta-partido">' not in contenido
 	assert '<div class="info-partido">' not in contenido
+	assert '<div class="tarjeta-partidos-asistidos">' not in contenido
 
 def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 
@@ -43,6 +44,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 	assert '<div class="tarjetas-partidos-wrapper">' in contenido
 	assert '<div class="tarjeta-partido"' in contenido
 	assert '<div class="info-partido">' in contenido
+	assert '<div class="tarjeta-partidos-asistidos">' not in contenido
 
 @pytest.mark.parametrize(["nombre_completo"],
 	[("atleti",),("atm",),("Club Atletico de Madrid",)]
@@ -648,3 +650,107 @@ def test_pagina_partidos_partidos_ganados(cliente, conexion):
 		assert '<p class="titulo-circulo-partidos-ganados">' in contenido
 		assert "Partidos Ganados 2019" in contenido
 		assert '<p class="valor-circulo-partidos-ganados"><strong>4</strong></p>' in contenido
+
+def test_pagina_partidos_sin_partido_asistido(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="tarjeta-partidos-asistidos">' not in contenido
+		assert '<p class="titulo-partidos-asistidos">' not in contenido
+		assert '<div class="tarjeta-partido-asistido"' not in contenido
+		assert '<div class="info-partido-asistido">' not in contenido
+
+def test_pagina_partidos_con_partido_asistido(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622"})
+
+		respuesta=cliente_abierto.get("/partidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="tarjeta-partidos-asistidos">' in contenido
+		assert '<p class="titulo-partidos-asistidos">' in contenido
+		assert '<div class="tarjeta-partido-asistido"' in contenido
+		assert '<div class="info-partido-asistido">' in contenido
+
+def test_pagina_partidos_con_partido_asistido_temporada_no_hay(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+						VALUES ('20200622', 'rival', 'atletico-madrid', '2020-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622"})
+
+		respuesta=cliente_abierto.get("/partidos?temporada=2020")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="tarjeta-partidos-asistidos">' not in contenido
+		assert '<p class="titulo-partidos-asistidos">' not in contenido
+		assert '<div class="tarjeta-partido-asistido"' not in contenido
+		assert '<div class="info-partido-asistido">' not in contenido
+
+def test_pagina_partidos_con_partido_asistido_temporada(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+						VALUES ('20200622', 'rival', 'atletico-madrid', '2020-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20200622"})
+
+		respuesta=cliente_abierto.get("/partidos?temporada=2020")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="tarjeta-partidos-asistidos">' in contenido
+		assert '<p class="titulo-partidos-asistidos">' in contenido
+		assert '<div class="tarjeta-partido-asistido"' in contenido
+		assert '<div class="info-partido-asistido">' in contenido

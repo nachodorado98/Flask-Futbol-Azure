@@ -135,10 +135,56 @@
         </div>
 
         {% block contenedor_lateral_der %}
+        
         <div class="contenedor-lateral contenedor-lateral-der">
 
+            {% if partidos_asistidos %}
+                <div class="tarjeta-partidos-asistidos">
+
+                <p class="titulo-partidos-asistidos"><strong>Partidos Asistidos</strong></p>
+
+                    <div class="tarjetas-partidos-asistidos">
+                        <div class="tarjetas-partidos-asistidos-wrapper">
+
+                        {% for asistido in partidos_asistidos %}
+
+                            <div class="tarjeta-partido-asistido" onclick="window.location.href='/partido/{{ asistido[0] }}'">
+
+                                <p><strong>{{ asistido[3] }}</strong></p>
+
+                                <div class="info-partido-asistido">
+
+                                    {% if asistido[4]==-1 %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                    {% else %}
+                                        <img src="{{ url_imagen_escudo }}{{ asistido[4] }}.png" alt="Local Icon">
+                                    {% endif %}
+
+                                    <h4>{{ asistido[1] }}</h4>
+
+                                    {% if asistido[5]==-1 %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                                    {% else %}
+                                        <img src="{{ url_imagen_escudo }}{{ asistido[5] }}.png" alt="Visitante Icon">
+                                    {% endif %}
+
+                                </div>
+
+                                 <p><strong>{{ asistido[2] }}</strong></p>
+
+                            </div>
+
+                        {% endfor %}
+
+                         </div>
+                    </div>
+                </div>
+            {% endif %}
+
         </div>
+
         {% endblock contenedor_lateral_der %}
+        
     </div>
 
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>

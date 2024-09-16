@@ -17,7 +17,9 @@ def pagina_partidos():
 
 	con=Conexion()
 
-	equipo=con.obtenerEquipo(current_user.id)
+	usuario=current_user.id
+
+	equipo=con.obtenerEquipo(usuario)
 
 	nombre_equipo=con.obtenerNombreEquipo(equipo)
 
@@ -35,6 +37,8 @@ def pagina_partidos():
 
 	temporadas=con.obtenerTemporadasEquipo(equipo)
 
+	partidos_asistidos_totales=con.obtenerPartidosAsistidosUsuario(usuario)
+
 	con.cerrarConexion()
 
 	if not partidos:
@@ -49,8 +53,6 @@ def pagina_partidos():
 
 	partidos_filtrados=list(filter(lambda partido: partido[0].startswith(str(temporada_filtrada)), partidos))
 
-	partidos_ganados=len(list(filter(lambda partido: partido[-1]==1, partidos_filtrados)))
-
 	if not partidos_filtrados:
 
 		return render_template("no_partidos.html",
@@ -58,6 +60,10 @@ def pagina_partidos():
 						equipo=equipo,
 						nombre_equipo=nombre_equipo,
 						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+	partidos_ganados=len(list(filter(lambda partido: partido[-1]==1, partidos_filtrados)))
+
+	partidos_asistidos_filtrados=list(filter(lambda asistido: asistido[0] in [partido_filtrado[0] for partido_filtrado in partidos_filtrados], partidos_asistidos_totales))
 
 	return render_template("partidos.html",
 							usuario=current_user.id,
@@ -68,4 +74,5 @@ def pagina_partidos():
 							partidos=partidos_filtrados,
 							numero_partidos=len(partidos_filtrados),
 							partidos_ganados=partidos_ganados,
+							partidos_asistidos=partidos_asistidos_filtrados,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

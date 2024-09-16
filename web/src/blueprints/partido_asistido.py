@@ -10,11 +10,19 @@ bp_partido_asistido=Blueprint("partido_asistido", __name__)
 @login_required
 def pagina_anadir_partido_asistido():
 
+	todos=request.args.get("todos", default=False, type=bool)
+
 	con=Conexion()
 
 	equipo=con.obtenerEquipo(current_user.id)
 
-	partidos_no_asistidos=con.obtenerPartidosNoAsistidosUsuario(current_user.id, equipo)
+	if todos:
+
+		partidos_no_asistidos=con.obtenerPartidosNoAsistidosUsuario(current_user.id, equipo)
+
+	else:
+
+		partidos_no_asistidos=con.obtenerPartidosNoAsistidosUsuarioRecientes(current_user.id, equipo)
 
 	con.cerrarConexion()
 
@@ -27,7 +35,8 @@ def pagina_anadir_partido_asistido():
 	return render_template("anadir_partido_asistido.html",
 							usuario=current_user.id,
 							equipo=equipo,
-							partidos_no_asistidos=partidos_no_asistidos)
+							partidos_no_asistidos=partidos_no_asistidos,
+							todos=todos)
 
 @bp_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
 @login_required
