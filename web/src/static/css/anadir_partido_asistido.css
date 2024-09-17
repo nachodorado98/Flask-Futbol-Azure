@@ -68,6 +68,26 @@
     font-size: 18px;
 }
 
+.contenedor-comentario {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 15px;
+}
+
+.campo-comentario {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bdc3c7;
+    background-color: #fff;
+    font-size: 17px;
+    resize: none;
+}
+
+.campo-comentario::placeholder {
+    color: #bdc3c7;
+}
+
 .botones-formulario-anadir-partido-asistido {
     display: flex;
     justify-content: center;

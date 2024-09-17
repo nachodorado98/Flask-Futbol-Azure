@@ -1125,11 +1125,13 @@ class Conexion:
 		return [victorias_1, empates, victorias_2]
 
 	# Metodo para insertar un partido asistido
-	def insertarPartidoAsistido(self, partido_id:str, usuario:str)->None:
+	def insertarPartidoAsistido(self, partido_id:str, usuario:str, comentario:str)->None:
+
+		codigo_partido_asistido=f"{partido_id}-{usuario}"
 
 		self.c.execute("""INSERT INTO partidos_asistidos
-							VALUES (%s, %s, %s)""",
-							(f"{partido_id}-{usuario}", partido_id, usuario))
+							VALUES (%s, %s, %s, %s)""",
+							(codigo_partido_asistido, partido_id, usuario, comentario))
 
 		self.confirmar()
 

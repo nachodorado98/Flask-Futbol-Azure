@@ -43,6 +43,7 @@ def pagina_anadir_partido_asistido():
 def pagina_insertar_partido_asistido():
 
 	partido_id=request.form.get("partido_anadir")
+	comentario=request.form.get("comentario")
 
 	con=Conexion()
 
@@ -60,7 +61,13 @@ def pagina_insertar_partido_asistido():
 
 		return redirect("/anadir_partido_asistido")
 
-	con.insertarPartidoAsistido(partido_id, usuario)
+	if comentario and len(comentario)>255:
+		
+		con.cerrarConexion()
+
+		return redirect("/anadir_partido_asistido")
+
+	con.insertarPartidoAsistido(partido_id, usuario, comentario)
 
 	con.cerrarConexion()
 

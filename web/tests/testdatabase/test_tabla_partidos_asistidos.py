@@ -13,7 +13,7 @@ def test_insertar_partido_usuario(conexion_entorno, partido_id, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido(partido_id, usuario)
+	conexion_entorno.insertarPartidoAsistido(partido_id, usuario, "comentario")
 
 	conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
 
@@ -29,9 +29,7 @@ def test_existe_partido_asistido_no_existe_usuario(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert not conexion_entorno.existe_partido_asistido("20190622", "otro")
 
@@ -39,9 +37,7 @@ def test_existe_partido_asistido(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
 
@@ -63,9 +59,7 @@ def test_obtener_partidos_no_asistidos_usuario_partido_asistido(conexion_entorno
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert not conexion_entorno.obtenerPartidosNoAsistidosUsuario("nacho", "atletico-madrid")
 
@@ -75,9 +69,7 @@ def test_obtener_partidos_no_asistidos_usuario_partido_asistido_otro_usuario(con
 
 	conexion_entorno.insertarUsuario("otro", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "otro")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "otro", "comentario")
 
 	partidos=conexion_entorno.obtenerPartidosNoAsistidosUsuario("nacho", "atletico-madrid")
 
@@ -103,7 +95,7 @@ def test_ultima_fecha_partidos_asistidos(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	fecha=conexion_entorno.ultima_fecha_partido_asistido("nacho")
 
@@ -129,7 +121,7 @@ def test_ultima_fecha_partidos_asistidos_varios(conexion_entorno, fechas, fecha_
 
 		conexion_entorno.confirmar()
 
-		conexion_entorno.insertarPartidoAsistido(f"20190622{numero}", "nacho")
+		conexion_entorno.insertarPartidoAsistido(f"20190622{numero}", "nacho", "comentario")
 
 	fecha=conexion_entorno.ultima_fecha_partido_asistido("nacho")
 
@@ -169,9 +161,7 @@ def test_obtener_partidos_no_asistidos_usuario_recientes_partido_asistido(conexi
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert not conexion_entorno.obtenerPartidosNoAsistidosUsuarioRecientes("nacho", "atletico-madrid")
 
@@ -192,9 +182,7 @@ def test_obtener_partidos_no_asistidos_usuario_recientes_partido_asistido_fecha_
 
 	conexion_entorno.confirmar()
 
-	conexion_entorno.insertarPartidoAsistido(partido_id, "nacho")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido(partido_id, "nacho", "comentario")
 
 	partidos=conexion_entorno.obtenerPartidosNoAsistidosUsuarioRecientes("nacho", "atletico-madrid")
 
@@ -206,9 +194,7 @@ def test_obtener_partidos_no_asistidos_usuario_recientes_partido_asistido_otro_u
 
 	conexion_entorno.insertarUsuario("otro", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "otro")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "otro", "comentario")
 
 	partidos=conexion_entorno.obtenerPartidosNoAsistidosUsuario("nacho", "atletico-madrid")
 
@@ -230,9 +216,7 @@ def test_obtener_partidos_no_asistidos_usuario_recientes_partido_asistido_fecha_
 
 	conexion_entorno.confirmar()
 
-	conexion_entorno.insertarPartidoAsistido("46358h2h", "otro")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("46358h2h", "otro", "comentario")
 
 	partidos=conexion_entorno.obtenerPartidosNoAsistidosUsuarioRecientes("nacho", "atletico-madrid")
 
@@ -246,16 +230,12 @@ def test_obtener_partidos_asistidos_usuario_no_existen(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.confirmar()
-
 	assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
 
 def test_obtener_partidos_asistidos_usuario(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
-
-	conexion_entorno.confirmar()
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")

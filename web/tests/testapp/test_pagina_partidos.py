@@ -582,9 +582,7 @@ def test_pagina_partidos_visitante_temporada(cliente, conexion, temporada, tempo
 			assert f"22/06/{temporada_no}" not in contenido
 
 @pytest.mark.parametrize(["cantidad_partidos"],
-	[
-		(1,),(2,),(10,),(7,),(22,)
-	]
+	[(1,),(2,),(10,),(7,),(22,)]
 )
 def test_pagina_partidos_partidos_totales(cliente, conexion, cantidad_partidos):
 
@@ -683,7 +681,7 @@ def test_pagina_partidos_con_partido_asistido(cliente, conexion_entorno):
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622"})
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622", "comentario":"comentario"})
 
 		respuesta=cliente_abierto.get("/partidos")
 
@@ -713,7 +711,7 @@ def test_pagina_partidos_con_partido_asistido_temporada_no_hay(cliente, conexion
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622"})
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622", "comentario":"comentario"})
 
 		respuesta=cliente_abierto.get("/partidos?temporada=2020")
 
@@ -743,7 +741,7 @@ def test_pagina_partidos_con_partido_asistido_temporada(cliente, conexion_entorn
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20200622"})
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20200622", "comentario":"comentario"})
 
 		respuesta=cliente_abierto.get("/partidos?temporada=2020")
 
@@ -754,3 +752,42 @@ def test_pagina_partidos_con_partido_asistido_temporada(cliente, conexion_entorn
 		assert '<p class="titulo-partidos-asistidos">' in contenido
 		assert '<div class="tarjeta-partido-asistido"' in contenido
 		assert '<div class="info-partido-asistido">' in contenido
+
+@pytest.mark.parametrize(["cantidad_partidos", "cantidad_partidos_asistidos"],
+	[(1,1),(2,1),(10,6),(7,3),(22,15)]
+)
+def test_pagina_partidos_partidos_asistidos(cliente, conexion, cantidad_partidos, cantidad_partidos_asistidos):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	for numero in range(cantidad_partidos):
+
+		conexion.c.execute("""INSERT INTO partidos
+							VALUES (%s, 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""",
+							(f"2019{numero+1}",))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		for numero_asistidos in range(cantidad_partidos_asistidos):
+
+			data={"partido_anadir":f"2019{numero_asistidos+1}", "comentario":"comentario"}
+
+			cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<p class="titulo-circulo-partidos-asistidos">' in contenido
+		assert "Partidos Asistidos 2019" in contenido
+		assert f'<p class="valor-circulo-partidos-asistidos"><strong>{cantidad_partidos_asistidos}</strong></p>' in contenido

@@ -75,4 +75,5 @@ def pagina_partidos():
 							numero_partidos=len(partidos_filtrados),
 							partidos_ganados=partidos_ganados,
 							partidos_asistidos=partidos_asistidos_filtrados,
+							numero_partidos_asistidos=len(partidos_asistidos_filtrados),
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

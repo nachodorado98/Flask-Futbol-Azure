@@ -100,7 +100,10 @@
 
         {% if jugador %}
         <div class="info-jugador" onclick="window.location.href='/jugador/{{ jugador[0] }}'">
-            <p><strong>{{ jugador[1] }}</strong></p>
+            <p>
+                <strong>{{ jugador[1] }}</strong>
+                <img class="crack" src="{{ url_for('static', filename='imagenes/iconos/corona.png') }}" alt="Crack Icon" height="17">
+            </p>
 
             {% if jugador[2]=='-1' %}
                 <img class="jugador-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">

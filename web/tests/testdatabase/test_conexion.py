@@ -32,7 +32,7 @@ def test_vaciar_bbdd(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho")
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	conexion_entorno.confirmar()
 
