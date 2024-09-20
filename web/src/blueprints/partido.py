@@ -40,17 +40,21 @@ def pagina_partido(partido_id:str):
 
 	historial_entre_equipos=con.obtenerPartidosHistorialEntreEquipos(partido[4], partido[7])
 
+	partido_asistido=con.existe_partido_asistido(partido_id, current_user.id)
+
 	con.cerrarConexion()
 
 	return render_template("partido.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							partido=partido,
+							partido_id=partido_id,
 							partido_id_anterior=partido_id_anterior,
 							partido_id_siguiente=partido_id_siguiente,
 							goleadores=goleadores,
 							partidos_entre_equipos=partidos_entre_equipos,
 							historial_entre_equipos=historial_entre_equipos,
+							partido_asistido=partido_asistido,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES)

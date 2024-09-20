@@ -241,8 +241,8 @@ def test_pagina_partido_con_competicion(cliente, conexion_entorno):
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<p class="competicion" onclick="window.location.href=' in contenido
-		assert '<p class="competicion">' not in contenido
+		assert '<strong class="strong-competicion" onclick="window.location.href=' in contenido
+		assert '<strong class="strong-competicion">' not in contenido
 
 def test_pagina_partido_sin_competicion(cliente, conexion_entorno):
 
@@ -264,8 +264,8 @@ def test_pagina_partido_sin_competicion(cliente, conexion_entorno):
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<p class="competicion" onclick="window.location.href=' not in contenido
-		assert '<p class="competicion">' in contenido
+		assert '<strong class="strong-competicion" onclick="window.location.href=' not in contenido
+		assert '<strong class="strong-competicion">' in contenido
 
 def test_pagina_partido_sin_goleadores(cliente, conexion_entorno):
 
@@ -438,3 +438,47 @@ def test_pagina_partido_con_partidos_entre_equipos(cliente, conexion_entorno):
 		respuesta.status_code==200
 		assert '<p class="titulo-partidos-entre-equipos">' in contenido
 		assert '<div class="tarjetas-partidos-entre-equipos">' in contenido
+
+def test_pagina_partido_partido_no_asistido(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<img class="icono-partido-asistido"' in contenido
+		assert '/partido_asistido.png' not in contenido
+		assert '/anadir_partido_asistido.png' in contenido
+		assert 'alt="Partido Asistido Icon" onclick="window.location.href=' in contenido
+
+def test_pagina_partido_partido_asistido(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		cliente_abierto.post("/insertar_partido_asistido", data={"partido_anadir":"20190622", "comentario":"comentario"})
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<img class="icono-partido-asistido"' in contenido
+		assert '/partido_asistido.png' in contenido
+		assert '/anadir_partido_asistido.png' not in contenido
+		assert 'alt="Partido Asistido Icon" onclick="window.location.href=' not in contenido

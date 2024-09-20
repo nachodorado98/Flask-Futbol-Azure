@@ -19,12 +19,17 @@
         <div class="contenedor-select-boton">
 
             <select class="select-partido" id="partido_anadir" name="partido_anadir" required>
-                <option value="sin-seleccion" selected disabled hidden>Selecciona un partido</option>
+
+                <option value="sin-seleccion"{% if not partido_id_anadir %} selected{% endif %} disabled hidden>
+                    Selecciona un partido
+                </option>
+
                 {% for partido in partidos_no_asistidos %}
-                    <option value="{{ partido[0] }}">
+                    <option value="{{ partido[0] }}"{% if partido_id_anadir==partido[0] %} selected{% endif %}>
                         {{ partido[3] }} - {{ partido[1] }} vs {{ partido[2] }} - {{ partido[4] }}
                     </option>
                 {% endfor %}
+
             </select>
 
             {% if not todos %}

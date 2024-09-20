@@ -154,6 +154,48 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(clie
 		assert '<p class="etiqueta">' in contenido
 		assert "No hay partidos disponibles para añadir..." not in contenido
 
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_no_defecto(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/anadir_partido_asistido")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<option value="sin-seleccion" selected disabled hidden>' in contenido
+		assert '<option value="sin-seleccion" disabled hidden>' not in contenido
+		assert '<option value="20190622" selected>' not in contenido
+		assert '<option value="20190622">' in contenido
+
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/anadir_partido_asistido?partido_id=20190622&todos=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<option value="sin-seleccion" selected disabled hidden>' not in contenido
+		assert '<option value="sin-seleccion" disabled hidden>' in contenido
+		assert '<option value="20190622" selected>' in contenido
+		assert '<option value="20190622">' not in contenido
+
 def test_pagina_insertar_partido_asistido_sin_login(cliente):
 
 	data={"partido_anadir":"20190622"}

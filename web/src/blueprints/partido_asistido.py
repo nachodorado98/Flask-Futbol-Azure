@@ -11,6 +11,7 @@ bp_partido_asistido=Blueprint("partido_asistido", __name__)
 def pagina_anadir_partido_asistido():
 
 	todos=request.args.get("todos", default=False, type=bool)
+	partido_id_anadir=request.args.get("partido_id", default=None)
 
 	con=Conexion()
 
@@ -36,7 +37,8 @@ def pagina_anadir_partido_asistido():
 							usuario=current_user.id,
 							equipo=equipo,
 							partidos_no_asistidos=partidos_no_asistidos,
-							todos=todos)
+							todos=todos,
+							partido_id_anadir=partido_id_anadir)
 
 @bp_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
 @login_required

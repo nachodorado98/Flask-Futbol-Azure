@@ -17,7 +17,15 @@
 .tarjeta-partido-detalle .competicion {
     font-size: 30px;
     margin: 5px;
-    color: var(--color-secundario) 
+    color: var(--color-secundario);
+}
+
+.tarjeta-partido-detalle .competicion .icono-partido-asistido{
+    width: 34px;
+    height: 35px;
+    margin-left: 5px;
+    vertical-align: middle;
+    margin-bottom: 6px;  
 }
 
 .info-partido-detalle {
