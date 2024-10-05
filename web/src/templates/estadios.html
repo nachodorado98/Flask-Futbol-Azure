@@ -45,7 +45,6 @@
                         </div>
 
                     </div>
-                    
 
                 {% endfor %}
 
@@ -112,4 +111,94 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+<div class="contenedor-lateral contenedor-lateral-der">
+
+    {% if estadios_asistidos_fecha %}
+        <div class="tarjeta-estadios-visitados-fecha">
+
+        <p class="titulo-estadios-visitados-fecha"><strong>Ultimos Visitados</strong></p>
+
+        <div class="tarjetas-estadios-visitados-totales-fecha">
+                <div class="tarjetas-estadios-visitados-totales-fecha-wrapper">
+
+                {% for estadio_visitado_fecha in estadios_asistidos_fecha %}
+
+                    <div class="tarjeta-estadios-visitados-totales-fecha" onclick="window.location.href='/estadio/{{ estadio_visitado_fecha[0] }}'">
+
+                        <div class="info-estadio-visitado-total-fecha">
+
+                            {% if estadio_visitado_fecha[2]==-1 %}
+                                <img class="estadio-estadio-visitado-total-fecha" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                            {% else %}
+                                <img class="estadio-estadio-visitado-total-fecha" src="{{ url_imagen_estadio }}{{ estadio_visitado_fecha[2] }}.png" alt="Estadio Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_visitado_fecha[1] }}</h4>
+
+                            {% if estadio_visitado_fecha[3]==-1 %}
+                                <img class="equipo-estadio-visitado-total-fecha" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% else %}
+                                <img class="equipo-estadio-visitado-total-fecha" src="{{ url_imagen_escudo }}{{ estadio_visitado_fecha[3] }}.png" alt="Equipo Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_visitado_fecha[5] }}</h4>
+
+                        </div>
+
+                    </div>
+                    
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+    {% endif %}
+
+    {% if estadios_asistidos_cantidad %}
+        <div class="tarjeta-estadios-visitados-cantidad">
+
+        <p class="titulo-estadios-visitados-cantidad"><strong>Mas Veces Visitados</strong></p>
+
+        <div class="tarjetas-estadios-visitados-totales-cantidad">
+                <div class="tarjetas-estadios-visitados-totales-cantidad-wrapper">
+
+                {% for estadio_visitado_cantidad in estadios_asistidos_cantidad %}
+
+                    <div class="tarjeta-estadios-visitados-totales-cantidad" onclick="window.location.href='/estadio/{{ estadio_visitado_cantidad[0] }}'">
+
+                        <div class="info-estadio-visitado-total-cantidad">
+
+                            {% if estadio_visitado_cantidad[2]==-1 %}
+                                <img class="estadio-estadio-visitado-total-cantidad" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                            {% else %}
+                                <img class="estadio-estadio-visitado-total-cantidad" src="{{ url_imagen_estadio }}{{ estadio_visitado_cantidad[2] }}.png" alt="Estadio Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_visitado_cantidad[1] }}</h4>
+
+                            {% if estadio_visitado_cantidad[3]==-1 %}
+                                <img class="equipo-estadio-visitado-total-cantidad" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% else %}
+                                <img class="equipo-estadio-visitado-total-cantidad" src="{{ url_imagen_escudo }}{{ estadio_visitado_cantidad[3] }}.png" alt="Equipo Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_visitado_cantidad[5] }} veces</h4>
+
+                        </div>
+
+                    </div>
+                    
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock contenedor_lateral_der %}

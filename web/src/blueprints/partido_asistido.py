@@ -55,9 +55,7 @@ def pagina_insertar_partido_asistido():
 
 		return redirect("/anadir_partido_asistido")
 
-	usuario=current_user.id
-
-	if con.existe_partido_asistido(partido_id, usuario):
+	if con.existe_partido_asistido(partido_id, current_user.id):
 
 		con.cerrarConexion()
 
@@ -69,7 +67,7 @@ def pagina_insertar_partido_asistido():
 
 		return redirect("/anadir_partido_asistido")
 
-	con.insertarPartidoAsistido(partido_id, usuario, comentario)
+	con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
 
 	con.cerrarConexion()
 

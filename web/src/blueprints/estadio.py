@@ -53,6 +53,12 @@ def pagina_estadios():
 
 	datos_estadios_top=con.obtenerDatosEstadiosTop(numero_top)
 
+	numero_estadios_asistidos=10
+
+	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos)
+
+	estadios_asistidos_cantidad=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios_asistidos)
+
 	con.cerrarConexion()
 
 	return render_template("estadios.html",
@@ -61,6 +67,8 @@ def pagina_estadios():
 							datos_estadios=datos_estadios,
 							numero_top=numero_top,
 							datos_estadios_top=datos_estadios_top,
+							estadios_asistidos_fecha=estadios_asistidos_fecha,
+							estadios_asistidos_cantidad=estadios_asistidos_cantidad,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

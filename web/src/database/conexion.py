@@ -1256,3 +1256,89 @@ class Conexion:
 											asistido["competicion"],
 											asistido["escudo_local"],
 											asistido["escudo_visitante"]), asistidos))
+
+	# Metodo para obtener los estadios de los partidos asistidos de un usuario por fecha
+	def obtenerEstadiosPartidosAsistidosUsuarioFecha(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.estadio_id, e.nombre,
+						       CASE WHEN e.codigo_estadio IS NULL
+						            THEN -1
+						            ELSE e.codigo_estadio
+						       END as estadio,
+						       MAX(CASE WHEN eq.escudo IS NULL
+						                THEN -1
+						                ELSE eq.escudo
+						           END) as escudo_equipo,
+						       MAX(CASE WHEN eq.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE eq.codigo_pais
+						           END) as pais,
+						       MAX(p.fecha) as ultima_fecha
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+		                    LEFT JOIN equipo_estadio ee
+							ON e.estadio_id=ee.estadio_id
+							LEFT JOIN equipos eq
+							ON ee.equipo_id=eq.equipo_id
+							WHERE e.capacidad IS NOT NULL
+							GROUP BY e.estadio_id, e.nombre, e.codigo_estadio
+							ORDER BY ultima_fecha DESC
+							LIMIT %s""",
+							(usuario, numero))
+
+		estadios_asistidos=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["nombre"],
+										estadio["estadio"],
+										estadio["escudo_equipo"],
+										estadio["pais"],
+										estadio["ultima_fecha"].strftime("%d/%m/%Y")), estadios_asistidos))
+
+	# Metodo para obtener los estadios de los partidos asistidos de un usuario por cantidad de veces visitado
+	def obtenerEstadiosPartidosAsistidosUsuarioCantidad(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.estadio_id, e.nombre,
+						       CASE WHEN e.codigo_estadio IS NULL
+						            THEN -1
+						            ELSE e.codigo_estadio
+						       END as estadio,
+						       MAX(CASE WHEN eq.escudo IS NULL
+						                THEN -1
+						                ELSE eq.escudo
+						           END) as escudo_equipo,
+						       MAX(CASE WHEN eq.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE eq.codigo_pais
+						           END) as pais,
+						       COUNT(DISTINCT p.partido_id) as numero_veces
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+		                    LEFT JOIN equipo_estadio ee
+							ON e.estadio_id=ee.estadio_id
+							LEFT JOIN equipos eq
+							ON ee.equipo_id=eq.equipo_id
+							WHERE e.capacidad IS NOT NULL
+							GROUP BY e.estadio_id, e.nombre, e.codigo_estadio
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, numero))
+
+		estadios_asistidos=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["nombre"],
+										estadio["estadio"],
+										estadio["escudo_equipo"],
+										estadio["pais"],
+										estadio["numero_veces"]), estadios_asistidos))
