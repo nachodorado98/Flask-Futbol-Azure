@@ -9,7 +9,24 @@
 <div class="contenedor-lateral contenedor-lateral-izq">
     <div class="tarjeta-estadios-top-totales">
 
-        <p class="titulo-top-estadios"><strong>Top {{ numero_top }} Estadios</strong></p>
+        <div class="titulo-top-estadios">
+            <strong>Top 
+                <div class="desplegable-cantidad-estadios">
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select">
+                            <select id="cantidad-estadios-select" class="select-estadios" onchange="estadiosTopFiltro()">
+                                {% for top in tops %}
+                                    <option value="{{ top }}" {% if numero_top==top %} selected {% endif %}>
+                                        {{ top }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div> 
+                Estadios
+            </strong>
+        </div>
 
         {% if datos_estadios_top %}
 
@@ -55,6 +72,8 @@
 
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/estadios_top.js') }}"></script>
 
 {% endblock contenedor_lateral_izq %}
 
@@ -118,7 +137,7 @@
     {% if estadios_asistidos_fecha %}
         <div class="tarjeta-estadios-visitados-fecha">
 
-        <p class="titulo-estadios-visitados-fecha"><strong>Ultimos Visitados</strong></p>
+        <p class="titulo-estadios-visitados-fecha"><strong>Ultimos Estadios Visitados</strong></p>
 
         <div class="tarjetas-estadios-visitados-totales-fecha">
                 <div class="tarjetas-estadios-visitados-totales-fecha-wrapper">
@@ -160,7 +179,7 @@
     {% if estadios_asistidos_cantidad %}
         <div class="tarjeta-estadios-visitados-cantidad">
 
-        <p class="titulo-estadios-visitados-cantidad"><strong>Mas Veces Visitados</strong></p>
+        <p class="titulo-estadios-visitados-cantidad"><strong>Estadios Mas Visitados</strong></p>
 
         <div class="tarjetas-estadios-visitados-totales-cantidad">
                 <div class="tarjetas-estadios-visitados-totales-cantidad-wrapper">

@@ -106,7 +106,7 @@
     flex-direction: column;
     display: flex;
     align-items: center;
-    margin: 10px auto 10px 15px;
+    margin: 10px auto 10px 5px;
     padding: 5px;
     border: 1px solid #bdc3c7;
     border-radius: 8px;
@@ -114,7 +114,7 @@
     cursor: default;
     background-color: var(--color-primario);
     color: var(--color-secundario);
-    width: 320px;
+    width: 330px;
     position: fixed;
     top: 71px;
     bottom: 33px;
@@ -199,6 +199,49 @@
     margin-top: 5px;
     width: 35px;
     height: 22,5px;
+}
+
+.desplegable-cantidad-estadios {
+    display: inline-block;
+    align-items: center;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-select {
+    position: relative;
+    width: auto;
+}
+
+.select-estadios {
+    display: block;
+    padding: 12px 15px;
+    border: 1px solid;
+    border-radius: 8px;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.select-estadios:focus {
+    outline: none;
+    border-color: var(--color-secundario);
+    box-shadow: 0 0 5px var(--color-secundario);
+}
+
+.select-estadios option {
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
 }
 
 .tarjeta-estadios-visitados-fecha {

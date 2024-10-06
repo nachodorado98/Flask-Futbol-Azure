@@ -47,6 +47,8 @@ def pagina_partidos():
 								usuario=current_user.id,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
+								temporada_filtrada=None,
+								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	temporada_filtrada=temporadas[0] if not temporada else temporada
@@ -59,6 +61,8 @@ def pagina_partidos():
 						usuario=current_user.id,
 						equipo=equipo,
 						nombre_equipo=nombre_equipo,
+						temporada_filtrada=temporada_filtrada,
+						local=local,
 						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	partidos_ganados=len(list(filter(lambda partido: partido[-1]==1, partidos_filtrados)))
@@ -76,4 +80,5 @@ def pagina_partidos():
 							partidos_ganados=partidos_ganados,
 							partidos_asistidos=partidos_asistidos_filtrados,
 							numero_partidos_asistidos=len(partidos_asistidos_filtrados),
+							local=local,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

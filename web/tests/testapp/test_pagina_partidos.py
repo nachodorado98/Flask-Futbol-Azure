@@ -38,6 +38,9 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 
 	assert respuesta.status_code==200
 	assert "Partidos del " in contenido
+	assert 'alt="Total Filtrado"' in contenido
+	assert 'alt="Local Filtrado"' not in contenido
+	assert 'alt="Visitante Filtrado"' not in contenido
 	assert f'<img class="navbar-escudo" src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
 	assert "No hay ningun partido disponible del " not in contenido
 	assert '<div class="tarjetas-partidos">' in contenido
@@ -67,6 +70,9 @@ def test_pagina_partidos_con_nombre_equipo(cliente, conexion, nombre_completo):
 
 	assert respuesta.status_code==200
 	assert f"Partidos del {nombre_completo}" in contenido
+	assert 'alt="Total Filtrado"' in contenido
+	assert 'alt="Local Filtrado"' not in contenido
+	assert 'alt="Visitante Filtrado"' not in contenido
 
 def test_pagina_partidos_partido_casa_no_hay(cliente, conexion):
 
@@ -98,6 +104,9 @@ def test_pagina_partidos_partido_casa_no_hay(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' in contenido
+		assert 'alt="Visitante Filtrado"' not in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 		assert '<div class="tarjeta-partido"' not in contenido
@@ -137,6 +146,9 @@ def test_pagina_partidos_partido_casa(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." not in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' in contenido
+		assert 'alt="Visitante Filtrado"' not in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
 		assert '<div class="tarjeta-partido"' in contenido
@@ -176,6 +188,9 @@ def test_pagina_partidos_partido_casa_local_fuera_de_casa(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' in contenido
+		assert 'alt="Visitante Filtrado"' not in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 		assert '<div class="tarjeta-partido"' not in contenido
@@ -215,6 +230,9 @@ def test_pagina_partidos_partido_casa_visitante_en_casa(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." not in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' in contenido
+		assert 'alt="Visitante Filtrado"' not in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
 		assert '<div class="tarjeta-partido"' in contenido
@@ -254,6 +272,9 @@ def test_pagina_partidos_partido_fuera_no_hay(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' not in contenido
+		assert 'alt="Visitante Filtrado"' in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 		assert '<div class="tarjeta-partido"' not in contenido
@@ -293,6 +314,9 @@ def test_pagina_partidos_partido_fuera(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." not in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' not in contenido
+		assert 'alt="Visitante Filtrado"' in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
 		assert '<div class="tarjeta-partido"' in contenido
@@ -332,6 +356,9 @@ def test_pagina_partidos_partido_fuera_local_fuera_de_casa(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." not in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' not in contenido
+		assert 'alt="Visitante Filtrado"' in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
 		assert '<div class="tarjeta-partido"' in contenido
@@ -371,6 +398,9 @@ def test_pagina_partidos_partido_fuera_visitante_en_casa(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." in contenido
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' not in contenido
+		assert 'alt="Visitante Filtrado"' in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 		assert '<div class="tarjeta-partido"' not in contenido
@@ -404,6 +434,7 @@ def test_pagina_partidos_temporada_no_hay(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." in contenido
+		assert f"2019/2020" in contenido
 		assert '<div class="tarjetas-partidos">' not in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
 		assert '<div class="tarjeta-partido"' not in contenido
@@ -435,6 +466,7 @@ def test_pagina_partidos_temporada(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert "No hay ningun partido disponible del None..." not in contenido
+		assert "2018/2019" in contenido
 		assert '<div class="tarjetas-partidos">' in contenido
 		assert '<div class="tarjetas-partidos-wrapper">' in contenido
 		assert '<div class="tarjeta-partido"' in contenido
@@ -479,6 +511,7 @@ def test_pagina_partidos_temporada_varios(cliente, conexion, temporada, temporad
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==200
+		assert f"{temporada-1}/{temporada}" in contenido
 		assert f"Temporada {temporada-1} - {temporada}" in contenido
 		assert f"22/06/{temporada}" in contenido
 
@@ -522,6 +555,10 @@ def test_pagina_partidos_local_temporada(cliente, conexion, temporada, temporada
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==200
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' in contenido
+		assert 'alt="Visitante Filtrado"' not in contenido
+		assert f"{temporada-1}/{temporada}" in contenido
 		assert '<h4>atleti ' in contenido
 		assert '<h4>rival ' not in contenido
 		assert ' atleti</h4>' not in contenido
@@ -564,11 +601,15 @@ def test_pagina_partidos_visitante_temporada(cliente, conexion, temporada, tempo
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		respuesta=cliente_abierto.get(f"/partidos?loca2=1&temporada={temporada}")
+		respuesta=cliente_abierto.get(f"/partidos?local=2&temporada={temporada}")
 
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==200
+		assert 'alt="Total Filtrado"' not in contenido
+		assert 'alt="Local Filtrado"' not in contenido
+		assert 'alt="Visitante Filtrado"' in contenido
+		assert f"{temporada-1}/{temporada}" in contenido
 		assert '<h4>atleti ' not in contenido
 		assert '<h4>rival ' in contenido
 		assert ' atleti</h4>' in contenido
@@ -611,7 +652,7 @@ def test_pagina_partidos_partidos_totales(cliente, conexion, cantidad_partidos):
 
 		assert respuesta.status_code==200
 		assert '<p class="titulo-circulo-partidos-totales">' in contenido
-		assert "Partidos Jugados 2019" in contenido
+		assert "Partidos Jugados" in contenido
 		assert f'<p class="valor-circulo-partidos-totales"><strong>{cantidad_partidos}</strong></p>' in contenido
 
 def test_pagina_partidos_partidos_ganados(cliente, conexion):
@@ -646,7 +687,7 @@ def test_pagina_partidos_partidos_ganados(cliente, conexion):
 
 		assert respuesta.status_code==200
 		assert '<p class="titulo-circulo-partidos-ganados">' in contenido
-		assert "Partidos Ganados 2019" in contenido
+		assert "Partidos Ganados" in contenido
 		assert '<p class="valor-circulo-partidos-ganados"><strong>4</strong></p>' in contenido
 
 def test_pagina_partidos_sin_partido_asistido(cliente, conexion_entorno):
@@ -789,5 +830,5 @@ def test_pagina_partidos_partidos_asistidos(cliente, conexion, cantidad_partidos
 
 		assert respuesta.status_code==200
 		assert '<p class="titulo-circulo-partidos-asistidos">' in contenido
-		assert "Partidos Asistidos 2019" in contenido
+		assert "Partidos Asistidos" in contenido
 		assert f'<p class="valor-circulo-partidos-asistidos"><strong>{cantidad_partidos_asistidos}</strong></p>' in contenido

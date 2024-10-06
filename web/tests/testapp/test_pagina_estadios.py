@@ -55,7 +55,7 @@ def test_pagina_estadios_estadios(cliente, conexion_entorno):
 		assert '<p class="titulo-pagina-estadios">' in contenido
 		assert '<div class="tarjetas-estadios-totales">' in contenido
 		assert '<div class="tarjeta-estadios-top-totales">' in contenido
-		assert '<p class="titulo-top-estadios">' in contenido
+		assert '<div class="titulo-top-estadios">' in contenido
 		assert '<div class="tarjetas-estadios-top-totales">' in contenido
 		assert '<div class="tarjeta-estadios-visitados-fecha">' not in contenido
 		assert '<div class="tarjetas-estadios-visitados-totales-fecha">' not in contenido
@@ -83,7 +83,7 @@ def test_pagina_estadios_estadios_top_no_existen(cliente, conexion_entorno):
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-estadios-top-totales">' in contenido
-		assert '<p class="titulo-top-estadios">' in contenido
+		assert '<div class="titulo-top-estadios">' in contenido
 		assert '<div class="tarjetas-estadios-top-totales">' not in contenido
 
 def test_pagina_estadios_estadios_fecha_asistidos_existen(cliente, conexion_entorno):

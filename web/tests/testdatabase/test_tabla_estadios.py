@@ -87,3 +87,25 @@ def test_obtener_estadios_top(conexion):
 
 	assert estadios_top[0][0]=="estadio2"
 	assert estadios_top[-1][0]=="estadio7"
+
+def test_estadio_asistido_usuario_no_existe_estadio(conexion):
+
+	assert not conexion.estadio_asistido_usuario("nacho", "estadio")
+
+def test_estadio_asistido_usuario_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.estadio_asistido_usuario("nacho", "metropolitano")
+
+def test_estadio_asistido_usuario_no_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.estadio_asistido_usuario("nacho", "metropolitano")
+
+def test_estadio_asistido_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.estadio_asistido_usuario("nacho", "metropolitano")

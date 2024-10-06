@@ -292,7 +292,7 @@ class Conexion:
 										THEN -1
 										ELSE e.codigo_estadio
 								END as estadio_partido,
-								LEFT(p.partido_id, 4) as temporada,
+								CAST(LEFT(p.partido_id, 4) as INT) as temporada,
 								pc.competicion_id,
 								CASE WHEN pc.competicion_id IS NULL
 										THEN False
@@ -1342,3 +1342,19 @@ class Conexion:
 										estadio["escudo_equipo"],
 										estadio["pais"],
 										estadio["numero_veces"]), estadios_asistidos))
+
+	# Metodo para saber si un usuario a asistido a un estadio o no
+	def estadio_asistido_usuario(self, usuario:str, estadio_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+							WHERE e.estadio_id=%s""",
+							(usuario, estadio_id))
+
+		return False if not self.c.fetchone() else True

@@ -12,7 +12,12 @@
 
 <div class="tarjeta-estadio">
 
-    <p class="nombre"><strong>{{ estadio[0] }}</strong></p>
+    <p class="nombre">
+        <strong>{{ estadio[0] }}</strong>
+        {% if estadio_asistido %}
+            <img class="estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/estadio_asistido.png') }}" alt="Asistido Icon">
+        {% endif %}
+    </p>
 
     {% if equipos_estadio %}
         <div class="equipo-estadio">

@@ -22,6 +22,12 @@
     color: var(--color-secundario) 
 }
 
+.tarjeta-estadio .estadio-asistido {
+    margin-top: 10px;
+    width: 38px;
+    height: 38px;
+}
+
 .equipo-estadio {
     display: flex;
     flex-direction: row;

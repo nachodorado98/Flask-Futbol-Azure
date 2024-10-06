@@ -44,15 +44,15 @@
 
         <div class="contenedor-lateral contenedor-lateral-izq">
             <div class="circulo-partidos-totales">
-                <p class="titulo-circulo-partidos-totales">Partidos Jugados {{ temporada_filtrada }}</p>
+                <p class="titulo-circulo-partidos-totales">Partidos Jugados</p>
                 <p class="valor-circulo-partidos-totales"><strong>{{ numero_partidos }}</strong></p>
             </div>
             <div class="circulo-partidos-ganados">
-                <p class="titulo-circulo-partidos-ganados">Partidos Ganados {{ temporada_filtrada }}</p>
+                <p class="titulo-circulo-partidos-ganados">Partidos Ganados</p>
                 <p class="valor-circulo-partidos-ganados"><strong>{{ partidos_ganados }}</strong></p>
             </div>
             <div class="circulo-partidos-asistidos">
-                <p class="titulo-circulo-partidos-asistidos">Partidos Asistidos {{ temporada_filtrada }}</p>
+                <p class="titulo-circulo-partidos-asistidos">Partidos Asistidos</p>
                 <p class="valor-circulo-partidos-asistidos"><strong>{{ numero_partidos_asistidos }}</strong></p>
             </div>
         </div>
@@ -66,7 +66,23 @@
                 {% block partidos %}
 
                 <div class="contenedor-titulo">
-                    <h1>Partidos del {{ nombre_equipo }}</h1>
+                    <h1>
+
+                        {% if temporada_filtrada is none %}
+                            Partidos del {{ nombre_equipo }}
+                        {% else %}
+                            Partidos del {{ nombre_equipo }} {{ temporada_filtrada-1 }}/{{ temporada_filtrada }}
+                        {% endif %}
+
+                        {% if local==1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/local.png') }}" alt="Local Filtrado" height="30">
+                        {% elif local==2 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante Filtrado" height="30">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Total Filtrado" height="30">
+                        {% endif %}
+
+                    </h1>
                 </div>
 
                 {% endblock partidos %}

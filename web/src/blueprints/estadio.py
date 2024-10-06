@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, request
 from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
@@ -28,6 +28,8 @@ def pagina_estadio(estadio_id:str):
 
 	equipos_estadio=con.obtenerEquipoEstadio(estadio_id)
 
+	estadio_asistido=con.estadio_asistido_usuario(current_user.id, estadio_id)
+
 	con.cerrarConexion()
 
 	return render_template("estadio.html",
@@ -36,6 +38,7 @@ def pagina_estadio(estadio_id:str):
 							estadio=estadio,
 							equipos_estadio=equipos_estadio,
 							anadirPuntos=anadirPuntos,
+							estadio_asistido=estadio_asistido,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
 
@@ -43,13 +46,13 @@ def pagina_estadio(estadio_id:str):
 @login_required
 def pagina_estadios():
 
+	numero_top=request.args.get("top_estadios", default=8, type=int)
+
 	con=Conexion()
 
 	equipo=con.obtenerEquipo(current_user.id)
 
 	datos_estadios=con.obtenerDatosEstadios()
-
-	numero_top=8
 
 	datos_estadios_top=con.obtenerDatosEstadiosTop(numero_top)
 
@@ -66,6 +69,7 @@ def pagina_estadios():
 							equipo=equipo,
 							datos_estadios=datos_estadios,
 							numero_top=numero_top,
+							tops=[8, 10, 15, 20, 25],
 							datos_estadios_top=datos_estadios_top,
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							estadios_asistidos_cantidad=estadios_asistidos_cantidad,

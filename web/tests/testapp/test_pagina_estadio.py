@@ -189,3 +189,43 @@ def test_pagina_estadio_estadio_sin_largo(cliente, conexion_entorno):
 		respuesta.status_code==200
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="dimensiones">' not in contenido
+
+def test_pagina_estadio_estadio_no_asistido(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<img class="estadio-asistido"' not in contenido
+
+def test_pagina_estadio_estadio_asistido(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<img class="estadio-asistido"' in contenido

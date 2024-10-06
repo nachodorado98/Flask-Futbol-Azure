@@ -62,7 +62,7 @@ body {
     margin: 2px 0;
     margin-top: 30px;
     padding: 0;
-    font-size: 18px;
+    font-size: 22px;
 }
 
 .circulo-partidos-totales .valor-circulo-partidos-totales,
@@ -195,7 +195,8 @@ body {
 
 .contenedor-titulo {
     width: 100%;
-    max-width: 850px;
+    max-width: 900px;
+    min-width: 900px;
     margin: 0px auto;
     margin-bottom: 15px;
     padding: 0px;
@@ -208,7 +209,7 @@ body {
 }
 
 .contenedor-titulo h1 {
-    font-size: 40px;
+    font-size: 35px;
 }
 
 .contenedor-tarjetas-partidos{
