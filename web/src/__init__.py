@@ -9,7 +9,7 @@ from .blueprints.equipo import bp_equipo
 from .blueprints.estadio import bp_estadio
 from .blueprints.competicion import bp_competicion
 from .blueprints.jugador import bp_jugador
-from .blueprints.partido_asistido import bp_partido_asistido
+from .blueprints.anadir_partido_asistido import bp_anadir_partido_asistido
 
 from .extensiones.manager import login_manager
 
@@ -32,6 +32,6 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_estadio)
 	app.register_blueprint(bp_competicion)
 	app.register_blueprint(bp_jugador)
-	app.register_blueprint(bp_partido_asistido)
+	app.register_blueprint(bp_anadir_partido_asistido)
 
 	return app

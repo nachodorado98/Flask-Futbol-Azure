@@ -407,3 +407,30 @@ def test_obtener_estadio_partido_asistido_cantidad_mismo_varias_veces(conexion_e
 	assert len(partidos_asistidos)==20
 	assert len(estadios)==1
 	assert estadios[0][-1]==20
+
+def test_obtener_partido_asistido_usuario_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidoAsistidoUsuario("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_no_existe_partido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuario("nacho", "20190623")
+
+def test_obtener_partido_asistido_usuario_partido_no_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuario("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	partido_asistido=conexion_entorno.obtenerPartidoAsistidoUsuario("nacho", "20190622")
+
+	assert partido_asistido[0]=="20190622-nacho"
+	assert partido_asistido[1]=="20190622"

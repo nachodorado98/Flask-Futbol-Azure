@@ -3,10 +3,10 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-bp_partido_asistido=Blueprint("partido_asistido", __name__)
+bp_anadir_partido_asistido=Blueprint("anadir_partido_asistido", __name__)
 
 
-@bp_partido_asistido.route("/anadir_partido_asistido")
+@bp_anadir_partido_asistido.route("/anadir_partido_asistido")
 @login_required
 def pagina_anadir_partido_asistido():
 
@@ -40,7 +40,7 @@ def pagina_anadir_partido_asistido():
 							todos=todos,
 							partido_id_anadir=partido_id_anadir)
 
-@bp_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
+@bp_anadir_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
 @login_required
 def pagina_insertar_partido_asistido():
 

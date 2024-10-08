@@ -1,0 +1,47 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partido_asistido.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-partido-asistido-detalle">
+
+    <div class="info-partido-asistido-detalle">
+
+        {% if partido_asistido[5]==-1 %}
+            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[3] }}'">
+        {% else %}
+            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido_asistido[5] }}.png" alt="Local Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[3] }}'">
+        {% endif %}
+
+        <h4>{{ partido_asistido[4] }} {{ partido_asistido[2] }} {{ partido_asistido[7] }}</h4>
+
+        {% if partido_asistido[8]==-1 %}
+            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[6] }}'">
+        {% else %}
+            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido_asistido[8] }}.png" alt="Visitante Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[6] }}'">
+        {% endif %}
+
+    </div>
+
+    <div class="contenedor-comentario">
+        {% if partido_asistido[9] %}
+            <div class="comentario">
+                <p>{{ partido_asistido[9] }}</p>
+            </div>
+        {% else %}
+            <h2 class="no-comentario">No hay comentario para este partido</h2>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

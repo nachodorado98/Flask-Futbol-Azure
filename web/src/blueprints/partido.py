@@ -22,13 +22,13 @@ def pagina_partido(partido_id:str):
 
 	equipo=con.obtenerEquipo(current_user.id)
 
-	partido=con.obtenerPartido(partido_id)
-
 	if not con.equipo_partido(equipo, partido_id):
 
 		con.cerrarConexion()
 
 		return redirect("/partidos")
+
+	partido=con.obtenerPartido(partido_id)
 
 	partido_id_anterior=con.obtenerPartidoAnterior(partido_id, equipo)
 
@@ -58,3 +58,41 @@ def pagina_partido(partido_id:str):
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES)
+
+@bp_partido.route("/partido/<partido_id>/asistido")
+@login_required
+def pagina_partido_asistido(partido_id:str):
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	if not con.equipo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	if not con.existe_partido_asistido(partido_id, current_user.id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	partido_asistido=con.obtenerPartidoAsistidoUsuario(current_user.id, partido_id)
+
+	con.cerrarConexion()
+
+	return render_template("partido_asistido.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							partido_asistido=partido_asistido,
+							partido_id=partido_id,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

@@ -1155,9 +1155,7 @@ class Conexion:
 							ON p.equipo_id_local=e1.equipo_id
 							LEFT JOIN equipos e2
 							ON p.equipo_id_visitante=e2.equipo_id
-							LEFT JOIN (SELECT *
-										FROM partidos_asistidos
-										WHERE usuario=%s) pa
+							LEFT JOIN (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 							ON p.partido_id=pa.partido_id
 							WHERE pa.partido_id IS NULL
 							AND (p.equipo_id_local=%s
@@ -1177,10 +1175,9 @@ class Conexion:
 	def ultima_fecha_partido_asistido(self, usuario:str)->Optional[str]:
 
 	    self.c.execute("""SELECT MAX(p.fecha) as fecha_reciente
-	                      FROM partidos_asistidos pa
+	                      FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 	                      JOIN partidos p
-	                      ON pa.partido_id=p.partido_id
-	                      WHERE pa.usuario=%s""",
+	                      ON pa.partido_id=p.partido_id""",
 	                      (usuario,))
 
 	    fecha_reciente=self.c.fetchone()
@@ -1206,9 +1203,7 @@ class Conexion:
 							ON p.equipo_id_local=e1.equipo_id
 							LEFT JOIN equipos e2
 							ON p.equipo_id_visitante=e2.equipo_id
-							LEFT JOIN (SELECT *
-										FROM partidos_asistidos
-										WHERE usuario=%s) pa
+							LEFT JOIN (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 							ON p.partido_id=pa.partido_id
 							WHERE pa.partido_id IS NULL
 							AND (p.equipo_id_local=%s
@@ -1237,14 +1232,13 @@ class Conexion:
 										THEN -1
 										ELSE e2.escudo
 								END as escudo_visitante
-							FROM partidos_asistidos pa
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 		                    LEFT JOIN partidos p
 		                    ON pa.partido_id=p.partido_id
 		                    LEFT JOIN equipos e1
 							ON p.equipo_id_local=e1.equipo_id
 							LEFT JOIN equipos e2
 							ON p.equipo_id_visitante=e2.equipo_id
-							WHERE pa.usuario=%s
 							ORDER BY p.fecha DESC""",
 							(usuario,))
 
@@ -1358,3 +1352,41 @@ class Conexion:
 							(usuario, estadio_id))
 
 		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener un partido asistido de un usuario
+	def obtenerPartidoAsistidoUsuario(self, usuario:str, partido_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT pa.asistido_id, pa.partido_id, p.marcador,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								pa.comentario
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN equipos e1
+							ON p.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON p.equipo_id_visitante=e2.equipo_id
+							WHERE pa.partido_id=%s""",
+							(usuario, partido_id))
+
+		asistido=self.c.fetchone()
+
+		return None if not asistido else (asistido["asistido_id"],
+											asistido["partido_id"],
+											asistido["marcador"],
+											asistido["cod_local"],
+											asistido["local"],
+											asistido["escudo_local"],
+											asistido["cod_visitante"],
+											asistido["visitante"],
+											asistido["escudo_visitante"],
+											asistido["comentario"])
