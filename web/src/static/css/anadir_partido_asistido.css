@@ -96,24 +96,7 @@
     margin-bottom: 10px;
 }
 
-.boton-submit-formulario-anadir-partido-asistido {
-    background-color: var(--color-secundario);
-    color: var(--color-primario);
-    font-size: 20px;
-    padding: 10px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.boton-submit-formulario-anadir-partido-asistido:hover {
-    transform: scale(1.05);
-    background-color: var(--color-fondo);
-}
-
+.boton-submit-formulario-anadir-partido-asistido,
 .boton-cancelar-formulario-anadir-partido-asistido {
     background-color: var(--color-secundario);
     color: var(--color-primario);
@@ -127,6 +110,7 @@
     transition: background-color 0.3s;
 }
 
+.boton-submit-formulario-anadir-partido-asistido:hover,
 .boton-cancelar-formulario-anadir-partido-asistido:hover {
     transform: scale(1.05);
     background-color: var(--color-fondo);

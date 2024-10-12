@@ -1390,3 +1390,43 @@ class Conexion:
 											asistido["visitante"],
 											asistido["escudo_visitante"],
 											asistido["comentario"])
+
+	# Metodo para obtener el partido siguiente de un partido asistido de un usuario
+	def obtenerPartidoAsistidoUsuarioSiguiente(self, usuario:str, partido_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT p2.partido_id
+						FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa2
+						LEFT JOIN partidos p2
+	                    ON pa2.partido_id=p2.partido_id
+						WHERE p2.fecha>(SELECT p.fecha
+						    		FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+				                    LEFT JOIN partidos p
+				                    ON pa.partido_id=p.partido_id
+						    		WHERE p.partido_id=%s)
+						ORDER BY p2.fecha ASC
+						LIMIT 1""",
+						(usuario, usuario, partido_id))
+
+		partido_asistido=self.c.fetchone()
+
+		return None if not partido_asistido else partido_asistido["partido_id"]
+
+	# Metodo para obtener el partido anterior de un partido asistido de un usuario
+	def obtenerPartidoAsistidoUsuarioAnterior(self, usuario:str, partido_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT p2.partido_id
+						FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa2
+						LEFT JOIN partidos p2
+	                    ON pa2.partido_id=p2.partido_id
+						WHERE p2.fecha<(SELECT p.fecha
+						    		FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+				                    LEFT JOIN partidos p
+				                    ON pa.partido_id=p.partido_id
+						    		WHERE p.partido_id=%s)
+						ORDER BY p2.fecha DESC
+						LIMIT 1""",
+						(usuario, usuario, partido_id))
+
+		partido_asistido=self.c.fetchone()
+
+		return None if not partido_asistido else partido_asistido["partido_id"]

@@ -434,3 +434,179 @@ def test_obtener_partido_asistido_usuario(conexion_entorno):
 
 	assert partido_asistido[0]=="20190622-nacho"
 	assert partido_asistido[1]=="20190622"
+
+def test_obtener_partido_asistido_usuario_siguiente_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_siguiente_no_existe_partido(conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partidos""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_siguiente_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_siguiente_existe_uno_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_siguiente_existe_anterior(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190621', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190621", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_siguiente(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190623", "nacho", "comentario")
+
+	partido_id=conexion_entorno.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+	assert partido_id=="20190623"
+
+@pytest.mark.parametrize(["data", "partido_id_siguiente"],
+	[
+		([("667658", "2019-02-19"),("664657658", "2019-06-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "20197658"),
+		([("667658", "2019-06-23"),("664657658", "2019-06-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "667658"),
+		([("667658", "2019-02-19"),("664657658", "2019-06-25"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "664657658"),
+		([("667658", "2019-02-19"),("664657658", "2019-06-19"),("20197658", "2019-07-19"),("661357658", "2019-07-18")], "661357658")
+	]
+)
+def test_obtener_partido_asistido_usuario_siguiente_varios(conexion_entorno, data, partido_id_siguiente):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	for partido_id, fecha in data:
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'atletico-madrid', %s, '22:00', 'Liga', '1-0', 'Victoria')""",
+									(partido_id, fecha))
+
+		conexion_entorno.confirmar()
+
+		conexion_entorno.insertarPartidoAsistido(partido_id, "nacho", "comentario")
+
+	partido_id=conexion_entorno.obtenerPartidoAsistidoUsuarioSiguiente("nacho", "20190622")
+
+	assert partido_id==partido_id_siguiente
+
+def test_obtener_partido_asistido_usuario_anterior_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_anterior_no_existe_partido(conexion_entorno):
+
+	conexion_entorno.c.execute("""DELETE FROM partidos""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_anterior_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_anterior_existe_uno_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_anterior_existe_siguiente(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190623", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+def test_obtener_partido_asistido_usuario_anterior(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('20190621', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190621", "nacho", "comentario")
+
+	partido_id=conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+	assert partido_id=="20190621"
+
+@pytest.mark.parametrize(["data", "partido_id_anterior"],
+	[
+		([("667658", "2019-02-19"),("664657658", "2019-05-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "664657658"),
+		([("667658", "2019-06-19"),("664657658", "2019-05-19"),("20197658", "2019-07-19"),("661357658", "2019-12-19")], "667658"),
+		([("667658", "2019-02-19"),("664657658", "2019-05-19"),("20197658", "2019-05-20"),("661357658", "2019-12-19")], "20197658"),
+		([("667658", "2019-02-19"),("664657658", "2019-05-19"),("20197658", "2019-07-19"),("661357658", "2019-06-13")], "661357658")
+	]
+)
+def test_obtener_partido_asistido_usuario_anterior_varios(conexion_entorno, data, partido_id_anterior):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	for partido_id, fecha in data:
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'atletico-madrid', %s, '22:00', 'Liga', '1-0', 'Victoria')""",
+									(partido_id, fecha))
+
+		conexion_entorno.confirmar()
+
+		conexion_entorno.insertarPartidoAsistido(partido_id, "nacho", "comentario")
+
+	partido_id=conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
+
+	assert partido_id==partido_id_anterior

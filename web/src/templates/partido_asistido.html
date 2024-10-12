@@ -31,16 +31,70 @@
     </div>
 
     <div class="contenedor-comentario">
+
         {% if partido_asistido[9] %}
+
             <div class="comentario">
                 <p>{{ partido_asistido[9] }}</p>
             </div>
+
         {% else %}
-            <h2 class="no-comentario">No hay comentario para este partido</h2>
+
+            <div class="contenedor-no-comentario">
+
+                <h2 class="no-comentario">No hay comentario para este partido...</h2>
+
+                <div id="contenedorBoton" style="display: block;">
+                    <button id="botonComentarPartidoAsistido" class="button-comentar-partido-asistido">Comentar</button>
+                </div>
+
+                <div class="seccion-comentar-partido-asistido" id="contenedorComentarPartidoAsistido" style="display: none;">
+
+                    <div class="contenedor-nuevo-comentario">
+                        <textarea id="nuevo-comentario" name="nuevo-comentario" class="campo-nuevo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
+                    </div>
+
+                    <div class="botones-anadir-comentario-partido-asistido">
+                        <button class="boton-anadir-comentario-partido-asistido" onclick="window.location.href='#'">
+                            Añadir Comentario
+                        </button>
+                        <button id="botonNoComentarPartidoAsistido" class="boton-cancelar-comentario-partido-asistido">
+                            Cerrar
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
         {% endif %}
+
+    </div>
+
+    <div class="contenedor-botones-asistido">
+
+        {% if partido_id_asistido_anterior %}
+            <button class="button-partido-anterior-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_anterior }}/asistido'">
+                <
+            </button>
+        {% endif %}
+
+        <button class="button-volver-partido-asistido" onclick="window.location.href='/partido/{{ partido_asistido[1] }}'">
+            Ver Detalle Del Partido
+        </button>
+
+        {% if partido_id_asistido_siguiente %}
+            <button class="button-partido-siguiente-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_siguiente }}/asistido'">
+                >
+            </button>
+        {% endif %}
+
     </div>
 
 </div>
+
+<script src="{{ url_for('static', filename='js/abrir_comentar_partido_asistido.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cerrar_comentar_partido_asistido.js') }}"></script>
 
 {% endblock principal %}
 

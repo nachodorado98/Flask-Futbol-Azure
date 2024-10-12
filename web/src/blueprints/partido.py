@@ -87,6 +87,10 @@ def pagina_partido_asistido(partido_id:str):
 
 	partido_asistido=con.obtenerPartidoAsistidoUsuario(current_user.id, partido_id)
 
+	partido_id_asistido_anterior=con.obtenerPartidoAsistidoUsuarioAnterior(current_user.id, partido_id)
+
+	partido_id_asistido_siguiente=con.obtenerPartidoAsistidoUsuarioSiguiente(current_user.id, partido_id)
+
 	con.cerrarConexion()
 
 	return render_template("partido_asistido.html",
@@ -94,5 +98,7 @@ def pagina_partido_asistido(partido_id:str):
 							equipo=equipo,
 							partido_asistido=partido_asistido,
 							partido_id=partido_id,
+							partido_id_asistido_anterior=partido_id_asistido_anterior,
+							partido_id_asistido_siguiente=partido_id_asistido_siguiente,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
