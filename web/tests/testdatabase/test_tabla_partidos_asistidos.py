@@ -610,3 +610,53 @@ def test_obtener_partido_asistido_usuario_anterior_varios(conexion_entorno, data
 	partido_id=conexion_entorno.obtenerPartidoAsistidoUsuarioAnterior("nacho", "20190622")
 
 	assert partido_id==partido_id_anterior
+
+def test_actualizar_comentario_partido_asistido_no_existe_partido(conexion):
+
+	assert not conexion.existe_partido("20190622")
+
+	conexion.actualizarComentarioPartidoAsistido("20190622", "nacho", "nuevo comentario")
+
+	assert not conexion.existe_partido("20190622")
+
+def test_actualizar_comentario_partido_asistido_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+	conexion_entorno.actualizarComentarioPartidoAsistido("20190622", "nacho", "nuevo comentario")
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+def test_actualizar_comentario_partido_asistido_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.actualizarComentarioPartidoAsistido("20190622", "nacho", "nuevo comentario")
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+def test_actualizar_comentario_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT Comentario FROM partidos_asistidos")
+
+	comentario=conexion_entorno.c.fetchone()["comentario"]
+
+	assert comentario=="comentario"
+
+	conexion_entorno.actualizarComentarioPartidoAsistido("20190622", "nacho", "nuevo comentario")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT Comentario FROM partidos_asistidos")
+
+	nuevo_comentario=conexion_entorno.c.fetchone()["comentario"]
+
+	assert nuevo_comentario=="nuevo comentario"

@@ -1430,3 +1430,14 @@ class Conexion:
 		partido_asistido=self.c.fetchone()
 
 		return None if not partido_asistido else partido_asistido["partido_id"]
+
+	# Metodo para actualizar el comentario de un partido asistido
+	def actualizarComentarioPartidoAsistido(self, partido_id:str, usuario:str, comentario_nuevo:str)->None:
+
+		self.c.execute("""UPDATE partidos_asistidos
+							SET Comentario=%s
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(comentario_nuevo, partido_id, usuario))
+
+		self.confirmar()

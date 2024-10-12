@@ -45,24 +45,28 @@
                 <h2 class="no-comentario">No hay comentario para este partido...</h2>
 
                 <div id="contenedorBoton" style="display: block;">
-                    <button id="botonComentarPartidoAsistido" class="button-comentar-partido-asistido">Comentar</button>
+                    <button id="botonComentarPartidoAsistido" class="button-comentar-partido-asistido">
+                        Realizar un comentario
+                    </button>
                 </div>
 
                 <div class="seccion-comentar-partido-asistido" id="contenedorComentarPartidoAsistido" style="display: none;">
+                    <form action="/actualizar_comentario_partido_asistido/{{ partido_asistido[1] }}" method="POST">
 
-                    <div class="contenedor-nuevo-comentario">
-                        <textarea id="nuevo-comentario" name="nuevo-comentario" class="campo-nuevo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
-                    </div>
+                        <div class="contenedor-nuevo-comentario">
+                            <textarea id="nuevo-comentario" name="nuevo-comentario" class="campo-nuevo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
+                        </div>
 
-                    <div class="botones-anadir-comentario-partido-asistido">
-                        <button class="boton-anadir-comentario-partido-asistido" onclick="window.location.href='#'">
-                            Añadir Comentario
-                        </button>
-                        <button id="botonNoComentarPartidoAsistido" class="boton-cancelar-comentario-partido-asistido">
-                            Cerrar
-                        </button>
-                    </div>
+                        <div class="botones-anadir-comentario-partido-asistido">
+                            <button type="submit" class="boton-anadir-comentario-partido-asistido">
+                                Añadir Comentario
+                            </button>
+                            <button id="botonNoComentarPartidoAsistido" class="boton-cancelar-comentario-partido-asistido" type="button">
+                                Cerrar
+                            </button>
+                        </div>
 
+                    </form>
                 </div>
 
             </div>

@@ -72,3 +72,35 @@ def pagina_insertar_partido_asistido():
 	con.cerrarConexion()
 
 	return redirect("/partidos")
+
+@bp_anadir_partido_asistido.route("/actualizar_comentario_partido_asistido/<partido_id>", methods=["POST"])
+@login_required
+def pagina_actualizar_comentario_partido_asistido(partido_id:str):
+
+	nuevo_comentario=request.form.get("nuevo-comentario")
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/anadir_partido_asistido")
+
+	if not con.existe_partido_asistido(partido_id, current_user.id):
+
+		con.cerrarConexion()
+
+		return redirect("/anadir_partido_asistido")
+
+	if nuevo_comentario and len(nuevo_comentario)>255:
+		
+		con.cerrarConexion()
+
+		return redirect("/anadir_partido_asistido")
+
+	con.actualizarComentarioPartidoAsistido(partido_id, current_user.id, nuevo_comentario)
+
+	con.cerrarConexion()
+
+	return redirect(f"/partido/{partido_id}/asistido")
