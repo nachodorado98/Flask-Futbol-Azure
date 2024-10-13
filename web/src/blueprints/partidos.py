@@ -17,9 +17,7 @@ def pagina_partidos():
 
 	con=Conexion()
 
-	usuario=current_user.id
-
-	equipo=con.obtenerEquipo(usuario)
+	equipo=con.obtenerEquipo(current_user.id)
 
 	nombre_equipo=con.obtenerNombreEquipo(equipo)
 
@@ -37,7 +35,7 @@ def pagina_partidos():
 
 	temporadas=con.obtenerTemporadasEquipo(equipo)
 
-	partidos_asistidos_totales=con.obtenerPartidosAsistidosUsuario(usuario)
+	partidos_asistidos_totales=con.obtenerPartidosAsistidosUsuario(current_user.id)
 
 	con.cerrarConexion()
 
@@ -81,4 +79,33 @@ def pagina_partidos():
 							partidos_asistidos=partidos_asistidos_filtrados,
 							numero_partidos_asistidos=len(partidos_asistidos_filtrados),
 							local=local,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+@bp_partidos.route("/partidos/asistidos")
+@login_required
+def pagina_partidos_asistidos():
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	nombre_equipo=con.obtenerNombreEquipo(equipo)
+
+	partidos_asistidos=con.obtenerPartidosAsistidosUsuario(current_user.id)
+
+	con.cerrarConexion()
+
+	if not partidos_asistidos:
+
+		return render_template("no_partidos_asistidos.html",
+								usuario=current_user.id,
+								equipo=equipo,
+								nombre_equipo=nombre_equipo,
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+	return render_template("partidos_asistidos.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							nombre_equipo=nombre_equipo,
+							partidos_asistidos=partidos_asistidos,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

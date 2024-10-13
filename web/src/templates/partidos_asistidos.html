@@ -1,0 +1,56 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos_asistidos.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}
+
+<div class="contenedor-titulo-partidos-asistidos">
+    <h1>Partidos Asistidos del {{ nombre_equipo }}</h1>
+</div>
+
+{% endblock partidos %}
+
+{% block principal %}
+
+<div class="contenedor-tarjetas-partidos-asistidos">
+
+    <div class="tarjetas-partidos-asistidos">
+        <div class="tarjetas-partidos-asistidos-wrapper">
+
+        {% for partido in partidos_asistidos %}
+
+            <div class="tarjeta-partido-asistidos" onclick="window.location.href='/partido/{{ partido[0] }}'">
+                <p><strong>{{ partido[2] }} - {{ partido[3] }}</strong></p>
+                <div class="info-partido-asistidos">
+
+                    {% if partido[4]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ partido[4] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4>{{ partido[6] }} {{ partido[1] }} {{ partido[7] }}</h4>
+
+                    {% if partido[5]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ partido[5] }}.png" alt="Visitante Icon">
+                    {% endif %}
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+         </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

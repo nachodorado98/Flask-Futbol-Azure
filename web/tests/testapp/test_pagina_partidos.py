@@ -21,7 +21,7 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno):
 	assert "No hay ningun partido disponible del " in contenido
 	assert '<div class="tarjetas-partidos">' not in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' not in contenido
-	assert '<div class="tarjeta-partido">' not in contenido
+	assert '<div class="tarjeta-partido"' not in contenido
 	assert '<div class="info-partido">' not in contenido
 	assert '<div class="tarjeta-partidos-asistidos">' not in contenido
 

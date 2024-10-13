@@ -29,7 +29,7 @@ def pagina_anadir_partido_asistido():
 
 	if not partidos_no_asistidos:
 
-		return render_template("no_partidos_asistidos.html",
+		return render_template("anadir_no_partido_asistido.html",
 								usuario=current_user.id,
 								equipo=equipo)
 

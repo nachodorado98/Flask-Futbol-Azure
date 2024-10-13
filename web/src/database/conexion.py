@@ -1231,7 +1231,8 @@ class Conexion:
 								CASE WHEN e2.escudo IS NULL
 										THEN -1
 										ELSE e2.escudo
-								END as escudo_visitante
+								END as escudo_visitante,
+								e1.nombre as local, e2.nombre as visitante
 							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 		                    LEFT JOIN partidos p
 		                    ON pa.partido_id=p.partido_id
@@ -1249,7 +1250,9 @@ class Conexion:
 											asistido["fecha"].strftime("%d/%m/%Y"),
 											asistido["competicion"],
 											asistido["escudo_local"],
-											asistido["escudo_visitante"]), asistidos))
+											asistido["escudo_visitante"],
+											asistido["local"],
+											asistido["visitante"]), asistidos))
 
 	# Metodo para obtener los estadios de los partidos asistidos de un usuario por fecha
 	def obtenerEstadiosPartidosAsistidosUsuarioFecha(self, usuario:str, numero:int)->List[Optional[tuple]]:
