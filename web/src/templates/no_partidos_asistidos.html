@@ -4,8 +4,11 @@
 
 {% block principal %}
 
-<div class="contenedor-no-partidos">
-    <h2 class="mensaje-no-partidos">No hay ningun partido asistido del {{ nombre_equipo }}...</h2>
+<div class="contenedor-no-partidos-asistidos">
+    <h2 class="mensaje-no-partidos-asistidos">No hay ningun partido asistido del {{ nombre_equipo }}...</h2>
+    <button class="boton-no-partidos-asistidos-anadir" onclick="window.location.href='/anadir_partido_asistido'">
+        Añadir Partido Asistido
+    </button>
 </div>
 
 {% endblock principal %}

@@ -108,4 +108,5 @@ def pagina_partidos_asistidos():
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
 							partidos_asistidos=partidos_asistidos,
+							numero_partidos_asistidos=len(partidos_asistidos),
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

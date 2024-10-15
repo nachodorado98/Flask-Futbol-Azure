@@ -17,11 +17,58 @@
         <div class="navbar-principal-izq">
             <img class="navbar-escudo" src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" onclick="window.location.href='/equipo/{{ equipo }}'" style="cursor: pointer;">
             <ul class="navbar-principal-menu">
-                <li><a href="/partidos">Partidos</a></li>
-                <li><a href="/equipos">Equipos</a></li>
-                <li><a href="/jugadores">Jugadores</a></li>
-                <li><a href="/estadios">Estadios</a></li>
-                <li><a href="/competiciones">Competiciones</a></li>
+
+                <button id="toggle-navbar-partidos" class="toggle-button-partidos">
+                    <strong>Partidos</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                </button>
+                <div class="navbar-partidos" id="navbar-partidos">
+                    <ul>
+                        <li><a href="/partidos"><strong>Disputados</strong></a></li>
+                        <li><a href="/partidos/asistidos"><strong>Asistidos</strong></a></li>
+                    </ul>
+                </div>
+
+                <button id="toggle-navbar-equipos" class="toggle-button-equipos">
+                    <strong>Equipos</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                </button>
+                </div>
+                <div class="navbar-equipos" id="navbar-equipos">
+                    <ul>
+                        <li><a href="/equipos"><strong>Equipos</strong></a></li>
+                    </ul>
+                </div>
+
+                <button id="toggle-navbar-jugadores" class="toggle-button-jugadores">
+                    <strong>Jugadores</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                </button>
+                <div class="navbar-jugadores" id="navbar-jugadores">
+                    <ul>
+                        <li><a href="/jugadores"><strong>Jugadores</strong></a></li>
+                    </ul>
+                </div>
+
+                <button id="toggle-navbar-estadios" class="toggle-button-estadios">
+                    <strong>Estadios</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                </button>
+                <div class="navbar-estadios" id="navbar-estadios">
+                    <ul>
+                        <li><a href="/estadios"><strong>Estadios</strong></a></li>
+                    </ul>
+                </div>
+
+                <button id="toggle-navbar-competiciones" class="toggle-button-competiciones">
+                    <strong>Competiciones</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar">                </button>
+                <div class="navbar-competiciones" id="navbar-competiciones">
+                    <ul>
+                        <li><a href="/competiciones"><strong>Competiciones</strong></a></li>
+                    </ul>
+                </div>
+
             </ul>
         </div>
         <div class="navbar-principal-der">
@@ -31,7 +78,6 @@
             <div class="navbar" id="navbar">
                 <ul>
                     <li><a href="#">{{ usuario }}</a></li>
-                    <li><a href="/partidos/asistidos">Partidos Asistidos</a></li>
                     <li><a href="/anadir_partido_asistido">Añadir Partido</a></li>
                     <li><a href="/logout">Salir</a></li>
                 </ul>
@@ -162,7 +208,24 @@
             {% if partidos_asistidos %}
                 <div class="tarjeta-partidos-asistidos">
 
-                <p class="titulo-partidos-asistidos"><strong>Partidos Asistidos</strong></p>
+                <p class="titulo-partidos-asistidos">
+                    <strong>
+                    {% if temporada_filtrada is none %}
+                        Asistidos
+                    {% else %}
+                        Asistidos {{ temporada_filtrada-1 }}/{{ temporada_filtrada }}
+                    {% endif %}
+                    </strong>
+
+                    {% if local==1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/local.png') }}" alt="Local Asistido Filtrado" height="20">
+                    {% elif local==2 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante Asistido Filtrado" height="20">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Total Asistido Filtrado" height="20">
+                    {% endif %}
+
+                </p>
 
                     <div class="tarjetas-partidos-asistidos">
                         <div class="tarjetas-partidos-asistidos-wrapper">

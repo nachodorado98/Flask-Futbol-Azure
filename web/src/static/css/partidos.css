@@ -135,8 +135,6 @@ body {
 
 #toggle-navbar {
     float: right;
-    background-color: #e74c3c;
-    color: #fff;
     border: none;
     padding: 10px;
     cursor: pointer;
@@ -183,6 +181,118 @@ body {
 
 .navbar-principal-der .icono-usuario{
     height: 30px;
+}
+
+#toggle-navbar-partidos,
+#toggle-navbar-equipos,
+#toggle-navbar-jugadores,
+#toggle-navbar-estadios,
+#toggle-navbar-competiciones {
+    float: right;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 17px;
+    z-index: 2;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    font-size: 18px;
+}
+
+.icono-flecha-navbar{
+    height: 11px;
+}
+
+.navbar-partidos,
+.navbar-equipos,
+.navbar-jugadores,
+.navbar-estadios,
+.navbar-competiciones {
+    display: none;
+    position: fixed;
+    top: 60px;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1;
+    background-color: var(--color-primario);
+}
+
+.navbar-partidos ul,
+.navbar-equipos ul,
+.navbar-jugadores ul,
+.navbar-estadios ul,
+.navbar-competiciones ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-partidos li,
+.navbar-equipos li,
+.navbar-jugadores li,
+.navbar-estadios li,
+.navbar-competiciones li {
+    margin-bottom: 12px;
+}
+
+.navbar-partidos a,
+.navbar-equipos a,
+.navbar-jugadores a,
+.navbar-estadios a,
+.navbar-competiciones a {
+    text-decoration: none;
+    font-size: 17px;
+    transition: color 0.3s ease-in-out;
+    color: var(--color-secundario) 
+}
+
+.navbar-partidos a:hover,
+.navbar-equipos a:hover,
+.navbar-jugadores a:hover,
+.navbar-estadios a:hover,
+.navbar-competiciones a:hover {
+    color: #000;
+}
+
+#toggle-navbar-partidos {
+    left: 80px;
+}
+
+.navbar-partidos {
+    left: 80px;
+}
+
+#toggle-navbar-equipos {
+    left: 190px;
+}
+
+.navbar-equipos {
+    left: 190px;
+}
+
+#toggle-navbar-jugadores {
+    left: 300px;
+}
+
+.navbar-jugadores {
+    left: 300px;
+}
+
+#toggle-navbar-estadios {
+    left: 430px;
+}
+
+.navbar-estadios {
+    left: 430px;
+}
+
+#toggle-navbar-competiciones {
+    left: 540px;
+}
+
+.navbar-competiciones {
+    left: 540px;
 }
 
 .contenido-principal {
@@ -448,4 +558,65 @@ footer {
     z-index: 1;
     background-color: var(--color-footer);
     color: var(--color-secundario);
+}
+
+/*----------------------------------------------------------NO PARTIDOS----------------------------------------------------------*/
+
+.contenedor-no-partidos {
+    width: 100%;
+    max-width: 700px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.mensaje-no-partidos {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 30px;
+    text-align: center;
+    color: var(--color-secundario) 
+}
+
+/*----------------------------------------------------------NO PARTIDOS ASISTIDOS--------------------------------------------------*/
+
+.contenedor-no-partidos-asistidos {
+    width: 100%;
+    max-width: 700px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.mensaje-no-partidos-asistidos {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 30px;
+    text-align: center;
+    color: var(--color-secundario) 
+}
+
+.boton-no-partidos-asistidos-anadir {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.boton-no-partidos-asistidos-anadir:hover {
+    transform: scale(1.05);
 }

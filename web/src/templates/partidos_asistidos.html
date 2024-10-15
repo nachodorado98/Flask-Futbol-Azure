@@ -4,7 +4,16 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos_asistidos.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-partidos-asistidos">
+        <p class="titulo-circulo-partidos-asistidos">Partidos Asistidos</p>
+        <p class="valor-circulo-partidos-asistidos"><strong>{{ numero_partidos_asistidos }}</strong></p>
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}
 
