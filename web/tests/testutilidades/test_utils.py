@@ -3,6 +3,7 @@ import pytest
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
 from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado, anadirPuntos
+from src.utilidades.utils import limpiarResultadosPartidos
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -209,3 +210,30 @@ def test_correo_enviado():
 def test_anadir_puntos(numero, numero_puntos):
 
 	assert anadirPuntos(numero)==numero_puntos
+
+def test_limpiar_resultados_partidos_no_hay():
+
+	resultados=limpiarResultadosPartidos([])
+
+	assert isinstance(resultados, dict)
+	assert resultados["ganados"]==0
+	assert resultados["perdidos"]==0
+	assert resultados["empatados"]==0
+
+@pytest.mark.parametrize(["partidos", "ganados", "perdidos", "empatados"],
+	[
+		([(1, 0, 0), (0, 0, 1), (1, 0, 0), (0, 1, 0), (1, 0, 0), (1, 0, 0)], 4, 1, 1),
+		([(0, 0, 0), (0, 0, 1), (1, 0, 0), (0, 1, 0), (1, 0, 0), (1, 0, 0)], 3, 1, 1),
+		([(1, 0, 0), (0, 0, 1), (1, 0, 0), (0, 1, 0), (1, 0, 0)], 3, 1, 1),
+		([(1, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 0), (0, 1, 0), (1, 0, 0)], 2, 3, 1),
+		([(1, 1, 1), (0, 0, 1), (1, 0, 0), (0, 1, 0), (1, 0, 0), (1, 0, 0)], 4, 2, 2),
+	]
+)
+def test_limpiar_resultados_partidos(partidos, ganados, perdidos, empatados):
+
+	resultados=limpiarResultadosPartidos(partidos)
+
+	assert isinstance(resultados, dict)
+	assert resultados["ganados"]==ganados
+	assert resultados["perdidos"]==perdidos
+	assert resultados["empatados"]==empatados

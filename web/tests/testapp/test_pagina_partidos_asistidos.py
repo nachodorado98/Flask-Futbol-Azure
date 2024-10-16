@@ -124,6 +124,38 @@ def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, cantida
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==200
-		assert '<p class="titulo-circulo-partidos-asistidos">' in contenido
+		assert '<p class="titulo-circulo-partidos-asistidos-totales">' in contenido
 		assert "Partidos Asistidos" in contenido
-		assert f'<p class="valor-circulo-partidos-asistidos"><strong>{cantidad_partidos_asistidos}</strong></p>' in contenido
+		assert f'<p class="valor-circulo-partidos-asistidos-totales"><strong>{cantidad_partidos_asistidos}</strong></p>' in contenido
+
+def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES (%s, 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""",
+						(f"2019",))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":f"2019", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos/asistidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-estadisticas-partidos-asistidos">' in contenido
+		assert '<canvas id="grafico_tarta">' in contenido
+		assert "var datos_grafica_tarta=" in contenido

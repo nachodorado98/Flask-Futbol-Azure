@@ -1220,8 +1220,10 @@ class Conexion:
 											partido["fecha"].strftime("%d/%m/%Y"),
 											partido["competicion"]), partidos))
 
-	# Metodo para obtener los partidos asistidos de un usuario
+	# Metodo para obtener los partidos asistidos de un usuario (en relacion a su equipo)
 	def obtenerPartidosAsistidosUsuario(self, usuario:str)->List[Optional[tuple]]:
+
+		equipo_id=self.obtenerEquipo(usuario)
 
 		self.c.execute("""SELECT pa.partido_id, p.marcador, p.fecha, p.competicion,
 								CASE WHEN e1.escudo IS NULL
@@ -1232,7 +1234,21 @@ class Conexion:
 										THEN -1
 										ELSE e2.escudo
 								END as escudo_visitante,
-								e1.nombre as local, e2.nombre as visitante
+								e1.nombre as local, e2.nombre as visitante,
+								CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_ganado,
+						       CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_perdido,
+   						       CASE WHEN p.resultado LIKE %s
+							            THEN 1
+							            ELSE 0
+						       END as partido_empatado
 							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 		                    LEFT JOIN partidos p
 		                    ON pa.partido_id=p.partido_id
@@ -1241,7 +1257,9 @@ class Conexion:
 							LEFT JOIN equipos e2
 							ON p.equipo_id_visitante=e2.equipo_id
 							ORDER BY p.fecha DESC""",
-							(usuario,))
+							(r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
+								r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
+								r'%Empate%', usuario))
 
 		asistidos=self.c.fetchall()
 
@@ -1252,7 +1270,10 @@ class Conexion:
 											asistido["escudo_local"],
 											asistido["escudo_visitante"],
 											asistido["local"],
-											asistido["visitante"]), asistidos))
+											asistido["visitante"],
+											asistido["partido_ganado"],
+											asistido["partido_perdido"],
+											asistido["partido_empatado"]), asistidos))
 
 	# Metodo para obtener los estadios de los partidos asistidos de un usuario por fecha
 	def obtenerEstadiosPartidosAsistidosUsuarioFecha(self, usuario:str, numero:int)->List[Optional[tuple]]:

@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import List, Dict
 
 from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO_CORREO
 
@@ -224,3 +225,15 @@ def anadirPuntos(numero:str)->str:
             numero_con_puntos+="."
 
     return numero_con_puntos[::-1]
+
+def limpiarResultadosPartidos(partidos:List[tuple])->Dict:
+
+    partidos_ganados=len(list(filter(lambda partido: partido[-3]==1, partidos)))
+
+    partidos_perdidos=len(list(filter(lambda partido: partido[-2]==1, partidos)))
+
+    partidos_empatados=len(list(filter(lambda partido: partido[-1]==1, partidos)))
+
+    return {"ganados":partidos_ganados,
+            "perdidos": partidos_perdidos,
+            "empatados": partidos_empatados}

@@ -7,9 +7,14 @@
 {% block contenedor_lateral_izq %}
 
 <div class="contenedor-lateral contenedor-lateral-izq">
-    <div class="circulo-partidos-asistidos">
-        <p class="titulo-circulo-partidos-asistidos">Partidos Asistidos</p>
-        <p class="valor-circulo-partidos-asistidos"><strong>{{ numero_partidos_asistidos }}</strong></p>
+    <div class="circulo-partidos-asistidos-totales">
+        <p class="titulo-circulo-partidos-asistidos-totales">Partidos Asistidos</p>
+        <p class="valor-circulo-partidos-asistidos-totales"><strong>{{ numero_partidos_asistidos }}</strong></p>
+    </div>
+    <div class="circulo-estadisticas-partidos-asistidos">
+        <canvas id="grafico_tarta"></canvas>
+        <script>var datos_grafica_tarta={{ resultados_partidos_asistidos | tojson | safe }};</script>
+        <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
     </div>
 </div>
 
