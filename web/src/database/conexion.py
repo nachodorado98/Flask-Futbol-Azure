@@ -149,7 +149,16 @@ class Conexion:
 						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
 							            THEN 1
 							            ELSE 0
-						       END as partido_ganado
+						       END as partido_ganado,
+						       CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_perdido,
+   						       CASE WHEN p.resultado LIKE %s
+							            THEN 1
+							            ELSE 0
+						       END as partido_empatado
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
@@ -160,7 +169,9 @@ class Conexion:
 						WHERE p.equipo_id_local=%s
 						OR p.equipo_id_visitante=%s
 						ORDER BY fecha DESC""",
-						(r'%Local%', equipo_id, r'%Visitante%', equipo_id, equipo_id, equipo_id))
+						(r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
+						r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
+						r'%Empate%', equipo_id, equipo_id))
 
 		partidos=self.c.fetchall()
 
@@ -175,7 +186,9 @@ class Conexion:
 											partido["escudo_visitante"],
 											partido["competicion"],
 											partido["estadio_partido"],
-											partido["partido_ganado"]), partidos))
+											partido["partido_ganado"],
+											partido["partido_perdido"],
+											partido["partido_empatado"]), partidos))
 
 	# Metodo para obtener los partidos de un equipo de local
 	def obtenerPartidosEquipoLocal(self, equipo_id:str)->List[tuple]:
@@ -1465,3 +1478,47 @@ class Conexion:
 							(comentario_nuevo, partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener los equipos de los partidos asistidos de un usuario por cantidad de veces enfrentado
+	def obtenerEquiposPartidosAsistidosUsuarioCantidad(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		equipo_id=self.obtenerEquipo(usuario)
+
+		self.c.execute("""SELECT equipo, nombre_equipo, escudo, COUNT(equipo) as numero_veces
+							FROM (SELECT p.equipo_id_local as equipo, e1.nombre as nombre_equipo,
+									CASE WHEN e1.escudo IS NULL
+											THEN -1
+											ELSE e1.escudo
+									END as escudo
+									FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+				                    LEFT JOIN partidos p
+				                    ON pa.partido_id=p.partido_id
+				                    LEFT JOIN equipos e1
+									ON p.equipo_id_local=e1.equipo_id
+									LEFT JOIN equipos e2
+									ON p.equipo_id_visitante=e2.equipo_id
+									UNION ALL
+									SELECT p.equipo_id_visitante as equipo, e2.nombre as nombre_equipo,
+										CASE WHEN e2.escudo IS NULL
+												THEN -1
+												ELSE e2.escudo
+										END as escudo
+									FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+				                    LEFT JOIN partidos p
+				                    ON pa.partido_id=p.partido_id
+				                    LEFT JOIN equipos e1
+									ON p.equipo_id_local=e1.equipo_id
+									LEFT JOIN equipos e2
+									ON p.equipo_id_visitante=e2.equipo_id) as t
+							GROUP BY equipo, nombre_equipo, escudo
+							HAVING equipo!=%s
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, usuario, equipo_id, numero))
+
+		equipos_enfrentados=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo"],
+										equipo["nombre_equipo"],
+										equipo["escudo"],
+										equipo["numero_veces"]), equipos_enfrentados))

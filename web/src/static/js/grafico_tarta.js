@@ -25,12 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'top',
-                    align: 'center',
-                    labels: {
-                        boxWidth: 20,
-                        padding: 15
-                    }
+                    display:false
                 },
                 tooltip: {
                     callbacks: {

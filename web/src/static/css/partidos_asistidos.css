@@ -1,7 +1,7 @@
 /*----------------------------------------------------------PARTIDOS ASISTIDOS---------------------------------------------------*/
 .circulo-partidos-asistidos-totales {
-    width: 190px;
-    height: 190px;
+    width: 195px;
+    height: 195px;
     border-radius: 50%;
     background-color: var(--color-footer);
     color: var(--color-secundario);
@@ -17,8 +17,7 @@
     border: 3px solid #000;
 }
 
-.circulo-partidos-asistidos-totales .titulo-circulo-partidos-asistidos-totales
- {
+.circulo-partidos-asistidos-totales .titulo-circulo-partidos-asistidos-totales {
     margin: 2px 0;
     margin-top: 30px;
     padding: 0;
@@ -33,16 +32,55 @@
 }
 
 .circulo-estadisticas-partidos-asistidos {
-    width: 235px;
-    height: 235px;
+    width: 190px;
+    height: 190px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 15px auto 10px 55px;
+    margin: 15px auto 10px 70px;
     text-align: center;
     overflow: hidden;
     cursor: default;
+}
+
+.circulo-equipo-mas-enfrentado {
+    width: 195px;
+    height: 195px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 70px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-equipo-mas-enfrentado .titulo-circulo-equipo-mas-enfrentado {
+    margin: 2px 0;
+    margin-top: 15px;
+    padding: 0;
+    font-size: 23px;
+}
+
+.circulo-equipo-mas-enfrentado .escudo-mas-enfrentado {
+    margin-top: 5px;
+    width: 75px;
+    height: 75px;
+    cursor: pointer;
+}
+
+.circulo-equipo-mas-enfrentado .valor-circulo-equipo-mas-enfrentado {
+    margin: 2px 0;
+    padding: 0;
+    font-size: 20px;
+    margin-top: 5px;
 }
 
 .contenedor-titulo-partidos-asistidos {

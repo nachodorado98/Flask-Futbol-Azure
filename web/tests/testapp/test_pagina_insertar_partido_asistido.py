@@ -115,7 +115,7 @@ def test_pagina_insertar_partido_asistido_sin_comentario(cliente, conexion_entor
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos"
+		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
@@ -143,7 +143,7 @@ def test_pagina_insertar_partido_asistido(cliente, conexion_entorno):
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos"
+		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
@@ -168,7 +168,7 @@ def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_en
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos"
+		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")

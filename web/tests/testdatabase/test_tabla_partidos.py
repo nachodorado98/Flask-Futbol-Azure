@@ -37,7 +37,9 @@ def test_obtener_partidos_equipo_ganado(conexion_entorno):
 
 	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
 
-	assert partidos[0][-1]==1
+	assert partidos[0][-1]==0
+	assert partidos[0][-2]==0
+	assert partidos[0][-3]==1
 
 @pytest.mark.parametrize(["resultados", "ganados"],
 	[
@@ -63,9 +65,9 @@ def test_obtener_partidos_equipo_ganados_local(conexion_entorno, resultados, gan
 
 	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
 
-	partidos_ganados=list(filter(lambda partido: partido[-1]==1, partidos))
+	partidos_ganados=list(filter(lambda partido: partido[-3]==1, partidos))
 
-	partidos_no_ganados=list(filter(lambda partido: partido[-1]==0, partidos))
+	partidos_no_ganados=list(filter(lambda partido: partido[-3]==0, partidos))
 
 	assert len(partidos_ganados)==ganados
 	assert len(partidos)==len(partidos_ganados)+len(partidos_no_ganados)
@@ -94,12 +96,170 @@ def test_obtener_partidos_equipo_ganados_visitante(conexion_entorno, resultados,
 
 	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
 
-	partidos_ganados=list(filter(lambda partido: partido[-1]==1, partidos))
+	partidos_ganados=list(filter(lambda partido: partido[-3]==1, partidos))
 
-	partidos_no_ganados=list(filter(lambda partido: partido[-1]==0, partidos))
+	partidos_no_ganados=list(filter(lambda partido: partido[-3]==0, partidos))
 
 	assert len(partidos_ganados)==ganados
 	assert len(partidos)==len(partidos_ganados)+len(partidos_no_ganados)
+
+def test_obtener_partidos_equipo_perdido(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('1', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	assert partidos[0][-1]==0
+	assert partidos[0][-2]==1
+	assert partidos[0][-3]==0
+
+@pytest.mark.parametrize(["resultados", "perdidos"],
+	[
+		(["Victoria Visitante", "Victoria Penaltis Visitante", "Victoria Visitante", "Victoria Local"], 3),
+		(["Visitante", "Victoria Penaltis Local", "Victoria Visitante", "Local"], 2),
+		(["Victoria Local", "Victoria Penaltis Local", "Local", "Local Victoria"], 0),
+		(["Victoria", "Victoria Visitante Panaltis", "Victoria Visitante", "Empate"], 2)
+	]
+)
+def test_obtener_partidos_equipo_perdidos_local(conexion_entorno, resultados, perdidos):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	for numero, resultado in enumerate(resultados):
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', %s)""",
+									(numero+1, resultado))
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	partidos_perdidos=list(filter(lambda partido: partido[-2]==1, partidos))
+
+	partidos_no_perdidos=list(filter(lambda partido: partido[-2]==0, partidos))
+
+	assert len(partidos_perdidos)==perdidos
+	assert len(partidos)==len(partidos_perdidos)+len(partidos_no_perdidos)
+
+@pytest.mark.parametrize(["resultados", "perdidos"],
+	[
+		(["Victoria Visitante", "Victoria Penaltis Visitante", "Victoria Visitante", "Victoria Local"], 1),
+		(["Visitante", "Victoria Penaltis Local", "Victoria Visitante", "Victoria Local"], 2),
+		(["Victoria Visitante", "Victoria Penaltis Visitante", "Victoria Visitante", "Visitante Victoria"], 0),
+		(["Victoria", "Victoria Local Panaltis", "Victoria Local", "Empate"], 2)
+	]
+)
+def test_obtener_partidos_equipo_perdidos_visitante(conexion_entorno, resultados, perdidos):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	for numero, resultado in enumerate(resultados):
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', %s)""",
+									(numero+1, resultado))
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	partidos_perdidos=list(filter(lambda partido: partido[-2]==1, partidos))
+
+	partidos_no_perdidos=list(filter(lambda partido: partido[-2]==0, partidos))
+
+	assert len(partidos_perdidos)==perdidos
+	assert len(partidos)==len(partidos_perdidos)+len(partidos_no_perdidos)
+
+def test_obtener_partidos_equipo_empatado(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES('1', 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', 'Empate')""")
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	assert partidos[0][-1]==1
+	assert partidos[0][-2]==0
+	assert partidos[0][-3]==0
+
+@pytest.mark.parametrize(["resultados", "empatados"],
+	[
+		(["Victoria Visitante", "Empate", "Victoria Visitante", "Empate A Dos"], 2),
+		(["Visitante", "Victoria Penaltis Local", "Victoria Visitante", "Empate"], 1),
+		(["Victoria Local", "Victoria Penaltis Local", "Local", "Local Victoria"], 0),
+		(["Victoria Empate", "Victoria Empate Panaltis", "Victoria Visitante", "Empate"], 3)
+	]
+)
+def test_obtener_partidos_equipo_empatados_local(conexion_entorno, resultados, empatados):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	for numero, resultado in enumerate(resultados):
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'atletico-madrid', 'rival', '2019-06-22', '20:00', 'Liga', '1-0', %s)""",
+									(numero+1, resultado))
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	partidos_empatados=list(filter(lambda partido: partido[-1]==1, partidos))
+
+	partidos_no_empatados=list(filter(lambda partido: partido[-1]==0, partidos))
+
+	assert len(partidos_empatados)==empatados
+	assert len(partidos)==len(partidos_empatados)+len(partidos_no_empatados)
+
+@pytest.mark.parametrize(["resultados", "empatados"],
+	[
+		(["Victoria Visitante", "Empate", "Victoria Visitante", "Empate A Dos"], 2),
+		(["Visitante", "Victoria Penaltis Local", "Victoria Visitante", "Empate"], 1),
+		(["Victoria Local", "Victoria Penaltis Local", "Local", "Local Victoria"], 0),
+		(["Victoria Empate", "Victoria Empate Panaltis", "Victoria Visitante", "Empate"], 3)
+	]
+)
+def test_obtener_partidos_equipo_empatados_visitante(conexion_entorno, resultados, empatados):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+
+	for numero, resultado in enumerate(resultados):
+
+		conexion_entorno.c.execute("""INSERT INTO partidos
+									VALUES(%s, 'rival', 'atletico-madrid', '2019-06-22', '20:00', 'Liga', '1-0', %s)""",
+									(numero+1, resultado))
+
+	conexion_entorno.confirmar()
+
+	partidos=conexion_entorno.obtenerPartidosEquipo("atletico-madrid")
+
+	partidos_empatados=list(filter(lambda partido: partido[-1]==1, partidos))
+
+	partidos_no_empatados=list(filter(lambda partido: partido[-1]==0, partidos))
+
+	assert len(partidos_empatados)==empatados
+	assert len(partidos)==len(partidos_empatados)+len(partidos_no_empatados)
 
 def test_obtener_partidos_equipo_local(conexion_entorno):
 

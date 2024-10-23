@@ -655,19 +655,12 @@ def test_pagina_partidos_partidos_totales(cliente, conexion, cantidad_partidos):
 		assert "Partidos Jugados" in contenido
 		assert f'<p class="valor-circulo-partidos-totales"><strong>{cantidad_partidos}</strong></p>' in contenido
 
-def test_pagina_partidos_partidos_ganados(cliente, conexion):
+def test_pagina_partidos_partidos_estadisticas(cliente, conexion):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
 	conexion.c.execute("""INSERT INTO partidos
-						VALUES ('20191', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
-								('20192', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '0-0', 'Empate'),
-								('20193', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '2(5-3)2', 'Victoria Penaltis Local'),
-								('20194', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-2', 'Victoria Visitante'),
-								('20195', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
-								('20196', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-5', 'Victoria Visitante'),
-								('20197', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-1', 'Empate'),
-								('20198', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1(2-3)1', 'Victoria Visitante Penaltis')""")
+						VALUES ('20191', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local')""")
 
 
 	conexion.confirmar()
@@ -686,9 +679,9 @@ def test_pagina_partidos_partidos_ganados(cliente, conexion):
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==200
-		assert '<p class="titulo-circulo-partidos-ganados">' in contenido
-		assert "Partidos Ganados" in contenido
-		assert '<p class="valor-circulo-partidos-ganados"><strong>4</strong></p>' in contenido
+		assert '<div class="circulo-estadisticas-partidos-disputados">' in contenido
+		assert '<canvas id="grafico_tarta">' in contenido
+		assert "var datos_grafica_tarta=" in contenido
 
 def test_pagina_partidos_sin_partido_asistido(cliente, conexion_entorno):
 

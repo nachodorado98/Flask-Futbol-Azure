@@ -97,9 +97,10 @@
                 <p class="titulo-circulo-partidos-totales">Partidos Jugados</p>
                 <p class="valor-circulo-partidos-totales"><strong>{{ numero_partidos }}</strong></p>
             </div>
-            <div class="circulo-partidos-ganados">
-                <p class="titulo-circulo-partidos-ganados">Partidos Ganados</p>
-                <p class="valor-circulo-partidos-ganados"><strong>{{ partidos_ganados }}</strong></p>
+            <div class="circulo-estadisticas-partidos-disputados">
+                <canvas id="grafico_tarta"></canvas>
+                <script>var datos_grafica_tarta={{ resultados_partidos_disputados | tojson | safe }};</script>
+                <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
             </div>
             <div class="circulo-partidos-asistidos">
                 <p class="titulo-circulo-partidos-asistidos">Partidos Asistidos</p>

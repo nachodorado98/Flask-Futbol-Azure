@@ -36,7 +36,6 @@ body {
 }
 
 .circulo-partidos-totales,
-.circulo-partidos-ganados,
 .circulo-partidos-asistidos {
     width: 190px;
     height: 190px;
@@ -56,7 +55,6 @@ body {
 }
 
 .circulo-partidos-totales .titulo-circulo-partidos-totales,
-.circulo-partidos-ganados .titulo-circulo-partidos-ganados,
 .circulo-partidos-asistidos .titulo-circulo-partidos-asistidos
  {
     margin: 2px 0;
@@ -66,12 +64,24 @@ body {
 }
 
 .circulo-partidos-totales .valor-circulo-partidos-totales,
-.circulo-partidos-ganados .valor-circulo-partidos-ganados,
 .circulo-partidos-asistidos .valor-circulo-partidos-asistidos {
     margin: 4px 0;
     margin-top: 10px;
     padding: 0;
     font-size: 30px;
+}
+
+.circulo-estadisticas-partidos-disputados {
+    width: 190px;
+    height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 70px;
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
 }
 
 .contenedor-lateral-der {

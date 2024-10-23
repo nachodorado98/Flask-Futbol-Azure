@@ -16,6 +16,15 @@
         <script>var datos_grafica_tarta={{ resultados_partidos_asistidos | tojson | safe }};</script>
         <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
     </div>
+    <div class="circulo-equipo-mas-enfrentado">
+        <p class="titulo-circulo-equipo-mas-enfrentado">{{ equipo_mas_enfrentado[1] }}</p>
+        {% if equipo_mas_enfrentado[2]==-1 %}
+            <img class="escudo-mas-enfrentado" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon" onclick="window.location.href='/equipo/{{ equipo_mas_enfrentado[0] }}'">
+        {% else %}
+            <img class="escudo-mas-enfrentado" src="{{ url_imagen_escudo }}{{ equipo_mas_enfrentado[2] }}.png" alt="Escudo Icon" onclick="window.location.href='/equipo/{{ equipo_mas_enfrentado[0] }}'">
+        {% endif %}
+        <p class="valor-circulo-equipo-mas-enfrentado"><strong>{{ equipo_mas_enfrentado[3] }} veces</strong></p>
+    </div>
 </div>
 
 {% endblock contenedor_lateral_izq %}

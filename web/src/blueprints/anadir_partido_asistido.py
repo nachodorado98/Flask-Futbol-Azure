@@ -71,7 +71,7 @@ def pagina_insertar_partido_asistido():
 
 	con.cerrarConexion()
 
-	return redirect("/partidos")
+	return redirect("/partidos/asistidos")
 
 @bp_anadir_partido_asistido.route("/actualizar_comentario_partido_asistido/<partido_id>", methods=["POST"])
 @login_required
