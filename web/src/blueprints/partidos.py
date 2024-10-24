@@ -92,6 +92,8 @@ def pagina_partidos():
 @login_required
 def pagina_partidos_asistidos():
 
+	local=request.args.get("local", default=0, type=int)
+
 	con=Conexion()
 
 	equipo=con.obtenerEquipo(current_user.id)
@@ -100,7 +102,17 @@ def pagina_partidos_asistidos():
 
 	estadio_equipo=con.estadio_equipo(equipo)
 
-	partidos_asistidos=con.obtenerPartidosAsistidosUsuario(current_user.id)
+	if local==1:	
+
+		partidos_asistidos=con.obtenerPartidosAsistidosUsuarioCasa(current_user.id)
+
+	elif local==2:
+
+		partidos_asistidos=con.obtenerPartidosAsistidosUsuarioFuera(current_user.id)
+
+	else:
+
+		partidos_asistidos=con.obtenerPartidosAsistidosUsuario(current_user.id)
 
 	if not partidos_asistidos:
 
@@ -111,6 +123,7 @@ def pagina_partidos_asistidos():
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
+								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	resultados_partidos_asistidos=limpiarResultadosPartidos(partidos_asistidos)
@@ -126,6 +139,7 @@ def pagina_partidos_asistidos():
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
+								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, 1)
@@ -142,5 +156,6 @@ def pagina_partidos_asistidos():
 							resultados_partidos_asistidos=resultados_partidos_asistidos,
 							equipo_mas_enfrentado=equipos_mas_enfrentados[0],
 							estadio_mas_visitado=estadios_mas_visitados[0],
+							local=local,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

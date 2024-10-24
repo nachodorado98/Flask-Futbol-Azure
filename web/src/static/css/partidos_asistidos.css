@@ -215,3 +215,28 @@
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
+
+.contenedor-tipo-partidos-asistidos {
+    width: 100%;
+    max-width: 50px;
+    text-align: center;
+    margin: 10px auto;
+    justify-content: center;
+    display: flex;
+    gap: 30px;
+}
+
+.tipo-partidos-asistidos {
+    display: inline-block;
+    padding: 1px 15px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.tipo-partidos-asistidos:hover {
+    color: #000;
+    transform: scale(1.05);
+}

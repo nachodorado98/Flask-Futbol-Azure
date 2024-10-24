@@ -41,7 +41,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 	assert 'alt="Total Filtrado"' in contenido
 	assert 'alt="Local Filtrado"' not in contenido
 	assert 'alt="Visitante Filtrado"' not in contenido
-	assert f'<img class="navbar-escudo" src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
+	assert '<img class="navbar-escudo" src="/static/imagenes/favoritos/atletico-madrid.png'in contenido
 	assert "No hay ningun partido disponible del " not in contenido
 	assert '<div class="tarjetas-partidos">' in contenido
 	assert '<div class="tarjetas-partidos-wrapper">' in contenido
