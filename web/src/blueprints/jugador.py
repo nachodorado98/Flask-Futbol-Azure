@@ -22,6 +22,8 @@ def pagina_jugador(jugador_id:str):
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_jugador=con.obtenerDatosJugador(jugador_id)
 
 	con.cerrarConexion()
@@ -29,6 +31,7 @@ def pagina_jugador(jugador_id:str):
 	return render_template("jugador.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							datos_jugador=datos_jugador,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
@@ -42,6 +45,8 @@ def pagina_jugadores():
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_jugadores=con.obtenerDatosJugadores()
 
 	numero_top=8
@@ -53,6 +58,7 @@ def pagina_jugadores():
 	return render_template("jugadores.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							datos_jugadores=datos_jugadores,
 							numero_top=numero_top,
 							datos_jugadores_top=datos_jugadores_top,

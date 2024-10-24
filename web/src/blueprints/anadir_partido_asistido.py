@@ -17,6 +17,8 @@ def pagina_anadir_partido_asistido():
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	if todos:
 
 		partidos_no_asistidos=con.obtenerPartidosNoAsistidosUsuario(current_user.id, equipo)
@@ -31,11 +33,13 @@ def pagina_anadir_partido_asistido():
 
 		return render_template("anadir_no_partido_asistido.html",
 								usuario=current_user.id,
-								equipo=equipo)
+								equipo=equipo,
+								estadio_equipo=estadio_equipo)
 
 	return render_template("anadir_partido_asistido.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							partidos_no_asistidos=partidos_no_asistidos,
 							todos=todos,
 							partido_id_anadir=partido_id_anadir)

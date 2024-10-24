@@ -83,6 +83,45 @@
     margin-top: 5px;
 }
 
+.circulo-estadio-mas-visitado {
+    width: 195px;
+    height: 195px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-estadio-mas-visitado .titulo-circulo-estadio-mas-visitado {
+    margin: 2px 0;
+    margin-top: 15px;
+    padding: 0;
+    font-size: 23px;
+}
+
+.circulo-estadio-mas-visitado .estadio-mas-visitado {
+    margin-top: 5px;
+    width: 116.7px;
+    height: 75px;
+    cursor: pointer;
+}
+
+.circulo-estadio-mas-visitado .valor-circulo-estadio-mas-visitado {
+    margin: 2px 0;
+    padding: 0;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
 .contenedor-titulo-partidos-asistidos {
     width: 100%;
     max-width: 900px;

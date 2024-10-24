@@ -1,12 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var toggleNavbarBtnPartidos = document.getElementById('toggle-navbar-partidos');
-    var navbarPartidos = document.getElementById('navbar-partidos');
-    
-    var toggleNavbarBtnEquipos = document.getElementById('toggle-navbar-equipos');
-    var navbarEquipos = document.getElementById('navbar-equipos');
-    
-    var toggleNavbarBtnJugadores = document.getElementById('toggle-navbar-jugadores');
-    var navbarJugadores = document.getElementById('navbar-jugadores');
+    var toggleNavbarBtnClub = document.getElementById('toggle-navbar-club');
+    var navbarClub = document.getElementById('navbar-club');
     
     var toggleNavbarBtnEstadios = document.getElementById('toggle-navbar-estadios');
     var navbarEstadios = document.getElementById('navbar-estadios');
@@ -15,40 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var navbarCompeticiones = document.getElementById('navbar-competiciones');
 
     function hideAllNavbars() {
-        navbarPartidos.style.display = 'none';
-        navbarEquipos.style.display = 'none';
-        navbarJugadores.style.display = 'none';
+        navbarClub.style.display = 'none';
         navbarEstadios.style.display = 'none';
         navbarCompeticiones.style.display = 'none';
     }
 
-    toggleNavbarBtnPartidos.addEventListener('click', function() {
+    toggleNavbarBtnClub.addEventListener('click', function() {
 
-        if (navbarPartidos.style.display === 'block') {
-            navbarPartidos.style.display = 'none';
+        if (navbarClub.style.display === 'block') {
+            navbarClub.style.display = 'none';
         } else {
             hideAllNavbars();
-            navbarPartidos.style.display = 'block';
-        }
-    });
-
-    toggleNavbarBtnEquipos.addEventListener('click', function() {
-
-        if (navbarEquipos.style.display === 'block') {
-            navbarEquipos.style.display = 'none';
-        } else {
-            hideAllNavbars();
-            navbarEquipos.style.display = 'block';
-        }
-    });
-
-    toggleNavbarBtnJugadores.addEventListener('click', function() {
-
-        if (navbarJugadores.style.display === 'block') {
-            navbarJugadores.style.display = 'none';
-        } else {
-            hideAllNavbars();
-            navbarJugadores.style.display = 'block';
+            navbarClub.style.display = 'block';
         }
     });
 
@@ -72,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
 
 document.addEventListener('DOMContentLoaded', function() {
     var toggleNavbarBtn = document.getElementById('toggle-navbar');

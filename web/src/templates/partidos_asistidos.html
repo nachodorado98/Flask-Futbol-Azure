@@ -76,4 +76,20 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+<div class="contenedor-lateral contenedor-lateral-der">
+
+    <div class="circulo-estadio-mas-visitado">
+        <p class="titulo-circulo-estadio-mas-visitado">{{ estadio_mas_visitado[1] }}</p>
+        {% if estadio_mas_visitado[2]==-1 %}
+            <img class="estadio-mas-visitado" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon" onclick="window.location.href='/estadio/{{ estadio_mas_visitado[0] }}'">
+        {% else %}
+            <img class="estadio-mas-visitado" src="{{ url_imagen_estadio }}{{ estadio_mas_visitado[2] }}.png" alt="Estadio Icon" onclick="window.location.href='/estadio/{{ estadio_mas_visitado[0] }}'">
+        {% endif %}
+        <p class="valor-circulo-estadio-mas-visitado"><strong>{{ estadio_mas_visitado[5] }} veces</strong></p>
+    </div>
+
+</div>
+
+{% endblock contenedor_lateral_der %}

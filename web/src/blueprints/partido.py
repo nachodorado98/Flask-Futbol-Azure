@@ -28,6 +28,8 @@ def pagina_partido(partido_id:str):
 
 		return redirect("/partidos")
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	partido=con.obtenerPartido(partido_id)
 
 	partido_id_anterior=con.obtenerPartidoAnterior(partido_id, equipo)
@@ -47,6 +49,7 @@ def pagina_partido(partido_id:str):
 	return render_template("partido.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							partido=partido,
 							partido_id=partido_id,
 							partido_id_anterior=partido_id_anterior,
@@ -85,6 +88,8 @@ def pagina_partido_asistido(partido_id:str):
 
 		return redirect("/partidos")
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	partido_asistido=con.obtenerPartidoAsistidoUsuario(current_user.id, partido_id)
 
 	partido_id_asistido_anterior=con.obtenerPartidoAsistidoUsuarioAnterior(current_user.id, partido_id)
@@ -96,6 +101,7 @@ def pagina_partido_asistido(partido_id:str):
 	return render_template("partido_asistido.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							partido_asistido=partido_asistido,
 							partido_id=partido_id,
 							partido_id_asistido_anterior=partido_id_asistido_anterior,

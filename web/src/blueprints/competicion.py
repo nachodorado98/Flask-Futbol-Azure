@@ -22,6 +22,8 @@ def pagina_competicion(competicion_id:str):
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_competicion=con.obtenerDatosCompeticion(competicion_id)
 
 	equipos_competicion=con.obtenerEquiposCompeticion(competicion_id)
@@ -35,6 +37,7 @@ def pagina_competicion(competicion_id:str):
 	return render_template("competicion.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							datos_competicion=datos_competicion,
 							equipos_competicion=equipos_competicion,
 							equipos_campeones=equipos_campeones,
@@ -51,6 +54,8 @@ def pagina_competiciones():
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_competiciones=con.obtenerDatosCompeticiones()
 
 	numero_top=8
@@ -62,6 +67,7 @@ def pagina_competiciones():
 	return render_template("competiciones.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							datos_competiciones=datos_competiciones,
 							numero_top=numero_top,
 							datos_competiciones_top=datos_competiciones_top,

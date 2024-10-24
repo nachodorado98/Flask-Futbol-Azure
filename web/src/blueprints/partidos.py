@@ -5,7 +5,7 @@ from src.utilidades.utils import limpiarResultadosPartidos
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS
 
 bp_partidos=Blueprint("partidos", __name__)
 
@@ -22,6 +22,8 @@ def pagina_partidos():
 	equipo=con.obtenerEquipo(current_user.id)
 
 	nombre_equipo=con.obtenerNombreEquipo(equipo)
+
+	estadio_equipo=con.estadio_equipo(equipo)
 
 	if local==1:	
 
@@ -47,6 +49,7 @@ def pagina_partidos():
 								usuario=current_user.id,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
+								estadio_equipo=estadio_equipo,
 								temporada_filtrada=None,
 								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
@@ -61,6 +64,7 @@ def pagina_partidos():
 						usuario=current_user.id,
 						equipo=equipo,
 						nombre_equipo=nombre_equipo,
+						estadio_equipo=estadio_equipo,
 						temporada_filtrada=temporada_filtrada,
 						local=local,
 						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
@@ -73,6 +77,7 @@ def pagina_partidos():
 							usuario=current_user.id,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
+							estadio_equipo=estadio_equipo,
 							temporadas=temporadas,
 							temporada_filtrada=temporada_filtrada,
 							partidos=partidos_filtrados,
@@ -93,6 +98,8 @@ def pagina_partidos_asistidos():
 
 	nombre_equipo=con.obtenerNombreEquipo(equipo)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	partidos_asistidos=con.obtenerPartidosAsistidosUsuario(current_user.id)
 
 	if not partidos_asistidos:
@@ -103,6 +110,7 @@ def pagina_partidos_asistidos():
 								usuario=current_user.id,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
+								estadio_equipo=estadio_equipo,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	resultados_partidos_asistidos=limpiarResultadosPartidos(partidos_asistidos)
@@ -117,7 +125,10 @@ def pagina_partidos_asistidos():
 								usuario=current_user.id,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
+								estadio_equipo=estadio_equipo,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, 1)
 
 	con.cerrarConexion()
 
@@ -125,8 +136,11 @@ def pagina_partidos_asistidos():
 							usuario=current_user.id,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
+							estadio_equipo=estadio_equipo,
 							partidos_asistidos=partidos_asistidos,
 							numero_partidos_asistidos=len(partidos_asistidos),
 							resultados_partidos_asistidos=resultados_partidos_asistidos,
 							equipo_mas_enfrentado=equipos_mas_enfrentados[0],
-							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+							estadio_mas_visitado=estadios_mas_visitados[0],
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

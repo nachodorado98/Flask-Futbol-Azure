@@ -18,40 +18,30 @@
 
     <nav class="navbar-principal">
         <div class="navbar-principal-izq">
-            <img class="navbar-escudo" src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" onclick="window.location.href='/equipo/{{ equipo }}'" style="cursor: pointer;">
+
+            <img class="navbar-escudo" src="{{ url_for('static', filename='imagenes/favoritos/'+equipo+'.png') }}" alt="Imagen" onclick="window.location.href='/partidos'" style="cursor: pointer;">
+
             <ul class="navbar-principal-menu">
 
-                <button id="toggle-navbar-partidos" class="toggle-button-partidos">
-                    <strong>Partidos</strong>
+                <button id="toggle-navbar-club" class="toggle-button-club">
+                    <strong>Club</strong>
                     <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
                 </button>
-                <div class="navbar-partidos" id="navbar-partidos">
+                <div class="navbar-club" id="navbar-club">
                     <ul>
-                        <li><a href="/partidos"><strong>Disputados</strong></a></li>
-                        <li><a href="/partidos/asistidos"><strong>Asistidos</strong></a></li>
+                        <li><a href="/equipo/{{ equipo }}"><strong>Datos del club</strong></a></li>
+                        <li><a href="/estadio/{{ estadio_equipo }}"><strong>Estadio</strong></a></li>
+                        <li><a href="#"><strong>Plantilla</strong></a></li>
                     </ul>
                 </div>
 
-                <button id="toggle-navbar-equipos" class="toggle-button-equipos">
+                <button id="toggle-navbar-mis-partidos" class="toggle-button-mis-partidos" onclick="window.location.href='/partidos/asistidos'">
+                    <strong>Mis Partidos</strong>
+                </button>
+
+                <button id="toggle-navbar-equipos" class="toggle-button-equipos" onclick="window.location.href='/equipos'">
                     <strong>Equipos</strong>
-                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
                 </button>
-                </div>
-                <div class="navbar-equipos" id="navbar-equipos">
-                    <ul>
-                        <li><a href="/equipos"><strong>Equipos</strong></a></li>
-                    </ul>
-                </div>
-
-                <button id="toggle-navbar-jugadores" class="toggle-button-jugadores">
-                    <strong>Jugadores</strong>
-                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
-                </button>
-                <div class="navbar-jugadores" id="navbar-jugadores">
-                    <ul>
-                        <li><a href="/jugadores"><strong>Jugadores</strong></a></li>
-                    </ul>
-                </div>
 
                 <button id="toggle-navbar-estadios" class="toggle-button-estadios">
                     <strong>Estadios</strong>
@@ -59,7 +49,8 @@
                 </button>
                 <div class="navbar-estadios" id="navbar-estadios">
                     <ul>
-                        <li><a href="/estadios"><strong>Estadios</strong></a></li>
+                        <li><a href="/estadios"><strong>Todos los estadios</strong></a></li>
+                        <li><a href="#"><strong>Mis estadios</strong></a></li>
                     </ul>
                 </div>
 
@@ -68,11 +59,13 @@
                     <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar">                </button>
                 <div class="navbar-competiciones" id="navbar-competiciones">
                     <ul>
-                        <li><a href="/competiciones"><strong>Competiciones</strong></a></li>
+                        <li><a href="/competiciones"><strong>Todas las competiciones</strong></a></li>
+                        <li><a href="#"><strong>Mis competiciones</strong></a></li>
                     </ul>
                 </div>
 
             </ul>
+
         </div>
         <div class="navbar-principal-der">
             <button id="toggle-navbar" class="toggle-button">

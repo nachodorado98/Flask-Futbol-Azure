@@ -23,6 +23,8 @@ def pagina_equipo(equipo_id:str):
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_equipo=con.obtenerDatosEquipo(equipo_id)
 
 	favorito=True if equipo==equipo_id else False
@@ -39,6 +41,7 @@ def pagina_equipo(equipo_id:str):
 							usuario=current_user.id,
 							equipo=equipo,
 							datos_equipo=datos_equipo,
+							estadio_equipo=estadio_equipo,
 							favorito=favorito,
 							jugador=jugador_equipo,
 							ultimo_partido=ultimo_partido,
@@ -59,6 +62,8 @@ def pagina_equipos():
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_equipos=con.obtenerDatosEquipos()
 
 	numero_top=8
@@ -70,6 +75,7 @@ def pagina_equipos():
 	return render_template("equipos.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							datos_equipos=datos_equipos,
 							numero_top=numero_top,
 							datos_equipos_top=datos_equipos_top,

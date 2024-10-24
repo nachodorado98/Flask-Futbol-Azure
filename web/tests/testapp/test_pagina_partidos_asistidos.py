@@ -65,8 +65,13 @@ def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
-	conexion.c.execute("""INSERT INTO partidos
-							VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
+	conexion.c.execute("""INSERT INTO partidos VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio VALUES('20190622', 'estadio')""")
 
 	conexion.confirmar()
 
@@ -103,11 +108,17 @@ def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, cantida
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
 	for numero in range(cantidad_partidos):
 
 		conexion.c.execute("""INSERT INTO partidos
 							VALUES (%s, 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""",
 							(f"2019{numero+1}",))
+
+		conexion.c.execute("""INSERT INTO partido_estadio VALUES(%s, 'estadio')""", (f"2019{numero+1}",))
 
 	conexion.confirmar()
 
@@ -139,8 +150,13 @@ def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, cone
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
-	conexion.c.execute("""INSERT INTO partidos
-						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
+	conexion.c.execute("""INSERT INTO partidos VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio VALUES('20190622', 'estadio')""")
 
 	conexion.confirmar()
 
@@ -170,8 +186,13 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado(cliente, conexion):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
 
-	conexion.c.execute("""INSERT INTO partidos
-						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
+	conexion.c.execute("""INSERT INTO partidos VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio VALUES('20190622', 'estadio')""")
 
 	conexion.confirmar()
 
@@ -210,6 +231,10 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM')""")
 
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
 	for numero, cantidad_partidos in enumerate(partidos_equipos):
 
 		conexion.c.execute(f"""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('rival{numero+1}', 'Rival{numero+1}')""")
@@ -220,6 +245,8 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 
 			conexion.c.execute(f"""INSERT INTO partidos
 								VALUES ('20190622{numero+1}{cantidad}', 'atletico-madrid', 'rival{numero+1}', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+			conexion.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero+1}{cantidad}', 'estadio')""")
 
 			conexion.confirmar()
 
@@ -249,7 +276,7 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 		assert f"Rival{equipo_mas_enfrentado}" in contenido
 		assert f'<p class="valor-circulo-equipo-mas-enfrentado"><strong>{veces} veces</strong></p>' in contenido
 
-def test_pagina_partidos_asistidos_contra_tu_equipo(cliente, conexion_entorno):
+def test_pagina_partidos_asistidos_equipo_mas_enfrentado_contra_tu_equipo(cliente, conexion_entorno):
 
 	with cliente as cliente_abierto:
 
@@ -271,3 +298,97 @@ def test_pagina_partidos_asistidos_contra_tu_equipo(cliente, conexion_entorno):
 		assert respuesta.status_code==200
 		assert '<p class="titulo-circulo-equipo-mas-enfrentado">' not in contenido
 		assert '<h2 class="mensaje-error">Error en la peticion. Not found</h2>' in contenido
+
+def test_pagina_partidos_asistidos_estadio_mas_visitado(cliente, conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad) VALUES('estadio', 'Estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
+	conexion.c.execute("""INSERT INTO partidos VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio VALUES('20190622', 'estadio')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos/asistidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<p class="titulo-circulo-estadio-mas-visitado">' in contenido
+		assert "Estadio" in contenido
+		assert '<p class="valor-circulo-estadio-mas-visitado"><strong>1 veces</strong></p>' in contenido
+
+@pytest.mark.parametrize(["partidos_equipos", "estadio_mas_visitado", "veces"],
+	[
+		([2, 4, 6, 5], 3, 6),
+		([2, 4, 6, 5, 7, 11], 6, 11),
+		([10, 2, 4, 6, 5], 1, 10),
+		([2, 4, 6, 5, 5, 4, 5, 5], 3, 6),
+		([2, 4, 2, 13, 6, 5], 4, 13)
+	]
+)
+def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion, partidos_equipos, estadio_mas_visitado, veces):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM')""")
+
+	for numero, cantidad_partidos in enumerate(partidos_equipos):
+
+		conexion.c.execute(f"""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('rival{numero+1}', 'Rival')""")
+
+		conexion.c.execute(f"""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad) VALUES('estadio{numero+1}', 'Estadio{numero+1}', 10000)""")
+
+		conexion.c.execute(f"""INSERT INTO equipo_estadio VALUES('rival{numero+1}', 'estadio{numero+1}')""")
+
+		conexion.confirmar()
+
+		for cantidad in range(cantidad_partidos):
+
+			conexion.c.execute(f"""INSERT INTO partidos
+								VALUES ('20190622{numero+1}{cantidad}', 'atletico-madrid', 'rival{numero+1}', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+			conexion.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero+1}{cantidad}', 'estadio{numero+1}')""")
+
+			conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		for numero, cantidad_partidos in enumerate(partidos_equipos):
+
+			for cantidad in range(cantidad_partidos):
+
+				data={"partido_anadir":f"20190622{numero+1}{cantidad}", "comentario":"comentario"}
+
+				cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos/asistidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<p class="titulo-circulo-estadio-mas-visitado">' in contenido
+		assert f"Estadio{estadio_mas_visitado}" in contenido
+		assert f'<p class="valor-circulo-estadio-mas-visitado"><strong>{veces} veces</strong></p>' in contenido

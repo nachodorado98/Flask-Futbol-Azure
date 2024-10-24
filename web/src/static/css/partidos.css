@@ -12,7 +12,7 @@ body {
     --color-secundario: #FFF;
     --color-footer: #031A77;
     --color-toogle: #031A77;
-    --color-fondo: #FFE7E5;
+    --color-fondo: #FFF;
     background-color: var(--color-fondo);
 }
 
@@ -97,7 +97,7 @@ body {
 .navbar-principal {
     display: flex;
     align-items: center;
-    background-color: var(--color-primario);
+    background-color: var(--color-toogle);
     padding: 10px 20px;
     position: fixed;
     width: 100%;
@@ -136,6 +136,119 @@ body {
 .navbar-principal-menu li a:hover {
     color: #000;
     transition: color 0.3s ease-in-out;
+}
+
+#toggle-navbar-club,
+#toggle-navbar-mis-partidos,
+
+#toggle-navbar-equipos,
+#toggle-navbar-jugadores,
+#toggle-navbar-estadios,
+#toggle-navbar-competiciones {
+    float: right;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 17px;
+    z-index: 2;
+    background-color: var(--color-toogle);
+    color: var(--color-secundario);
+    font-size: 18px;
+}
+
+.icono-flecha-navbar{
+    height: 11px;
+    margin-left: 5px;
+}
+
+.navbar-club,
+
+.navbar-equipos,
+.navbar-jugadores,
+.navbar-estadios,
+.navbar-competiciones {
+    display: none;
+    position: fixed;
+    top: 60px;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1;
+    background-color: var(--color-toogle);
+}
+
+.navbar-club ul,
+
+.navbar-equipos ul,
+.navbar-jugadores ul,
+.navbar-estadios ul,
+.navbar-competiciones ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-club li,
+
+.navbar-equipos li,
+.navbar-jugadores li,
+.navbar-estadios li,
+.navbar-competiciones li {
+    margin-bottom: 12px;
+}
+
+.navbar-club a,
+
+.navbar-equipos a,
+.navbar-jugadores a,
+.navbar-estadios a,
+.navbar-competiciones a {
+    text-decoration: none;
+    font-size: 17px;
+    transition: color 0.3s ease-in-out;
+    color: var(--color-secundario) 
+}
+
+.navbar-club a:hover,
+
+.navbar-equipos a:hover,
+.navbar-jugadores a:hover,
+.navbar-estadios a:hover,
+.navbar-competiciones a:hover {
+    color: #000;
+}
+
+#toggle-navbar-club {
+    left: 80px;
+}
+
+.navbar-club {
+    left: 90px;
+}
+
+#toggle-navbar-mis-partidos {
+    left: 160px;
+}
+
+
+#toggle-navbar-equipos {
+    left: 290px;
+}
+
+#toggle-navbar-estadios {
+    left: 390px;
+}
+
+.navbar-estadios {
+    left: 400px;
+}
+
+#toggle-navbar-competiciones {
+    left: 510px;
+}
+
+.navbar-competiciones {
+    left: 520px;
 }
 
 .navbar-principal-der {
@@ -191,118 +304,6 @@ body {
 
 .navbar-principal-der .icono-usuario{
     height: 30px;
-}
-
-#toggle-navbar-partidos,
-#toggle-navbar-equipos,
-#toggle-navbar-jugadores,
-#toggle-navbar-estadios,
-#toggle-navbar-competiciones {
-    float: right;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    position: fixed;
-    top: 17px;
-    z-index: 2;
-    background-color: var(--color-primario);
-    color: var(--color-secundario);
-    font-size: 18px;
-}
-
-.icono-flecha-navbar{
-    height: 11px;
-}
-
-.navbar-partidos,
-.navbar-equipos,
-.navbar-jugadores,
-.navbar-estadios,
-.navbar-competiciones {
-    display: none;
-    position: fixed;
-    top: 60px;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1;
-    background-color: var(--color-primario);
-}
-
-.navbar-partidos ul,
-.navbar-equipos ul,
-.navbar-jugadores ul,
-.navbar-estadios ul,
-.navbar-competiciones ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.navbar-partidos li,
-.navbar-equipos li,
-.navbar-jugadores li,
-.navbar-estadios li,
-.navbar-competiciones li {
-    margin-bottom: 12px;
-}
-
-.navbar-partidos a,
-.navbar-equipos a,
-.navbar-jugadores a,
-.navbar-estadios a,
-.navbar-competiciones a {
-    text-decoration: none;
-    font-size: 17px;
-    transition: color 0.3s ease-in-out;
-    color: var(--color-secundario) 
-}
-
-.navbar-partidos a:hover,
-.navbar-equipos a:hover,
-.navbar-jugadores a:hover,
-.navbar-estadios a:hover,
-.navbar-competiciones a:hover {
-    color: #000;
-}
-
-#toggle-navbar-partidos {
-    left: 80px;
-}
-
-.navbar-partidos {
-    left: 80px;
-}
-
-#toggle-navbar-equipos {
-    left: 190px;
-}
-
-.navbar-equipos {
-    left: 190px;
-}
-
-#toggle-navbar-jugadores {
-    left: 300px;
-}
-
-.navbar-jugadores {
-    left: 300px;
-}
-
-#toggle-navbar-estadios {
-    left: 430px;
-}
-
-.navbar-estadios {
-    left: 430px;
-}
-
-#toggle-navbar-competiciones {
-    left: 540px;
-}
-
-.navbar-competiciones {
-    left: 540px;
 }
 
 .contenido-principal {

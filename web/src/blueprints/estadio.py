@@ -24,6 +24,8 @@ def pagina_estadio(estadio_id:str):
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	estadio=con.obtenerEstadio(estadio_id)
 
 	equipos_estadio=con.obtenerEquipoEstadio(estadio_id)
@@ -35,6 +37,7 @@ def pagina_estadio(estadio_id:str):
 	return render_template("estadio.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							estadio=estadio,
 							equipos_estadio=equipos_estadio,
 							anadirPuntos=anadirPuntos,
@@ -52,6 +55,8 @@ def pagina_estadios():
 
 	equipo=con.obtenerEquipo(current_user.id)
 
+	estadio_equipo=con.estadio_equipo(equipo)
+
 	datos_estadios=con.obtenerDatosEstadios()
 
 	datos_estadios_top=con.obtenerDatosEstadiosTop(numero_top)
@@ -67,6 +72,7 @@ def pagina_estadios():
 	return render_template("estadios.html",
 							usuario=current_user.id,
 							equipo=equipo,
+							estadio_equipo=estadio_equipo,
 							datos_estadios=datos_estadios,
 							numero_top=numero_top,
 							tops=[8, 10, 15, 20, 25],
