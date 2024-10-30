@@ -128,7 +128,9 @@ def pagina_partidos_asistidos():
 
 	resultados_partidos_asistidos=limpiarResultadosPartidos(partidos_asistidos)
 
-	equipos_mas_enfrentados=con.obtenerEquiposPartidosAsistidosUsuarioCantidad(current_user.id, 1)
+	partidos_asistidos_ids=tuple(map(lambda partido_asistido: partido_asistido[0], partidos_asistidos))
+
+	equipos_mas_enfrentados=con.obtenerEquiposPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
 
 	if not equipos_mas_enfrentados:
 
@@ -142,7 +144,7 @@ def pagina_partidos_asistidos():
 								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
-	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, 1)
+	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
 
 	con.cerrarConexion()
 
@@ -158,4 +160,5 @@ def pagina_partidos_asistidos():
 							estadio_mas_visitado=estadios_mas_visitados[0],
 							local=local,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							partidos_asistidos_ids=partidos_asistidos_ids)

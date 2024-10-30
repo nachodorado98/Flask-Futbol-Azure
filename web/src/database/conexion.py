@@ -1445,6 +1445,54 @@ class Conexion:
 										estadio["pais"],
 										estadio["numero_veces"]), estadios_asistidos))
 
+	# Metodo para obtener los estadios de los partidos asistidos filtrados de un usuario por cantidad de veces visitado
+	def obtenerEstadiosPartidosAsistidosUsuarioCantidadFiltrado(self, usuario:str, partidos_ids:tuple, numero:int)->List[Optional[tuple]]:
+
+		numero_place_holders=", ".join(["%s"]*len(partidos_ids))
+
+		self.c.execute(f"""SELECT e.estadio_id, e.nombre,
+						       CASE WHEN e.codigo_estadio IS NULL
+						            THEN -1
+						            ELSE e.codigo_estadio
+						       END as estadio,
+						       MAX(CASE WHEN eq.escudo IS NULL
+						                THEN -1
+						                ELSE eq.escudo
+						           END) as escudo_equipo,
+						       MAX(CASE WHEN eq.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE eq.codigo_pais
+						           END) as pais,
+						       COUNT(DISTINCT p.partido_id) as numero_veces
+							FROM (SELECT *
+									FROM partidos_asistidos
+									WHERE usuario=%s
+									AND partido_id IN ({numero_place_holders})) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+		                    LEFT JOIN equipo_estadio ee
+							ON e.estadio_id=ee.estadio_id
+							LEFT JOIN equipos eq
+							ON ee.equipo_id=eq.equipo_id
+							WHERE e.capacidad IS NOT NULL
+							GROUP BY e.estadio_id, e.nombre, e.codigo_estadio
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, *partidos_ids, numero))
+
+		estadios_asistidos=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["nombre"],
+										estadio["estadio"],
+										estadio["escudo_equipo"],
+										estadio["pais"],
+										estadio["numero_veces"]), estadios_asistidos))
+
 	# Metodo para saber si un usuario a asistido a un estadio o no
 	def estadio_asistido_usuario(self, usuario:str, estadio_id:str)->bool:
 
@@ -1586,6 +1634,58 @@ class Conexion:
 							ORDER BY numero_veces DESC
 							LIMIT %s""",
 							(usuario, usuario, equipo_id, numero))
+
+		equipos_enfrentados=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo"],
+										equipo["nombre_equipo"],
+										equipo["escudo"],
+										equipo["numero_veces"]), equipos_enfrentados))
+
+	# Metodo para obtener los equipos de los partidos asistidos filtrados de un usuario por cantidad de veces enfrentado
+	def obtenerEquiposPartidosAsistidosUsuarioCantidadFiltrado(self, usuario:str, partidos_ids:tuple, numero:int)->List[Optional[tuple]]:
+
+		numero_place_holders=", ".join(["%s"]*len(partidos_ids))
+
+		equipo_id=self.obtenerEquipo(usuario)
+
+		self.c.execute(f"""SELECT equipo, nombre_equipo, escudo, COUNT(equipo) as numero_veces
+							FROM (SELECT p.equipo_id_local as equipo, e1.nombre as nombre_equipo,
+									CASE WHEN e1.escudo IS NULL
+											THEN -1
+											ELSE e1.escudo
+									END as escudo
+									FROM (SELECT *
+											FROM partidos_asistidos
+											WHERE usuario=%s
+											AND partido_id IN ({numero_place_holders})) pa
+				                    LEFT JOIN partidos p
+				                    ON pa.partido_id=p.partido_id
+				                    LEFT JOIN equipos e1
+									ON p.equipo_id_local=e1.equipo_id
+									LEFT JOIN equipos e2
+									ON p.equipo_id_visitante=e2.equipo_id
+									UNION ALL
+									SELECT p.equipo_id_visitante as equipo, e2.nombre as nombre_equipo,
+										CASE WHEN e2.escudo IS NULL
+												THEN -1
+												ELSE e2.escudo
+										END as escudo
+									FROM (SELECT *
+											FROM partidos_asistidos
+											WHERE usuario=%s
+											AND partido_id IN ({numero_place_holders})) pa
+				                    LEFT JOIN partidos p
+				                    ON pa.partido_id=p.partido_id
+				                    LEFT JOIN equipos e1
+									ON p.equipo_id_local=e1.equipo_id
+									LEFT JOIN equipos e2
+									ON p.equipo_id_visitante=e2.equipo_id) as t
+							GROUP BY equipo, nombre_equipo, escudo
+							HAVING equipo!=%s
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, *partidos_ids, usuario, *partidos_ids, equipo_id, numero))
 
 		equipos_enfrentados=self.c.fetchall()
 
