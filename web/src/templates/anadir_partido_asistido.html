@@ -46,6 +46,13 @@
 
         </div>
 
+        {% if not existe_partido_asistido_favorito %}
+            <div class="contenedor-checkbox-partido-favorito">
+                <input type="checkbox" id="partido-favorito" name="partido-favorito">
+                <p class="partido-favorito-texto"><strong>Partido Asistido Favorito</strong></p>
+            </div>
+        {% endif %}
+
         <div class="contenedor-comentario">
             <textarea id="comentario" name="comentario" class="campo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
         </div>

@@ -797,3 +797,79 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion
 		assert '<p class="titulo-circulo-estadio-mas-visitado">' in contenido
 		assert f"Estadio{estadio_mas_visitado}" in contenido
 		assert f'<p class="valor-circulo-estadio-mas-visitado"><strong>{veces} veces</strong></p>' in contenido
+
+def test_pagina_partidos_asistidos_sin_partido_asistido_favorito(cliente, conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
+	conexion.c.execute("""INSERT INTO partidos VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio VALUES('20190622', 'estadio')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos/asistidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partido-asistido-favorito">' not in contenido
+		assert '<div class="tarjeta-partido-asistido-favorito"' not in contenido
+		assert '<p class="titulo-circulo-partido-asistido-favorito"><strong>Partido Favorito</strong></p>' not in contenido
+		assert '<div class="info-partido-asistido-favorito">' not in contenido
+
+def test_pagina_partidos_asistidos_partido_asistido_favorito(cliente, conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
+
+	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio', 10000)""")
+
+	conexion.c.execute("""INSERT INTO equipo_estadio VALUES('atletico-madrid', 'estadio')""")
+
+	conexion.c.execute("""INSERT INTO partidos VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Local')""")
+
+	conexion.c.execute("""INSERT INTO partido_estadio VALUES('20190622', 'estadio')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		conexion.insertarPartidoAsistidoFavorito("20190622", "nacho98")
+
+		respuesta=cliente_abierto.get("/partidos/asistidos")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partido-asistido-favorito">' in contenido
+		assert '<div class="tarjeta-partido-asistido-favorito"' in contenido
+		assert '<p class="titulo-circulo-partido-asistido-favorito"><strong>Partido Favorito</strong></p>' in contenido
+		assert '<div class="info-partido-asistido-favorito">' in contenido

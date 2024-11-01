@@ -115,6 +115,40 @@
         <p class="valor-circulo-estadio-mas-visitado"><strong>{{ estadio_mas_visitado[5] }} veces</strong></p>
     </div>
 
+    {% if datos_partido_asistido_favorito is not none %}
+
+        <div class="circulo-partido-asistido-favorito">
+            <div class="tarjeta-partido-asistido-favorito" onclick="window.location.href='/partido/{{ id_partido_asistido_favorito }}'">
+
+                <p class="titulo-circulo-partido-asistido-favorito"><strong>Partido Favorito</strong></p>
+
+                <p><strong>{{ datos_partido_asistido_favorito[3] }}</strong></p>
+
+                <div class="info-partido-asistido-favorito">
+
+                    {% if datos_partido_asistido_favorito[6]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ datos_partido_asistido_favorito[6] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4>{{ datos_partido_asistido_favorito[0] }}</h4>
+
+                    {% if datos_partido_asistido_favorito[9]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ datos_partido_asistido_favorito[9] }}.png" alt="Visitante Icon">
+                    {% endif %}
+
+                </div>
+
+                 <p><strong>{{ datos_partido_asistido_favorito[1] }}</strong></p>
+
+            </div>
+        </div>
+
+    {% endif %}
+
 </div>
 
 {% endblock contenedor_lateral_der %}

@@ -1693,3 +1693,35 @@ class Conexion:
 										equipo["nombre_equipo"],
 										equipo["escudo"],
 										equipo["numero_veces"]), equipos_enfrentados))
+
+	# Metodo para insertar un partido asistido favorito
+	def insertarPartidoAsistidoFavorito(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""INSERT INTO partido_asistido_favorito
+							VALUES (%s, %s)""",
+							(partido_id, usuario))
+
+		self.confirmar()
+
+	# Metodo para comprobar si ya existe un partido asistido favorito de un usuario
+	def existe_partido_asistido_favorito(self, partido_id:str, usuario:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM partido_asistido_favorito
+						WHERE partido_id=%s
+						AND usuario=%s""",
+						(partido_id, usuario))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener el partido asistido favorito del usuario
+	def obtenerPartidoAsistidoFavorito(self, usuario:str)->Optional[str]:
+
+		self.c.execute("""SELECT partido_id
+						FROM partido_asistido_favorito
+						WHERE usuario=%s""",
+						(usuario,))
+
+		partido_asistido_favorito=self.c.fetchone()
+
+		return None if not partido_asistido_favorito else partido_asistido_favorito["partido_id"]

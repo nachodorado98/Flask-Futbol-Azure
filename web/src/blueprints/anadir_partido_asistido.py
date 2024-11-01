@@ -27,14 +27,18 @@ def pagina_anadir_partido_asistido():
 
 		partidos_no_asistidos=con.obtenerPartidosNoAsistidosUsuarioRecientes(current_user.id, equipo)
 
-	con.cerrarConexion()
-
 	if not partidos_no_asistidos:
+
+		con.cerrarConexion()
 
 		return render_template("anadir_no_partido_asistido.html",
 								usuario=current_user.id,
 								equipo=equipo,
 								estadio_equipo=estadio_equipo)
+
+	existe_partido_asistido_favorito=False if not con.obtenerPartidoAsistidoFavorito(current_user.id) else True
+
+	con.cerrarConexion()
 
 	return render_template("anadir_partido_asistido.html",
 							usuario=current_user.id,
@@ -42,7 +46,8 @@ def pagina_anadir_partido_asistido():
 							estadio_equipo=estadio_equipo,
 							partidos_no_asistidos=partidos_no_asistidos,
 							todos=todos,
-							partido_id_anadir=partido_id_anadir)
+							partido_id_anadir=partido_id_anadir,
+							existe_partido_asistido_favorito=existe_partido_asistido_favorito)
 
 @bp_anadir_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
 @login_required
@@ -50,6 +55,7 @@ def pagina_insertar_partido_asistido():
 
 	partido_id=request.form.get("partido_anadir")
 	comentario=request.form.get("comentario")
+	partido_asistido_favorito=request.form.get("partido-favorito")
 
 	con=Conexion()
 
@@ -72,6 +78,12 @@ def pagina_insertar_partido_asistido():
 		return redirect("/anadir_partido_asistido")
 
 	con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
+
+	existe_partido_asistido_favorito=False if not con.obtenerPartidoAsistidoFavorito(current_user.id) else True
+
+	if not existe_partido_asistido_favorito and partido_asistido_favorito:
+
+		con.insertarPartidoAsistidoFavorito(partido_id, current_user.id)
 
 	con.cerrarConexion()
 

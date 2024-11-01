@@ -68,6 +68,23 @@
     font-size: 18px;
 }
 
+.contenedor-checkbox-partido-favorito {
+    display: flex;
+    align-items: center;
+}
+
+.contenedor-checkbox-partido-favorito input[type="checkbox"] {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.contenedor-checkbox-partido-favorito .partido-favorito-texto {
+    color: var(--color-secundario);
+    font-size: 20px;
+}
+
 .contenedor-comentario {
     width: 100%;
     max-width: 600px;

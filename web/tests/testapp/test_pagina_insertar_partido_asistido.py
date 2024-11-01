@@ -174,3 +174,127 @@ def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_en
 		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
 
 		assert len(conexion_entorno.c.fetchall())==1
+
+def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_no_favorito(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		assert not conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
+
+def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_si_favorito(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "partido-favorito":"on"}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
+
+		assert len(conexion_entorno.c.fetchall())==1
+
+def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_no_favorito(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		conexion_entorno.insertarPartidoAsistido("20190623", "nacho98", "comentario")
+
+		conexion_entorno.insertarPartidoAsistidoFavorito("20190623", "nacho98")
+
+		conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
+
+		assert len(conexion_entorno.c.fetchall())==1
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
+
+		assert len(conexion_entorno.c.fetchall())==1
+
+def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_si_favorito(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		conexion_entorno.insertarPartidoAsistido("20190623", "nacho98", "comentario")
+
+		conexion_entorno.insertarPartidoAsistidoFavorito("20190623", "nacho98")
+
+		conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
+
+		assert len(conexion_entorno.c.fetchall())==1
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "partido-favorito":"on"}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
+
+		assert len(conexion_entorno.c.fetchall())==1

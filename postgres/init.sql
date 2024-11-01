@@ -128,3 +128,9 @@ CREATE TABLE partidos_asistidos (Asistido_Id VARCHAR(255) PRIMARY KEY,
 								Comentario VARCHAR(255) DEFAULT NULL,
 								FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
 								FOREIGN KEY (Usuario) REFERENCES usuarios (Usuario) ON DELETE CASCADE);
+
+CREATE TABLE partido_asistido_favorito (Partido_Id VARCHAR(255),
+										Usuario VARCHAR(255),
+										PRIMARY KEY (Partido_Id, Usuario),
+										FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
+										FOREIGN KEY (Usuario) REFERENCES usuarios (Usuario) ON DELETE CASCADE);

@@ -9,7 +9,7 @@ def test_tabla_partidos_asistidos_vacia(conexion):
 @pytest.mark.parametrize(["partido_id", "usuario"],
 	[("20190622", "nacho98"), ("20190622", "nacho948"),("20190622", "nacho")]
 )
-def test_insertar_partido_usuario(conexion_entorno, partido_id, usuario):
+def test_insertar_partido_asistido_usuario(conexion_entorno, partido_id, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
 

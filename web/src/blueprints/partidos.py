@@ -146,6 +146,10 @@ def pagina_partidos_asistidos():
 
 	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
 
+	id_partido_asistido_favorito=con.obtenerPartidoAsistidoFavorito(current_user.id)
+
+	datos_partido_asistido_favorito=con.obtenerPartido(id_partido_asistido_favorito)
+
 	con.cerrarConexion()
 
 	return render_template("partidos_asistidos.html",
@@ -159,6 +163,8 @@ def pagina_partidos_asistidos():
 							equipo_mas_enfrentado=equipos_mas_enfrentados[0],
 							estadio_mas_visitado=estadios_mas_visitados[0],
 							local=local,
+							partidos_asistidos_ids=partidos_asistidos_ids,
+							id_partido_asistido_favorito=id_partido_asistido_favorito,
+							datos_partido_asistido_favorito=datos_partido_asistido_favorito,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							partidos_asistidos_ids=partidos_asistidos_ids)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

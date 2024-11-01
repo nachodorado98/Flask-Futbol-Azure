@@ -37,6 +37,8 @@ def test_pagina_anadir_partido_asistido_partidos_no_existen(cliente, conexion_en
 		assert 'todos.png' not in contenido
 		assert '<p class="etiqueta">' not in contenido
 		assert "No hay partidos disponibles para añadir..." in contenido
+		assert '<div class="contenedor-comentario">' not in contenido
+		assert '<div class="contenedor-checkbox-partido-favorito">' not in contenido
 
 def test_pagina_anadir_partido_asistido_partidos_no_existen_equipo_usuario(cliente, conexion_entorno):
 
@@ -74,6 +76,8 @@ def test_pagina_anadir_partido_asistido_partidos_no_existen_equipo_usuario(clien
 		assert 'todos.png' not in contenido
 		assert '<p class="etiqueta">' not in contenido
 		assert "No hay partidos disponibles para añadir..." in contenido
+		assert '<div class="contenedor-comentario">' not in contenido
+		assert '<div class="contenedor-checkbox-partido-favorito">' not in contenido
 
 def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(cliente, conexion_entorno):
 
@@ -99,6 +103,8 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(
 		assert 'todos.png' not in contenido
 		assert '<p class="etiqueta">' in contenido
 		assert "No hay partidos disponibles para añadir..." not in contenido
+		assert '<div class="contenedor-comentario">' in contenido
+		assert '<div class="contenedor-checkbox-partido-favorito">' in contenido
 
 def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_recientes(cliente, conexion_entorno):
 
@@ -128,6 +134,8 @@ def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_reciente
 		assert 'todos.png' not in contenido
 		assert '<p class="etiqueta">' not in contenido
 		assert "No hay partidos disponibles para añadir..." in contenido
+		assert '<div class="contenedor-comentario">' not in contenido
+		assert '<div class="contenedor-checkbox-partido-favorito">' not in contenido
 
 def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(cliente, conexion_entorno):
 
@@ -153,6 +161,8 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(clie
 		assert 'todos.png' in contenido
 		assert '<p class="etiqueta">' in contenido
 		assert "No hay partidos disponibles para añadir..." not in contenido
+		assert '<div class="contenedor-comentario">' in contenido
+		assert '<div class="contenedor-checkbox-partido-favorito">' in contenido
 
 def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_no_defecto(cliente, conexion_entorno):
 
@@ -195,3 +205,23 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cl
 		assert '<option value="sin-seleccion" disabled hidden>' in contenido
 		assert '<option value="20190622" selected>' in contenido
 		assert '<option value="20190622">' not in contenido
+
+def test_pagina_anadir_partido_asistido_partido_asistido_favorito_no_existe(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/anadir_partido_asistido")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="contenedor-checkbox-partido-favorito">' in contenido
+		assert '<input type="checkbox" id="partido-favorito" name="partido-favorito">' in contenido
+		assert '<p class="partido-favorito-texto"><strong>Partido Asistido Favorito</strong></p>' in contenido
