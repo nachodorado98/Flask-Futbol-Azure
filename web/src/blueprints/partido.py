@@ -113,3 +113,83 @@ def pagina_partido_asistido(partido_id:str):
 							partido_id_asistido_siguiente=partido_id_asistido_siguiente,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+
+@bp_partido.route("/partido/<partido_id>/asistido/quitar_partido_favorito")
+@login_required
+def pagina_quitar_partido_asistido_favorito(partido_id:str):
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	if not con.equipo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	if not con.existe_partido_asistido(partido_id, current_user.id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	id_partido_favorito=con.obtenerPartidoAsistidoFavorito(current_user.id)
+
+	if id_partido_favorito==partido_id:
+
+		con.eliminarPartidoAsistidoFavorito(partido_id, current_user.id)
+
+	con.cerrarConexion()
+
+	return redirect(f"/partido/{partido_id}/asistido")
+
+@bp_partido.route("/partido/<partido_id>/asistido/anadir_partido_favorito")
+@login_required
+def pagina_anadir_partido_asistido_favorito(partido_id:str):
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	if not con.equipo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	if not con.existe_partido_asistido(partido_id, current_user.id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	id_partido_favorito=con.obtenerPartidoAsistidoFavorito(current_user.id)
+
+	existe_partido_asistido_favorito=False if not id_partido_favorito else True
+
+	if existe_partido_asistido_favorito:
+
+		con.eliminarPartidoAsistidoFavorito(id_partido_favorito, current_user.id)
+		
+	con.insertarPartidoAsistidoFavorito(partido_id, current_user.id)
+
+	con.cerrarConexion()
+
+	return redirect(f"/partido/{partido_id}/asistido")

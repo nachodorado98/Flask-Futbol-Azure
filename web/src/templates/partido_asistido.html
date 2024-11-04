@@ -13,10 +13,14 @@
 <div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
 
     {% if partido_asistido_favorito %}
-        <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/favorito_asistido.png') }}" alt="Favorito Asistido Icon">
+
+        <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/favorito_asistido.png') }}" alt="Favorito Icon" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/quitar_partido_favorito'">
         <h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>
+
     {% else %}
-        <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_favorito_asistido.png') }}" alt="Favorito Asistido Icon">
+
+        <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_favorito_asistido.png') }}" alt="Favorito Icon" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/anadir_partido_favorito'">
+
     {% endif %}
 
     <div class="info-partido-asistido-detalle">

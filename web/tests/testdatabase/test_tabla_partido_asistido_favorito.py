@@ -84,3 +84,57 @@ def test_obtener_partido_asistido_favorito(conexion_entorno):
 	partido_asistido_usuario=conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
 
 	assert partido_asistido_usuario=="20190622"
+
+def test_eliminar_partido_asistido_favorito_no_existen(conexion):
+
+	assert not conexion.obtenerPartidoAsistidoFavorito("nacho")
+
+	conexion.eliminarPartidoAsistidoFavorito("20190622", "nacho")
+
+	assert not conexion.obtenerPartidoAsistidoFavorito("nacho")
+
+def test_eliminar_partido_asistido_favorito_no_existe_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+	conexion_entorno.eliminarPartidoAsistidoFavorito("20190622", "otro")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+def test_eliminar_partido_asistido_favorito_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+	conexion_entorno.eliminarPartidoAsistidoFavorito("20190622", "nacho")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+def test_eliminar_partido_asistido_favorito_no_existe_partido_favorito(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+	conexion_entorno.eliminarPartidoAsistidoFavorito("20190622", "nacho")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+def test_eliminar_partido_asistido_favorito(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.insertarPartidoAsistidoFavorito("20190622", "nacho")
+
+	assert conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")
+
+	conexion_entorno.eliminarPartidoAsistidoFavorito("20190622", "nacho")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho")

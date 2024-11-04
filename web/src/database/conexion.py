@@ -1725,3 +1725,13 @@ class Conexion:
 		partido_asistido_favorito=self.c.fetchone()
 
 		return None if not partido_asistido_favorito else partido_asistido_favorito["partido_id"]
+
+	# Metodo para eliminar un partido asistido favorito
+	def eliminarPartidoAsistidoFavorito(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""DELETE FROM partido_asistido_favorito
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(partido_id, usuario))
+
+		self.confirmar()
