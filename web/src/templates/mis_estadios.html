@@ -1,0 +1,58 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mis_estadios.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-estadios-asistidos">
+
+    <p class="titulo-pagina-estadios-asistidos"><strong>Mis Estadios</strong></p>
+
+    {% if estadios_asistidos %}
+
+        <div class="tarjetas-estadios-asistidos">
+            <div class="tarjetas-estadios-asistidos-wrapper">
+
+            {% for estadio in estadios_asistidos %}
+
+            <div class="tarjeta-estadio-asistido" onclick="window.location.href='/estadio/{{ estadio[0] }}'">
+
+                <div class="info-estadio-asistido">
+
+                    {% if estadio[2]==-1 %}
+                        <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                    {% else %}
+                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[2] }}.png" alt="Estadio Icon">
+                    {% endif %}
+
+                    <h4>{{ estadio[1] }}</h4>
+
+                    {% if estadio[3]==-1 %}
+                        <img class="equipo-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                    {% else %}
+                        <img class="equipo-estadio-asistido" src="{{ url_imagen_escudo }}{{ estadio[3] }}.png" alt="Equipo Icon">
+                    {% endif %}
+
+                    <h4>{{ estadio[5] }} veces</h4>
+
+                </div>
+            </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

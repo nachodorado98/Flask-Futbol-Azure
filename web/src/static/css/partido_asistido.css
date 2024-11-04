@@ -1,5 +1,6 @@
 /*----------------------------------------------------------PARTIDO ASISTIDO----------------------------------------------------*/
 .tarjeta-partido-asistido-detalle {
+    position: relative;
     width: 100%;
     max-width: 910px;
     min-width: 900px;
@@ -11,6 +12,21 @@
     margin-top: 0px;
     cursor: default;
     background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.favorito-asistido {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 35px;
+    width: 35px;
+    cursor: pointer;
+}
+
+.titulo-partido-asistido-favorito {
+    font-size: 32px;
+    margin-top: 10px;
     color: var(--color-secundario) 
 }
 
@@ -32,7 +48,6 @@
 
 .info-partido-asistido-detalle h4 {
     font-size: 45px;
-    color: #fff;
     margin: 0px;
     color: var(--color-secundario) 
 }

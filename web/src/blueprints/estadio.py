@@ -82,3 +82,34 @@ def pagina_estadios():
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+
+@bp_estadio.route("/estadios/mis_estadios")
+@login_required
+def pagina_mis_estadios():
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	datos_estadios=con.obtenerDatosEstadios()
+
+	numero_estadios_asistidos=len(datos_estadios)
+
+	estadios_asistidos=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios_asistidos)
+
+	con.cerrarConexion()
+
+	if not estadios_asistidos:
+
+		return redirect("/partidos")
+
+	return render_template("mis_estadios.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							estadios_asistidos=estadios_asistidos,
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

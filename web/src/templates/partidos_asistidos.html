@@ -59,7 +59,7 @@
 
         {% for partido in partidos_asistidos %}
 
-            <div class="tarjeta-partido-asistidos" onclick="window.location.href='/partido/{{ partido[0] }}'">
+            <div class="tarjeta-partido-asistidos" onclick="window.location.href='/partido/{{ partido[0] }}/asistido'">
                 <p><strong>{{ partido[2] }} - {{ partido[3] }}</strong></p>
                 <div class="info-partido-asistidos">
 
@@ -108,9 +108,9 @@
     <div class="circulo-estadio-mas-visitado">
         <p class="titulo-circulo-estadio-mas-visitado">{{ estadio_mas_visitado[1] }}</p>
         {% if estadio_mas_visitado[2]==-1 %}
-            <img class="estadio-mas-visitado" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon" onclick="window.location.href='/estadio/{{ estadio_mas_visitado[0] }}'">
+            <img class="estadio-mas-visitado" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon" onclick="window.location.href='/estadios/mis_estadios'">
         {% else %}
-            <img class="estadio-mas-visitado" src="{{ url_imagen_estadio }}{{ estadio_mas_visitado[2] }}.png" alt="Estadio Icon" onclick="window.location.href='/estadio/{{ estadio_mas_visitado[0] }}'">
+            <img class="estadio-mas-visitado" src="{{ url_imagen_estadio }}{{ estadio_mas_visitado[2] }}.png" alt="Estadio Icon" onclick="window.location.href='/estadios/mis_estadios'">
         {% endif %}
         <p class="valor-circulo-estadio-mas-visitado"><strong>{{ estadio_mas_visitado[5] }} veces</strong></p>
     </div>
@@ -118,7 +118,7 @@
     {% if datos_partido_asistido_favorito is not none %}
 
         <div class="circulo-partido-asistido-favorito">
-            <div class="tarjeta-partido-asistido-favorito" onclick="window.location.href='/partido/{{ id_partido_asistido_favorito }}'">
+            <div class="tarjeta-partido-asistido-favorito" onclick="window.location.href='/partido/{{ id_partido_asistido_favorito }}/asistido'">
 
                 <p class="titulo-circulo-partido-asistido-favorito"><strong>Partido Favorito</strong></p>
 

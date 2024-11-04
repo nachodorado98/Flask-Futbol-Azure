@@ -94,6 +94,9 @@ def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno):
 		assert '<div class="comentario">' in contenido
 		assert '<h2 class="no-comentario">' not in contenido
 		assert '<div class="seccion-comentar-partido-asistido"' not in contenido
+		assert "/no_favorito_asistido.png" in contenido
+		assert "/favorito_asistido.png" not in contenido
+		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
 
 def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno):
 
@@ -121,6 +124,9 @@ def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno):
 		assert '<div class="comentario">' not in contenido
 		assert '<h2 class="no-comentario">' in contenido
 		assert '<div class="seccion-comentar-partido-asistido"' in contenido
+		assert "/no_favorito_asistido.png" in contenido
+		assert "/favorito_asistido.png" not in contenido
+		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
 
 def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno):
 
@@ -229,3 +235,27 @@ def test_pagina_partido_asistido_si_partido_anterior_si_partido_siguiente(client
 		respuesta.status_code==200
 		assert '<button class="button-partido-anterior-asistido"' in contenido
 		assert '<button class="button-partido-siguiente-asistido"' in contenido
+
+def test_pagina_partido_asistido_partido_asistido_favorito(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "partido-favorito":"on"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert "/no_favorito_asistido.png" not in contenido
+		assert "/favorito_asistido.png" in contenido
+		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' in contenido
