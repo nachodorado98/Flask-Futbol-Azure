@@ -1735,3 +1735,13 @@ class Conexion:
 							(partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para eliminar un partido asistido
+	def eliminarPartidoAsistido(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""DELETE FROM partidos_asistidos
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(partido_id, usuario))
+
+		self.confirmar()

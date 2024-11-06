@@ -259,13 +259,13 @@
     width: 330px;
     position: fixed;
     top: 71px;
-    bottom: 350px;
+    bottom: 347px;
     overflow-y: auto;
     padding-top: 10px;
 }
 
 .tarjeta-estadios-visitados-fecha .titulo-estadios-visitados-fecha {
-    font-size: 23px;
+    font-size: 20px;
     margin: 5px;
     color: var(--color-secundario);
     margin-bottom: 7px;
@@ -292,8 +292,8 @@
 .tarjeta-estadios-visitados-totales-fecha {
     width: 100%;
     max-width: 800px;
-    margin: 7px auto;
-    padding: 8px;
+    margin: 4px auto;
+    padding: 7px;
     border: 1px solid #bdc3c7;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -313,8 +313,8 @@
 .info-estadio-visitado-total-fecha .estadio-estadio-visitado-total-fecha {
     margin-right: 5px;
     margin-left: 3px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+    margin-bottom: 4px;
+    margin-top: 4px;
     width: 35px;
     height: 22,5px;
 }
@@ -322,10 +322,10 @@
 .info-estadio-visitado-total-fecha .equipo-estadio-visitado-total-fecha {
     margin-right: 3px;
     margin-left: 5px;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    width: 32px;
-    height: 32px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    width: 30px;
+    height: 30px;
 }
 
 .info-estadio-visitado-total-fecha h4 {
@@ -355,7 +355,7 @@
 }
 
 .tarjeta-estadios-visitados-cantidad .titulo-estadios-visitados-cantidad {
-    font-size: 23px;
+    font-size: 20px;
     margin: 5px;
     color: var(--color-secundario);
     margin-bottom: 7px;
@@ -382,8 +382,8 @@
 .tarjeta-estadios-visitados-totales-cantidad {
     width: 100%;
     max-width: 800px;
-    margin: 7px auto;
-    padding: 8px;
+    margin: 4px auto;
+    padding: 7px;
     border: 1px solid #bdc3c7;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -403,8 +403,8 @@
 .info-estadio-visitado-total-cantidad .estadio-estadio-visitado-total-cantidad {
     margin-right: 5px;
     margin-left: 3px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+    margin-bottom: 4px;
+    margin-top: 4px;
     width: 35px;
     height: 22,5px;
 }
@@ -412,10 +412,10 @@
 .info-estadio-visitado-total-cantidad .equipo-estadio-visitado-total-cantidad {
     margin-right: 3px;
     margin-left: 5px;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    width: 32px;
-    height: 32px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    width: 30px;
+    height: 30px;
 }
 
 .info-estadio-visitado-total-cantidad h4 {

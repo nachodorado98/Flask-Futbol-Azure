@@ -1706,3 +1706,43 @@ def test_obtener_equipos_partido_asistido_cantidad_filtrado_mismo_varias_veces(c
 	assert len(partidos_asistidos)==20
 	assert len(equipos)==1
 	assert equipos[0][-1]==len(partidos_ids)
+
+def test_eliminar_partido_asistido_no_existen(conexion):
+
+	assert not conexion.obtenerPartidosAsistidosUsuario("nacho")
+
+	conexion.eliminarPartidoAsistido("20190622", "nacho")
+
+	assert not conexion.obtenerPartidosAsistidosUsuario("nacho")
+
+def test_eliminar_partido_asistido_no_existe_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+	conexion_entorno.eliminarPartidoAsistido("20190622", "otro")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+def test_eliminar_partido_asistido_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+	conexion_entorno.eliminarPartidoAsistido("20190622", "nacho")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+def test_eliminar_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+	conexion_entorno.eliminarPartidoAsistido("20190622", "nacho")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")

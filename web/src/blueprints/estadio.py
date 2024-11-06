@@ -61,7 +61,7 @@ def pagina_estadios():
 
 	datos_estadios_top=con.obtenerDatosEstadiosTop(numero_top)
 
-	numero_estadios_asistidos=10
+	numero_estadios_asistidos=4
 
 	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos)
 
@@ -99,17 +99,24 @@ def pagina_mis_estadios():
 
 	estadios_asistidos=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios_asistidos)
 
-	con.cerrarConexion()
-
 	if not estadios_asistidos:
 
+		con.cerrarConexion()
+
 		return redirect("/partidos")
+
+	numero_estadios_asistidos=10
+
+	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos)
+
+	con.cerrarConexion()
 
 	return render_template("mis_estadios.html",
 							usuario=current_user.id,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							estadios_asistidos=estadios_asistidos,
+							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

@@ -193,3 +193,39 @@ def pagina_anadir_partido_asistido_favorito(partido_id:str):
 	con.cerrarConexion()
 
 	return redirect(f"/partido/{partido_id}/asistido")
+
+@bp_partido.route("/partido/<partido_id>/asistido/eliminar")
+@login_required
+def pagina_eliminar_partido_asistido(partido_id:str):
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	if not con.equipo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	if not con.existe_partido_asistido(partido_id, current_user.id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	con.eliminarPartidoAsistido(partido_id, current_user.id)
+
+	con.eliminarPartidoAsistidoFavorito(partido_id, current_user.id)
+
+	con.cerrarConexion()
+
+	return redirect("/partidos/asistidos")
