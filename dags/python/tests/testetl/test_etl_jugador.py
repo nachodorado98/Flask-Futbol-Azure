@@ -50,7 +50,7 @@ def test_cargar_data_jugador_error_no_existe(conexion):
 
 		cargarDataJugador(data_limpia, "j-alvarez-772644")
 
-def test_cargar_data_competicion_datos_error(conexion):
+def test_cargar_data_jugador_datos_error(conexion):
 
 	conexion.insertarJugador("j-alvarez-772644")
 
@@ -67,7 +67,7 @@ def test_cargar_data_competicion_datos_error(conexion):
 @pytest.mark.parametrize(["jugador"],
 	[("j-alvarez-772644",),("c-gallagher-367792",),("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_cargar_data_competicion_datos_correctos_con_equipo(conexion, jugador):
+def test_cargar_data_jugador_datos_correctos_con_equipo(conexion, jugador):
 
 	conexion.insertarJugador(jugador)
 
@@ -97,7 +97,7 @@ def test_cargar_data_competicion_datos_correctos_con_equipo(conexion, jugador):
 @pytest.mark.parametrize(["jugador"],
 	[("f-torres-29366",),("d-villa-23386",),("f-beckenbauer-321969",)]
 )
-def test_cargar_data_competicion_datos_correctos_sin_equipo(conexion, jugador):
+def test_cargar_data_jugador_datos_correctos_sin_equipo(conexion, jugador):
 
 	conexion.insertarJugador(jugador)
 

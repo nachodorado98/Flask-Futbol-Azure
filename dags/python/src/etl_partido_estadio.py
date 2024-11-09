@@ -17,13 +17,17 @@ def limpiarDataPartidoEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Codigo_Estadio"]=tabla["Codigo_Estadio"].apply(limpiarCodigoImagen).apply(lambda codigo: None if not codigo or codigo=="estadio_nofoto" else int(codigo))
 
+	tabla["Codigo_Estadio_String"]=tabla["Codigo_Estadio"].apply(lambda codigo: "" if not codigo else str(codigo))
+
 	tabla["Nombre"]=tabla["Nombre"].apply(lambda nombre: None if nombre=="" else nombre.strip())
 
 	tabla["Ciudad"]=tabla["Ciudad"].apply(lambda ciudad: None if ciudad=="" else ciudad.strip())
 
 	tabla["Direccion"]=tabla["Direccion"].apply(lambda direccion: None if direccion=="" else direccion.strip())
 
-	tabla["Nombre_URL"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
+	tabla["Nombre_Normalizado"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
+
+	tabla["Nombre_URL"]=tabla["Nombre_Normalizado"]+"-"+tabla["Codigo_Estadio_String"]
 
 	tabla[["Latitud", "Longitud"]]=tabla["Nombre"].apply(lambda estadio: pd.Series(obtenerCoordenadasEstadio(estadio)))
 

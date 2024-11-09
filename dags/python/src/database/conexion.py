@@ -112,7 +112,8 @@ class Conexion:
 	#Metodo para insertar un estadio
 	def insertarEstadio(self, estadio:List[str])->None:
 
-		self.c.execute("""INSERT INTO estadios
+		self.c.execute("""INSERT INTO estadios (Estadio_Id, Codigo_Estadio, Nombre, Direccion, Latitud, Longitud, Ciudad,
+												Capacidad, Fecha, Largo, Ancho, Telefono, Cesped)
 							VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
 							tuple(estadio))
 
@@ -519,7 +520,7 @@ class Conexion:
 		self.confirmar()
 
 	# Metodo para obtener los jugadores
-	def obtenerJugadores(self)->List[tuple]:
+	def obtenerJugadores(self)->List[str]:
 
 		self.c.execute("""SELECT Jugador_Id
 						FROM jugadores
@@ -591,3 +592,26 @@ class Conexion:
 		return list(map(lambda partido: (partido["partido_id"],
 										partido["equipo_id_local"],
 										partido["equipo_id_visitante"]), partidos))
+
+	# Metodo para actualizar los datos de un estadio
+	def actualizarDatosEstadio(self, datos_estadio:List[str], estadio_id:str)->None:
+
+		datos_estadio.append(estadio_id)
+
+		self.c.execute("""UPDATE estadios
+							SET Pais=%s, Codigo_Pais=%s
+							WHERE Estadio_Id=%s""",
+							tuple(datos_estadio))
+
+		self.confirmar()
+
+	# Metodo para obtener los estadios
+	def obtenerEstadios(self)->List[str]:
+
+		self.c.execute("""SELECT Estadio_Id
+						FROM estadios
+						ORDER BY Estadio_Id""")
+
+		estadios=self.c.fetchall()
+
+		return list(map(lambda estadio: estadio["estadio_id"], estadios))

@@ -41,7 +41,9 @@ CREATE TABLE estadios (Estadio_Id VARCHAR(255) PRIMARY KEY,
 						Largo INTEGER,
 						Ancho INTEGER,
 						Telefono VARCHAR(255),
-						Cesped VARCHAR(255));
+						Cesped VARCHAR(255),
+						Pais VARCHAR(255) DEFAULT NULL,
+						Codigo_Pais VARCHAR(5) DEFAULT NULL);
 
 CREATE TABLE equipo_estadio (Equipo_Id VARCHAR(255),
 							Estadio_Id VARCHAR(255),
@@ -111,7 +113,8 @@ INSERT INTO variables (Nombre, Valor)
 VALUES ('DAG_EQUIPOS_EJECUTADO', 'False'),
 		('DAG_PARTIDOS_EJECUTADO', 'False'),
 		('DAG_COMPETICIONES_EJECUTADO', 'False'),
-		('DAG_JUGADORES_EJECUTADO', 'False');
+		('DAG_JUGADORES_EJECUTADO', 'False'),
+		('DAG_ESTADIOS_EJECUTADO', 'False');
 
 CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						Correo VARCHAR(255),

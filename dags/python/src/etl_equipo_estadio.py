@@ -17,9 +17,13 @@ def limpiarDataEquipoEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Codigo_Estadio"]=tabla["Codigo_Estadio"].apply(limpiarCodigoImagen).apply(lambda codigo: None if not codigo or codigo=="estadio_nofoto" else int(codigo))
 
+	tabla["Codigo_Estadio_String"]=tabla["Codigo_Estadio"].apply(lambda codigo: "" if not codigo else str(codigo))
+
 	tabla["Nombre"]=tabla["Nombre"].apply(lambda nombre: nombre.strip())
 
-	tabla["Nombre_URL"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
+	tabla["Nombre_Normalizado"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
+
+	tabla["Nombre_URL"]=tabla["Nombre_Normalizado"]+"-"+tabla["Codigo_Estadio_String"]
 
 	tabla["Direccion"]=tabla["Direccion"].apply(lambda direccion: direccion.strip())
 

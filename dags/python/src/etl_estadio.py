@@ -5,6 +5,8 @@ from .scrapers.scraper_estadio import ScraperEstadio
 
 from .utils import limpiarCodigoImagen
 
+from .database.conexion import Conexion
+
 def extraerDataEstadio(estadio:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperEstadio(estadio)
@@ -20,3 +22,27 @@ def limpiarDataEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 	columnas=["Pais", "Codigo_Pais"]
 
 	return tabla[columnas]
+
+def cargarDataEstadio(tabla:pd.DataFrame, estadio_id:str)->None:
+
+	datos_estadio=tabla.values.tolist()[0]
+
+	con=Conexion()
+
+	if not con.existe_estadio(estadio_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar el estadio {estadio_id}. No existe")
+
+	try:
+
+		con.actualizarDatosEstadio(datos_estadio, estadio_id)
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar los datos del estadio {estadio_id}")

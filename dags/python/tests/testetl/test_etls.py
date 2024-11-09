@@ -4,12 +4,13 @@ import pandas as pd
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
-from src.etls import ETL_Jugador, ETL_Partido_Goleadores
+from src.etls import ETL_Jugador, ETL_Partido_Goleadores, ETL_Estadio
+
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
 from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
 from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError, JugadorError
-from src.scrapers.excepciones_scrapers import PartidoGoleadoresError
+from src.scrapers.excepciones_scrapers import PartidoGoleadoresError, EstadioError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -1001,3 +1002,36 @@ def test_etl_partido_goleadores_existentes(conexion, local, visitante, partido_i
 
 	assert numero_registros_jugadores==numero_registros_jugadores_nuevos
 	assert numero_registros_goleadores==numero_registros_goleadores_nuevos
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
+)
+def test_etl_estadio_error(endpoint):
+
+	with pytest.raises(EstadioError):
+
+		ETL_Estadio(endpoint)
+
+def test_etl_estadio_no_existe_error():
+
+	with pytest.raises(Exception):
+
+		ETL_Estadio("riyadh-air-metropolitano-23")
+
+@pytest.mark.parametrize(["estadio_id"],
+	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+)
+def test_etl_estadio_datos_correctos(conexion, estadio_id):
+
+	estadio=[estadio_id, 1, "Metropolitano", "Metropo", 40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	ETL_Estadio(estadio_id)
+
+	conexion.c.execute(f"SELECT * FROM estadios WHERE Estadio_Id='{estadio_id}'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["pais"] is not None
+	assert datos_actualizados["codigo_pais"] is not None

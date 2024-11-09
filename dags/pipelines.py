@@ -7,7 +7,7 @@ from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equ
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
-from python.src.etls import ETL_Partido_Goleadores
+from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -334,5 +334,25 @@ def Pipeline_Jugadores()->None:
 			mensaje=f"Jugador: {jugador} - Motivo: {e}"
 
 			print(f"Error en jugador {jugador}")
+
+			crearArchivoLog(mensaje)
+
+def Pipeline_Estadios_Pais()->None:
+
+	con=Conexion()
+
+	estadios=con.obtenerEstadios()
+
+	for estadio in estadios:
+
+		try:
+
+			ETL_Estadio(estadio)
+
+		except Exception as e:
+
+			mensaje=f"Pais Estadio: {estadio} - Motivo: {e}"
+
+			print(f"Error en pais del estadio {estadio}")
 
 			crearArchivoLog(mensaje)
