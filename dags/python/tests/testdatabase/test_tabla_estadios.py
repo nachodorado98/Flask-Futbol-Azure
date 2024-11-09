@@ -66,7 +66,7 @@ def test_actualizar_datos_estadios_no_existe(conexion):
 	assert not conexion.existe_estadio("estadio")
 
 @pytest.mark.parametrize(["datos_nuevos"],
-	[(["Argentina", "ar"],), ([None, "ar"],), (["Argentina", None],)]
+	[(["Argentina", "ar"],), ([None, "ar"],), (["Argentina", None],), (["España", "es"],)]
 )
 def test_actualizar_datos_estadio(conexion, datos_nuevos):
 
@@ -94,7 +94,7 @@ def test_obtener_estadios(conexion):
 
 	for numero in range(1,11):
 
-		estadio=[f"vicente-calderon{numero}", numero, "Calderon", "Paseo de los Melancolicos",
+		estadio=[f"vicente-calderon-{numero}", numero, "Calderon", "Paseo de los Melancolicos",
 				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
 
 		conexion.insertarEstadio(estadio)
@@ -103,15 +103,40 @@ def test_obtener_estadios(conexion):
 
 	assert len(estadios)==10
 
-def test_obtener_estadios_codigo_estadio_nulo(conexion):
+def test_obtener_codigo_paises_estadios_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoPaisesEstadios()
+
+def test_obtener_codigo_paises_estadios_son_nulos(conexion):
 
 	for numero in range(1,11):
 
-		estadio=[f"vicente-calderon{numero}", None, "Calderon", "Paseo de los Melancolicos",
+		estadio=[f"vicente-calderon-{numero}", 1, "Calderon", "Paseo de los Melancolicos",
 				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
 
 		conexion.insertarEstadio(estadio)
 
-	estadios=conexion.obtenerEstadios()
+	assert not conexion.obtenerCodigoPaisesEstadios()
 
-	assert len(estadios)==10
+@pytest.mark.parametrize(["datos", "numero_paises"],
+	[
+		([["Argentina", "ar"], [None, "ar"], ["Argentina", None], ["España", "es"]], 2),
+		([["Argentina", "ar"], [None, "ar"], ["Argentina", None], ["Argentina", "ar"]], 1),
+		([["Argentina", None], [None, "ar"], ["Argentina", None], ["España", "es"]], 2),
+		([["Argentina", "ar"], [None, "ar"], ["Argentina", None], ["España", "es"], ["Francia", "fr"]], 3),
+	]
+)
+def test_obtener_codigo_paises_estadios(conexion, datos, numero_paises):
+
+	for numero, dato in enumerate(datos):
+
+		estadio=[f"vicente-calderon-{numero}", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+		conexion.insertarEstadio(estadio)
+
+		conexion.actualizarDatosEstadio(dato, f"vicente-calderon-{numero}")
+
+	paises=conexion.obtenerCodigoPaisesEstadios()
+
+	assert len(paises)==numero_paises

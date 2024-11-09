@@ -14,7 +14,17 @@ def test_extraer_data_estadio_error_endpoint(endpoint):
 		extraerDataEstadio(endpoint)
 
 @pytest.mark.parametrize(["estadio"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",),
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
 )
 def test_extraer_data_estadio(estadio):
 
@@ -25,7 +35,17 @@ def test_extraer_data_estadio(estadio):
 	assert len(data)==1
 
 @pytest.mark.parametrize(["estadio"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",),
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
 )
 def test_limpiar_data_estadio(estadio):
 
@@ -66,7 +86,17 @@ def test_cargar_data_estadio_datos_error(conexion):
 		cargarDataEstadio(data_limpia, "riyadh-air-metropolitano-23")
 
 @pytest.mark.parametrize(["estadio_id"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",),
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
 )
 def test_cargar_data_estadio_datos_correctos_con_equipo(conexion, estadio_id):
 

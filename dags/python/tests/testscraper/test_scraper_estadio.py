@@ -73,9 +73,14 @@ def test_scraper_estadio_obtener_informacion_datos_estadio(scraper_estadio):
 	assert tabla_info_datos is not None
 
 @pytest.mark.parametrize(["estadio"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
 )
-def test_scraper_estadio_obtener_tabla_ubicacion_pais_datos_correctos(estadio):
+def test_scraper_estadio_obtener_tabla_ubicacion_localidad_pais_datos_correctos(estadio):
 
 	scraper_estadio=ScraperEstadio(estadio)
 
@@ -85,15 +90,44 @@ def test_scraper_estadio_obtener_tabla_ubicacion_pais_datos_correctos(estadio):
 
 	tabla_info_datos=scraper_estadio._ScraperEstadio__informacion_datos_estadio(tabla_estadio)
 
-	direccion_pais=scraper_estadio._ScraperEstadio__tabla_ubicacion_pais(tabla_info_datos)
+	direccion_localidad_pais=scraper_estadio._ScraperEstadio__tabla_ubicacion_pais(tabla_info_datos)
 
-	assert len(direccion_pais)==3
-	assert "" not in direccion_pais
+	assert len(direccion_localidad_pais)==4
+	assert "" not in direccion_localidad_pais
 
 @pytest.mark.parametrize(["estadio"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",)
+	]
 )
-def test_scraper_estadio_obtener_informacion_ubicacion_pais_datos_correctos(estadio):
+def test_scraper_estadio_obtener_tabla_ubicacion_localidad_pais_datos_faltantes(estadio):
+
+	scraper_estadio=ScraperEstadio(estadio)
+
+	contenido=scraper_estadio._Scraper__realizarPeticion()
+
+	tabla_estadio=scraper_estadio._ScraperEstadio__contenido_tabla_estadio(contenido)
+
+	tabla_info_datos=scraper_estadio._ScraperEstadio__informacion_datos_estadio(tabla_estadio)
+
+	direccion_localidad_pais=scraper_estadio._ScraperEstadio__tabla_ubicacion_pais(tabla_info_datos)
+
+	assert len(direccion_localidad_pais)==4
+	assert "" in direccion_localidad_pais
+
+@pytest.mark.parametrize(["estadio"],
+	[
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
+)
+def test_scraper_estadio_obtener_informacion_ubicacion_localidad_pais_datos_correctos(estadio):
 
 	scraper_estadio=ScraperEstadio(estadio)
 
@@ -103,11 +137,43 @@ def test_scraper_estadio_obtener_informacion_ubicacion_pais_datos_correctos(esta
 
 	direccion_pais=scraper_estadio._ScraperEstadio__informacion_ubicacion_pais(tabla_estadio)
 
-	assert len(direccion_pais)==3
+	assert len(direccion_pais)==4
 	assert "" not in direccion_pais
 
 @pytest.mark.parametrize(["estadio"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",)
+	]
+)
+def test_scraper_estadio_obtener_informacion_ubicacion_localidad_pais_datos_faltantes(estadio):
+
+	scraper_estadio=ScraperEstadio(estadio)
+
+	contenido=scraper_estadio._Scraper__realizarPeticion()
+
+	tabla_estadio=scraper_estadio._ScraperEstadio__contenido_tabla_estadio(contenido)
+
+	direccion_pais=scraper_estadio._ScraperEstadio__informacion_ubicacion_pais(tabla_estadio)
+
+	assert len(direccion_pais)==4
+	assert "" in direccion_pais
+
+@pytest.mark.parametrize(["estadio"],
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",),
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
 )
 def test_scraper_estadio_obtener_data_limpia(estadio):
 
@@ -133,7 +199,17 @@ def test_scraper_estadio_obtener_estadio_equipo_error(endpoint):
 		scraper.obtenerEstadio()
 
 @pytest.mark.parametrize(["estadio"],
-	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
+	[
+		("riyadh-air-metropolitano-23",),
+		("municipal-football-santa-amalia-4902",),
+		("celtic-park-82",),
+		("stadion-feijenoord-71",),
+		("estadio-olimpico-lluis-companys-2978",),
+		("benito-villamarin-33",),
+		("abanca-balaidos-30",),
+		("san-mames-22",),
+		("mestalla-22",)
+	]
 )
 def test_scraper_estadio_obtener_estadio(estadio):
 

@@ -51,17 +51,41 @@ class ScraperEstadio(Scraper):
 
             celdas=fila.find_all("div")
 
-            return celdas[1]
+            return celdas[0].text, celdas[1]
 
         filas_contenedores=[obtenerContenedorFila(fila) for fila in filas]
 
-        ubicacion=filas_contenedores[0].text.strip()
+        def comprobarCampo(filas:str, campo:str)->bool:
 
-        pais=filas_contenedores[1].text.strip()
+            return False if not list(filter(lambda fila: fila[0]==campo, filas)) else True
 
-        pais_url=filas_contenedores[1].find("img", src=True)["src"].split("?")[0].strip()
+        for campo in ["Dirección", "Localidad", "País"]:
 
-        return ubicacion, pais, pais_url
+            condicion_campo=comprobarCampo(filas_contenedores, campo)
+
+            if not condicion_campo:
+
+                filas_contenedores.append((campo, ""))
+
+        filas_ordenadas=sorted(filas_contenedores)
+
+        filas_limpias=list(map(lambda fila: fila[1], filas_ordenadas))
+
+        ubicacion=filas_limpias[0].text.strip()
+
+        try:
+
+            localidad=filas_limpias[1].text.strip()
+
+        except Exception:
+
+            localidad=""
+
+        pais=filas_limpias[2].text.strip()
+
+        pais_url=filas_limpias[2].find("img", src=True)["src"].split("?")[0].strip()
+
+        return ubicacion, localidad, pais, pais_url
 
     def __informacion_ubicacion_pais(self, tabla_estadio:bs4)->tuple:
 
@@ -73,17 +97,17 @@ class ScraperEstadio(Scraper):
 
         except Exception:
 
-            ("","","")
+            ("","","", "")
     
     def __obtenerDataLimpia(self, tabla_estadio:bs4)->pd.DataFrame:
 
         codigo_estadio=self.__imagen_estadio(tabla_estadio)
 
-        direccion, pais, pais_url=self.__informacion_ubicacion_pais(tabla_estadio)
+        direccion, localidad, pais, pais_url=self.__informacion_ubicacion_pais(tabla_estadio)
 
-        fila_datos_unificados=[codigo_estadio, direccion, pais, pais_url]
+        fila_datos_unificados=[codigo_estadio, direccion, localidad, pais, pais_url]
 
-        columnas=["Codigo_Estadio", "Direccion", "Pais", "Pais_URL"]
+        columnas=["Codigo_Estadio", "Direccion", "Localidad", "Pais", "Pais_URL"]
 
         return pd.DataFrame([fila_datos_unificados], columns=columnas)
 
