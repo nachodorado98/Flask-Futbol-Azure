@@ -482,14 +482,27 @@ class Conexion:
 	# Metodo para obtener la informacion de un estadio
 	def obtenerEstadio(self, estadio_id:str)->Optional[tuple]:
 
-		self.c.execute("""SELECT nombre,
-								CASE WHEN codigo_estadio IS NULL
+		self.c.execute("""SELECT e.nombre,
+								CASE WHEN e.codigo_estadio IS NULL
 										THEN -1
-										ELSE codigo_estadio
+										ELSE e.codigo_estadio
 								END as imagen_estadio,
-								direccion, latitud, longitud, ciudad, CAST(capacidad AS TEXT) AS espectadores, fecha, largo, ancho
-						FROM estadios
-						WHERE estadio_id=%s""",
+								e.direccion, e.latitud, e.longitud, e.ciudad,
+								CAST(e.capacidad AS TEXT) AS espectadores, e.fecha, e.largo, e.ancho,
+								(CASE WHEN e.codigo_pais IS NULL
+					                THEN 
+					                	CASE WHEN eq.codigo_pais IS NULL
+					                		THEN '-1'
+					                		ELSE eq.codigo_pais
+					           			END
+					                ELSE e.codigo_pais
+					           	END) as pais
+						FROM estadios e
+	                    LEFT JOIN equipo_estadio ee
+						ON e.estadio_id=ee.estadio_id
+						LEFT JOIN equipos eq
+						ON ee.equipo_id=eq.equipo_id
+						WHERE e.estadio_id=%s""",
 						(estadio_id,))
 
 		estadio=self.c.fetchone()
@@ -503,7 +516,8 @@ class Conexion:
 										estadio["espectadores"],
 										estadio["fecha"],
 										estadio["largo"],
-										estadio["ancho"])
+										estadio["ancho"],
+										estadio["pais"])
 
 	# Metodo para obtener el equipo de un estadio
 	def obtenerEquipoEstadio(self, estadio_id:str)->List[Optional[tuple]]:
@@ -883,9 +897,13 @@ class Conexion:
 						                THEN -1
 						                ELSE eq.escudo
 						           END) as escudo_equipo,
-						       MAX(CASE WHEN eq.codigo_pais IS NULL
-						                THEN '-1'
-						                ELSE eq.codigo_pais
+						       MAX(CASE WHEN e.codigo_pais IS NULL
+						                THEN 
+						                	CASE WHEN eq.codigo_pais IS NULL
+						                		THEN '-1'
+						                		ELSE eq.codigo_pais
+						           			END
+						                ELSE e.codigo_pais
 						           END) as pais
 						FROM estadios e
 						LEFT JOIN equipo_estadio ee
@@ -981,9 +999,13 @@ class Conexion:
 						                THEN -1
 						                ELSE eq.escudo
 						           END) as escudo_equipo,
-						       MAX(CASE WHEN eq.codigo_pais IS NULL
-						                THEN '-1'
-						                ELSE eq.codigo_pais
+						       MAX(CASE WHEN e.codigo_pais IS NULL
+						                THEN 
+						                	CASE WHEN eq.codigo_pais IS NULL
+						                		THEN '-1'
+						                		ELSE eq.codigo_pais
+						           			END
+						                ELSE e.codigo_pais
 						           END) as pais
 						FROM estadios e
 						LEFT JOIN equipo_estadio ee
@@ -1371,9 +1393,13 @@ class Conexion:
 						                THEN -1
 						                ELSE eq.escudo
 						           END) as escudo_equipo,
-						       MAX(CASE WHEN eq.codigo_pais IS NULL
-						                THEN '-1'
-						                ELSE eq.codigo_pais
+						       MAX(CASE WHEN e.codigo_pais IS NULL
+						                THEN 
+						                	CASE WHEN eq.codigo_pais IS NULL
+						                		THEN '-1'
+						                		ELSE eq.codigo_pais
+						           			END
+						                ELSE e.codigo_pais
 						           END) as pais,
 						       MAX(p.fecha) as ultima_fecha
 							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
@@ -1414,9 +1440,13 @@ class Conexion:
 						                THEN -1
 						                ELSE eq.escudo
 						           END) as escudo_equipo,
-						       MAX(CASE WHEN eq.codigo_pais IS NULL
-						                THEN '-1'
-						                ELSE eq.codigo_pais
+						       MAX(CASE WHEN e.codigo_pais IS NULL
+						                THEN 
+						                	CASE WHEN eq.codigo_pais IS NULL
+						                		THEN '-1'
+						                		ELSE eq.codigo_pais
+						           			END
+						                ELSE e.codigo_pais
 						           END) as pais,
 						       COUNT(DISTINCT p.partido_id) as numero_veces
 							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
@@ -1459,9 +1489,13 @@ class Conexion:
 						                THEN -1
 						                ELSE eq.escudo
 						           END) as escudo_equipo,
-						       MAX(CASE WHEN eq.codigo_pais IS NULL
-						                THEN '-1'
-						                ELSE eq.codigo_pais
+						       MAX(CASE WHEN e.codigo_pais IS NULL
+						                THEN 
+						                	CASE WHEN eq.codigo_pais IS NULL
+						                		THEN '-1'
+						                		ELSE eq.codigo_pais
+						           			END
+						                ELSE e.codigo_pais
 						           END) as pais,
 						       COUNT(DISTINCT p.partido_id) as numero_veces
 							FROM (SELECT *
@@ -1745,3 +1779,27 @@ class Conexion:
 							(partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener los paises estadios de los partidos asistidos de un usuario por cantidad de veces visitado
+	def obtenerPaisesEstadiosPartidosAsistidosUsuarioCantidad(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.codigo_pais, e.pais, COUNT(DISTINCT p.partido_id) as numero_veces
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+							WHERE e.capacidad IS NOT NULL
+							AND e.codigo_pais IS NOT NULL
+							GROUP BY e.codigo_pais, e.pais
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, numero))
+
+		paises_asistidos=self.c.fetchall()
+
+		return list(map(lambda pais: (pais["codigo_pais"],
+										pais["pais"],
+										pais["numero_veces"]), paises_asistidos))

@@ -105,6 +105,9 @@ def test_pagina_mis_estadios(cliente, conexion_entorno):
 		assert "<h4>1 veces</h4>" in contenido
 		assert '<div class="tarjeta-mis-estadios-recientes">' in contenido
 		assert '<div class="tarjetas-mis-estadios-recientes">' in contenido
+		assert '<div class="tarjeta-paises-mis-estadios">' in contenido
+		assert '<p class="titulo-paises-mis-estadios">' in contenido
+		assert '<div class="tarjetas-paises-mis-estadios">' in contenido
 
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
@@ -144,3 +147,34 @@ def test_pagina_mis_estadios_varias_veces(cliente, conexion_entorno, veces):
 		assert f"<h4>{veces} veces</h4>" in contenido
 		assert '<div class="tarjeta-mis-estadios-recientes">' in contenido
 		assert '<div class="tarjetas-mis-estadios-recientes">' in contenido
+		assert '<div class="tarjeta-paises-mis-estadios">' in contenido
+		assert '<p class="titulo-paises-mis-estadios">' in contenido
+		assert '<div class="tarjetas-paises-mis-estadios">' in contenido
+
+def test_pagina_mis_estadios_codigo_pais_nulo(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/estadios/mis_estadios")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-paises-mis-estadios">' in contenido
+		assert '<p class="titulo-paises-mis-estadios">' in contenido
+		assert '<div class="tarjetas-paises-mis-estadios">' not in contenido

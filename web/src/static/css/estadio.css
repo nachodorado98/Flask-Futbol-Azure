@@ -52,6 +52,11 @@
     color: var(--color-secundario) 
 }
 
+.tarjeta-estadio .imagen-pais-estadio {
+    width: 40px;
+    height: 25.7px;
+}
+
 .tarjeta-estadio .imagen-estadio {
     margin-top: 10px;
     width: 525px;

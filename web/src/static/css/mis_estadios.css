@@ -93,6 +93,96 @@
     height: 70px;
 }
 
+.tarjeta-paises-mis-estadios {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 30px 5px;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 330px;
+    position: fixed;
+    top: 71px;
+    bottom: 20px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-paises-mis-estadios .titulo-paises-mis-estadios {
+    font-size: 23px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-paises-mis-estadios {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 0px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-paises-mis-estadios::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-paises-mis-estadios-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-pais-paises-mis-estadios {
+    width: 100%;
+    max-width: 800px;
+    margin: 6px auto;
+    padding: 7.5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.info-pais-paises-mis-estadios {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-pais-paises-mis-estadios .pais-paises {
+    margin-right: 5px;
+    margin-left: 10px;
+    margin-bottom: 7px;
+    margin-top: 7px;
+    width: 50px;
+    height: 32px;
+}
+
+.info-pais-paises-mis-estadios .nombre-pais-paises {
+    font-size: 19px;
+    margin: 0px;
+    margin-right: 5px;
+    color: var(--color-secundario) 
+}
+
+.info-pais-paises-mis-estadios .veces-pais-paises {
+    font-size: 19px;
+    margin: 0px;
+    margin-left: 5px;
+    margin-right: 10px;
+    color: var(--color-secundario) 
+}
+
 .tarjeta-mis-estadios-recientes {
     flex-direction: column;
     display: flex;

@@ -41,7 +41,18 @@
         <img class="imagen-estadio" src="{{ url_imagen_estadio }}{{ estadio[1] }}.png" alt="Estadio Icon">
     {% endif %}
 
-    {% if estadio[2] %}<p class="direccion"><strong>{{ estadio[2] }}</strong></p>{% endif %}
+    {% if estadio[2] %}
+    <p class="direccion">
+        <strong>{{ estadio[2] }}</strong>
+
+        {% if estadio[10]=='-1' %}
+            <img class="imagen-pais-estadio" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="imagen-pais-estadio" src="{{ url_imagen_pais }}{{ estadio[10] }}.png" alt="Pais Icon">
+        {% endif %}
+            
+    </p>
+    {% endif %}
 
     <div class="info-estadio-detalle">
         {% if estadio[7] %}<p class="fecha-fundacion"><strong>Desde {{ estadio[7] }}</strong></p>{% endif %}
