@@ -24,7 +24,7 @@
 }
 
 .tarjetas-competiciones-totales {
-    max-height: calc(84vh - 100px);
+    max-height: calc(82vh - 100px);
     overflow-y: auto;
     padding: 0px;
     padding-right: 15px;

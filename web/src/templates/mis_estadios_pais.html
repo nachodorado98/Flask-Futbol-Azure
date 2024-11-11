@@ -1,0 +1,79 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mis_estadios_pais.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-estadios-asistidos-pais">
+
+        {% if codigo_pais=='-1' %}
+            <img class="pais" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="pais" src="{{ url_imagen_pais }}{{ codigo_pais }}.png" alt="Pais Icon">
+        {% endif %}
+        
+        <p class="titulo-circulo-estadios-asistidos-pais">Estadios Visitados</p>
+        <p class="valor-circulo-estadios-asistidos-pais"><strong>{{ numero_estadios_pais }}</strong></p>
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-estadios-asistidos-pais">
+
+    <p class="titulo-pagina-estadios-asistidos-pais">
+        <strong>Mis Estadios</strong>
+
+        {% if codigo_pais=='-1' %}
+            <img class="pais" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="pais" src="{{ url_imagen_pais }}{{ codigo_pais }}.png" alt="Pais Icon">
+        {% endif %}
+
+    </p>
+
+    <div class="tarjetas-estadios-asistidos-pais">
+        <div class="tarjetas-estadios-asistidos-pais-wrapper">
+
+        {% for estadio in estadios_asistidos_pais %}
+
+        <div class="tarjeta-estadio-asistido-pais" onclick="window.location.href='/estadio/{{ estadio[0] }}'">
+
+            <div class="info-estadio-asistido-pais">
+
+                {% if estadio[2]==-1 %}
+                    <img class="estadio-estadio-asistido-pais" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                {% else %}
+                    <img class="estadio-estadio-asistido-pais" src="{{ url_imagen_estadio }}{{ estadio[2] }}.png" alt="Estadio Icon">
+                {% endif %}
+
+                <h4>{{ estadio[1] }}</h4>
+
+                {% if estadio[3]==-1 %}
+                    <img class="equipo-estadio-asistido-pais" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                {% else %}
+                    <img class="equipo-estadio-asistido-pais" src="{{ url_imagen_escudo }}{{ estadio[3] }}.png" alt="Equipo Icon">
+                {% endif %}
+
+                <h4>{{ estadio[5] }} veces</h4>
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

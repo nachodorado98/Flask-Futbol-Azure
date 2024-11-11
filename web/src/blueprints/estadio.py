@@ -96,9 +96,9 @@ def pagina_mis_estadios():
 
 	datos_estadios=con.obtenerDatosEstadios()
 
-	numero_estadios_asistidos=len(datos_estadios)
+	numero_estadios=len(datos_estadios)
 
-	estadios_asistidos=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios_asistidos)
+	estadios_asistidos=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios)
 
 	if not estadios_asistidos:
 
@@ -110,7 +110,7 @@ def pagina_mis_estadios():
 
 	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos_fecha)
 
-	paises_asistidos=con.obtenerPaisesEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios_asistidos)
+	paises_asistidos=con.obtenerPaisesEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios)
 
 	con.cerrarConexion()
 
@@ -121,6 +121,41 @@ def pagina_mis_estadios():
 							estadios_asistidos=estadios_asistidos,
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							paises_asistidos=paises_asistidos,
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+
+@bp_estadio.route("/estadios/mis_estadios/<codigo_pais>")
+@login_required
+def pagina_pais_mis_estadios(codigo_pais:str):
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	datos_estadios=con.obtenerDatosEstadios()
+
+	numero_estadios=len(datos_estadios)
+
+	estadios_asistidos_pais=con.obtenerEstadiosPaisPartidosAsistidosUsuarioCantidad(current_user.id, codigo_pais, numero_estadios)
+
+	if not estadios_asistidos_pais:
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	con.cerrarConexion()
+
+	return render_template("mis_estadios_pais.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							codigo_pais=codigo_pais,
+							estadios_asistidos_pais=estadios_asistidos_pais,
+							numero_estadios_pais=len(estadios_asistidos_pais),
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

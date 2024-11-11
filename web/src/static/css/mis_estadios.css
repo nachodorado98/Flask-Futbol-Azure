@@ -24,7 +24,7 @@
 }
 
 .tarjetas-estadios-asistidos {
-    max-height: calc(84vh - 100px);
+    max-height: calc(82vh - 100px);
     overflow-y: auto;
     padding: 0px;
     padding-right: 15px;
@@ -150,6 +150,7 @@
     cursor: default;
     background-color: var(--color-primario);
     color: var(--color-secundario);
+    cursor: pointer;
     box-sizing: border-box;
 }
 

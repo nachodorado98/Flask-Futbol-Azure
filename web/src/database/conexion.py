@@ -1803,3 +1803,10 @@ class Conexion:
 		return list(map(lambda pais: (pais["codigo_pais"],
 										pais["pais"],
 										pais["numero_veces"]), paises_asistidos))
+
+	# Metodo para obtener los estadios de los partidos asistidos de un usuario y un pais por cantidad de veces visitado
+	def obtenerEstadiosPaisPartidosAsistidosUsuarioCantidad(self, usuario:str, codigo_pais:str, numero:int)->List[Optional[tuple]]:
+
+		estadios_asistidos=self.obtenerEstadiosPartidosAsistidosUsuarioCantidad(usuario, numero)
+
+		return list(filter(lambda estadio: estadio[4]==codigo_pais, estadios_asistidos))
