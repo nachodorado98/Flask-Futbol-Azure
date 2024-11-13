@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO_CORREO
 
@@ -237,3 +237,19 @@ def limpiarResultadosPartidos(partidos:List[tuple])->Dict:
     return {"ganados":partidos_ganados,
             "perdidos": partidos_perdidos,
             "empatados": partidos_empatados}
+
+def obtenerNombrePaisSeleccionado(paises:List[tuple], codigo_pais:str)->Optional[str]:
+
+    try:
+
+        return list(filter(lambda pais: pais[0]==codigo_pais, paises))[0][1]
+
+    except Exception:
+
+        return None
+
+def obtenerPaisesNoSeleccionados(paises:List[tuple], codigo_pais:str)->List[tuple]:
+
+    paises_no_seleccionados=list(filter(lambda pais: pais[0]!=codigo_pais, paises))
+
+    return [(pais[0], pais[1]) for pais in paises_no_seleccionados]

@@ -53,17 +53,83 @@
     color: var(--color-secundario)
 }
 
-.tarjeta-estadios-asistidos-pais .titulo-pagina-estadios-asistidos-pais {
-    font-size: 45px;
-    margin: 5px;
-    color: var(--color-secundario);
+.tarjeta-estadios-asistidos-pais {
     margin-bottom: 15px;
 }
 
-.tarjeta-estadios-asistidos-pais .pais {
-    margin-left: 5px;
+.contenedor-titulo-iconos-estadios-asistidos-pais {
+    margin-bottom: 15px;
+}
+
+.contenedor-titulo-iconos {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.titulo-pagina-estadios-asistidos-pais {
+    font-size: 45px;
+    color: var(--color-secundario);
+    margin: 5px 0;
+}
+
+.pais-contenedor {
+    display: flex;
+    align-items: center;
+}
+
+.pais-icono {
     width: 70px;
     height: 45px;
+    margin-right: -25px;
+}
+
+.icono-flecha-pais{
+    height: 16px;
+    margin-top: 15px;
+}
+
+.desplegable-contenedor {
+    position: relative;
+}
+
+.boton-desplegable {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-desplegable {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--color-primario);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 220px;
+    padding: 8px 0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.menu-desplegable .opcion-desplegable {
+    color: var(--color-secundario);
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 22px;
+}
+
+.menu-desplegable .opcion-desplegable:hover {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+}
+
+.pais-icono-desplegable {
+    width: 30px;
+    height: 19.3px;
 }
 
 .tarjetas-estadios-asistidos-pais {

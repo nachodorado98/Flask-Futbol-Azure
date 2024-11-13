@@ -18,6 +18,7 @@
         <p class="titulo-circulo-estadios-asistidos-pais">Estadios Visitados</p>
         <p class="valor-circulo-estadios-asistidos-pais"><strong>{{ numero_estadios_pais }}</strong></p>
     </div>
+
 </div>
 
 {% endblock contenedor_lateral_izq %}
@@ -28,16 +29,45 @@
 
 <div class="tarjeta-estadios-asistidos-pais">
 
-    <p class="titulo-pagina-estadios-asistidos-pais">
-        <strong>Mis Estadios</strong>
+    <div class="contenedor-titulo-iconos-estadios-asistidos-pais">
+        <div class="contenedor-titulo-iconos">
+            <p class="titulo-pagina-estadios-asistidos-pais">
+                <strong>Mis Estadios de {{ nombre_pais_seleccionado }}</strong>
+            </p>
 
-        {% if codigo_pais=='-1' %}
-            <img class="pais" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
-        {% else %}
-            <img class="pais" src="{{ url_imagen_pais }}{{ codigo_pais }}.png" alt="Pais Icon">
-        {% endif %}
+            <div class="pais-contenedor">
+                {% if codigo_pais == '-1' %}
+                    <img class="pais-icono" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                {% else %}
+                    <img class="pais-icono" src="{{ url_imagen_pais }}{{ codigo_pais }}.png" alt="Pais Icon">
+                {% endif %}
+            </div>
 
-    </p>
+            {% if paises_no_seleccionados %}
+                <div class="desplegable-contenedor">
+                    <button class="boton-desplegable" onclick="desplegablePaises()">
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-pais"> 
+                    </button>
+
+                    <div id="menuDesplegable" class="menu-desplegable">
+                        {% for pais_no_seleccionado in paises_no_seleccionados %}
+                            <a href="/estadios/mis_estadios/{{ pais_no_seleccionado[0] }}" class="opcion-desplegable">
+                                <srong>{{ pais_no_seleccionado[1] }}</strong>
+
+                                {% if pais_no_seleccionado[0] == '-1' %}
+                                    <img class="pais-icono-desplegable" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                                {% else %}
+                                    <img class="pais-icono-desplegable" src="{{ url_imagen_pais }}{{ pais_no_seleccionado[0] }}.png" alt="Pais Icon">
+                                {% endif %}
+
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
 
     <div class="tarjetas-estadios-asistidos-pais">
         <div class="tarjetas-estadios-asistidos-pais-wrapper">
@@ -73,6 +103,8 @@
     </div>
 
 </div>
+
+<script src="{{ url_for('static', filename='js/desplegable_paises.js') }}"></script>
 
 {% endblock principal %}
 

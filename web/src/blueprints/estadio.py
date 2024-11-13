@@ -5,7 +5,7 @@ from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
 
-from src.utilidades.utils import anadirPuntos
+from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 
 bp_estadio=Blueprint("estadio", __name__)
 
@@ -62,12 +62,6 @@ def pagina_estadios():
 
 	datos_estadios_top=con.obtenerDatosEstadiosTop(numero_top)
 
-	numero_estadios_asistidos=4
-
-	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos)
-
-	estadios_asistidos_cantidad=con.obtenerEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios_asistidos)
-
 	con.cerrarConexion()
 
 	return render_template("estadios.html",
@@ -78,8 +72,6 @@ def pagina_estadios():
 							numero_top=numero_top,
 							tops=[8, 10, 15, 20, 25],
 							datos_estadios_top=datos_estadios_top,
-							estadios_asistidos_fecha=estadios_asistidos_fecha,
-							estadios_asistidos_cantidad=estadios_asistidos_cantidad,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
@@ -106,7 +98,7 @@ def pagina_mis_estadios():
 
 		return redirect("/partidos")
 
-	numero_estadios_asistidos_fecha=8
+	numero_estadios_asistidos_fecha=4
 
 	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos_fecha)
 
@@ -119,8 +111,10 @@ def pagina_mis_estadios():
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							estadios_asistidos=estadios_asistidos,
+							numero_estadios=len(estadios_asistidos),
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							paises_asistidos=paises_asistidos,
+							numero_paises=len(paises_asistidos),
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
@@ -147,6 +141,12 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 		return redirect("/partidos")
 
+	paises_asistidos=con.obtenerPaisesEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios)
+
+	nombre_pais_seleccionado=obtenerNombrePaisSeleccionado(paises_asistidos, codigo_pais)
+
+	paises_no_seleccionados=obtenerPaisesNoSeleccionados(paises_asistidos, codigo_pais)
+
 	con.cerrarConexion()
 
 	return render_template("mis_estadios_pais.html",
@@ -156,6 +156,8 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							codigo_pais=codigo_pais,
 							estadios_asistidos_pais=estadios_asistidos_pais,
 							numero_estadios_pais=len(estadios_asistidos_pais),
+							nombre_pais_seleccionado=nombre_pais_seleccionado,
+							paises_no_seleccionados=paises_no_seleccionados,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

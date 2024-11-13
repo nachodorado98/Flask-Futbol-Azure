@@ -140,7 +140,6 @@ body {
 
 #toggle-navbar-club,
 #toggle-navbar-mis-partidos,
-
 #toggle-navbar-equipos,
 #toggle-navbar-jugadores,
 #toggle-navbar-estadios,
@@ -163,7 +162,6 @@ body {
 }
 
 .navbar-club,
-
 .navbar-equipos,
 .navbar-jugadores,
 .navbar-estadios,
@@ -178,7 +176,6 @@ body {
 }
 
 .navbar-club ul,
-
 .navbar-equipos ul,
 .navbar-jugadores ul,
 .navbar-estadios ul,
@@ -189,7 +186,6 @@ body {
 }
 
 .navbar-club li,
-
 .navbar-equipos li,
 .navbar-jugadores li,
 .navbar-estadios li,
@@ -198,7 +194,6 @@ body {
 }
 
 .navbar-club a,
-
 .navbar-equipos a,
 .navbar-jugadores a,
 .navbar-estadios a,
@@ -210,7 +205,6 @@ body {
 }
 
 .navbar-club a:hover,
-
 .navbar-equipos a:hover,
 .navbar-jugadores a:hover,
 .navbar-estadios a:hover,
@@ -229,7 +223,6 @@ body {
 #toggle-navbar-mis-partidos {
     left: 160px;
 }
-
 
 #toggle-navbar-equipos {
     left: 290px;

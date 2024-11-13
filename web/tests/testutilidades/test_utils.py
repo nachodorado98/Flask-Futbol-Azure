@@ -3,7 +3,7 @@ import pytest
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
 from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado, anadirPuntos
-from src.utilidades.utils import limpiarResultadosPartidos
+from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -237,3 +237,51 @@ def test_limpiar_resultados_partidos(partidos, ganados, perdidos, empatados):
 	assert resultados["ganados"]==ganados
 	assert resultados["perdidos"]==perdidos
 	assert resultados["empatados"]==empatados
+
+@pytest.mark.parametrize(["codigo_pais"],
+	[("fr",),("uk",),("gb",),("ch",)]
+)
+def test_obtener_nombre_pais_seleccionado_no_esta(codigo_pais):
+
+	paises=[("es", "España", 12), ("it", "Italia", 1), ("nl", "Países Bajos", 1),
+			("pt", "Portugal", 1), ("ss", "Escocia", 1)] 
+
+	assert not obtenerNombrePaisSeleccionado(paises, codigo_pais)
+
+@pytest.mark.parametrize(["codigo_pais", "nombre_pais"],
+	[
+		("es", "España"),
+		("pt", "Portugal"),
+		("ss", "Escocia"),
+		("nl", "Países Bajos"),
+		("it", "Italia")
+	]
+)
+def test_obtener_nombre_pais_seleccionado_no_esta(codigo_pais, nombre_pais):
+
+	paises=[("es", "España", 12), ("it", "Italia", 1), ("nl", "Países Bajos", 1),
+			("pt", "Portugal", 1), ("ss", "Escocia", 1)] 
+
+	assert obtenerNombrePaisSeleccionado(paises, codigo_pais)==nombre_pais
+
+def test_obtener_paises_no_seleccionados_no_existen():
+
+	assert not obtenerPaisesNoSeleccionados([], "es")
+
+def test_obtener_paises_no_seleccionados_solo_pais():
+
+	paises=[("es", "España", 12)] 
+
+	assert not obtenerPaisesNoSeleccionados(paises, "es")
+
+@pytest.mark.parametrize(["codigo_pais"],
+	[("es",),("pt",),("ss",),("nl",),("it",)]
+)
+def test_obtener_paises_no_seleccionados(codigo_pais):
+
+	paises=[("es", "España", 12), ("it", "Italia", 1), ("nl", "Países Bajos", 1),
+			("pt", "Portugal", 1), ("ss", "Escocia", 1)] 
+
+	paises_no_seleccionados=obtenerPaisesNoSeleccionados(paises, codigo_pais)
+
+	assert len(paises_no_seleccionados)
