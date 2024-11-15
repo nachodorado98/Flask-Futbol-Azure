@@ -147,8 +147,54 @@
             </div>
         </div>
 
+    {% else %}
+
+        <div class="circulo-partido-asistido-favorito-anadir">
+            <div class="tarjeta-partido-asistido-favorito-anadir">
+
+                <p><strong>No hay partido favorito</strong></p>
+                <p><strong>¡Pulsa para añadir uno!</strong></p>
+
+                <img class="icono-anadir-partido-favorito" src="{{ url_for('static', filename='imagenes/iconos/anadir_partido_asistido.png') }}" onclick="abrirVentanaEmergente()">
+
+            </div>
+        </div>
+
+        <div id="ventana-emergente" class="ventana-emergente">
+            <div class="contenido-ventana-emergente">
+                <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+                <h2>Selecciona un Partido Asistido</h2>
+                <form id="formFavorito" onsubmit="redireccionarConValor(event)">
+                    <select id="seleccion-partido-favorito" class="seleccion-partido-favorito" name="seleccion-partido-favorito" required>
+                        <option value="" disabled selected>Elige un partido</option>
+
+                        {% for partido in partidos_asistidos %}
+                            <option value="{{ partido[0] }}">
+                                {{ partido[6] }} vs {{ partido[7] }} ({{ partido[3] }}) - {{ partido[2] }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                    <button type="submit" class="boton-guardar-favorito">Marcar como Favorito</button>
+                </form>
+            </div>
+        </div>
+
     {% endif %}
 
+    <div class="circulo-competicion-mas-asistida">
+        <p class="titulo-circulo-competicion-mas-asistida">{{ competicion_mas_asistida[1] }}</p>
+        {% if competicion_mas_asistida[2]=='-1' %}
+            <img class="competicion-mas-asistida" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon" onclick="window.location.href='/competicion/{{ competicion_mas_asistida[0] }}'">
+        {% else %}
+            <img class="competicion-mas-asistida" src="{{ url_imagen_competicion }}{{ competicion_mas_asistida[2] }}.png" alt="Competicion Icon" onclick="window.location.href='/competicion/{{ competicion_mas_asistida[0] }}'">
+        {% endif %}
+        <p class="valor-circulo-competicion-mas-asistida"><strong>{{ competicion_mas_asistida[4] }} veces</strong></p>
+    </div>
+
 </div>
+
+<script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
+<script src="{{ url_for('static', filename='js/redireccion_anadir_partido_favorito.js') }}"></script>
 
 {% endblock contenedor_lateral_der %}

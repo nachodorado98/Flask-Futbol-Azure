@@ -259,3 +259,27 @@ def test_pagina_partido_asistido_partido_asistido_favorito(cliente, conexion_ent
 		assert "/no_favorito_asistido.png" not in contenido
 		assert "/favorito_asistido.png" in contenido
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' in contenido
+
+def test_pagina_partido_asistido_ventana_emergente_papelera_disponible(cliente, conexion_entorno):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "partido-favorito":"on"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<img class="papelera-partido-asistido"' in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+		assert "/partido/20190622/asistido/eliminar" in contenido

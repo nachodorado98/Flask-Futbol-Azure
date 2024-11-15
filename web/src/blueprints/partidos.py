@@ -5,7 +5,7 @@ from src.utilidades.utils import limpiarResultadosPartidos
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_COMPETICIONES
 
 bp_partidos=Blueprint("partidos", __name__)
 
@@ -132,7 +132,11 @@ def pagina_partidos_asistidos():
 
 	equipos_mas_enfrentados=con.obtenerEquiposPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
 
-	if not equipos_mas_enfrentados:
+	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
+
+	competiciones_mas_asistidas=con.obtenerCompeticionesPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
+
+	if not equipos_mas_enfrentados or not estadios_mas_visitados or not competiciones_mas_asistidas:
 
 		con.cerrarConexion()
 
@@ -143,8 +147,6 @@ def pagina_partidos_asistidos():
 								estadio_equipo=estadio_equipo,
 								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
-
-	estadios_mas_visitados=con.obtenerEstadiosPartidosAsistidosUsuarioCantidadFiltrado(current_user.id, partidos_asistidos_ids, 1)
 
 	id_partido_asistido_favorito=con.obtenerPartidoAsistidoFavorito(current_user.id)
 
@@ -162,9 +164,11 @@ def pagina_partidos_asistidos():
 							resultados_partidos_asistidos=resultados_partidos_asistidos,
 							equipo_mas_enfrentado=equipos_mas_enfrentados[0],
 							estadio_mas_visitado=estadios_mas_visitados[0],
+							competicion_mas_asistida=competiciones_mas_asistidas[0],
 							local=local,
 							partidos_asistidos_ids=partidos_asistidos_ids,
 							id_partido_asistido_favorito=id_partido_asistido_favorito,
 							datos_partido_asistido_favorito=datos_partido_asistido_favorito,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)

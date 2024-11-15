@@ -1810,3 +1810,76 @@ class Conexion:
 		estadios_asistidos=self.obtenerEstadiosPartidosAsistidosUsuarioCantidad(usuario, numero)
 
 		return list(filter(lambda estadio: estadio[4]==codigo_pais, estadios_asistidos))
+
+	# Metodo para obtener las competiciones de los partidos asistidos de un usuario por cantidad de veces asistidas
+	def obtenerCompeticionesPartidosAsistidosUsuarioCantidad(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT c.competicion_id, c.nombre,
+						       CASE WHEN c.codigo_logo IS NULL
+						            THEN '-1'
+						            ELSE c.codigo_logo
+						       END as logo_competicion,
+						       CASE WHEN c.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE c.codigo_pais
+					           END as pais,
+						       COUNT(DISTINCT p.partido_id) as numero_veces
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_competicion pc
+		                    ON p.partido_id=pc.partido_id
+		                    LEFT JOIN competiciones c
+		                    ON pc.competicion_id=c.competicion_id
+		                    WHERE c.competicion_id IS NOT NULL
+							GROUP BY c.competicion_id, c.nombre, c.codigo_logo, c.codigo_pais
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, numero))
+
+		competiciones_asistidas=self.c.fetchall()
+
+		return list(map(lambda competicion: (competicion["competicion_id"],
+											competicion["nombre"],
+											competicion["logo_competicion"],
+											competicion["pais"],
+											competicion["numero_veces"]), competiciones_asistidas))
+
+	# Metodo para obtener las competiciones de los partidos asistidos filtrados de un usuario por cantidad de veces asistidas
+	def obtenerCompeticionesPartidosAsistidosUsuarioCantidadFiltrado(self, usuario:str, partidos_ids:tuple, numero:int)->List[Optional[tuple]]:
+
+		numero_place_holders=", ".join(["%s"]*len(partidos_ids))
+
+		self.c.execute(f"""SELECT c.competicion_id, c.nombre,
+						       CASE WHEN c.codigo_logo IS NULL
+						            THEN '-1'
+						            ELSE c.codigo_logo
+						       END as logo_competicion,
+						       CASE WHEN c.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE c.codigo_pais
+					           END as pais,
+						       COUNT(DISTINCT p.partido_id) as numero_veces
+							FROM (SELECT *
+									FROM partidos_asistidos
+									WHERE usuario=%s
+									AND partido_id IN ({numero_place_holders})) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_competicion pc
+		                    ON p.partido_id=pc.partido_id
+		                    LEFT JOIN competiciones c
+		                    ON pc.competicion_id=c.competicion_id
+		                    WHERE c.competicion_id IS NOT NULL
+							GROUP BY c.competicion_id, c.nombre, c.codigo_logo, c.codigo_pais
+							ORDER BY numero_veces DESC
+							LIMIT %s""",
+							(usuario, *partidos_ids, numero))
+
+		competiciones_asistidas=self.c.fetchall()
+
+		return list(map(lambda competicion: (competicion["competicion_id"],
+											competicion["nombre"],
+											competicion["logo_competicion"],
+											competicion["pais"],
+											competicion["numero_veces"]), competiciones_asistidas))

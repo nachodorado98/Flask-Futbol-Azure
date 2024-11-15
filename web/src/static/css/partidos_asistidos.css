@@ -186,6 +186,148 @@
     color: var(--color-secundario) 
 }
 
+.circulo-partido-asistido-favorito-anadir {
+    width: 210px;
+    height: 195px;
+    background-color: var(--color-fondo);
+    color: var(--color-fondo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 40px;
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+}
+
+.tarjeta-partido-asistido-favorito-anadir {
+    width: 195px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    background-color: #ffbf00;
+}
+
+.tarjeta-partido-asistido-favorito-anadir p {
+    font-size: 17px;
+    margin-bottom: 8px;
+    color: var(--color-secundario);
+}
+
+.tarjeta-partido-asistido-favorito-anadir .icono-anadir-partido-favorito {
+    height: 30px;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.ventana-emergente {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.contenido-ventana-emergente {
+    background-color: #ffbf00;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 10px;
+    color: var(--color-secundario);
+}
+
+.seleccion-partido-favorito {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.boton-guardar-favorito {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: var(--color-secundario);
+    color: #ffbf00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.boton-guardar-favorito:hover {
+    transform: scale(1.05);
+}
+
+.cerrar {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.cerrar:hover,
+.cerrar:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.circulo-competicion-mas-asistida {
+    width: 195px;
+    height: 195px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-competicion-mas-asistida .titulo-circulo-competicion-mas-asistida {
+    margin: 1px 0;
+    margin-top: 15px;
+    padding: 0;
+    font-size: 20px;
+}
+
+.circulo-competicion-mas-asistida .competicion-mas-asistida {
+    margin-top: 5px;
+    width: 75px;
+    height: 75px;
+    cursor: pointer;
+}
+
+.circulo-competicion-mas-asistida .valor-circulo-competicion-mas-asistida {
+    margin: 2px 0;
+    padding: 0;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
 .contenedor-titulo-partidos-asistidos {
     width: 100%;
     max-width: 900px;
