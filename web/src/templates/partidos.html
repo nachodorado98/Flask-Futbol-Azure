@@ -23,62 +23,101 @@
 
             <ul class="navbar-principal-menu">
 
-                <button id="toggle-navbar-club" class="toggle-button-club">
-                    <strong>Club</strong>
-                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
-                </button>
-                <div class="navbar-club" id="navbar-club">
-                    <ul>
-                        <li><a href="/equipo/{{ equipo }}"><strong>Datos del club</strong></a></li>
-                        <li><a href="/estadio/{{ estadio_equipo }}"><strong>Estadio</strong></a></li>
-                        <li><a href="#"><strong>Plantilla</strong></a></li>
-                    </ul>
+                <div class="desplegable-contenedor-navbar-club">
+
+                    <button class="button-navbar-club" onclick="desplegableNavBarClub()">
+                        <strong>Club</strong>
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                    </button>
+
+                    <div id="menuDesplegableNavBarClub" class="menu-desplegable-navbar-club">
+                        <a href="/equipo/{{ equipo }}" class="opcion-desplegable-navbar-club">
+                            <strong>Datos Del Club</strong>
+                        </a>
+                        <a href="/estadio/{{ estadio_equipo }}" class="opcion-desplegable-navbar-club">
+                            <strong>Estadio</strong>
+                        </a>
+                        <a href="#" class="opcion-desplegable-navbar-club">
+                            <strong>Plantilla</strong>
+                        </a>
+                    </div>
+
                 </div>
 
-                <button id="toggle-navbar-mis-partidos" class="toggle-button-mis-partidos" onclick="window.location.href='/partidos/asistidos'">
-                    <strong>Mis Partidos</strong>
-                </button>
-
-                <button id="toggle-navbar-equipos" class="toggle-button-equipos" onclick="window.location.href='/equipos'">
-                    <strong>Equipos</strong>
-                </button>
-
-                <button id="toggle-navbar-estadios" class="toggle-button-estadios">
-                    <strong>Estadios</strong>
-                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
-                </button>
-                <div class="navbar-estadios" id="navbar-estadios">
-                    <ul>
-                        <li><a href="/estadios"><strong>Todos los estadios</strong></a></li>
-                        <li><a href="/estadios/mis_estadios"><strong>Mis estadios</strong></a></li>
-                    </ul>
+                <div class="desplegable-contenedor-navbar-mis-partidos" onclick="window.location.href='/partidos/asistidos'">
+                    <button class="button-navbar-mis-partidos">
+                        <strong>Mis Partidos</strong>
+                    </button>
                 </div>
 
-                <button id="toggle-navbar-competiciones" class="toggle-button-competiciones">
-                    <strong>Competiciones</strong>
-                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar">                </button>
-                <div class="navbar-competiciones" id="navbar-competiciones">
-                    <ul>
-                        <li><a href="/competiciones"><strong>Todas las competiciones</strong></a></li>
-                        <li><a href="#"><strong>Mis competiciones</strong></a></li>
-                    </ul>
+                <div class="desplegable-contenedor-navbar-equipos" onclick="window.location.href='/equipos'">
+                    <button class="button-navbar-equipos">
+                        <strong>Equipos</strong>
+                    </button>
                 </div>
+
+                <div class="desplegable-contenedor-navbar-estadios">
+
+                    <button class="button-navbar-estadios" onclick="desplegableNavBarEstadios()">
+                        <strong>Estadios</strong>
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                    </button>
+
+                    <div id="menuDesplegableNavBarEstadios" class="menu-desplegable-navbar-estadios">
+                        <a href="/estadios" class="opcion-desplegable-navbar-estadios">
+                            <strong>Todos Los Estadios</strong>
+                        </a>
+                        <a href="/estadios/mis_estadios" class="opcion-desplegable-navbar-estadios">
+                            <strong>Mis Estadios</strong>
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="desplegable-contenedor-navbar-competiciones">
+
+                    <button class="button-navbar-competiciones" onclick="desplegableNavBarCompeticiones()">
+                        <strong>Competiciones</strong>
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
+                    </button>
+
+                    <div id="menuDesplegableNavBarCompeticiones" class="menu-desplegable-navbar-competiciones">
+                        <a href="/competiciones" class="opcion-desplegable-navbar-competiciones">
+                            <strong>Todas Las Competiciones</strong>
+                        </a>
+                        <a href="#" class="opcion-desplegable-navbar-competiciones">
+                            <strong>Mis Competiciones</strong>
+                        </a>
+                    </div>
+
+                </div>
+
+
 
             </ul>
 
         </div>
-        <div class="navbar-principal-der">
-            <button id="toggle-navbar" class="toggle-button">
-                <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" alt="Hamburguesa Icon" height="20" class="icono-usuario">
+
+        <div class="desplegable-contenedor-navbar-usuario">
+
+            <button class="button-navbar-usuario" onclick="desplegableNavBarUsuario()">
+                <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" alt="Usuario Icon" class="icono-usuario">
             </button>
-            <div class="navbar" id="navbar">
-                <ul>
-                    <li><a href="#">{{ usuario }}</a></li>
-                    <li><a href="/anadir_partido_asistido">Añadir Partido</a></li>
-                    <li><a href="/logout">Salir</a></li>
-                </ul>
+
+            <div id="menuDesplegableNavBarUsuario" class="menu-desplegable-navbar-usuario">
+                <a href="#" class="opcion-desplegable-navbar-usuario">
+                    <strong>{{ usuario }}</strong>
+                </a>
+                <a href="/anadir_partido_asistido" class="opcion-desplegable-navbar-usuario">
+                    <strong>Añadir Partido</strong>
+                </a>
+                <a href="/logout" class="opcion-desplegable-navbar-usuario">
+                    <strong>Cerrar Sesión</strong>
+                </a>
             </div>
+
         </div>
+
     </nav>
 
     <div class="contenedor-pagina">
@@ -268,9 +307,9 @@
         
     </div>
 
-    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/temporadas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pagina_anterior.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/desplegables_navbar.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>

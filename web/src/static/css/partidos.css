@@ -138,12 +138,21 @@ body {
     transition: color 0.3s ease-in-out;
 }
 
-#toggle-navbar-club,
-#toggle-navbar-mis-partidos,
-#toggle-navbar-equipos,
-#toggle-navbar-jugadores,
-#toggle-navbar-estadios,
-#toggle-navbar-competiciones {
+.desplegable-contenedor-navbar-club,
+.desplegable-contenedor-navbar-mis-partidos,
+.desplegable-contenedor-navbar-equipos,
+.desplegable-contenedor-navbar-estadios,
+.desplegable-contenedor-navbar-competiciones,
+.desplegable-contenedor-navbar-usuario {
+    position: relative;
+}
+
+.button-navbar-club,
+.button-navbar-mis-partidos,
+.button-navbar-equipos,
+.button-navbar-estadios,
+.button-navbar-competiciones,
+.button-navbar-usuario {
     float: right;
     border: none;
     padding: 10px;
@@ -156,147 +165,109 @@ body {
     font-size: 18px;
 }
 
-.icono-flecha-navbar{
-    height: 11px;
-    margin-left: 5px;
+.icono-flecha-navbar {
+    height: 12px;
 }
 
-.navbar-club,
-.navbar-equipos,
-.navbar-jugadores,
-.navbar-estadios,
-.navbar-competiciones {
-    display: none;
-    position: fixed;
-    top: 60px;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1;
-    background-color: var(--color-toogle);
+.icono-usuario {
+    height: 40px;
 }
 
-.navbar-club ul,
-.navbar-equipos ul,
-.navbar-jugadores ul,
-.navbar-estadios ul,
-.navbar-competiciones ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.navbar-club li,
-.navbar-equipos li,
-.navbar-jugadores li,
-.navbar-estadios li,
-.navbar-competiciones li {
-    margin-bottom: 12px;
-}
-
-.navbar-club a,
-.navbar-equipos a,
-.navbar-jugadores a,
-.navbar-estadios a,
-.navbar-competiciones a {
-    text-decoration: none;
-    font-size: 17px;
-    transition: color 0.3s ease-in-out;
-    color: var(--color-secundario) 
-}
-
-.navbar-club a:hover,
-.navbar-equipos a:hover,
-.navbar-jugadores a:hover,
-.navbar-estadios a:hover,
-.navbar-competiciones a:hover {
-    color: #000;
-}
-
-#toggle-navbar-club {
+.button-navbar-club {
     left: 80px;
 }
 
-.navbar-club {
-    left: 90px;
+.button-navbar-mis-partidos {
+    left: 155px;
 }
 
-#toggle-navbar-mis-partidos {
-    left: 160px;
+.button-navbar-equipos {
+    left:285px;
 }
 
-#toggle-navbar-equipos {
-    left: 290px;
+.button-navbar-estadios {
+    left:385px;
 }
 
-#toggle-navbar-estadios {
-    left: 390px;
+.button-navbar-competiciones {
+    left: 500px;
 }
 
-.navbar-estadios {
-    left: 400px;
-}
-
-#toggle-navbar-competiciones {
-    left: 510px;
-}
-
-.navbar-competiciones {
-    left: 520px;
-}
-
-.navbar-principal-der {
-    display: flex;
-    align-items: center;
-}
-
-#toggle-navbar {
+.button-navbar-usuario {
     float: right;
     border: none;
-    padding: 10px;
+    padding: 0px;
     cursor: pointer;
-    border-radius: 5px;
     position: fixed;
-    top: 10px;
-    right: 30px;
+    top: 15px;
     z-index: 2;
     background-color: var(--color-toogle);
-    color: var(--color-secundario) 
+    right: 55px;
 }
 
-.navbar {
+.menu-desplegable-navbar-club,
+.menu-desplegable-navbar-mis-partidos,
+.menu-desplegable-navbar-equipos,
+.menu-desplegable-navbar-estadios,
+.menu-desplegable-navbar-competiciones,
+.menu-desplegable-navbar-usuario {
     display: none;
-    position: fixed;
-    top: 60px;
-    right: 30px;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1;
+    position: absolute;
+    top: 20px;
     background-color: var(--color-toogle);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 150px;
+    padding: 10px 16px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
 }
-
-.navbar ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.navbar li {
-    margin-bottom: 10px;
-}
-
-.navbar a {
+.menu-desplegable-navbar-club .opcion-desplegable-navbar-club,
+.menu-desplegable-navbar-mis-partidos .opcion-desplegable-navbar-mis-partidos,
+.menu-desplegable-navbar-equipos .opcion-desplegable-navbar-equipos,
+.menu-desplegable-navbar-estadios .opcion-desplegable-navbar-estadios,
+.menu-desplegable-navbar-competiciones .opcion-desplegable-navbar-competiciones,
+.menu-desplegable-navbar-usuario .opcion-desplegable-navbar-usuario {
+    color: var(--color-secundario);
     text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s ease-in-out;
-    color: var(--color-secundario) 
+    display: block;
+    font-size: 17px;
+    margin: 10px;
 }
-
-.navbar a:hover {
+.menu-desplegable-navbar-club .opcion-desplegable-navbar-club:hover,
+.menu-desplegable-navbar-mis-partidos .opcion-desplegable-navbar-mis-partidos:hover,
+.menu-desplegable-navbar-equipos .opcion-desplegable-navbar-equipos:hover,
+.menu-desplegable-navbar-estadios .opcion-desplegable-navbar-estadios:hover,
+.menu-desplegable-navbar-competiciones .opcion-desplegable-navbar-competiciones:hover,
+.menu-desplegable-navbar-usuario .opcion-desplegable-navbar-usuario:hover {
     color: #000;
 }
 
-.navbar-principal-der .icono-usuario{
-    height: 30px;
+.menu-desplegable-navbar-club {
+    left: 40px;
+}
+
+.menu-desplegable-navbar-mis-partidos {
+    left: 190px;
+}
+
+.menu-desplegable-navbar-equipos {
+    left: 310px;
+}
+
+.menu-desplegable-navbar-estadios {
+    left:380px;
+    min-width: 180px;
+}
+
+.menu-desplegable-navbar-competiciones {
+    left: 545px;
+    min-width: 220px;
+}
+
+.menu-desplegable-navbar-usuario {
+    left: 1330px;
+    min-width: 140px;
 }
 
 .contenido-principal {

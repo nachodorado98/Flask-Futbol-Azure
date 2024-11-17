@@ -52,7 +52,7 @@
                     <div id="menuDesplegable" class="menu-desplegable">
                         {% for pais_no_seleccionado in paises_no_seleccionados %}
                             <a href="/estadios/mis_estadios/{{ pais_no_seleccionado[0] }}" class="opcion-desplegable">
-                                <srong>{{ pais_no_seleccionado[1] }}</strong>
+                                <strong>{{ pais_no_seleccionado[1] }}</strong>
 
                                 {% if pais_no_seleccionado[0] == '-1' %}
                                     <img class="pais-icono-desplegable" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
@@ -103,8 +103,6 @@
     </div>
 
 </div>
-
-<script src="{{ url_for('static', filename='js/desplegable_paises.js') }}"></script>
 
 {% endblock principal %}
 
