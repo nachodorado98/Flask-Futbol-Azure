@@ -1,9 +1,11 @@
 import pytest
+import os
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
 from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado, anadirPuntos
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
+from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario, crearMapaMisEstadios
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -285,3 +287,277 @@ def test_obtener_paises_no_seleccionados(codigo_pais):
 	paises_no_seleccionados=obtenerPaisesNoSeleccionados(paises, codigo_pais)
 
 	assert len(paises_no_seleccionados)
+
+def test_crear_carpeta_no_existe():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert not os.path.exists(ruta_carpeta)
+
+	crearCarpeta(ruta_carpeta)
+
+	assert os.path.exists(ruta_carpeta)
+
+def test_crear_carpeta_existe():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert os.path.exists(ruta_carpeta)
+
+	crearCarpeta(ruta_carpeta)
+
+	assert os.path.exists(ruta_carpeta)
+
+	os.rmdir(ruta_carpeta)
+
+def test_borrar_carpeta_no_existe():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert not os.path.exists(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+	assert not os.path.exists(ruta_carpeta)
+
+def test_borrar_carpeta_existe():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	assert os.path.exists(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+	assert not os.path.exists(ruta_carpeta)
+
+def test_vaciar_carpeta_vacia():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	assert not os.listdir(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	assert not os.listdir(ruta_carpeta)
+
+def crearHTML(ruta:str)->None:
+
+	contenido="""
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <title>Mi Archivo HTML</title>
+			</head>
+			<body>
+			    <h1>Hola, este es mi archivo HTML creado con Python</h1>
+			</body>
+			</html>
+			"""
+
+	with open(ruta, "w") as html:
+
+	    html.write(contenido)
+
+def test_vaciar_carpeta_llena():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert not os.listdir(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "html.html")
+
+	crearHTML(ruta_html)
+
+	assert os.listdir(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	assert not os.listdir(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["numero_archivos"],
+	[(1,),(3,),(7,),(4,),(13,)]
+)
+def test_vaciar_carpeta_llena_varios(numero_archivos):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	assert not os.listdir(ruta_carpeta)
+
+	for numero in range(numero_archivos):
+
+		ruta_html=os.path.join(ruta_carpeta, f"html{numero}.html")
+
+		crearHTML(ruta_html)
+
+	assert len(os.listdir(ruta_carpeta))==numero_archivos
+
+	vaciarCarpeta(ruta_carpeta)
+
+	assert not os.listdir(ruta_carpeta)
+
+
+
+
+
+
+
+def test_vaciar_carpeta_mapas_usuario_vacia():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert not os.listdir(ruta_carpeta)
+
+	vaciarCarpetaMapasUsuario(ruta_carpeta, "golden")
+
+	assert not os.listdir(ruta_carpeta)
+
+def test_vaciar_carpeta_mapas_usuario_llena_archivo_usuario():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert not os.listdir(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "html_golden.html")
+
+	crearHTML(ruta_html)
+
+	assert os.listdir(ruta_carpeta)
+
+	vaciarCarpetaMapasUsuario(ruta_carpeta, "golden")
+
+	assert not os.listdir(ruta_carpeta)
+
+def test_vaciar_carpeta_mapas_usuario_llena_archivo_otro_usuario():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	assert not os.listdir(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "html_otro.html")
+
+	crearHTML(ruta_html)
+
+	assert os.listdir(ruta_carpeta)
+
+	vaciarCarpetaMapasUsuario(ruta_carpeta, "golden")
+
+	assert os.listdir(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["numero_archivos_usuario"],
+	[(1,),(3,),(7,),(4,),(13,)]
+)
+def test_vaciar_carpeta_mapas_usuario_llena_archivos_ambos(numero_archivos_usuario):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	assert not os.listdir(ruta_carpeta)
+
+	for numero in range(numero_archivos_usuario):
+
+		ruta_html=os.path.join(ruta_carpeta, f"html_golden{numero}.html")
+
+		crearHTML(ruta_html)
+
+	for numero in range(numero_archivos_usuario+2):
+
+		ruta_html=os.path.join(ruta_carpeta, f"html_otro{numero}.html")
+
+		crearHTML(ruta_html)
+
+	assert len(os.listdir(ruta_carpeta))==numero_archivos_usuario+numero_archivos_usuario+2
+
+	vaciarCarpetaMapasUsuario(ruta_carpeta, "golden")
+
+	assert len(os.listdir(ruta_carpeta))==numero_archivos_usuario+2
+
+	for archivo in os.listdir(ruta_carpeta):
+
+		assert not archivo.startswith("html_golden")
+		assert archivo.startswith("html_otro")
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_mis_estadios_sin_puntos():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadios(ruta_carpeta, [], "nacho_mapa.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var circle_" not in contenido
+		assert "L.circle" not in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["latitud", "longitud"],
+	[
+		(40.01, -3.45),
+		(30.11, -21.45),
+		(1.01, 9.86),
+		(-2.34, 40.04),
+	]
+)
+def test_crear_mapa_mis_estadios(latitud, longitud):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadios(ruta_carpeta, [(latitud, longitud)], "nacho_mapa.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var circle_" in contenido
+		assert "L.circle" in contenido
+		assert f"[{latitud}, {longitud}]"
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)

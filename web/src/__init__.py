@@ -1,4 +1,5 @@
 from flask import Flask
+import os
 
 from .blueprints.inicio import bp_inicio
 from .blueprints.registro import bp_registro
@@ -12,6 +13,15 @@ from .blueprints.jugador import bp_jugador
 from .blueprints.anadir_partido_asistido import bp_anadir_partido_asistido
 
 from .extensiones.manager import login_manager
+
+from .utilidades.utils import crearCarpeta
+
+# Funcion para crear el entorno
+def creacionEntorno()->None:
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas"))
 
 # Funcion para crear la instancia de la aplicacion
 def crear_app(configuracion:object)->Flask:
@@ -33,5 +43,7 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_competicion)
 	app.register_blueprint(bp_jugador)
 	app.register_blueprint(bp_anadir_partido_asistido)
+
+	creacionEntorno()
 
 	return app

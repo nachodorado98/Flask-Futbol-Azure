@@ -1883,3 +1883,25 @@ class Conexion:
 											competicion["logo_competicion"],
 											competicion["pais"],
 											competicion["numero_veces"]), competiciones_asistidas))
+
+	# Metodo para obtener las coordenadas de los estadios de los partidos asistidos de un usuario
+	def obtenerCoordenadasEstadiosPartidosAsistidosUsuario(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT DISTINCT e.latitud, e.longitud
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+							WHERE e.latitud IS NOT NULL
+							AND e.longitud IS NOT NULL
+							GROUP BY e.latitud, e.longitud
+							LIMIT %s""",
+							(usuario, numero))
+
+		coordenadas_estadios_asistidos=self.c.fetchall()
+
+		return list(map(lambda coordenada: (coordenada["latitud"],
+											coordenada["longitud"]), coordenadas_estadios_asistidos))

@@ -1,11 +1,13 @@
-from flask import Blueprint, render_template, redirect, request
+from flask import Blueprint, render_template, redirect, request, send_file
 from flask_login import login_required, current_user
+import os
 
 from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
 
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
+from src.utilidades.utils import vaciarCarpeta, crearMapaMisEstadios
 
 bp_estadio=Blueprint("estadio", __name__)
 
@@ -104,6 +106,16 @@ def pagina_mis_estadios():
 
 	paises_asistidos=con.obtenerPaisesEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios)
 
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	vaciarCarpeta(os.path.join(ruta, "templates", "mapas"))
+
+	nombre_mapa=f"mapa_small_mis_estadios_user_{current_user.id}.html"
+
+	coordenadas=con.obtenerCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
+
+	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), coordenadas, nombre_mapa)
+
 	con.cerrarConexion()
 
 	return render_template("mis_estadios.html",
@@ -115,9 +127,20 @@ def pagina_mis_estadios():
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							paises_asistidos=paises_asistidos,
 							numero_paises=len(paises_asistidos),
+							nombre_mapa=nombre_mapa,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+
+@bp_estadio.route("/estadios/mis_estadios/mapa/<nombre_mapa>")
+@login_required
+def visualizarMapaMisEstadios(nombre_mapa:str):
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
+
+	return send_file(ruta_mapa)
 
 @bp_estadio.route("/estadios/mis_estadios/<codigo_pais>")
 @login_required

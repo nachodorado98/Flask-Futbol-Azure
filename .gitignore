@@ -188,3 +188,4 @@ pyrightconfig.json
 /config
 /logs
 /plugins
+web/src/templates/mapas/

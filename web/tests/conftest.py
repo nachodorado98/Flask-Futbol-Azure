@@ -6,6 +6,7 @@ import pytest
 from src import crear_app
 from src.database.conexion import Conexion
 from confmain import config
+from src.utilidades.utils import vaciarCarpeta
 
 @pytest.fixture()
 def app():
@@ -86,3 +87,9 @@ def pytest_sessionfinish(session, exitstatus):
 	con.cerrarConexion()
 
 	print("\nLimpieza de la BBDD correcta")
+
+	ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+
+	vaciarCarpeta(ruta_carpeta_mapas)
+
+	print("\nLimpieza de la carpeta mapas correcta")

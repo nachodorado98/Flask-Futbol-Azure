@@ -5,6 +5,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List, Dict, Optional
+import os
+import folium
 
 from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO_CORREO
 
@@ -253,3 +255,49 @@ def obtenerPaisesNoSeleccionados(paises:List[tuple], codigo_pais:str)->List[tupl
     paises_no_seleccionados=list(filter(lambda pais: pais[0]!=codigo_pais, paises))
 
     return [(pais[0], pais[1]) for pais in paises_no_seleccionados]
+
+def crearCarpeta(ruta:str)->None:
+
+    if not os.path.exists(ruta):
+
+        os.mkdir(ruta)
+
+        print(f"Carpeta creada: {ruta}")
+
+def borrarCarpeta(ruta:str)->None:
+
+    if os.path.exists(ruta):
+
+        os.rmdir(ruta)
+
+        print(f"Carpeta borrada: {ruta}")
+
+def vaciarCarpeta(ruta:str)->None:
+
+    if os.path.exists(ruta):
+
+        for archivo in os.listdir(ruta):
+
+            os.remove(os.path.join(ruta, archivo))
+
+def vaciarCarpetaMapasUsuario(ruta:str, nombre_usuario:str)->None:
+
+    if os.path.exists(ruta):
+
+        for archivo in os.listdir(ruta):
+
+            if nombre_usuario in archivo:
+
+                os.remove(os.path.join(ruta, archivo))
+
+def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str)->None:
+
+    centro_mapa=[50.0909, 10.1228]
+
+    mapa=folium.Map(location=centro_mapa, zoom_start=2.4)
+
+    for latitud, longitud in datos_estadios:
+
+        folium.Circle(location=[latitud, longitud], radius=2000, color="red", fill=True, fill_color="red", fill_opacity=1).add_to(mapa)
+
+    mapa.save(os.path.join(ruta, nombre_mapa))
