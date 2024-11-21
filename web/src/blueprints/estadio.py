@@ -7,7 +7,7 @@ from src.database.conexion import Conexion
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
 
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
-from src.utilidades.utils import vaciarCarpeta, crearMapaMisEstadios, crearMapaMisEstadiosDetalle, obtenerCentroide
+from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaMisEstadios, crearMapaMisEstadiosDetalle, obtenerCentroide
 
 bp_estadio=Blueprint("estadio", __name__)
 
@@ -108,15 +108,21 @@ def pagina_mis_estadios():
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	vaciarCarpeta(os.path.join(ruta, "templates", "mapas"))
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas"), current_user.id)
 
 	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
 
 	centroide=obtenerCentroide(datos_coordenadas)
 
-	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, f"mapa_small_mis_estadios_user_{current_user.id}.html", centroide)
+	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"),
+						datos_coordenadas,
+						f"mapa_small_mis_estadios_user_{current_user.id}.html",
+						centroide)
 
-	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, f"mapa_detalle_mis_estadios_user_{current_user.id}.html", centroide)
+	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"),
+								datos_coordenadas,
+								f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
+								centroide)
 
 	con.cerrarConexion()
 
@@ -173,6 +179,20 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 	paises_no_seleccionados=obtenerPaisesNoSeleccionados(paises_asistidos, codigo_pais)
 
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas"), current_user.id)
+
+	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPaisPartidosAsistidosUsuario(current_user.id, codigo_pais, numero_estadios)
+
+	centroide=obtenerCentroide(datos_coordenadas)
+
+	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"),
+						datos_coordenadas,
+						f"mapa_small_mis_estadios_user_{current_user.id}.html",
+						centroide,
+						3)
+
 	con.cerrarConexion()
 
 	return render_template("mis_estadios_pais.html",
@@ -184,6 +204,17 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							numero_estadios_pais=len(estadios_asistidos_pais),
 							nombre_pais_seleccionado=nombre_pais_seleccionado,
 							paises_no_seleccionados=paises_no_seleccionados,
+							nombre_mapa_small_detalle=f"mapa_small_mis_estadios_user_{current_user.id}.html",
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+
+@bp_estadio.route("/estadios/mis_estadios_pais/mapa/<nombre_mapa>")
+@login_required
+def visualizarMapaMisEstadiosPais(nombre_mapa:str):
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
+
+	return send_file(ruta_mapa)

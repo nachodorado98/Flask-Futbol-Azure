@@ -7,6 +7,7 @@
 {% block contenedor_lateral_izq %}
 
 <div class="contenedor-lateral contenedor-lateral-izq">
+
     <div class="circulo-estadios-asistidos-pais">
 
         {% if codigo_pais=='-1' %}
@@ -17,6 +18,14 @@
         
         <p class="titulo-circulo-estadios-asistidos-pais">Estadios Visitados</p>
         <p class="valor-circulo-estadios-asistidos-pais"><strong>{{ numero_estadios_pais }}</strong></p>
+    </div>
+
+    <div class="circulo-mapa-mis-estadios-pais-asistidos">
+        <div class="tarjeta-mapa-mis-estadios-pais-asistidos" onclick="abrirVentanaEmergente()">
+            <div class="contenedor-mapa-mis-estadios-pais-asistidos">
+                <iframe src="/estadios/mis_estadios_pais/mapa/{{ nombre_mapa_small_detalle }}"></iframe>
+            </div>
+        </div>
     </div>
 
 </div>

@@ -306,9 +306,9 @@ def obtenerCentroide(datos_estadios:List[tuple])->tuple:
 
         raise Exception("Error en obtener el centroide")
 
-def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228])->None:
+def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228], zoom:float=2.4)->None:
 
-    mapa=folium.Map(location=centro_mapa, zoom_start=2.4)
+    mapa=folium.Map(location=centro_mapa, zoom_start=zoom)
 
     for nombre, latitud, longitud, escudo, pais in datos_estadios:
 
@@ -321,9 +321,9 @@ def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, 
 
     mapa.save(os.path.join(ruta, nombre_mapa))
 
-def crearMapaMisEstadiosDetalle(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228])->None:
+def crearMapaMisEstadiosDetalle(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228], zoom:float=3.5)->None:
 
-    mapa=folium.Map(location=centro_mapa, zoom_start=3.5, min_zoom=3.5)
+    mapa=folium.Map(location=centro_mapa, zoom_start=zoom, min_zoom=zoom)
 
     for nombre, latitud, longitud, estadio, pais in datos_estadios:
 

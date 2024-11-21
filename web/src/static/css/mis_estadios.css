@@ -77,11 +77,6 @@
     pointer-events: none;
 }
 
-
-
-
-
-
 .ventana-emergente {
     display: none;
     position: fixed;
@@ -135,14 +130,6 @@
     text-decoration: none;
     cursor: pointer;
 }
-
-
-
-
-
-
-
-
 
 .circulo-paises-estadios-asistidos {
     width: 193px;

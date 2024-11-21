@@ -1944,3 +1944,10 @@ class Conexion:
 												datos_estadio["longitud"],
 												datos_estadio["imagen_estadio"],
 												datos_estadio["pais"]), datos_estadios_asistidos))
+
+	# Metodo para obtener los datos y las coordenadas de los estadios de los partidos asistidos de un usuario y un pais
+	def obtenerDatosCoordenadasEstadiosPaisPartidosAsistidosUsuario(self, usuario:str, codigo_pais:str, numero:int)->List[Optional[tuple]]:
+
+		datos_estadios_asistidos=self.obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(usuario, numero)
+
+		return list(filter(lambda dato_estadio: dato_estadio[4]==codigo_pais, datos_estadios_asistidos))
