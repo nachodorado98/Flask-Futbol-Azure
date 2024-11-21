@@ -45,7 +45,7 @@ def conexion_entorno(conexion):
 
 	conexion.c.execute("""INSERT INTO estadios (Estadio_Id, Codigo_Estadio, Nombre, Direccion, Latitud, Longitud, Ciudad,
 												Capacidad, Fecha, Largo, Ancho, Telefono, Cesped, Pais, Codigo_Pais)
-						VALUES('metropolitano', '23', 'Metropolitano', 'Av Luis Aragones', '40.436', '-3.599', 'Madrid', 100000,
+						VALUES('metropolitano', 23, 'Metropolitano', 'Av Luis Aragones', 40.436, -3.599, 'Madrid', 100000,
 								2017, 105, 68, 'Telefono', 'Cedped', 'España', 'es')""")
 
 	conexion.c.execute("""INSERT INTO partido_estadio

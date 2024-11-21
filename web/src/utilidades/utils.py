@@ -10,6 +10,8 @@ import folium
 
 from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO_CORREO
 
+from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESTADIOS
+
 def usuario_correcto(usuario:str)->bool:
 
     return bool(usuario and usuario.isalnum())
@@ -290,14 +292,61 @@ def vaciarCarpetaMapasUsuario(ruta:str, nombre_usuario:str)->None:
 
                 os.remove(os.path.join(ruta, archivo))
 
-def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str)->None:
+def obtenerCentroide(datos_estadios:List[tuple])->tuple:
 
-    centro_mapa=[50.0909, 10.1228]
+    latitudes=[latitud for nombre, latitud, longitud, escudo, pais in datos_estadios]
+
+    longitudes = [longitud for nombre, latitud, longitud, escudo, pais in datos_estadios]
+
+    try:
+
+        return (sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes))
+
+    except Exception:
+
+        raise Exception("Error en obtener el centroide")
+
+def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228])->None:
 
     mapa=folium.Map(location=centro_mapa, zoom_start=2.4)
 
-    for latitud, longitud in datos_estadios:
+    for nombre, latitud, longitud, escudo, pais in datos_estadios:
 
-        folium.Circle(location=[latitud, longitud], radius=2000, color="red", fill=True, fill_color="red", fill_opacity=1).add_to(mapa)
+        folium.Circle(location=[latitud, longitud],
+                        radius=2000,
+                        color="red",
+                        fill=True,
+                        fill_color="red",
+                        fill_opacity=1).add_to(mapa)
+
+    mapa.save(os.path.join(ruta, nombre_mapa))
+
+def crearMapaMisEstadiosDetalle(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228])->None:
+
+    mapa=folium.Map(location=centro_mapa, zoom_start=3.5, min_zoom=3.5)
+
+    for nombre, latitud, longitud, estadio, pais in datos_estadios:
+
+        popup_html=f"""
+                    <div style="text-align: center;">
+                        <h4>
+                            {nombre}
+                            <img src="{URL_DATALAKE_PAISES}{pais}.png" 
+                             alt="Pais" style="width:35px;">
+                        </h4>
+                        <img src="{URL_DATALAKE_ESTADIOS}{estadio}.png" 
+                             alt="Estadio" style="width:250px;">
+                    </div>
+                    """
+
+        icono_html=f"""
+                    <div style="background-color: #ffcccc ; width: 35px; height: 35px; border-radius: 50%; text-align: center; border: 1px solid red; border-width: 1px;"">
+                        <img src="/static/imagenes/iconos/estadio_mapa.png" style="width: 25px; height: 25px; margin-top: 4px;">
+                    </div>
+                    """
+
+        folium.Marker(location=[latitud, longitud],
+                        popup=folium.Popup(popup_html, max_width=400),
+                        icon=folium.DivIcon(html=icono_html)).add_to(mapa)
 
     mapa.save(os.path.join(ruta, nombre_mapa))

@@ -14,9 +14,9 @@
     </div>
 
     <div class="circulo-mapa-mis-estadios-asistidos">
-        <div class="tarjeta-mapa-mis-estadios-asistidos">
+        <div class="tarjeta-mapa-mis-estadios-asistidos" onclick="abrirVentanaEmergente()">
             <div class="contenedor-mapa-mis-estadios-asistidos">
-                <iframe src="/estadios/mis_estadios/mapa/{{ nombre_mapa }}"></iframe>
+                <iframe src="/estadios/mis_estadios/mapa/{{ nombre_mapa_small }}"></iframe>
             </div>
         </div>
     </div>
@@ -27,6 +27,8 @@
     </div>
 
  </div>
+
+<script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
 
 {% endblock contenedor_lateral_izq %}
 
@@ -156,6 +158,16 @@
 
         {% endif %}
 
+    </div>
+
+    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solamamiento con los contenedores laterales -->
+    <div id="ventana-emergente" class="ventana-emergente">
+        <div class="contenido-ventana-emergente">
+            <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+            <div class="contenedor-mapa-mis-estadios-asistidos-detalle">
+                <iframe src="/estadios/mis_estadios/mapa/{{ nombre_mapa_detalle }}"></iframe>
+            </div>
+        </div>
     </div>
 
  </div>

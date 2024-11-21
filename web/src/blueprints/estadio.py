@@ -7,7 +7,7 @@ from src.database.conexion import Conexion
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
 
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
-from src.utilidades.utils import vaciarCarpeta, crearMapaMisEstadios
+from src.utilidades.utils import vaciarCarpeta, crearMapaMisEstadios, crearMapaMisEstadiosDetalle, obtenerCentroide
 
 bp_estadio=Blueprint("estadio", __name__)
 
@@ -110,11 +110,13 @@ def pagina_mis_estadios():
 
 	vaciarCarpeta(os.path.join(ruta, "templates", "mapas"))
 
-	nombre_mapa=f"mapa_small_mis_estadios_user_{current_user.id}.html"
+	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
 
-	coordenadas=con.obtenerCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
+	centroide=obtenerCentroide(datos_coordenadas)
 
-	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), coordenadas, nombre_mapa)
+	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, f"mapa_small_mis_estadios_user_{current_user.id}.html", centroide)
+
+	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, f"mapa_detalle_mis_estadios_user_{current_user.id}.html", centroide)
 
 	con.cerrarConexion()
 
@@ -127,7 +129,8 @@ def pagina_mis_estadios():
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							paises_asistidos=paises_asistidos,
 							numero_paises=len(paises_asistidos),
-							nombre_mapa=nombre_mapa,
+							nombre_mapa_small=f"mapa_small_mis_estadios_user_{current_user.id}.html",
+							nombre_mapa_detalle=f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

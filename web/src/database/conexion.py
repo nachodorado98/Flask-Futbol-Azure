@@ -1897,7 +1897,6 @@ class Conexion:
 		                    ON pe.estadio_id=e.estadio_id
 							WHERE e.latitud IS NOT NULL
 							AND e.longitud IS NOT NULL
-							GROUP BY e.latitud, e.longitud
 							LIMIT %s""",
 							(usuario, numero))
 
@@ -1905,3 +1904,43 @@ class Conexion:
 
 		return list(map(lambda coordenada: (coordenada["latitud"],
 											coordenada["longitud"]), coordenadas_estadios_asistidos))
+
+	# Metodo para obtener los datos y las coordenadas de los estadios de los partidos asistidos de un usuario
+	def obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT DISTINCT e.nombre, e.latitud, e.longitud,
+								CASE WHEN e.codigo_estadio IS NULL
+										THEN -1
+										ELSE e.codigo_estadio
+								END as imagen_estadio,
+								(CASE WHEN e.codigo_pais IS NULL
+					                THEN 
+					                	CASE WHEN eq.codigo_pais IS NULL
+					                		THEN '-1'
+					                		ELSE eq.codigo_pais
+					           			END
+					                ELSE e.codigo_pais
+					           	END) as pais
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+    	                    LEFT JOIN equipo_estadio ee
+							ON e.estadio_id=ee.estadio_id
+    						LEFT JOIN equipos eq
+							ON ee.equipo_id=eq.equipo_id
+							WHERE e.latitud IS NOT NULL
+							AND e.longitud IS NOT NULL
+							LIMIT %s""",
+							(usuario, numero))
+
+		datos_estadios_asistidos=self.c.fetchall()
+
+		return list(map(lambda datos_estadio: (datos_estadio["nombre"],
+												datos_estadio["latitud"],
+												datos_estadio["longitud"],
+												datos_estadio["imagen_estadio"],
+												datos_estadio["pais"]), datos_estadios_asistidos))

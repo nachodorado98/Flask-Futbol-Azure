@@ -5,7 +5,8 @@ from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_cor
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
 from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado, anadirPuntos
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
-from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario, crearMapaMisEstadios
+from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
+from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -403,12 +404,6 @@ def test_vaciar_carpeta_llena_varios(numero_archivos):
 
 	assert not os.listdir(ruta_carpeta)
 
-
-
-
-
-
-
 def test_vaciar_carpeta_mapas_usuario_vacia():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
@@ -493,6 +488,55 @@ def test_vaciar_carpeta_mapas_usuario_llena_archivos_ambos(numero_archivos_usuar
 
 	borrarCarpeta(ruta_carpeta)
 
+def test_obtener_centroide_sin_puntos():
+
+	with pytest.raises(Exception):
+
+		obtenerCentroide([])
+
+@pytest.mark.parametrize(["latitud", "longitud"],
+	[
+		(40.01, -3.45),
+		(30.11, -21.45),
+		(1.01, 9.86),
+		(-2.34, 40.04),
+	]
+)
+def test_obtener_centroide_un_punto(latitud, longitud):
+
+	assert obtenerCentroide([("Estadio", latitud, longitud, 1, "1")])==(latitud, longitud)
+
+def test_obtener_centroide_puntos_limites():
+
+	estadios=[("Estadio", 90.0, 180.0, 1, "1"),
+				("Estadio", -90.0, -180.0, 1, "1")]
+
+	assert obtenerCentroide(estadios)==pytest.approx((0.0, 0.0))
+
+def test_obtener_centroide():
+
+	estadios=[("Estadio", 40.0, -3.0, 1, "1"),
+				("Estadio", 41.0, -2.0, 1, "1"),
+				("Estadio", 42.0, -4.0, 1, "1")]
+
+	centroide=((40.0+41.0+42.0)/3, (-3.0+-2.0+-4.0)/3)
+
+	assert obtenerCentroide(estadios)==pytest.approx(centroide)
+
+def test_obtener_centroide_datos_reales():
+
+    estadios=[("Estadio Santiago Bernabéu", 40.453054, -3.688344, 1, "1"),
+        		("Camp Nou", 41.380898, 2.122820, 1, "1"),
+		        ("Estadio Ramón Sánchez-Pizjuán", 37.384049, -5.970579, 1, "1"),
+		        ("Estadio de Mestalla", 39.474574, -0.358355, 1, "1"),
+		        ("San Mamés", 43.264130, -2.949721, 1, "1"),
+		        ("Estadio de Gran Canaria", 28.099731, -15.451081, 1, "1")]
+
+    centroide=((40.453054+41.380898+37.384049+39.474574+43.264130+28.099731)/6,
+        		(-3.688344+2.122820+-5.970579+-0.358355+-2.949721+-15.451081)/6)
+
+    assert obtenerCentroide(estadios) == pytest.approx(centroide)
+
 def test_crear_mapa_mis_estadios_sin_puntos():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
@@ -543,7 +587,7 @@ def test_crear_mapa_mis_estadios(latitud, longitud):
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaMisEstadios(ruta_carpeta, [(latitud, longitud)], "nacho_mapa.html")
+	crearMapaMisEstadios(ruta_carpeta, [("Estadio", latitud, longitud, 1, "1")], "nacho_mapa.html")
 
 	assert os.path.exists(ruta_html)
 
@@ -556,7 +600,80 @@ def test_crear_mapa_mis_estadios(latitud, longitud):
 		assert "L.map" in contenido
 		assert "var circle_" in contenido
 		assert "L.circle" in contenido
-		assert f"[{latitud}, {longitud}]"
+		assert f"[{latitud}, {longitud}]" in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_mis_estadios_detalle_sin_puntos():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_detalle.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadiosDetalle(ruta_carpeta, [], "nacho_mapa_detalle.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" not in contenido
+		assert "L.marker" not in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["latitud", "longitud"],
+	[
+		(40.01, -3.45),
+		(30.11, -21.45),
+		(1.01, 9.86),
+		(-2.34, 40.04),
+	]
+)
+def test_crear_mapa_mis_estadios_detalle(latitud, longitud):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_detalle.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadiosDetalle(ruta_carpeta, [("Nombre Estadio", latitud, longitud, 220619, "pais_icono")], "nacho_mapa_detalle.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+		assert f"[{latitud}, {longitud}]" in contenido
+		assert "Nombre Estadio" in contenido
+		assert "220619.png" in contenido
+		assert "pais_icono.png" in contenido
+		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
