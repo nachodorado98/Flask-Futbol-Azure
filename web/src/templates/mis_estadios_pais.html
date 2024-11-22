@@ -23,12 +23,14 @@
     <div class="circulo-mapa-mis-estadios-pais-asistidos">
         <div class="tarjeta-mapa-mis-estadios-pais-asistidos" onclick="abrirVentanaEmergente()">
             <div class="contenedor-mapa-mis-estadios-pais-asistidos">
-                <iframe src="/estadios/mis_estadios_pais/mapa/{{ nombre_mapa_small_detalle }}"></iframe>
+                <iframe src="/estadios/mis_estadios_pais/mapa/{{ nombre_mapa_small }}"></iframe>
             </div>
         </div>
     </div>
 
 </div>
+
+<script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
 
 {% endblock contenedor_lateral_izq %}
 
@@ -115,4 +117,20 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+<div class="contenedor-lateral contenedor-lateral-der">
+
+    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solamamiento con los contenedores laterales -->
+    <div id="ventana-emergente" class="ventana-emergente">
+        <div class="contenido-ventana-emergente">
+            <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+            <div class="contenedor-mapa-mis-estadios-asistidos-pais-detalle">
+                <iframe src="/estadios/mis_estadios_pais/mapa/{{ nombre_mapa_detalle }}"></iframe>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock contenedor_lateral_der %}

@@ -193,6 +193,12 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 						centroide,
 						3)
 
+	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"),
+							datos_coordenadas,
+							f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
+							centroide,
+							4.5)
+
 	con.cerrarConexion()
 
 	return render_template("mis_estadios_pais.html",
@@ -204,7 +210,8 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							numero_estadios_pais=len(estadios_asistidos_pais),
 							nombre_pais_seleccionado=nombre_pais_seleccionado,
 							paises_no_seleccionados=paises_no_seleccionados,
-							nombre_mapa_small_detalle=f"mapa_small_mis_estadios_user_{current_user.id}.html",
+							nombre_mapa_small=f"mapa_small_mis_estadios_user_{current_user.id}.html",
+							nombre_mapa_detalle=f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
