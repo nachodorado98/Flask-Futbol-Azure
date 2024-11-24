@@ -164,12 +164,24 @@
     <div id="ventana-emergente" class="ventana-emergente">
         <div class="contenido-ventana-emergente">
             <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+            <div class="botones-mapa-detalle">
+                <button onclick="cambiarMapa('/estadios/mis_estadios/mapa/{{ nombre_mapa_detalle }}', this)" class="boton-estadios-mapa active">
+                    <span class="boton-estadios-mapa-text">Estadios</span>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/estadio_mapa.png') }}" alt="Estadio Mapa Icon" class="icono-estadio-mapa">
+                </button>
+                <button onclick="cambiarMapa('/estadios/mis_estadios/mapa/{{ nombre_mapa_detalle_paises }}', this)" class="boton-paises-mapa">
+                    <span class="boton-paises-mapa-text">Paises</span>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/pais_mapa.png') }}" alt="Pais Mapa Icon" class="icono-pais-mapa">
+                </button>
+            </div>
             <div class="contenedor-mapa-mis-estadios-asistidos-detalle">
-                <iframe src="/estadios/mis_estadios/mapa/{{ nombre_mapa_detalle }}"></iframe>
+                <iframe src="/estadios/mis_estadios/mapa/{{ nombre_mapa_detalle }}" id="iframe-mapa"></iframe>
             </div>
         </div>
     </div>
 
  </div>
+
+<script src="{{ url_for('static', filename='js/cambio_mapa_estadios_paises.js') }}"></script>
 
 {% endblock contenedor_lateral_der %}

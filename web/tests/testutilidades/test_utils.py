@@ -1,5 +1,6 @@
 import pytest
 import os
+import geopandas as gpd
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
@@ -7,6 +8,7 @@ from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, corre
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
+from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -674,6 +676,280 @@ def test_crear_mapa_mis_estadios_detalle(latitud, longitud):
 		assert "220619.png" in contenido
 		assert "pais_icono.png" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_leer_geojson_paises_error():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static")
+
+	with pytest.raises(Exception):
+
+		leerGeoJSON(ruta_relativa)
+
+def test_leer_geojson_paises():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	geodataframe=leerGeoJSON(ruta_relativa)
+
+	assert not geodataframe.empty
+	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
+
+def test_obtener_geometria_pais_error():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static")
+
+	with pytest.raises(Exception):
+
+		obtenerGeometriaPais(ruta_relativa, 40.4168, -3.7038)
+
+def test_obtener_geometria_pais_no_existen():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	geodataframe=obtenerGeometriaPais(ruta_relativa, 0, 0)
+
+	assert geodataframe.empty
+	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
+
+@pytest.mark.parametrize(["latitud", "longitud", "pais"],
+    [
+        (40.4168, -3.7038, "Spain"),
+        (48.8566, 2.3522, "France"), 
+        (51.5074, -0.1278, "United Kingdom"),
+        (39.5696, 2.6502, "Spain-Mallorca"),
+        (28.1235, -15.4363, "Spain-LasPalmas"),
+        (41.9028, 12.4964, "Italy")
+    ]
+)
+def test_obtener_geometria_pais(latitud, longitud, pais):
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	geodataframe=obtenerGeometriaPais(ruta_relativa, latitud, longitud)
+
+	assert not geodataframe.empty
+	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
+	assert geodataframe["name"].iloc[0]==pais
+
+def test_obtener_geometrias_paises_error():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static")
+
+	with pytest.raises(Exception):
+
+		obtenerGeometriasPaises(ruta_relativa, [(40.4168, -3.7038)])
+
+def test_obtener_geometrias_paises_error_puntos():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	with pytest.raises(Exception):
+
+		obtenerGeometriasPaises(ruta_relativa, [])
+
+def test_obtener_geometrias_paises_no_existen():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	geodataframe=obtenerGeometriasPaises(ruta_relativa, [(0, 0)])
+
+	assert geodataframe.empty
+	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
+
+def test_obtener_geometrias_paises():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	coordenadas=[(40.4168, -3.7038),(48.8566, 2.3522),(51.5074, -0.1278),(39.5696, 2.6502),
+        		(28.1235, -15.4363),(41.9028, 12.4964)]
+
+	geodataframe=obtenerGeometriasPaises(ruta_relativa, coordenadas)
+
+	assert not geodataframe.empty
+	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
+	assert len(geodataframe)==6
+
+def test_obtener_geometrias_paises_mismo_pais():
+
+	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
+
+	coordenadas=[(40.4168, -3.7038),(41.4168, -4.7039),(41.2168, -4.1039),(39.4168, -4.7039)]
+
+	geodataframe=obtenerGeometriasPaises(ruta_relativa, coordenadas)
+
+	assert not geodataframe.empty
+	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
+	assert len(geodataframe)==1
+
+def test_crear_mapa_mis_estadios_detalle_paises_error():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	with pytest.raises(Exception):
+
+		crearMapaMisEstadiosDetallePaises(ruta_carpeta, [], "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_mis_estadios_detalle_paises_sin_puntos():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadiosDetallePaises(ruta_carpeta, [(0.0, 0.0)], "nacho_mapa.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var geo_json_" in contenido
+		assert "function geo_json_" in contenido
+		assert '"bbox": [NaN, NaN, NaN, NaN]' in contenido
+		assert '"features": []' in contenido
+		assert '"type": "FeatureCollection"' in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_mis_estadios_detalle_paises_con_punto():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadiosDetallePaises(ruta_carpeta, [(40.01, -3.45)], "nacho_mapa.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var geo_json_" in contenido
+		assert "function geo_json_" in contenido
+		assert '"bbox": [NaN, NaN, NaN, NaN]' not in contenido
+		assert '"features": []' not in contenido
+		assert '"type": "FeatureCollection"' in contenido
+		assert '{"name": "Spain"}' in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["latitud", "longitud", "pais"],
+    [
+        (40.4168, -3.7038, "Spain"),
+        (48.8566, 2.3522, "France"), 
+        (51.5074, -0.1278, "United Kingdom"),
+        (39.5696, 2.6502, "Spain-Mallorca"),
+        (28.1235, -15.4363, "Spain-LasPalmas"),
+        (41.9028, 12.4964, "Italy")
+    ]
+)
+def test_crear_mapa_mis_estadios_detalle_paises_con_punto_paises(latitud, longitud, pais):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaMisEstadiosDetallePaises(ruta_carpeta, [(latitud, longitud)], "nacho_mapa.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var geo_json_" in contenido
+		assert "function geo_json_" in contenido
+		assert '"bbox": [NaN, NaN, NaN, NaN]' not in contenido
+		assert '"features": []' not in contenido
+		assert '"type": "FeatureCollection"' in contenido
+		assert '{"name": "'+pais+'"}' in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_mis_estadios_detalle_paises_con_puntos():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa.html")
+
+	assert not os.path.exists(ruta_html)
+
+	coordenadas=[(40.4168, -3.7038),(48.8566, 2.3522),(41.9028, 12.4964),(51.5074, -0.1278)]
+
+	crearMapaMisEstadiosDetallePaises(ruta_carpeta, coordenadas, "nacho_mapa.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var geo_json_" in contenido
+		assert "function geo_json_" in contenido
+		assert '"bbox": [NaN, NaN, NaN, NaN]' not in contenido
+		assert '"features": []' not in contenido
+		assert '"type": "FeatureCollection"' in contenido
+		assert '{"name": "Spain"}' in contenido
+		assert '{"name": "France"}' in contenido
+		assert '{"name": "Italy"}' in contenido
+		assert '{"name": "United Kingdom"}' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
