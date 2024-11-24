@@ -719,7 +719,7 @@ def test_obtener_geometria_pais_no_existen():
     [
         (40.4168, -3.7038, "Spain"),
         (48.8566, 2.3522, "France"), 
-        (51.5074, -0.1278, "United Kingdom"),
+        (51.5074, -0.1278, "England"),
         (39.5696, 2.6502, "Spain-Mallorca"),
         (28.1235, -15.4363, "Spain-LasPalmas"),
         (41.9028, 12.4964, "Italy")
@@ -876,7 +876,7 @@ def test_crear_mapa_mis_estadios_detalle_paises_con_punto():
     [
         (40.4168, -3.7038, "Spain"),
         (48.8566, 2.3522, "France"), 
-        (51.5074, -0.1278, "United Kingdom"),
+        (51.5074, -0.1278, "England"),
         (39.5696, 2.6502, "Spain-Mallorca"),
         (28.1235, -15.4363, "Spain-LasPalmas"),
         (41.9028, 12.4964, "Italy")
@@ -949,7 +949,7 @@ def test_crear_mapa_mis_estadios_detalle_paises_con_puntos():
 		assert '{"name": "Spain"}' in contenido
 		assert '{"name": "France"}' in contenido
 		assert '{"name": "Italy"}' in contenido
-		assert '{"name": "United Kingdom"}' in contenido
+		assert '{"name": "England"}' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 

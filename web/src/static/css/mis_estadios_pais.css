@@ -104,7 +104,7 @@
     border-radius: 10px;
 }
 
-.contenedor-mapa-mis-estadios-asistidos-pais-detalle {
+.contenedor-mapa-mis-estadios-asistidos-detalle {
     margin-top: 15px;
     border-radius: 5px;
     overflow: hidden;
@@ -114,17 +114,17 @@
     background-color: var(--color-fondo);
 }
 
-.contenedor-mapa-mis-estadios-asistidos-pais-detalle iframe {
+.contenedor-mapa-mis-estadios-asistidos-detalle iframe {
     width: 100%;
     max-width: 1000px;
-    height: 600px;
+    height: 550px;
     border: none;
 }
 
 .cerrar {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 25px;
     font-weight: bold;
     margin-left: 10px;
 }
@@ -135,6 +135,61 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.botones-mapa-detalle {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 0px;
+}
+
+.botones-mapa-detalle button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.botones-mapa-detalle button:hover {
+    transform: scale(1.05);
+}
+
+.boton-estadios-mapa-text,
+.boton-paises-mapa-text {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.icono-estadio-mapa,
+.icono-pais-mapa {
+    height: 24px;
+    width: auto;
+}
+
+.botones-mapa-detalle button.active {
+    background-color: var(--color-fondo);
+    color: var(--color-primario);
+    font-weight: bold;
+    border: 2px solid var(--color-primario);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-mapa-mis-estadios-asistidos-detalle iframe {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.contenedor-mapa-mis-estadios-asistidos-detalle iframe.hidden {
+    opacity: 0;
+}
+
 
 .tarjeta-estadios-asistidos-pais {
     width: 100%;

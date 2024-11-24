@@ -115,22 +115,28 @@ def pagina_mis_estadios():
 
 	centroide=obtenerCentroide(datos_coordenadas)
 
+	nombre_mapa_small=f"mapa_small_mis_estadios_user_{current_user.id}.html"
+
 	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"),
-						datos_coordenadas,
-						f"mapa_small_mis_estadios_user_{current_user.id}.html",
-						centroide)
+							datos_coordenadas,
+							nombre_mapa_small,
+							centroide)
+
+	nombre_mapa_detalle=f"mapa_detalle_mis_estadios_user_{current_user.id}.html"
 
 	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"),
 								datos_coordenadas,
-								f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
+								nombre_mapa_detalle,
 								centroide)
 
 	coordenadas=con.obtenerCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
 
+	nombre_mapa_detalle_paises=f"mapa_detalle_paises_mis_estadios_user_{current_user.id}.html"
+
 	crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"),
-							coordenadas,
-							f"mapa_detalle_paises_mis_estadios_user_{current_user.id}.html",
-							centroide)
+										coordenadas,
+										nombre_mapa_detalle_paises,
+										centroide)
 
 	con.cerrarConexion()
 
@@ -143,9 +149,9 @@ def pagina_mis_estadios():
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							paises_asistidos=paises_asistidos,
 							numero_paises=len(paises_asistidos),
-							nombre_mapa_small=f"mapa_small_mis_estadios_user_{current_user.id}.html",
-							nombre_mapa_detalle=f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
-							nombre_mapa_detalle_paises=f"mapa_detalle_paises_mis_estadios_user_{current_user.id}.html",
+							nombre_mapa_small=nombre_mapa_small,
+							nombre_mapa_detalle=nombre_mapa_detalle,
+							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
@@ -196,19 +202,31 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 	centroide=obtenerCentroide(datos_coordenadas)
 
+	nombre_mapa_small=f"mapa_small_mis_estadios_pais_{codigo_pais}_user_{current_user.id}.html"
+
 	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"),
 						datos_coordenadas,
-						f"mapa_small_mis_estadios_user_{current_user.id}.html",
+						nombre_mapa_small,
 						centroide,
 						3)
 
+	nombre_mapa_detalle=f"mapa_detalle_mis_estadios_pais_{codigo_pais}_user_{current_user.id}.html"
+
 	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"),
-							datos_coordenadas,
-							f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
-							centroide,
-							4.5)
+								datos_coordenadas,
+								nombre_mapa_detalle,
+								centroide,
+								4.5)
 
+	coordenadas=[(dato[1], dato[2]) for dato in datos_coordenadas]
 
+	nombre_mapa_detalle_paises=f"mapa_detalle_paises_mis_estadios_pais_{codigo_pais}_user_{current_user.id}.html"
+
+	crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"),
+										coordenadas,
+										nombre_mapa_detalle_paises,
+										centroide,
+										4.5)
 
 	con.cerrarConexion()
 
@@ -221,8 +239,9 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							numero_estadios_pais=len(estadios_asistidos_pais),
 							nombre_pais_seleccionado=nombre_pais_seleccionado,
 							paises_no_seleccionados=paises_no_seleccionados,
-							nombre_mapa_small=f"mapa_small_mis_estadios_user_{current_user.id}.html",
-							nombre_mapa_detalle=f"mapa_detalle_mis_estadios_user_{current_user.id}.html",
+							nombre_mapa_small=nombre_mapa_small,
+							nombre_mapa_detalle=nombre_mapa_detalle,
+							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
