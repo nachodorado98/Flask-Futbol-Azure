@@ -487,7 +487,7 @@ class Conexion:
 										THEN -1
 										ELSE e.codigo_estadio
 								END as imagen_estadio,
-								e.direccion, e.latitud, e.longitud, e.ciudad,
+								e.direccion, e.latitud, e.longitud, e.ciudad, e.pais,
 								CAST(e.capacidad AS TEXT) AS espectadores, e.fecha, e.largo, e.ancho,
 								(CASE WHEN e.codigo_pais IS NULL
 					                THEN 
@@ -496,7 +496,7 @@ class Conexion:
 					                		ELSE eq.codigo_pais
 					           			END
 					                ELSE e.codigo_pais
-					           	END) as pais
+					           	END) as bandera_pais
 						FROM estadios e
 	                    LEFT JOIN equipo_estadio ee
 						ON e.estadio_id=ee.estadio_id
@@ -517,7 +517,8 @@ class Conexion:
 										estadio["fecha"],
 										estadio["largo"],
 										estadio["ancho"],
-										estadio["pais"])
+										estadio["pais"],
+										estadio["bandera_pais"])
 
 	# Metodo para obtener el equipo de un estadio
 	def obtenerEquipoEstadio(self, estadio_id:str)->List[Optional[tuple]]:
@@ -1951,3 +1952,14 @@ class Conexion:
 		datos_estadios_asistidos=self.obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(usuario, numero)
 
 		return list(filter(lambda dato_estadio: dato_estadio[4]==codigo_pais, datos_estadios_asistidos))
+
+	# Metodo para obtener el numero de veces visitado a un estadio de los partidos asistidos
+	def obtenerNumeroVecesEstadioPartidosAsistidosUsuario(self, usuario:str, estadio_id:str)->int:
+
+		estadios=self.obtenerDatosEstadios()
+
+		estadios_asistidos=self.obtenerEstadiosPartidosAsistidosUsuarioCantidad(usuario, len(estadios))
+
+		estadio_veces=list(filter(lambda estadio: estadio[0]==estadio_id, estadios_asistidos))
+
+		return 0 if not estadio_veces else estadio_veces[0][5]

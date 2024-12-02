@@ -8,7 +8,7 @@ from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE
 
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
-from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadiosDetallePaises
+from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadiosDetallePaises, crearMapaEstadio
 
 bp_estadio=Blueprint("estadio", __name__)
 
@@ -35,6 +35,18 @@ def pagina_estadio(estadio_id:str):
 
 	estadio_asistido=con.estadio_asistido_usuario(current_user.id, estadio_id)
 
+	numero_veces_asistido=con.obtenerNumeroVecesEstadioPartidosAsistidosUsuario(current_user.id, estadio_id)
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas"), current_user.id)
+
+	nombre_mapa_small_estadio=f"mapa_small_estadio_user_{current_user.id}.html"
+
+	crearMapaEstadio(os.path.join(ruta, "templates", "mapas"),
+							estadio,
+							nombre_mapa_small_estadio)
+
 	con.cerrarConexion()
 
 	return render_template("estadio.html",
@@ -45,9 +57,21 @@ def pagina_estadio(estadio_id:str):
 							equipos_estadio=equipos_estadio,
 							anadirPuntos=anadirPuntos,
 							estadio_asistido=estadio_asistido,
+							numero_veces_asistido=numero_veces_asistido,
+							nombre_mapa_small_estadio=nombre_mapa_small_estadio,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES)
+
+@bp_estadio.route("/estadio/mapa/<nombre_mapa>")
+@login_required
+def visualizarMapaEstadio(nombre_mapa:str):
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
+
+	return send_file(ruta_mapa)
 
 @bp_estadio.route("/estadios")
 @login_required

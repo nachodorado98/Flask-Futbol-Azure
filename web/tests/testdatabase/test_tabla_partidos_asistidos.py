@@ -2667,3 +2667,115 @@ def test_obtener_datos_coordenadas_estadios_pais_partido_asistido_mismo_varias_v
 
 	assert len(partidos_asistidos)==20
 	assert len(estadios_datos_coordenadas)==1
+
+def test_obtener_numero_veces_estadio_partido_asistido_no_existe_usuario(conexion):
+
+	veces=conexion.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "metropolitano")
+
+	assert veces==0
+
+def test_obtener_numero_veces_estadio_partido_asistido_no_existen_partidos(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "metropolitano")
+
+	assert veces==0
+
+def test_obtener_numero_veces_estadio_partido_asistido_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "metropolitano")
+
+	assert veces==0
+
+def test_obtener_numero_veces_estadio_partido_asistido_no_existe_estadio(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "estadio")
+
+	assert veces==0
+
+def test_obtener_numero_veces_estadio_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "metropolitano")
+
+	assert veces==1
+
+def test_obtener_numero_veces_estadio_partido_asistido_otro_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarUsuario("otro", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "otro", "comentario")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "metropolitano")
+
+	assert veces==0
+
+def test_obtener_numero_veces_estadio_partido_asistido_cantidad_varios(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	for numero in range(1,21):
+
+		conexion_entorno.c.execute(f"""INSERT INTO equipos (Equipo_Id) VALUES('equipo{numero}')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio{numero}', 10000)""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO equipo_estadio VALUES('equipo{numero}', 'estadio{numero}')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190623{numero}', 'equipo{numero}', 'atletico-madrid', '20{numero}-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO partido_estadio VALUES('20190623{numero}', 'estadio{numero}')""")
+
+		conexion_entorno.insertarPartidoAsistido(f"20190623{numero}", "nacho", "comentario")
+
+	conexion_entorno.confirmar()
+
+	partidos_asistidos=conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "estadio1")
+
+	assert len(partidos_asistidos)==20
+	assert veces==1
+
+def test_obtener_numero_veces_estadio_partido_asistido_mismo_varias_veces(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	for numero in range(1,21):
+
+		conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190623{numero}', 'atletico-madrid', 'atletico-madrid', '20{numero}-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO partido_estadio VALUES('20190623{numero}', 'metropolitano')""")
+
+		conexion_entorno.insertarPartidoAsistido(f"20190623{numero}", "nacho", "comentario")
+
+	conexion_entorno.confirmar()
+
+	partidos_asistidos=conexion_entorno.obtenerPartidosAsistidosUsuario("nacho")
+
+	veces=conexion_entorno.obtenerNumeroVecesEstadioPartidosAsistidosUsuario("nacho", "metropolitano")
+
+	assert len(partidos_asistidos)==20
+	assert veces==20

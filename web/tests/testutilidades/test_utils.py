@@ -9,6 +9,7 @@ from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSel
 from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
+from src.utilidades.utils import crearMapaEstadio
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -950,6 +951,66 @@ def test_crear_mapa_mis_estadios_detalle_paises_con_puntos():
 		assert '{"name": "France"}' in contenido
 		assert '{"name": "Italy"}' in contenido
 		assert '{"name": "England"}' in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_estadio_sin_punto_error():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_estadio.html")
+
+	assert not os.path.exists(ruta_html)
+
+	with pytest.raises(Exception):
+
+		crearMapaEstadio(ruta_carpeta, (0, 1, 2, None, None), "nacho_mapa_estadio.html")
+
+	assert not os.path.exists(ruta_html)
+
+	borrarCarpeta(ruta_carpeta)
+
+@pytest.mark.parametrize(["latitud", "longitud"],
+	[
+		(40.01, -3.45),
+		(30.11, -21.45),
+		(1.01, 9.86),
+		(-2.34, 40.04),
+	]
+)
+def test_crear_mapa_estadio(latitud, longitud):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_estadio.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaEstadio(ruta_carpeta, (0, 1, 2, latitud, longitud, 220619, "pais_icono"), "nacho_mapa_estadio.html")
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+		assert f"[{latitud}, {longitud}]" in contenido
+		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 

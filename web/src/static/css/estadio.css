@@ -1,7 +1,85 @@
 /*----------------------------------------------------------ESTADIO--------------------------------------------------------------*/
-.tarjeta-estadio {
+.circulo-numero-veces-asistido {
+    width: 193px;
+    height: 193px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 70px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-numero-veces-asistido .titulo-circulo-numero-veces-asistido {
+    margin: 2px 0;
+    margin-top: 30px;
+    padding: 0;
+    font-size: 22px;
+}
+
+.circulo-numero-veces-asistido .valor-circulo-numero-veces-asistido {
+    margin: 4px 0;
+    margin-top: 10px;
+    padding: 0;
+    font-size: 30px;
+}
+
+.circulo-mapa-estadio {
+    width: 220px;
+    height: 195px;
+    background-color: var(--color-fondo);
+    color: var(--color-fondo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 5px 60px;
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid var(--color-footer);
+}
+
+.tarjeta-mapa-estadio {
+    width: 220px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    background-color: var(--color-fondo);
+    cursor: default;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.contenedor-mapa-estadio {
+    margin-top: 15px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-fondo);
+}
+
+.contenedor-mapa-estadio iframe {
     width: 100%;
     max-width: 1000px;
+    height: 450px;
+    border: none;
+    pointer-events: none;
+}
+
+.tarjeta-estadio {
+    width: 100%;
+    max-width: 920px;
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -50,6 +128,17 @@
     font-size: 22px;
     margin: 5px;
     color: var(--color-secundario) 
+}
+
+.tarjeta-estadio .direccion .link-imagen-maps {
+    text-decoration: none;
+}
+
+.tarjeta-estadio .direccion .imagen-maps {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    margin-right: 5px;
 }
 
 .tarjeta-estadio .imagen-pais-estadio {

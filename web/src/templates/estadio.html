@@ -4,7 +4,26 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/estadio.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+
+    <div class="circulo-numero-veces-asistido">
+        <p class="titulo-circulo-numero-veces-asistido">Veces Asistido</p>
+        <p class="valor-circulo-numero-veces-asistido"><strong>{{ numero_veces_asistido }}</strong></p>
+    </div>
+
+    <div class="circulo-mapa-estadio">
+        <div class="tarjeta-mapa-estadio">
+            <div class="contenedor-mapa-estadio">
+                <iframe src="/estadio/mapa/{{ nombre_mapa_small_estadio }}"></iframe>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 
@@ -42,16 +61,27 @@
     {% endif %}
 
     {% if estadio[2] %}
-    <p class="direccion">
-        <strong>{{ estadio[2] }}</strong>
+        <p class="direccion">
 
-        {% if estadio[10]=='-1' %}
-            <img class="imagen-pais-estadio" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
-        {% else %}
-            <img class="imagen-pais-estadio" src="{{ url_imagen_pais }}{{ estadio[10] }}.png" alt="Pais Icon">
-        {% endif %}
-            
-    </p>
+            <a href="https://www.google.com/maps/search/?api=1&query={{ estadio[0] | replace(' ', '+') }}" target="_blank" class="link-imagen-maps">
+                <img class="imagen-maps" src="{{ url_for('static', filename='imagenes/iconos/google_maps.png') }}" alt="Maps Icon">
+            </a>
+
+            <strong>
+                {% if estadio[5] %}
+                    {{ estadio[5] }}, {{ estadio[10] }}
+                {% else %}
+                    {{ estadio[2] }}
+                {% endif %}
+            </strong>
+
+            {% if estadio[11]=='-1' %}
+                <img class="imagen-pais-estadio" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+            {% else %}
+                <img class="imagen-pais-estadio" src="{{ url_imagen_pais }}{{ estadio[11] }}.png" alt="Pais Icon">
+            {% endif %}
+
+        </p>
     {% endif %}
 
     <div class="info-estadio-detalle">

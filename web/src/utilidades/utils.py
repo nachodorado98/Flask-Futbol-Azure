@@ -285,7 +285,13 @@ def vaciarCarpeta(ruta:str)->None:
 
 		for archivo in os.listdir(ruta):
 
-			os.remove(os.path.join(ruta, archivo))
+			try:
+
+				os.remove(os.path.join(ruta, archivo))
+
+			except Exception:
+				
+				pass
 
 def vaciarCarpetaMapasUsuario(ruta:str, nombre_usuario:str)->None:
 
@@ -295,7 +301,13 @@ def vaciarCarpetaMapasUsuario(ruta:str, nombre_usuario:str)->None:
 
 			if nombre_usuario in archivo:
 
-				os.remove(os.path.join(ruta, archivo))
+				try:
+
+					os.remove(os.path.join(ruta, archivo))
+
+				except Exception:
+					
+					pass
 
 def obtenerCentroide(datos_estadios:List[tuple])->tuple:
 
@@ -403,3 +415,26 @@ def crearMapaMisEstadiosDetallePaises(ruta:str, coordenadas:List[tuple], nombre_
 	folium.GeoJson(geodataframe, name="paises").add_to(mapa)
 
 	mapa.save(os.path.join(ruta, nombre_mapa))
+
+def crearMapaEstadio(ruta:str, estadio:tuple, nombre_mapa:str, zoom:float=15)->None:
+
+	latitud, longitud=estadio[3], estadio[4]
+
+	try:
+
+		mapa=folium.Map(location=[latitud, longitud], zoom_start=zoom)
+
+		icono_html=f"""
+					<div style="background-color: #ffcccc ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid red; border-width: 1px;"">
+						<img src="/static/imagenes/iconos/estadio_mapa.png" style="width: 23px; height: 23px; margin-top: 4px;">
+					</div>
+					"""
+
+		folium.Marker(location=[latitud, longitud],
+						icon=folium.DivIcon(html=icono_html)).add_to(mapa)
+
+		mapa.save(os.path.join(ruta, nombre_mapa))
+
+	except Exception as e:
+
+		raise Exception("Error al crear el mapa")
