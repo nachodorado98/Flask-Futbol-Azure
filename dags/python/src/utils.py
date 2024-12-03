@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 from datetime import datetime
 import unicodedata
 from geopy.geocoders import Nominatim
@@ -156,6 +156,8 @@ def subirArchivosDataLake(nombre_contenedor:str, nombre_carpeta:str, ruta_local_
 
 			datalake.subirArchivo(nombre_contenedor, nombre_carpeta, ruta_local_carpeta, archivo_local)
 
+	datalake.cerrarConexion()
+
 def limpiarFechaInicio(fecha_inicio:str)->tuple:
 
 	try:
@@ -261,3 +263,15 @@ def limpiarMinuto(minuto:str)->tuple:
 	minuto_numero, anadido=minuto.split("'")
 
 	return (int(minuto_numero), 0) if anadido=="" else (int(minuto_numero), int(anadido.split("+")[-1]))
+
+def obtenerArchivosNoExistenDataLake(nombre_contenedor:str, nombre_carpeta:str, archivos_comprobar:List[Any], extension:str="png")->List[Any]:
+
+	datalake=ConexionDataLake()
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor(nombre_contenedor, nombre_carpeta)
+
+	datalake.cerrarConexion()
+
+	archivos_carpeta_contenedor_limpios=[archivo.name.split(f"{nombre_carpeta}/")[1] for archivo in archivos_carpeta_contenedor]
+
+	return list(filter(lambda archivo: f"{archivo}.{extension}" not in archivos_carpeta_contenedor_limpios, archivos_comprobar))

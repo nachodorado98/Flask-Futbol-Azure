@@ -3,7 +3,7 @@ import os
 from utils import vaciarCarpeta, crearArchivoLog
 from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
 from config import URL_JUGADOR
-from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES
+from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES, USUARIOS
 from config import TABLA_EQUIPOS, TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO
 from config import TABLA_COMPETICIONES, TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES
 from config import TABLA_PARTIDO_GOLEADOR
@@ -11,7 +11,7 @@ from config import TABLA_PARTIDO_GOLEADOR
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
 from python.src.utils import entorno_creado, crearEntornoDataLake, descargarImagen, subirArchivosDataLake
-from python.src.utils import subirTablaDataLake
+from python.src.utils import subirTablaDataLake, obtenerArchivosNoExistenDataLake
 
 def data_lake_disponible()->str:
 
@@ -37,7 +37,7 @@ def entorno_data_lake_creado():
 
 def creacion_entorno_data_lake()->None:
 
-	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES,TABLA_EQUIPOS,
+	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES, USUARIOS, TABLA_EQUIPOS,
 				TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO, TABLA_COMPETICIONES, 
 				TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES, TABLA_PARTIDO_GOLEADOR]
 
@@ -51,11 +51,13 @@ def subirEscudosDataLake()->None:
 
 	codigo_escudos=con.obtenerCodigoEscudos()
 
+	codigo_escudos_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, ESCUDOS, codigo_escudos)
+
 	con.cerrarConexion()
 
 	ruta_escudos=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ESCUDOS)
 
-	for codigo in codigo_escudos:
+	for codigo in codigo_escudos_descargar:
 
 		print(f"Descargando escudo {codigo}...")
 
@@ -101,11 +103,13 @@ def subirEntrenadoresDataLake()->None:
 
 	codigo_entrenadores=con.obtenerCodigoEntrenadores()
 
+	codigo_entrenadores_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, ENTRENADORES, codigo_entrenadores)
+
 	con.cerrarConexion()
 
 	ruta_entrenadores=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ENTRENADORES)
 
-	for codigo in codigo_entrenadores:
+	for codigo in codigo_entrenadores_descargar:
 
 		print(f"Descargando entrenador {codigo}...")
 
@@ -143,11 +147,13 @@ def subirPresidentesDataLake()->None:
 
 	codigo_presidentes=con.obtenerCodigoPresidentes()
 
+	codigo_presidentes_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, PRESIDENTES, codigo_presidentes)
+
 	con.cerrarConexion()
 
 	ruta_presidentes=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PRESIDENTES)
 
-	for codigo in codigo_presidentes:
+	for codigo in codigo_presidentes_descargar:
 
 		print(f"Descargando presidente {codigo}...")
 
@@ -185,11 +191,13 @@ def subirEstadiosDataLake()->None:
 
 	codigo_estadios=con.obtenerCodigoEstadios()
 
+	codigo_estadios_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, ESTADIOS, codigo_estadios)
+
 	con.cerrarConexion()
 
 	ruta_estadios=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ESTADIOS)
 
-	for codigo in codigo_estadios:
+	for codigo in codigo_estadios_descargar:
 
 		print(f"Descargando estadios {codigo}...")
 
@@ -266,11 +274,13 @@ def subirCompeticionesDataLake():
 
 	codigo_logos_competiciones=con.obtenerCodigoLogoCompeticiones()
 
+	codigo_logos_competiciones_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, COMPETICIONES, codigo_logos_competiciones)
+
 	con.cerrarConexion()
 
 	ruta_logos_competiciones=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", COMPETICIONES)
 
-	for codigo in codigo_logos_competiciones:
+	for codigo in codigo_logos_competiciones_descargar:
 
 		print(f"Descargando logo competicion {codigo}...")
 
@@ -308,11 +318,13 @@ def subirPaisesDataLake():
 
 	codigo_paises=con.obtenerCodigoPaises()
 
+	codigo_paises_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, PAISES, codigo_paises)
+
 	con.cerrarConexion()
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
 
-	for codigo in codigo_paises:
+	for codigo in codigo_paises_descargar:
 
 		print(f"Descargando pais {codigo}...")
 
@@ -392,11 +404,13 @@ def subirPaisesJugadoresDataLake():
 
 	codigo_paises=con.obtenerCodigoPaisesJugadores()
 
+	codigo_paises_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, PAISES, codigo_paises)
+
 	con.cerrarConexion()
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
 
-	for codigo in codigo_paises:
+	for codigo in codigo_paises_descargar:
 
 		print(f"Descargando pais {codigo}...")
 
@@ -434,11 +448,57 @@ def subirPaisesEstadiosDataLake():
 
 	codigo_paises=con.obtenerCodigoPaisesEstadios()
 
+	codigo_paises_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, PAISES, codigo_paises)
+
 	con.cerrarConexion()
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
 
-	for codigo in codigo_paises:
+	for codigo in codigo_paises_descargar:
+
+		print(f"Descargando pais {codigo}...")
+
+		try:
+
+			descargarImagen(URL_PAIS, codigo, ruta_paises)
+
+		except Exception as e:
+
+			mensaje=f"Pais: {codigo} - Motivo: {e}"
+
+			print(f"Error en pais con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de paises finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, PAISES, ruta_paises)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los paises al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_paises)
+
+def subirPaisesEquiposDataLake():
+	
+	con=Conexion()
+
+	codigo_paises=con.obtenerCodigoPaisesEquipos()
+
+	codigo_paises_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, PAISES, codigo_paises)
+
+	con.cerrarConexion()
+
+	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	for codigo in codigo_paises_descargar:
 
 		print(f"Descargando pais {codigo}...")
 

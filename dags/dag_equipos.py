@@ -15,7 +15,7 @@ from pipelines import Pipeline_Equipos_Ligas
 from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipeline_Entrenador_Equipos, Pipeline_Estadio_Equipos
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake
+from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake, subirPaisesEquiposDataLake
 
 
 
@@ -97,10 +97,12 @@ with DAG("dag_equipos",
 
 		tarea_subir_estadios_data_lake=PythonOperator(task_id="subir_estadios_data_lake", python_callable=subirEstadiosDataLake, trigger_rule="none_failed_min_one_success")
 
+		tarea_subir_paises_equipos_data_lake=PythonOperator(task_id="subir_paises_equipos_data_lake", python_callable=subirPaisesEquiposDataLake, trigger_rule="none_failed_min_one_success")
+
 
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
-		tarea_subir_escudos_data_lake >> tarea_subir_entrenadores_data_lake >> tarea_subir_presidentes_data_lake >> tarea_subir_estadios_data_lake
+		tarea_subir_escudos_data_lake >> tarea_subir_entrenadores_data_lake >> tarea_subir_presidentes_data_lake >> tarea_subir_estadios_data_lake >> tarea_subir_paises_equipos_data_lake
 
 
 

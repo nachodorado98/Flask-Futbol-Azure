@@ -230,3 +230,38 @@ def test_obtener_codigo_presidentes(conexion, datos, numero_presidentes):
 	codigo_presidentes=conexion.obtenerCodigoPresidentes()
 
 	assert len(codigo_presidentes)==numero_presidentes
+
+def test_obtener_codigo_paises_equipos_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoPaisesEquipos()
+
+def test_obtener_codigo_paises_equipos_son_nulos(conexion):
+
+	for numero in range(1,11):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+	assert not conexion.obtenerCodigoPaisesEquipos()
+
+@pytest.mark.parametrize(["datos", "numero_paises"],
+	[
+		([["Argentina", "ar"], [None, "ar"], ["Argentina", None], ["España", "es"]], 2),
+		([["Argentina", "ar"], [None, "ar"], ["Argentina", None], ["Argentina", "ar"]], 1),
+		([["Argentina", None], [None, "ar"], ["Argentina", None], ["España", "es"]], 2),
+		([["Argentina", "ar"], [None, "ar"], ["Argentina", None], ["España", "es"], ["Francia", "fr"]], 3),
+	]
+)
+def test_obtener_codigo_paises_equipos(conexion, datos, numero_paises):
+
+	for numero, dato in enumerate(datos):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+		datos=["Club Atletico de Madrid", "Atleti", "ATM", dato[0], dato[1], "Madrid", "Primera", "primera",
+				22, "Calderon", 1903, "Nacho", "nacho-dorado", 16]
+
+		conexion.actualizarDatosEquipo(datos, f"atleti-madrid-{numero}")
+
+	paises=conexion.obtenerCodigoPaisesEquipos()
+
+	assert len(paises)==numero_paises

@@ -27,6 +27,7 @@ ESTADIOS="estadios"
 COMPETICIONES="competiciones"
 PAISES="paises"
 JUGADORES="jugadores"
+USUARIOS="usuarios"
 
 # Carpetas para las tablas en el datalake
 TABLA_EQUIPOS="tablas/equipos"

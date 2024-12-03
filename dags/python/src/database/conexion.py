@@ -627,3 +627,15 @@ class Conexion:
 		paises=self.c.fetchall()
 
 		return list(map(lambda pais: pais["codigo_pais"], paises))
+
+	# Metodo para obtener los codigos de los paises de los equipos
+	def obtenerCodigoPaisesEquipos(self)->List[str]:
+
+		self.c.execute("""SELECT DISTINCT(Codigo_Pais)
+							FROM equipos
+							WHERE Codigo_Pais IS NOT NULL
+							ORDER BY Codigo_Pais""")
+
+		paises=self.c.fetchall()
+
+		return list(map(lambda pais: pais["codigo_pais"], paises))

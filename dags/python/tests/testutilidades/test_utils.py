@@ -8,7 +8,7 @@ from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normaliz
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
 from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
-from src.utils import obtenerBoolCadena, subirTablaDataLake, limpiarMinuto
+from src.utils import obtenerBoolCadena, subirTablaDataLake, limpiarMinuto, obtenerArchivosNoExistenDataLake
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -274,11 +274,17 @@ def test_subir_archivo_data_lake_contenedor_no_existe():
 
 		subirArchivosDataLake("contenedornacho", "carpeta", "ruta_local")
 
-def test_subir_archivo_data_lake_carpeta_no_existe():
+def test_subir_archivo_data_lake_carpeta_no_existe(datalake):
+
+	datalake.crearContenedor("contenedor45")
 
 	with pytest.raises(Exception):
 
-		subirArchivosDataLake("contenedor4", "carpeta", "ruta_local")
+		subirArchivosDataLake("contenedor45", "carpeta", "ruta_local")
+
+	datalake.eliminarContenedor("contenedor45")
+
+	datalake.cerrarConexion()
 
 def test_subir_archivo_data_lake_local_no_existe(datalake):
 
@@ -396,8 +402,6 @@ def test_subir_archivo_data_lake_archivos_existentes_no_existentes(datalake):
 	datalake.cerrarConexion()
 
 	vaciarCarpeta(ruta_carpeta)
-
-	borrarCarpeta(ruta_carpeta)
 
 @pytest.mark.parametrize(["fecha_inicio"],
 	[("",),("fecha",),("2019-06-22",),("22/6/19",),("22/13/2019",),("2019-06-2222:22",)]
@@ -601,3 +605,142 @@ def test_subir_tabla_data_lake(conexion, datalake):
 def test_limpiar_minuto(minuto, minuto_numero, anadido_numero):
 
 	assert limpiarMinuto(minuto)==(minuto_numero, anadido_numero)
+
+def test_obtener_archivos_no_existen_data_lake_contenedor_no_existe():
+
+	with pytest.raises(Exception):
+
+		obtenerArchivosNoExistenDataLake("contenedornacho", "carpeta", ["archivo1", "archivo2"])
+
+def test_obtener_archivos_no_existen_data_lake_carpeta_no_existe(datalake):
+
+	datalake.crearContenedor("contenedor85")
+
+	with pytest.raises(Exception):
+
+		obtenerArchivosNoExistenDataLake("contenedor9", "carpeta", ["archivo1", "archivo2"])
+
+	datalake.eliminarContenedor("contenedor85")
+
+	datalake.cerrarConexion()
+
+def test_obtener_archivos_no_existen_data_lake_archivos_comprobar_no_existen(datalake):
+
+	crearEntornoDataLake("contenedor9", ["carpeta_creada"])
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	crearArchivoTXT(ruta_carpeta, nombre_archivo)
+
+	subirArchivosDataLake("contenedor9", "carpeta_creada", ruta_carpeta)
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor("contenedor9", "carpeta_creada")
+
+	assert len(archivos_carpeta_contenedor)==1
+
+	assert not obtenerArchivosNoExistenDataLake("contenedor9", "carpeta_creada", [])
+
+	datalake.eliminarContenedor("contenedor9")
+
+	datalake.cerrarConexion()
+
+	vaciarCarpeta(ruta_carpeta)
+
+def test_obtener_archivos_no_existen_data_lake_archivos_datalake_no_existen(datalake):
+
+	crearEntornoDataLake("contenedor10", ["carpeta_creada"])
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor("contenedor10", "carpeta_creada")
+
+	assert not archivos_carpeta_contenedor
+
+	archivos_comprobar=obtenerArchivosNoExistenDataLake("contenedor10", "carpeta_creada", ["archivo1", "archivo2"])
+
+	assert len(archivos_comprobar)==2
+
+	datalake.eliminarContenedor("contenedor10")
+
+	datalake.cerrarConexion()
+
+def test_obtener_archivos_no_existen_data_lake(datalake):
+
+	crearEntornoDataLake("contenedor11", ["carpeta_creada"])
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	crearArchivoTXT(ruta_carpeta, nombre_archivo)
+
+	subirArchivosDataLake("contenedor11", "carpeta_creada", ruta_carpeta)
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor("contenedor11", "carpeta_creada")
+
+	assert len(archivos_carpeta_contenedor)==1
+
+	assert not obtenerArchivosNoExistenDataLake("contenedor11", "carpeta_creada", ["archivo"], "txt")
+
+	datalake.eliminarContenedor("contenedor11")
+
+	datalake.cerrarConexion()
+
+	vaciarCarpeta(ruta_carpeta)
+
+def test_obtener_archivos_no_existen_data_lake_varios_existen_todos(datalake):
+
+	crearEntornoDataLake("contenedor12", ["carpeta_creada"])
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	for numero in range(15):
+
+		nombre_archivo=f"archivo{numero}.txt"
+
+		crearArchivoTXT(ruta_carpeta, nombre_archivo)
+
+	subirArchivosDataLake("contenedor12", "carpeta_creada", ruta_carpeta)
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor("contenedor12", "carpeta_creada")
+
+	assert len(archivos_carpeta_contenedor)==15
+
+	assert not obtenerArchivosNoExistenDataLake("contenedor12", "carpeta_creada", ["archivo1", "archivo13", "archivo7"], "txt")
+
+	datalake.eliminarContenedor("contenedor12")
+
+	datalake.cerrarConexion()
+
+	vaciarCarpeta(ruta_carpeta)
+
+def test_obtener_archivos_no_existen_data_lake_varios_no_existen_todos(datalake):
+
+	crearEntornoDataLake("contenedor13", ["carpeta_creada"])
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	for numero in range(15):
+
+		nombre_archivo=f"archivo{numero}.txt"
+
+		crearArchivoTXT(ruta_carpeta, nombre_archivo)
+
+	subirArchivosDataLake("contenedor13", "carpeta_creada", ruta_carpeta)
+
+	archivos_carpeta_contenedor=datalake.paths_carpeta_contenedor("contenedor13", "carpeta_creada")
+
+	assert len(archivos_carpeta_contenedor)==15
+
+	archivos_comprobar=obtenerArchivosNoExistenDataLake("contenedor13", "carpeta_creada", ["archivo1", "archivo13", "archivo17"], "txt")
+
+	assert len(archivos_comprobar)==1
+	assert archivos_comprobar[0]=="archivo17"
+
+	datalake.eliminarContenedor("contenedor13")
+
+	datalake.cerrarConexion()
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
