@@ -39,8 +39,7 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 
 	tabla_filtrada[["Equipo_Id_Local", "Equipo_Id_Visitante"]]=tabla_filtrada["Link"].apply(lambda link: pd.Series(obtenerEquiposId(link)))
 
-	columnas=["Partido_Id", "Equipo_Id_Local", "Equipo_Id_Visitante", "Fecha",
-				"Hora", "Competicion", "Marcador", "Resultado"]
+	columnas=["Partido_Id", "Equipo_Id_Local", "Equipo_Id_Visitante", "Fecha", "Hora", "Competicion", "Marcador", "Resultado"]
 
 	return tabla_filtrada[columnas]
 
@@ -77,7 +76,3 @@ def cargarDataPartidosEquipo(tabla:pd.DataFrame)->None:
 				print(f"Error en partido {partido}")
 
 		con.cerrarConexion()
-
-		
-
-	

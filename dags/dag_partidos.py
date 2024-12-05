@@ -12,14 +12,14 @@ from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES,
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
 from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio, Pipeline_Partidos_Competicion
-from pipelines import Pipeline_Partidos_Goleadores
+from pipelines import Pipeline_Partidos_Goleadores, Pipeline_Proximos_Partidos_Equipo
 
 
 
 with DAG("dag_partidos",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los partidos de la web de futbol",
-		schedule_interval="@weekly",
+		schedule_interval="@daily",
 		catchup=False) as dag:
 
 
@@ -67,9 +67,17 @@ with DAG("dag_partidos",
 		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion >> tarea_pipeline_partidos_goleadores
 
 
+	with TaskGroup("pipelines_proximos_partidos") as tareas_pipelines_proximos_partidos:
+
+		tarea_pipeline_proximos_partidos_equipo=PythonOperator(task_id="pipeline_proximos_partidos_equipo", python_callable=Pipeline_Proximos_Partidos_Equipo, trigger_rule="none_failed_min_one_success")
+
+
+		tarea_pipeline_proximos_partidos_equipo
+
+
 	tarea_ejecutar_dag_partidos=PythonOperator(task_id="ejecutar_dag_partidos", python_callable=ejecutarDagPartidos)
 
 	tarea_dag_partidos_completado=PythonOperator(task_id="dag_partidos_completado", python_callable=lambda: actualizarVariable("DAG_PARTIDOS_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_partidos >> tareas_entorno >> tareas_pipelines_partidos >> tarea_dag_partidos_completado
+tarea_ejecutar_dag_partidos >> tareas_entorno >> tareas_pipelines_partidos >> tareas_pipelines_proximos_partidos >> tarea_dag_partidos_completado

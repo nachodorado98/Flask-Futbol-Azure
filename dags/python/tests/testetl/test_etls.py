@@ -1,10 +1,11 @@
 import pytest
 import pandas as pd
+from unittest.mock import patch
 
 from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ETL_Entrenador_Equipo
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
-from src.etls import ETL_Jugador, ETL_Partido_Goleadores, ETL_Estadio
+from src.etls import ETL_Jugador, ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
@@ -70,9 +71,9 @@ def test_etl_equipos_liga_equipos_nuevos_equipos(conexion, endpoint, nuevos_equi
 
 	conexion.c.execute(f"""DELETE FROM equipos
 							WHERE Equipo_Id IN (SELECT Equipo_Id
-											    FROM equipos
-											    ORDER BY RANDOM()
-											    LIMIT {nuevos_equipos})""")
+												FROM equipos
+												ORDER BY RANDOM()
+												LIMIT {nuevos_equipos})""")
 
 	conexion.confirmar()
 
@@ -475,9 +476,9 @@ def test_etl_partidos_equipo_partidos_nuevos(conexion, equipo_id, temporada, nue
 
 	conexion.c.execute(f"""DELETE FROM partidos
 							WHERE Partido_Id IN (SELECT Partido_Id
-											    FROM partidos
-											    ORDER BY RANDOM()
-											    LIMIT {nuevos_partidos})""")
+												FROM partidos
+												ORDER BY RANDOM()
+												LIMIT {nuevos_partidos})""")
 
 	conexion.confirmar()
 
@@ -829,9 +830,9 @@ def test_etl_jugadores_equipo_jugadores_nuevos(conexion, equipo_id, temporada, n
 
 	conexion.c.execute(f"""DELETE FROM jugadores
 							WHERE Jugador_Id IN (SELECT Jugador_Id
-											    FROM jugadores
-											    ORDER BY RANDOM()
-											    LIMIT {nuevos_jugadores})""")
+												FROM jugadores
+												ORDER BY RANDOM()
+												LIMIT {nuevos_jugadores})""")
 
 	conexion.confirmar()
 
@@ -1035,3 +1036,125 @@ def test_etl_estadio_datos_correctos(conexion, estadio_id):
 
 	assert datos_actualizados["pais"] is not None
 	assert datos_actualizados["codigo_pais"] is not None
+
+@pytest.mark.parametrize(["equipo_id", "temporada"],
+	[(-1, -1), (0, 0), (0, 2019), (1, 2024), ("equipo", 2023)]
+)
+def test_etl_proximos_partidos_equipo_error(equipo_id, temporada):
+
+	with pytest.raises(PartidosEquipoError):
+
+		ETL_Proximos_Partidos_Equipo(equipo_id, temporada)
+
+@pytest.mark.parametrize(["equipo_id", "temporada"],
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+)
+def test_etl_proximos_partidos_equipo_no_hay(conexion, equipo_id, temporada):
+
+	with pytest.raises(Exception):	
+
+		ETL_Proximos_Partidos_Equipo(equipo_id, temporada)
+
+def test_etl_proximos_partidos_equipo(conexion):
+
+	mock_data=pd.DataFrame({"Partido_Id": ["match-2025225057", "match-20256430"],
+							"Link": ["https://es.besoccer.com/partido/cacereno/atletico-madrid/2025225057",
+									"https://es.besoccer.com/partido/atletico-madrid/sevilla/20256430"],
+							"Estado": [-1, -1],
+							"Fecha_Inicio": ["2024-12-05T19:00:00+01:00", "2024-12-08T21:00:00+01:00"],
+							"Competicion": ["Copa del Rey", "Primera División"],
+							"Local": ["CP Cacereño", "Atlético"],
+							"Visitante": ["Atlético", "Sevilla"],
+							"Marcador": ["19:00", "21:00"],
+							"Fecha_Str": ["05 DIC", "08 DIC"]})
+   
+	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+
+		ETL_Proximos_Partidos_Equipo(369, 2025)
+
+	conexion.c.execute("SELECT * FROM equipos")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	assert conexion.c.fetchall()
+
+def test_etl_proximos_partidos_equipo_todo_existente(conexion):
+
+	mock_data=pd.DataFrame({"Partido_Id": ["match-2025225057", "match-20256430"],
+							"Link": ["https://es.besoccer.com/partido/cacereno/atletico-madrid/2025225057",
+									"https://es.besoccer.com/partido/atletico-madrid/sevilla/20256430"],
+							"Estado": [-1, -1],
+							"Fecha_Inicio": ["2024-12-05T19:00:00+01:00", "2024-12-08T21:00:00+01:00"],
+							"Competicion": ["Copa del Rey", "Primera División"],
+							"Local": ["CP Cacereño", "Atlético"],
+							"Visitante": ["Atlético", "Sevilla"],
+							"Marcador": ["19:00", "21:00"],
+							"Fecha_Str": ["05 DIC", "08 DIC"]})
+   
+	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+
+		ETL_Proximos_Partidos_Equipo(369, 2025)
+
+	conexion.c.execute("SELECT * FROM equipos")
+
+	equipos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	proximos_partidos=conexion.c.fetchall()
+
+	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+
+		ETL_Proximos_Partidos_Equipo(369, 2025)
+
+	conexion.c.execute("SELECT * FROM equipos")
+
+	equipos_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	proximos_partidos_nuevos=conexion.c.fetchall()
+
+	assert len(equipos)==len(equipos_nuevos)
+	assert len(proximos_partidos)==len(proximos_partidos_nuevos)
+
+def test_etl_proximos_partidos_equipo_partido_nuevo(conexion):
+
+	mock_data=pd.DataFrame({"Partido_Id": ["match-2025225057", "match-20256430"],
+							"Link": ["https://es.besoccer.com/partido/cacereno/atletico-madrid/2025225057",
+									"https://es.besoccer.com/partido/atletico-madrid/sevilla/20256430"],
+							"Estado": [-1, -1],
+							"Fecha_Inicio": ["2024-12-05T19:00:00+01:00", "2024-12-08T21:00:00+01:00"],
+							"Competicion": ["Copa del Rey", "Primera División"],
+							"Local": ["CP Cacereño", "Atlético"],
+							"Visitante": ["Atlético", "Sevilla"],
+							"Marcador": ["19:00", "21:00"],
+							"Fecha_Str": ["05 DIC", "08 DIC"]})
+   
+	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+
+		ETL_Proximos_Partidos_Equipo(369, 2025)
+
+	conexion.c.execute("""DELETE FROM proximos_partidos
+						WHERE Partido_Id IN (SELECT Partido_Id
+										    FROM proximos_partidos
+										    ORDER BY RANDOM()
+										    LIMIT 1)""")
+
+	conexion.confirmar()
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	proximos_partidos=conexion.c.fetchall()
+
+	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+
+		ETL_Proximos_Partidos_Equipo(369, 2025)
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	proximos_partidos_nuevos=conexion.c.fetchall()
+
+	assert len(proximos_partidos_nuevos)==len(proximos_partidos)+1

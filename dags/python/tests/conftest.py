@@ -73,6 +73,8 @@ def conexion():
 
 	con.c.execute("DELETE FROM temporada_jugadores")
 
+	con.c.execute("DELETE FROM proximos_partidos")
+
 	con.confirmar()
 
 	return con

@@ -12,6 +12,7 @@ from .etl_jugadores import extraerDataJugadoresEquipo, limpiarDataJugadoresEquip
 from .etl_jugador import extraerDataJugador, limpiarDataJugador, cargarDataJugador
 from .etl_partido_goleadores import extraerDataPartidoGoleadores, limpiarDataPartidoGoleadores, cargarDataPartidoGoleadores
 from .etl_estadio import extraerDataEstadio, limpiarDataEstadio, cargarDataEstadio
+from .etl_proximos_partidos import extraerDataProximosPartidosEquipo, limpiarDataProximosPartidosEquipo, cargarDataProximosPartidosEquipo
 
 def ETL_Equipos_Liga(liga:str)->None:
 
@@ -152,3 +153,13 @@ def ETL_Estadio(estadio_id:str)->None:
 	data_limpia=limpiarDataEstadio(data)
 
 	cargarDataEstadio(data_limpia, estadio_id)
+
+def ETL_Proximos_Partidos_Equipo(equipo_id:int, temporada:int)->None:
+
+	print(f"ETL Proximos Partidos Equipo {equipo_id} Temporada {temporada}")
+
+	data=extraerDataProximosPartidosEquipo(equipo_id, temporada)
+
+	data_limpia=limpiarDataProximosPartidosEquipo(data)
+
+	cargarDataProximosPartidosEquipo(data_limpia)

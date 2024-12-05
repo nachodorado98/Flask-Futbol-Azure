@@ -15,6 +15,7 @@ def test_conexion(conexion):
 	assert "estadios" in tablas
 	assert "equipo_estadio" in tablas
 	assert "partidos" in tablas
+	assert "proximos_partidos" in tablas
 	assert "partido_estadio" in tablas
 	assert "partido_competicion" in tablas
 	assert "competiciones" in tablas
@@ -43,9 +44,9 @@ def test_tabla_vacia_llena(conexion):
 	assert not conexion.tabla_vacia("ligas_scrapear")
 
 @pytest.mark.parametrize(["tabla"],
-	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("partido_estadio",),
-	("competiciones",),("competiciones_campeones",),("partido_competicion",),("jugadores",),
-	("partido_goleador",),("temporada_jugadores",)]
+	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("proximos_partidos",),
+	("partido_estadio",),("competiciones",),("competiciones_campeones",),("partido_competicion",),
+	("jugadores",),("partido_goleador",),("temporada_jugadores",)]
 )
 def test_tabla_vacia(conexion, tabla):
 

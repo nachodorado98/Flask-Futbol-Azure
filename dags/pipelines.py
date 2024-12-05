@@ -7,7 +7,7 @@ from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equ
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
-from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio
+from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from python.src.database.conexion import Conexion
 from python.src.utils import generarTemporadas
 
@@ -356,3 +356,30 @@ def Pipeline_Estadios_Pais()->None:
 			print(f"Error en pais del estadio {estadio}")
 
 			crearArchivoLog(mensaje)
+
+def Pipeline_Proximos_Partidos_Equipo()->None:
+
+	con=Conexion()
+
+	# Permite actualizar los proximos partidos (elimina los que ya se han jugado y actualiza si hay horas definidas)
+	con.vaciar_proximos_partidos()
+
+	ano_mas_reciente=con.ultimo_ano()
+
+	temporadas=generarTemporadas(ano_mas_reciente, MES_FIN_TEMPORADA)
+
+	temporada=temporadas[-1]
+
+	print(f"Obtencion de los proximos partidos de {temporada}")
+
+	try:
+		
+		ETL_Proximos_Partidos_Equipo(EQUIPO_ID, temporada)
+
+	except Exception as e:
+
+		mensaje=f"Proximos Partidos Equipo: {equipo} Temporada: {temporada} - Motivo: {e}"
+	
+		print(f"Error en proximo partido de equipo {equipo} en temporada {temporada}")
+
+		crearArchivoLog(mensaje)

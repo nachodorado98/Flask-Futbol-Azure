@@ -639,3 +639,29 @@ class Conexion:
 		paises=self.c.fetchall()
 
 		return list(map(lambda pais: pais["codigo_pais"], paises))
+
+	#Metodo para insertar un proximo partido
+	def insertarProximoPartido(self, proximo_partido:List[str])->None:
+
+		self.c.execute("""INSERT INTO proximos_partidos
+							VALUES(%s, %s, %s, %s, %s, %s)""",
+							tuple(proximo_partido))
+
+		self.confirmar()
+
+	# Metodo para saber si existe el proximo partido
+	def existe_proximo_partido(self, partido_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM proximos_partidos
+							WHERE Partido_Id=%s""",
+							(partido_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para vaciar la tabla de proximos partidos
+	def vaciar_proximos_partidos(self)->None:
+
+		self.c.execute("""DELETE FROM proximos_partidos""")
+
+		self.confirmar()
