@@ -24,6 +24,8 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno):
 	assert '<div class="tarjeta-partido"' not in contenido
 	assert '<div class="info-partido">' not in contenido
 	assert '<div class="tarjeta-partidos-asistidos">' not in contenido
+	assert '<div class="tarjeta-proximos-partidos">' not in contenido
+	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 
 def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 
@@ -48,6 +50,8 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno):
 	assert '<div class="tarjeta-partido"' in contenido
 	assert '<div class="info-partido">' in contenido
 	assert '<div class="tarjeta-partidos-asistidos">' not in contenido
+	assert '<div class="tarjeta-proximos-partidos">' in contenido
+	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 
 @pytest.mark.parametrize(["nombre_completo"],
 	[("atleti",),("atm",),("Club Atletico de Madrid",)]
@@ -825,3 +829,43 @@ def test_pagina_partidos_partidos_asistidos(cliente, conexion, cantidad_partidos
 		assert '<p class="titulo-circulo-partidos-asistidos">' in contenido
 		assert "Partidos Asistidos" in contenido
 		assert f'<p class="valor-circulo-partidos-asistidos"><strong>{cantidad_partidos_asistidos}</strong></p>' in contenido
+
+def test_pagina_partidos_sin_proximos_partidos(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM proximos_partidos")
+
+	conexion_entorno.confirmar()
+
+	cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+									"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+									"fecha-nacimiento":"1998-02-16",
+									"equipo":"atletico-madrid"})
+
+	respuesta=cliente.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert '<div class="tarjetas-proximos-partidos">' not in contenido
+	assert '<div class="tarjetas-proximos-partidos-wrapper">' not in contenido
+	assert '<div class="tarjeta-proximo-partido">' not in contenido
+	assert '<div class="info-proximo-partido">' not in contenido
+	assert '<div class="tarjeta-no-proximo-partido">' in contenido
+
+def test_pagina_partidos_con_proximo_partido(cliente, conexion_entorno):
+
+	cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+									"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+									"fecha-nacimiento":"1998-02-16",
+									"equipo":"atletico-madrid"})
+
+	respuesta=cliente.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert '<div class="tarjetas-proximos-partidos">' in contenido
+	assert '<div class="tarjetas-proximos-partidos-wrapper">' in contenido
+	assert '<div class="tarjeta-proximo-partido">' in contenido
+	assert '<div class="info-proximo-partido">' in contenido
+	assert '<div class="tarjeta-no-proximo-partido">' not in contenido

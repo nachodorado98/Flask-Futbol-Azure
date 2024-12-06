@@ -433,7 +433,7 @@ body {
     cursor: pointer;
 }
 
-.tarjeta-partidos-asistidos {
+.tarjeta-proximos-partidos {
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -448,7 +448,123 @@ body {
     width: 300px;
     position: fixed;
     top: 71px;
-    bottom: 285px;
+    bottom: 460px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-proximos-partidos .titulo-proximos-partidos {
+    font-size: 23px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-proximos-partidos {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-proximos-partidos::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-proximos-partidos-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-proximo-partido {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-proximo-partido p {
+    font-size: 14px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.info-proximo-partido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-proximo-partido img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 50px;
+    height: 50px;
+}
+
+.info-proximo-partido h4 {
+    font-size: 26px;
+    color: #fff;
+    margin: 2px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-no-proximo-partido {
+    width: 100%;
+    max-width: 250px;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: var(--color-primario);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-no-proximo-partido img {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+}
+
+.tarjeta-no-proximo-partido p {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--color-secundario);
+    margin: 5px;
+}
+
+.tarjeta-partidos-asistidos {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 30px -40px;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 300px;
+    position: fixed;
+    top: 290px;
+    bottom: 25px;
     overflow-y: auto;
     padding-top: 10px;
 }
@@ -557,43 +673,4 @@ footer {
     font-size: 30px;
     text-align: center;
     color: var(--color-secundario) 
-}
-
-/*----------------------------------------------------------NO PARTIDOS ASISTIDOS--------------------------------------------------*/
-
-.contenedor-no-partidos-asistidos {
-    width: 100%;
-    max-width: 700px;
-    margin: 5px auto;
-    padding: 5px;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    background-color: var(--color-primario);
-    color: var(--color-secundario) 
-}
-
-.mensaje-no-partidos-asistidos {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    font-size: 30px;
-    text-align: center;
-    color: var(--color-secundario) 
-}
-
-.boton-no-partidos-asistidos-anadir {
-    background-color: var(--color-secundario);
-    color: var(--color-primario);
-    font-size: 20px;
-    padding: 10px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.boton-no-partidos-asistidos-anadir:hover {
-    transform: scale(1.05);
 }

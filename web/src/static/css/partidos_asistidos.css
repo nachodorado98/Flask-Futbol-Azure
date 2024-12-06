@@ -446,3 +446,42 @@
     color: #000;
     transform: scale(1.05);
 }
+
+/*----------------------------------------------------------NO PARTIDOS ASISTIDOS-------------------------------------------------*/
+
+.contenedor-no-partidos-asistidos {
+    width: 100%;
+    max-width: 700px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.mensaje-no-partidos-asistidos {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 30px;
+    text-align: center;
+    color: var(--color-secundario) 
+}
+
+.boton-no-partidos-asistidos-anadir {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.boton-no-partidos-asistidos-anadir:hover {
+    transform: scale(1.05);
+}

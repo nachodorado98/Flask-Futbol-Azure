@@ -41,6 +41,8 @@ def pagina_partidos():
 
 	partidos_asistidos_totales=con.obtenerPartidosAsistidosUsuario(current_user.id)
 
+	proximos_partidos=con.obtenerProximosPartidosEquipo(equipo, 1)
+
 	con.cerrarConexion()
 
 	if not partidos:
@@ -85,6 +87,7 @@ def pagina_partidos():
 							resultados_partidos_disputados=resultados_partidos_disputados,
 							partidos_asistidos=partidos_asistidos_filtrados,
 							numero_partidos_asistidos=len(partidos_asistidos_filtrados),
+							proximos_partidos=proximos_partidos,
 							local=local,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 

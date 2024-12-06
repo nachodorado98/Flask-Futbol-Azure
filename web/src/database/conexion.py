@@ -49,6 +49,8 @@ class Conexion:
 
 		self.c.execute("DELETE FROM partidos_asistidos")
 
+		self.c.execute("DELETE FROM proximos_partidos")
+
 		self.confirmar()
 
 	# Metodo para insertar un usuario
@@ -1963,3 +1965,42 @@ class Conexion:
 		estadio_veces=list(filter(lambda estadio: estadio[0]==estadio_id, estadios_asistidos))
 
 		return 0 if not estadio_veces else estadio_veces[0][5]
+
+	# Metodo para obtener los proximos partidos de un equipo
+	def obtenerProximosPartidosEquipo(self, equipo_id:str, numero:int)->List[tuple]:
+
+		self.c.execute("""SELECT pp.partido_id, pp.fecha, pp.hora,
+								pp.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								pp.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								pp.competicion
+						FROM proximos_partidos pp
+						LEFT JOIN equipos e1
+						ON pp.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON pp.equipo_id_visitante=e2.equipo_id
+						WHERE pp.equipo_id_local=%s
+						OR pp.equipo_id_visitante=%s
+						ORDER BY fecha ASC
+						LIMIT %s""",
+						(equipo_id, equipo_id, numero))
+
+		proximos_partidos=self.c.fetchall()
+
+		return list(map(lambda proximo_partido: (proximo_partido["partido_id"],
+												proximo_partido["fecha"].strftime("%d/%m/%Y"),
+												proximo_partido["hora"],
+												proximo_partido["cod_local"],
+												proximo_partido["local"],
+												proximo_partido["escudo_local"],
+												proximo_partido["cod_visitante"],
+												proximo_partido["visitante"],
+												proximo_partido["escudo_visitante"],
+												proximo_partido["competicion"]), proximos_partidos))

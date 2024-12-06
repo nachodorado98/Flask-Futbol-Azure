@@ -243,6 +243,64 @@
         
         <div class="contenedor-lateral contenedor-lateral-der">
 
+            <div class="tarjeta-proximos-partidos">
+
+                <p class="titulo-proximos-partidos">
+                    <strong>
+                        Proximo Partido
+                        <img src="{{ url_for('static', filename='imagenes/iconos/proximo_partido.png') }}" alt="Proximo" height="20">
+                    </strong>
+                </p>
+
+                {% if proximos_partidos %}
+                
+                    <div class="tarjetas-proximos-partidos">
+                        <div class="tarjetas-proximos-partidos-wrapper">
+
+                        {% for proximo in proximos_partidos %}
+
+                            <div class="tarjeta-proximo-partido">
+
+                                <p><strong>{{ proximo[1] }}</strong></p>
+
+                                <div class="info-proximo-partido">
+
+                                    {% if proximo[5]==-1 %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                    {% else %}
+                                        <img src="{{ url_imagen_escudo }}{{ proximo[5] }}.png" alt="Local Icon">
+                                    {% endif %}
+
+                                    <h4>{{ proximo[2] }}</h4>
+
+                                    {% if proximo[8]==-1 %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                                    {% else %}
+                                        <img src="{{ url_imagen_escudo }}{{ proximo[8] }}.png" alt="Visitante Icon">
+                                    {% endif %}
+
+                                </div>
+
+                                 <p><strong>{{ proximo[9] }}</strong></p>
+
+                            </div> 
+
+                        {% endfor %}
+
+                         </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="tarjeta-no-proximo-partido">
+                        <img src="{{ url_for('static', filename='imagenes/iconos/proximo_partido.png') }}" alt="Proximo">
+                        <p><strong>No hay proximo partido</strong></p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
             {% if partidos_asistidos %}
                 <div class="tarjeta-partidos-asistidos">
 
