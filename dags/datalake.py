@@ -362,11 +362,13 @@ def subirJugadoresDataLake():
 
 	codigo_jugadores=con.obtenerCodigoJugadores()
 
+	codigo_jugadores_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, JUGADORES, codigo_jugadores)
+
 	con.cerrarConexion()
 
 	ruta_jugadores=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", JUGADORES)
 
-	for codigo in codigo_jugadores:
+	for codigo in codigo_jugadores_descargar:
 
 		print(f"Descargando jugador {codigo}...")
 

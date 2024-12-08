@@ -1,0 +1,54 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mis_competiciones.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-competiciones-asistidas">
+
+    <p class="titulo-pagina-competiciones-asistidas"><strong>Mis Competiciones</strong></p>
+
+    <div class="tarjetas-competiciones-asistidas">
+        <div class="tarjetas-competiciones-asistidas-wrapper">
+
+        {% for competicion in competiciones_asistidos %}
+
+        <div class="tarjeta-competicion-asistida" onclick="window.location.href='/competicion/{{ competicion[0] }}'">
+
+            <div class="info-competicion-asistida">
+
+                {% if competicion[2]=='-1' %}
+                    <img class="logo-competicion-asistida" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+                {% else %}
+                    <img class="logo-competicion-asistida" src="{{ url_imagen_competicion }}{{ competicion[2] }}.png" alt="Competicion Icon">
+                {% endif %}
+
+                <h4>{{ competicion[1] }}</h4>
+
+                {% if competicion[3]=='-1' %}
+                    <img class="pais-competicion-asistida" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                {% else %}
+                    <img class="pais-competicion-asistida" src="{{ url_imagen_pais }}{{ competicion[3] }}.png" alt="Pais Icon">
+                {% endif %}
+
+                <h4>{{ competicion[4] }} veces</h4>
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
