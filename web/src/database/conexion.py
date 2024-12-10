@@ -1640,12 +1640,16 @@ class Conexion:
 
 		equipo_id=self.obtenerEquipo(usuario)
 
-		self.c.execute("""SELECT equipo, nombre_equipo, escudo, COUNT(equipo) as numero_veces
+		self.c.execute("""SELECT equipo, nombre_equipo, escudo, pais, COUNT(equipo) as numero_veces
 							FROM (SELECT p.equipo_id_local as equipo, e1.nombre as nombre_equipo,
 									CASE WHEN e1.escudo IS NULL
 											THEN -1
 											ELSE e1.escudo
-									END as escudo
+									END as escudo,
+									CASE WHEN e1.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e1.codigo_pais
+									END as pais
 									FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 				                    LEFT JOIN partidos p
 				                    ON pa.partido_id=p.partido_id
@@ -1655,10 +1659,14 @@ class Conexion:
 									ON p.equipo_id_visitante=e2.equipo_id
 									UNION ALL
 									SELECT p.equipo_id_visitante as equipo, e2.nombre as nombre_equipo,
-										CASE WHEN e2.escudo IS NULL
-												THEN -1
-												ELSE e2.escudo
-										END as escudo
+									CASE WHEN e2.escudo IS NULL
+											THEN -1
+											ELSE e2.escudo
+									END as escudo,
+									CASE WHEN e2.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e2.codigo_pais
+									END as pais
 									FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 				                    LEFT JOIN partidos p
 				                    ON pa.partido_id=p.partido_id
@@ -1666,7 +1674,7 @@ class Conexion:
 									ON p.equipo_id_local=e1.equipo_id
 									LEFT JOIN equipos e2
 									ON p.equipo_id_visitante=e2.equipo_id) as t
-							GROUP BY equipo, nombre_equipo, escudo
+							GROUP BY equipo, nombre_equipo, escudo, pais
 							HAVING equipo!=%s
 							ORDER BY numero_veces DESC
 							LIMIT %s""",
@@ -1677,6 +1685,7 @@ class Conexion:
 		return list(map(lambda equipo: (equipo["equipo"],
 										equipo["nombre_equipo"],
 										equipo["escudo"],
+										equipo["pais"],
 										equipo["numero_veces"]), equipos_enfrentados))
 
 	# Metodo para obtener los equipos de los partidos asistidos filtrados de un usuario por cantidad de veces enfrentado
@@ -1686,12 +1695,16 @@ class Conexion:
 
 		equipo_id=self.obtenerEquipo(usuario)
 
-		self.c.execute(f"""SELECT equipo, nombre_equipo, escudo, COUNT(equipo) as numero_veces
+		self.c.execute(f"""SELECT equipo, nombre_equipo, escudo, pais, COUNT(equipo) as numero_veces
 							FROM (SELECT p.equipo_id_local as equipo, e1.nombre as nombre_equipo,
 									CASE WHEN e1.escudo IS NULL
 											THEN -1
 											ELSE e1.escudo
-									END as escudo
+									END as escudo,
+									CASE WHEN e1.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e1.codigo_pais
+									END as pais
 									FROM (SELECT *
 											FROM partidos_asistidos
 											WHERE usuario=%s
@@ -1704,10 +1717,14 @@ class Conexion:
 									ON p.equipo_id_visitante=e2.equipo_id
 									UNION ALL
 									SELECT p.equipo_id_visitante as equipo, e2.nombre as nombre_equipo,
-										CASE WHEN e2.escudo IS NULL
-												THEN -1
-												ELSE e2.escudo
-										END as escudo
+									CASE WHEN e2.escudo IS NULL
+											THEN -1
+											ELSE e2.escudo
+									END as escudo,
+									CASE WHEN e2.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e2.codigo_pais
+									END as pais
 									FROM (SELECT *
 											FROM partidos_asistidos
 											WHERE usuario=%s
@@ -1718,7 +1735,7 @@ class Conexion:
 									ON p.equipo_id_local=e1.equipo_id
 									LEFT JOIN equipos e2
 									ON p.equipo_id_visitante=e2.equipo_id) as t
-							GROUP BY equipo, nombre_equipo, escudo
+							GROUP BY equipo, nombre_equipo, escudo, pais
 							HAVING equipo!=%s
 							ORDER BY numero_veces DESC
 							LIMIT %s""",
@@ -1729,6 +1746,7 @@ class Conexion:
 		return list(map(lambda equipo: (equipo["equipo"],
 										equipo["nombre_equipo"],
 										equipo["escudo"],
+										equipo["pais"],
 										equipo["numero_veces"]), equipos_enfrentados))
 
 	# Metodo para insertar un partido asistido favorito

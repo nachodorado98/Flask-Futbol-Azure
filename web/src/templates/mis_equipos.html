@@ -1,0 +1,54 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mis_equipos.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-equipos-enfrentados">
+
+    <p class="titulo-pagina-equipos-enfrentados"><strong>Equipos Enfrentados</strong></p>
+
+    <div class="tarjetas-equipos-enfrentados">
+        <div class="tarjetas-equipos-enfrentados-wrapper">
+
+        {% for equipo in equipos_enfrentados %}
+
+        <div class="tarjeta-equipo-enfrentado" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+
+            <div class="info-equipo-enfrentado">
+
+                {% if equipo[2]==-1 %}
+                    <img class="escudo-equipo-enfrentado" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
+                {% else %}
+                    <img class="escudo-equipo-enfrentado" src="{{ url_imagen_escudo }}{{ equipo[2] }}.png" alt="Escudo Icon">
+                {% endif %}
+
+                <h4>{{ equipo[1] }}</h4>
+
+                {% if equipo[3]=='-1' %}
+                    <img class="pais-equipo-enfrentado" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                {% else %}
+                    <img class="pais-equipo-enfrentado" src="{{ url_imagen_pais }}{{ equipo[3] }}.png" alt="Pais Icon">
+                {% endif %}
+
+                <h4>{{ equipo[4] }} veces</h4>
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

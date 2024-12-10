@@ -52,49 +52,23 @@
                     </button>
                 </div>
 
-                <div class="desplegable-contenedor-navbar-equipos" onclick="window.location.href='/equipos'">
+                <div class="desplegable-contenedor-navbar-equipos" onclick="window.location.href='/equipos/mis_equipos'">
                     <button class="button-navbar-equipos">
                         <strong>Equipos</strong>
                     </button>
                 </div>
 
-                <div class="desplegable-contenedor-navbar-estadios">
-
-                    <button class="button-navbar-estadios" onclick="desplegableNavBarEstadios()">
+                <div class="desplegable-contenedor-navbar-estadios"  onclick="window.location.href='/estadios/mis_estadios'">
+                    <button class="button-navbar-estadios">
                         <strong>Estadios</strong>
-                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
                     </button>
-
-                    <div id="menuDesplegableNavBarEstadios" class="menu-desplegable-navbar-estadios">
-                        <a href="/estadios" class="opcion-desplegable-navbar-estadios">
-                            <strong>Todos Los Estadios</strong>
-                        </a>
-                        <a href="/estadios/mis_estadios" class="opcion-desplegable-navbar-estadios">
-                            <strong>Mis Estadios</strong>
-                        </a>
-                    </div>
-
                 </div>
 
-                <div class="desplegable-contenedor-navbar-competiciones">
-
-                    <button class="button-navbar-competiciones" onclick="desplegableNavBarCompeticiones()">
+                <div class="desplegable-contenedor-navbar-competiciones"  onclick="window.location.href='/competiciones/mis_competiciones'">
+                    <button class="button-navbar-competiciones">
                         <strong>Competiciones</strong>
-                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-navbar"> 
                     </button>
-
-                    <div id="menuDesplegableNavBarCompeticiones" class="menu-desplegable-navbar-competiciones">
-                        <a href="/competiciones" class="opcion-desplegable-navbar-competiciones">
-                            <strong>Todas Las Competiciones</strong>
-                        </a>
-                        <a href="/competiciones/mis_competiciones" class="opcion-desplegable-navbar-competiciones">
-                            <strong>Mis Competiciones</strong>
-                        </a>
-                    </div>
-
                 </div>
-
-
 
             </ul>
 
