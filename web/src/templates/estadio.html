@@ -14,11 +14,15 @@
     </div>
 
     <div class="circulo-mapa-estadio">
-        <div class="tarjeta-mapa-estadio">
-            <div class="contenedor-mapa-estadio">
-                <iframe src="/estadio/mapa/{{ nombre_mapa_small_estadio }}"></iframe>
+        {% if mapa_correcto %}
+            <div class="tarjeta-mapa-estadio">
+                <div class="contenedor-mapa-estadio">
+                    <iframe src="/estadio/mapa/{{ nombre_mapa_small_estadio }}"></iframe>
+                </div>
             </div>
-        </div>
+        {% else %}
+            <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
+        {% endif %}
     </div>
 
 </div>

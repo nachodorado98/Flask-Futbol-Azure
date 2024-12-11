@@ -43,9 +43,16 @@ def pagina_estadio(estadio_id:str):
 
 	nombre_mapa_small_estadio=f"mapa_small_estadio_user_{current_user.id}.html"
 
-	crearMapaEstadio(os.path.join(ruta, "templates", "mapas"),
-							estadio,
-							nombre_mapa_small_estadio)
+	mapa_correcto=True
+
+	try:
+
+		crearMapaEstadio(os.path.join(ruta, "templates", "mapas"), estadio, nombre_mapa_small_estadio)
+
+	except Exception as e:
+
+		print(e)
+		mapa_correcto=False
 
 	con.cerrarConexion()
 
@@ -59,6 +66,7 @@ def pagina_estadio(estadio_id:str):
 							estadio_asistido=estadio_asistido,
 							numero_veces_asistido=numero_veces_asistido,
 							nombre_mapa_small_estadio=nombre_mapa_small_estadio,
+							mapa_correcto=mapa_correcto,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES)
@@ -137,30 +145,30 @@ def pagina_mis_estadios():
 
 	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
 
-	centroide=obtenerCentroide(datos_coordenadas)
-
 	nombre_mapa_small=f"mapa_small_mis_estadios_user_{current_user.id}.html"
-
-	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"),
-							datos_coordenadas,
-							nombre_mapa_small,
-							centroide)
 
 	nombre_mapa_detalle=f"mapa_detalle_mis_estadios_user_{current_user.id}.html"
 
-	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"),
-								datos_coordenadas,
-								nombre_mapa_detalle,
-								centroide)
-
-	coordenadas=con.obtenerCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
-
 	nombre_mapa_detalle_paises=f"mapa_detalle_paises_mis_estadios_user_{current_user.id}.html"
 
-	crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"),
-										coordenadas,
-										nombre_mapa_detalle_paises,
-										centroide)
+	mapas_correcto=True
+
+	try:
+
+		centroide=obtenerCentroide(datos_coordenadas)
+
+		crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_small, centroide)
+
+		crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_detalle, centroide)
+
+		coordenadas=con.obtenerCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
+
+		crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"), coordenadas, nombre_mapa_detalle_paises, centroide)
+
+	except Exception as e:
+
+		print(e)
+		mapas_correcto=False
 
 	con.cerrarConexion()
 
@@ -176,6 +184,7 @@ def pagina_mis_estadios():
 							nombre_mapa_small=nombre_mapa_small,
 							nombre_mapa_detalle=nombre_mapa_detalle,
 							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
+							mapas_correcto=mapas_correcto,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
@@ -224,33 +233,30 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPaisPartidosAsistidosUsuario(current_user.id, codigo_pais, numero_estadios)
 
-	centroide=obtenerCentroide(datos_coordenadas)
-
 	nombre_mapa_small=f"mapa_small_mis_estadios_pais_{codigo_pais}_user_{current_user.id}.html"
-
-	crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"),
-						datos_coordenadas,
-						nombre_mapa_small,
-						centroide,
-						3)
 
 	nombre_mapa_detalle=f"mapa_detalle_mis_estadios_pais_{codigo_pais}_user_{current_user.id}.html"
 
-	crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"),
-								datos_coordenadas,
-								nombre_mapa_detalle,
-								centroide,
-								4.5)
-
-	coordenadas=[(dato[1], dato[2]) for dato in datos_coordenadas]
-
 	nombre_mapa_detalle_paises=f"mapa_detalle_paises_mis_estadios_pais_{codigo_pais}_user_{current_user.id}.html"
 
-	crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"),
-										coordenadas,
-										nombre_mapa_detalle_paises,
-										centroide,
-										4.5)
+	mapas_correcto=True
+
+	try:
+
+		centroide=obtenerCentroide(datos_coordenadas)
+
+		crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_small, centroide, 3)
+
+		crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_detalle, centroide, 4.5)
+
+		coordenadas=[(dato[1], dato[2]) for dato in datos_coordenadas]
+
+		crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"), coordenadas, nombre_mapa_detalle_paises, centroide, 4.5)
+	
+	except Exception as e:
+
+		print(e)
+		mapas_correcto=False
 
 	con.cerrarConexion()
 
@@ -266,6 +272,7 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							nombre_mapa_small=nombre_mapa_small,
 							nombre_mapa_detalle=nombre_mapa_detalle,
 							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
+							mapas_correcto=mapas_correcto,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)

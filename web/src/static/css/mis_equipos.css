@@ -1,4 +1,36 @@
 /*----------------------------------------------------------MIS EQUIPOS-------------------------------------------------*/
+.circulo-equipos-enfrentados {
+    width: 193px;
+    height: 193px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 70px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-equipos-enfrentados .titulo-circulo-equipos-enfrentados {
+    margin: 2px 0;
+    margin-top: 30px;
+    padding: 0;
+    font-size: 20px;
+}
+
+.circulo-equipos-enfrentados .valor-circulo-equipos-enfrentados {
+    margin: 4px 0;
+    margin-top: 10px;
+    padding: 0;
+    font-size: 30px;
+}
+
 .tarjeta-equipos-enfrentados {
     width: 100%;
     max-width: 870px;

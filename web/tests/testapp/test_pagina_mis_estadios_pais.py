@@ -166,6 +166,7 @@ def test_pagina_mis_estadios_pais(cliente, conexion_entorno):
 		assert '<div class="desplegable-contenedor">' not in contenido
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 		assert '<div class="botones-mapa-detalle">' in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
@@ -207,6 +208,7 @@ def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_ent
 		assert '<div class="desplegable-contenedor">' not in contenido
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 		assert '<div class="botones-mapa-detalle">' in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
@@ -248,6 +250,7 @@ def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_ento
 		assert '<div class="desplegable-contenedor">' not in contenido
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 		assert '<div class="botones-mapa-detalle">' in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
@@ -296,6 +299,7 @@ def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, veces)
 		assert '<div class="desplegable-contenedor">' not in contenido
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 		assert '<div class="botones-mapa-detalle">' in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
@@ -470,6 +474,34 @@ def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_
 		assert '<div class="desplegable-contenedor">' in contenido
 		assert '<button class="boton-desplegable"' in contenido
 		assert '<div id="menuDesplegable" class="menu-desplegable">' in contenido
+
+def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/estadios/mis_estadios/es")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert "iframe" not in contenido
+		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_nacho98.html" not in contenido
+		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno):
 

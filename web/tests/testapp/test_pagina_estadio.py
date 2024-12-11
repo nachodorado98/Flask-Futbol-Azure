@@ -59,6 +59,7 @@ def test_pagina_estadio_estadio(cliente, conexion_entorno):
 		assert '<p class="valor-circulo-numero-veces-asistido"><strong>0</strong></p>' in contenido
 		assert "iframe" in contenido
 		assert "/estadio/mapa/mapa_small_estadio_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
 
 def test_pagina_estadio_estadio_sin_equipo(cliente, conexion_entorno):
 
@@ -284,6 +285,30 @@ def test_pagina_estadio_estadio_asistido_varias_veces(cliente, conexion_entorno,
 		assert '<p class="titulo-circulo-numero-veces-asistido">' in contenido
 		assert "Veces Asistido" in contenido
 		assert f'<p class="valor-circulo-numero-veces-asistido"><strong>{veces}</strong></p>' in contenido
+
+def test_pagina_estadio_error_mapas(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert "iframe" not in contenido
+		assert "/estadio/mapa/mapa_small_estadio_user_" not in contenido
+		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_estadio_mapa_small(cliente, conexion_entorno):
 

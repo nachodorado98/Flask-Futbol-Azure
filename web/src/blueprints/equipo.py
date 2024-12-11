@@ -110,5 +110,6 @@ def pagina_mis_equipos():
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							equipos_enfrentados=equipos_enfrentados,
+							numero_equipos=len(equipos_enfrentados),
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_pais=URL_DATALAKE_PAISES)

@@ -101,5 +101,6 @@ def pagina_mis_competiciones():
 						equipo=equipo,
 						estadio_equipo=estadio_equipo,
 						competiciones_asistidos=competiciones_asistidos,
+						numero_competiciones=len(competiciones_asistidos),
 						url_imagen_pais=URL_DATALAKE_PAISES,
 						url_imagen_competicion=URL_DATALAKE_COMPETICIONES)

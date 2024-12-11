@@ -4,7 +4,18 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mis_equipos.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+
+    <div class="circulo-equipos-enfrentados">
+        <p class="titulo-circulo-equipos-enfrentados">Equipos Enfrentados</p>
+        <p class="valor-circulo-equipos-enfrentados"><strong>{{ numero_equipos }}</strong></p>
+    </div>
+
+ </div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 
