@@ -184,15 +184,23 @@
                 </div>
 
                 <div class="contenedor-tipo-partidos">
-                    <a href="/partidos" class="tipo-partidos tipo-partidos-todo">
+
+                    <div class="desplegar-ventana-emergente-filtros" onclick="abrirVentanaEmergente()">
+                        <img src="{{ url_for('static', filename='imagenes/iconos/filtro.png') }}" alt="Filtro" height="40">
+                    </div>
+
+                    <a href="#" class="tipo-partidos tipo-partidos-todo" data-local="">
                         <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Todo" height="40">
                     </a>
-                    <a href="/partidos?local=1" class="tipo-partidos tipo-partidos-local">
+
+                    <a href="#" class="tipo-partidos tipo-partidos-local" data-local="1">
                         <img src="{{ url_for('static', filename='imagenes/iconos/local.png') }}" alt="Local" height="40">
                     </a>
-                    <a href="/partidos?local=2" class="tipo-partidos tipo-partidos-visitante">
+
+                    <a href="#" class="tipo-partidos tipo-partidos-visitante" data-local="2">
                         <img src="{{ url_for('static', filename='imagenes/iconos/visitante.png') }}" alt="Visitante" height="40">
                     </a>
+
                     <div class="contenedor-desplegable">
                         <select id="temporada" name="temporada">
                             <option value="" selected disabled hidden>
@@ -335,6 +343,28 @@
                 </div>
             {% endif %}
 
+            <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solamamiento con los contenedores laterales -->
+            <div id="ventana-emergente" class="ventana-emergente">
+                <div class="contenido-ventana-emergente">
+                    <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+                    <h2>Selecciona un Filtro</h2>
+                    <div class="contenedor-filtros">
+
+                        <div class="contenedor-desplegable-competiciones">
+                            <select id="competicion" name="competicion">
+                                <option value="" selected disabled hidden>
+                                    {{ competicion_filtrada }}
+                                </option>
+                                {% for competicion in competiciones_unicas %}
+                                    <option value="{{ competicion }}">{{ competicion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+                </div>    
+            </div>
+
         </div>
 
         {% endblock contenedor_lateral_der %}
@@ -344,6 +374,9 @@
     <script src="{{ url_for('static', filename='js/temporadas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pagina_anterior.js') }}"></script>
     <script src="{{ url_for('static', filename='js/desplegables_navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/home_away.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/competiciones.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>

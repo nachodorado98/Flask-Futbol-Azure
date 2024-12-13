@@ -9,7 +9,7 @@ from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSel
 from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
-from src.utilidades.utils import crearMapaEstadio
+from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1015,3 +1015,27 @@ def test_crear_mapa_estadio(latitud, longitud):
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
+
+def test_obtener_competiciones_unicas_no_hay():
+
+	competiciones_unicas=obtenerCompeticionesPartidosUnicas([])
+
+	assert len(competiciones_unicas)==1
+	assert competiciones_unicas[0]=="Todo"
+
+def test_obtener_competiciones_unicas_repetidas():
+
+	partidos=[(0,1,2,3,4,5,6,7,8,"Primera") for numero_partidos in range(10)]
+
+	competiciones_unicas=obtenerCompeticionesPartidosUnicas(partidos)
+
+	assert len(competiciones_unicas)==2
+
+def test_obtener_competiciones_unicas():
+
+	partidos=[(0,1,2,3,4,5,6,7,8,"Primera"),(0,1,2,3,4,5,6,7,8,"Segunda"), (0,1,2,3,4,5,6,7,8,"Champions"),
+				(0,1,2,3,4,5,6,7,8,"Copa"),(0,1,2,3,4,5,6,7,8,"Mundial"),(0,1,2,3,4,5,6,7,8,"Eurocopa")]
+
+	competiciones_unicas=obtenerCompeticionesPartidosUnicas(partidos)
+
+	assert len(competiciones_unicas)==7

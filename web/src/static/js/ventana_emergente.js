@@ -11,4 +11,4 @@ window.onclick = function(event) {
     if (event.target == ventanaEmergente) {
         ventanaEmergente.style.display = "none";
     }
-}
+};

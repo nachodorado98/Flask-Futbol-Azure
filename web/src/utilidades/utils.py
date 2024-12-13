@@ -438,3 +438,11 @@ def crearMapaEstadio(ruta:str, estadio:tuple, nombre_mapa:str, zoom:float=15)->N
 	except Exception as e:
 
 		raise Exception("Error al crear el mapa")
+
+def obtenerCompeticionesPartidosUnicas(partidos:List[tuple])->List[str]:
+
+	competiciones_ordenadas=sorted(list(set(list(map(lambda partido: partido[9], partidos)))))
+
+	competiciones_ordenadas.append("Todo")
+
+	return competiciones_ordenadas
