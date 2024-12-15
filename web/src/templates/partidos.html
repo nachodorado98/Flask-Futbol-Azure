@@ -350,15 +350,39 @@
                     <h2>Selecciona un Filtro</h2>
                     <div class="contenedor-filtros">
 
-                        <div class="contenedor-desplegable-competiciones">
-                            <select id="competicion" name="competicion">
-                                <option value="" selected disabled hidden>
-                                    {{ competicion_filtrada }}
-                                </option>
-                                {% for competicion in competiciones_unicas %}
-                                    <option value="{{ competicion }}">{{ competicion }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="filtro">
+                            <label for="competicion" class="filtro-label">Competición:</label>
+                            <div class="contenedor-desplegable-competiciones">
+                                <select id="competicion" name="competicion">
+                                    <option value="" selected disabled hidden>
+                                        {{ competicion_filtrada }}
+                                    </option>
+                                    {% for competicion in competiciones_unicas %}
+                                        <option value="{{ competicion }}">{{ competicion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="filtro">
+                            <label for="resultados" class="filtro-label">Resultados:</label>
+                            <div class="contenedor-desplegable-resultados">
+                                <select id="resultados" name="resultados">
+                                    <option value="" selected disabled hidden>
+                                        {{ resultado_filtrado }}
+                                    </option>
+                                    <option value="Todo" class="todo">Todo</option>
+                                    <option value="Ganados" class="ganados">Ganados</option>
+                                    <option value="Empatados" class="empatados">Empatados</option>
+                                    <option value="Perdidos" class="perdidos">Perdidos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                         <div class="contenedor-botones-filtro">
+                            <button class="button-filtro-reestablecer" onclick="window.location.href='/partidos'">
+                                <strong>Reestablecer</strong>
+                            </button>
                         </div>
 
                     </div>
@@ -377,6 +401,7 @@
     <script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
     <script src="{{ url_for('static', filename='js/home_away.js') }}"></script>
     <script src="{{ url_for('static', filename='js/competiciones.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/resultados.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>

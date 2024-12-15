@@ -439,18 +439,125 @@ body {
     color: var(--color-secundario);
 }
 
-.contenedor-desplegable-competiciones {
-    display: block;
+.contenido-ventana-emergente {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.contenedor-filtros {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 20px;
+}
+
+.filtro {
+    display: flex;
     align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.filtro-label {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--color-secundario);
+    min-width: 120px;
+    text-align: right;
 }
 
 .contenedor-desplegable-competiciones select {
-    padding: 5px 10px;
+    width: 100%;
+    padding: 10px 15px;
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.contenedor-desplegable-competiciones select:hover {
     background-color: #fff;
+    border-color: var(--color-secundario);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-desplegable-competiciones select:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.contenedor-desplegable-resultados select {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.contenedor-desplegable-resultados select:hover {
+    background-color: #fff;
+    border-color: var(--color-secundario);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contenedor-desplegable-resultados select:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ganados {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.perdidos {
+    background-color: #F44336;
+    color: white;
+}
+
+.empatados {
+    background-color: #FFEB3B;
+    color: black;
+}
+
+.contenedor-botones-filtro {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.button-filtro-reestablecer {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 0px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-filtro-reestablecer:hover {
+    transform: scale(1.02);
 }
 
 .cerrar {

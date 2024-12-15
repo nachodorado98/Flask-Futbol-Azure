@@ -1561,3 +1561,496 @@ def test_pagina_partidos_visitante_temporada_competicion(cliente, conexion, temp
 
 			assert f"- {competicion_no}" not in contenido
 			assert f'<option value="{competicion_no}">{competicion_no}</option>' not in contenido
+
+@pytest.mark.parametrize(["marcador", "resultado", "filtro"],
+	[
+		("0-1", "Victoria Visitante", "Perdidos"),
+		("1-1", "Empate", "Ganados"),
+		("1-0", "Victoria Local", "Empatados")
+	]
+)
+def test_pagina_partidos_resultados_no_hay(cliente, conexion, marcador, resultado, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', %s, %s)""",
+						(marcador, resultado))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." in contenido
+		assert marcador not in contenido
+		assert '<div class="tarjetas-partidos">' not in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
+		assert '<div class="info-partido">' not in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
+
+@pytest.mark.parametrize(["marcador", "resultado", "filtro"],
+	[
+		("0-1", "Victoria Visitante", "Ganados"),
+		("1-1", "Empate", "Empatados"),
+		("1-0", "Victoria Local", "Perdidos")
+	]
+)
+def test_pagina_partidos_resultados(cliente, conexion, marcador, resultado, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', %s, %s)""",
+						(marcador, resultado))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." not in contenido
+		assert marcador in contenido
+		assert '<div class="tarjetas-partidos">' in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
+		assert '<div class="info-partido">' in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+
+@pytest.mark.parametrize(["marcadores", "marcadores_no", "filtro"],
+	[
+		(["1-0", "2-1", "0-2", "1-2"], ["2-0", "1-1"], "Ganados"),
+		(["2-0"], ["1-0", "2-1", "0-2", "1-2", "1-1"], "Perdidos"),
+		(["1-1"], ["1-0", "2-1", "0-2", "1-2", "2-0"], "Empatados")
+	]
+)
+def test_pagina_partidos_resultados_varios(cliente, conexion, marcadores, marcadores_no, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+ 						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+ 								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+ 								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+ 								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+ 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+ 								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." not in contenido
+		assert '<div class="tarjetas-partidos">' in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
+		assert '<div class="info-partido">' in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+
+		for marcador in marcadores:
+
+			assert marcador in contenido
+
+		for marcador_no in marcadores_no:
+
+			assert marcador_no not in contenido
+
+@pytest.mark.parametrize(["marcador", "resultado", "filtro"],
+	[
+		("0-1", "Victoria Visitante", "Perdidos"),
+		("1-1", "Empate", "Ganados"),
+		("1-0", "Victoria Local", "Empatados")
+	]
+)
+def test_pagina_partidos_local_resultados_no_hay(cliente, conexion, marcador, resultado, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', %s, %s)""",
+						(marcador, resultado))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?local=1&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." in contenido
+		assert marcador not in contenido
+		assert '<div class="tarjetas-partidos">' not in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
+		assert '<div class="info-partido">' not in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
+
+@pytest.mark.parametrize(["marcador", "resultado", "filtro"],
+	[
+		("1-0", "Victoria Local", "Ganados"),
+		("1-1", "Empate", "Empatados"),
+		("0-1", "Victoria Visitante", "Perdidos")
+	]
+)
+def test_pagina_partidos_local_resultados(cliente, conexion, marcador, resultado, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', %s, %s)""",
+						(marcador, resultado))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?local=1&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." not in contenido
+		assert marcador in contenido
+		assert '<div class="tarjetas-partidos">' in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
+		assert '<div class="info-partido">' in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+
+@pytest.mark.parametrize(["marcador", "resultado", "filtro"],
+	[
+		("1-0", "Victoria Local", "Empatados"),
+		("1-1", "Empate", "Perdidos"),
+		("0-1", "Victoria Visitante", "Ganados")
+	]
+)
+def test_pagina_partidos_visitante_resultados_no_hay(cliente, conexion, marcador, resultado, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', %s, %s)""",
+						(marcador, resultado))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?local=2&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." in contenido
+		assert marcador not in contenido
+		assert '<div class="tarjetas-partidos">' not in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
+		assert '<div class="info-partido">' not in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
+
+@pytest.mark.parametrize(["marcador", "resultado", "filtro"],
+	[
+		("0-1", "Victoria Visitante", "Ganados"),
+		("1-1", "Empate", "Empatados"),
+		("1-0", "Victoria Local", "Perdidos")
+	]
+)
+def test_pagina_partidos_visitante_resultados(cliente, conexion, marcador, resultado, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'rival', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', %s, %s)""",
+						(marcador, resultado))
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?local=2&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." not in contenido
+		assert marcador in contenido
+		assert '<div class="tarjetas-partidos">' in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
+		assert '<div class="info-partido">' in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+
+@pytest.mark.parametrize(["temporada", "marcadores_no", "filtro"],
+	[
+		(2020, ["1-0", "2-1", "0-2", "1-2", "2-0", "1-1"], "Ganados"),
+		(2019, ["2-0", "1-0", "2-1", "0-2", "1-2", "1-1"], "Perdidos"),
+		(1998, ["1-1", "1-0", "2-1", "0-2", "1-2", "2-0"], "Empatados")
+	]
+)
+def test_pagina_partidos_temporada_resultados_no_hay(cliente, conexion, temporada, marcadores_no, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+ 						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+ 								('20200623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+ 								('20160624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+ 								('20150625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+ 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+ 								('19980627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?temporada={temporada}&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." in contenido
+		assert f"{temporada-1}/{temporada}" in contenido
+		assert '<div class="tarjetas-partidos">' not in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
+		assert '<div class="info-partido">' not in contenido
+		assert f"Temporada {temporada-1} - {temporada}" not in contenido
+		assert f"22/06/{temporada}" not in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
+
+		for marcador_no in marcadores_no:
+
+			assert marcador_no not in contenido
+
+@pytest.mark.parametrize(["temporada", "temporadas_no", "marcadores", "marcadores_no", "filtro"],
+	[
+		(2019, [2020, 2016, 2015, 2024, 1998], ["1-0"], ["2-1", "0-2", "1-2", "2-0", "1-1"], "Ganados"),
+		(2020, [2019, 2016, 2015, 2024, 1998], ["2-0"], ["1-0", "2-1", "0-2", "1-2", "1-1"], "Perdidos"),
+		(2024, [2020, 2016, 2015, 2019, 1998], ["1-1"], ["1-0", "2-1", "0-2", "1-2", "2-0"], "Empatados")
+	]
+)
+def test_pagina_partidos_temporada_resultados(cliente, conexion, temporada, temporadas_no, marcadores, marcadores_no, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+ 						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+ 								('20200623', 'rival', 'atletico-madrid', '2020-06-22', '22:00', 'Primera', '2-0', 'Victoria Local'),
+ 								('20160624', 'atletico-madrid', 'rival', '2016-06-22', '22:00', 'Copa', '2-1', 'Victoria Local'),
+ 								('20150625', 'rival', 'atletico-madrid', '2015-06-22', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+ 								('20240626', 'atletico-madrid', 'rival', '2024-06-22', '22:00', 'Mundial', '1-1', 'Empate'),
+ 								('19980627', 'rival', 'atletico-madrid', '1998-06-22', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?temporada={temporada}&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." not in contenido
+		assert f"{temporada-1}/{temporada}" in contenido
+		assert '<div class="tarjetas-partidos">' in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
+		assert '<div class="info-partido">' in contenido
+		assert f"Temporada {temporada-1} - {temporada}" in contenido
+		assert f"22/06/{temporada}" in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+
+		for marcador in marcadores:
+
+			assert marcador in contenido
+
+		for marcador_no in marcadores_no:
+
+			assert marcador_no not in contenido
+
+		for temporada_no in temporadas_no:
+
+			assert f"Temporada {temporada_no-1} - {temporada_no}" not in contenido
+			assert f"22/06/{temporada_no}" not in contenido
+
+@pytest.mark.parametrize(["competicion", "marcadores_no", "filtro"],
+	[
+		("Primera", ["1-0", "2-1", "0-2", "1-2", "2-0", "1-1"], "Ganados"),
+		("Champions", ["2-0", "1-0", "2-1", "0-2", "1-2", "1-1"], "Perdidos"),
+		("Copa", ["1-1", "1-0", "2-1", "0-2", "1-2", "2-0"], "Empatados")
+	]
+)
+def test_pagina_partidos_competicion_resultados_no_hay(cliente, conexion, competicion, marcadores_no, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+ 						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+ 								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+ 								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+ 								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+ 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+ 								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?competicion={competicion}&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." in contenido
+		assert f"- {competicion}" not in contenido
+		assert '<div class="tarjetas-partidos">' not in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' not in contenido
+		assert '<div class="tarjeta-partido"' not in contenido
+		assert '<div class="info-partido">' not in contenido
+		assert f'<option value="{competicion}">{competicion}</option>' not in contenido
+		assert '<option value="Todo">Todo</option>' not in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
+
+		for marcador_no in marcadores_no:
+
+			assert marcador_no not in contenido
+
+@pytest.mark.parametrize(["competicion", "marcadores", "marcadores_no", "filtro"],
+	[
+		("Liga", ["1-0"], ["2-1", "0-2", "1-2", "2-0", "1-1"], "Ganados"),
+		("Primera", ["2-0"], ["1-0", "2-1", "0-2", "1-2", "1-1"], "Perdidos"),
+		("Mundial", ["1-1"], ["1-0", "2-1", "0-2", "1-2", "2-0"], "Empatados")
+	]
+)
+def test_pagina_partidos_competicion_resultados(cliente, conexion, competicion, marcadores, marcadores_no, filtro):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+ 						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+ 								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+ 								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+ 								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+ 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+ 								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+
+	conexion.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+										"fecha-nacimiento":"1998-02-16",
+										"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?competicion={competicion}&resultados={filtro}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "No hay ningun partido disponible del None..." not in contenido
+		assert f"- {competicion}" in contenido
+		assert '<div class="tarjetas-partidos">' in contenido
+		assert '<div class="tarjetas-partidos-wrapper">' in contenido
+		assert '<div class="tarjeta-partido"' in contenido
+		assert '<div class="info-partido">' in contenido
+		assert f'<option value="{competicion}">{competicion}</option>' in contenido
+		assert '<option value="Todo">Todo</option>' in contenido
+		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+
+		for marcador in marcadores:
+
+			assert marcador in contenido
+
+		for marcador_no in marcadores_no:
+
+			assert marcador_no not in contenido

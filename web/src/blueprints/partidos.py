@@ -17,6 +17,7 @@ def pagina_partidos():
 	local=request.args.get("local", default=0, type=int)
 	temporada=request.args.get("temporada", default=None, type=int)
 	competicion=request.args.get("competicion", default=None, type=str)
+	resultados=request.args.get("resultados", default=None, type=str)
 
 	con=Conexion()
 
@@ -55,6 +56,7 @@ def pagina_partidos():
 								estadio_equipo=estadio_equipo,
 								temporada_filtrada=None,
 								competicion_filtrada=None,
+								resultado_filtrado=None,
 								local=local,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
@@ -71,6 +73,7 @@ def pagina_partidos():
 						estadio_equipo=estadio_equipo,
 						temporada_filtrada=temporada_filtrada,
 						competicion_filtrada=None,
+						resultado_filtrado=None,
 						local=local,
 						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
@@ -95,12 +98,44 @@ def pagina_partidos():
 					estadio_equipo=estadio_equipo,
 					temporada_filtrada=temporada_filtrada,
 					competicion_filtrada=competicion_filtrada,
+					resultado_filtrado=None,
 					local=local,
 					url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
-	resultados_partidos_disputados=limpiarResultadosPartidos(partidos_filtrados_competicion)
+	resultado_filtrado="Todo" if not resultados else resultados
 
-	partidos_asistidos_filtrados=list(filter(lambda asistido: asistido[0] in [partido_filtrado[0] for partido_filtrado in partidos_filtrados_competicion], partidos_asistidos_totales))
+	if resultado_filtrado=="Ganados":
+
+		partidos_filtrados_resultado=list(filter(lambda partido: partido[-3]==1, partidos_filtrados_competicion))
+
+	elif resultado_filtrado=="Perdidos":
+
+		partidos_filtrados_resultado=list(filter(lambda partido: partido[-2]==1, partidos_filtrados_competicion))
+
+	elif resultado_filtrado=="Empatados":
+
+		partidos_filtrados_resultado=list(filter(lambda partido: partido[-1]==1, partidos_filtrados_competicion))
+
+	else:
+
+		partidos_filtrados_resultado=partidos_filtrados_competicion
+
+	if not partidos_filtrados_resultado:
+
+		return render_template("no_partidos.html",
+								usuario=current_user.id,
+								equipo=equipo,
+								nombre_equipo=nombre_equipo,
+								estadio_equipo=estadio_equipo,
+								temporada_filtrada=temporada_filtrada,
+								competicion_filtrada=competicion_filtrada,
+								resultado_filtrado=resultado_filtrado,
+								local=local,
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+	resultados_partidos_disputados=limpiarResultadosPartidos(partidos_filtrados_resultado)
+
+	partidos_asistidos_filtrados=list(filter(lambda asistido: asistido[0] in [partido_filtrado[0] for partido_filtrado in partidos_filtrados_resultado], partidos_asistidos_totales))
 
 	return render_template("partidos.html",
 							usuario=current_user.id,
@@ -109,14 +144,15 @@ def pagina_partidos():
 							estadio_equipo=estadio_equipo,
 							temporadas=temporadas,
 							temporada_filtrada=temporada_filtrada,
-							partidos=partidos_filtrados_competicion,
-							numero_partidos=len(partidos_filtrados_competicion),
+							partidos=partidos_filtrados_resultado,
+							numero_partidos=len(partidos_filtrados_resultado),
 							resultados_partidos_disputados=resultados_partidos_disputados,
 							partidos_asistidos=partidos_asistidos_filtrados,
 							numero_partidos_asistidos=len(partidos_asistidos_filtrados),
 							proximos_partidos=proximos_partidos,
 							competiciones_unicas=competiciones_unicas,
 							competicion_filtrada=competicion_filtrada,
+							resultado_filtrado=resultado_filtrado,
 							local=local,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
