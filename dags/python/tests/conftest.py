@@ -19,6 +19,7 @@ from src.scrapers.scraper_competicion_campeones import ScraperCompeticionCampeon
 from src.scrapers.scraper_jugadores import ScraperJugadores
 from src.scrapers.scraper_jugador import ScraperJugador
 from src.scrapers.scraper_estadio import ScraperEstadio
+from src.scrapers.scraper_entrenador import ScraperEntrenador
 
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
@@ -128,6 +129,11 @@ def scraper_jugador():
 def scraper_estadio():
 
 	return ScraperEstadio("riyadh-air-metropolitano-23")
+
+@pytest.fixture
+def scraper_entrenador():
+
+	return ScraperEntrenador("diego-simeone-13")
 
 def pytest_sessionfinish(session, exitstatus):
 
