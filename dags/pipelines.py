@@ -9,7 +9,7 @@ from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
 from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from python.src.database.conexion import Conexion
-from python.src.utils import generarTemporadas
+from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio
 
 def Pipeline_Equipos_Ligas()->None:
 
@@ -337,6 +337,8 @@ def Pipeline_Jugadores()->None:
 
 			crearArchivoLog(mensaje)
 
+	con.cerrarConexion()
+
 def Pipeline_Estadios_Pais()->None:
 
 	con=Conexion()
@@ -356,6 +358,46 @@ def Pipeline_Estadios_Pais()->None:
 			print(f"Error en pais del estadio {estadio}")
 
 			crearArchivoLog(mensaje)
+
+def Pipeline_Estadios_Coordenadas()->None:
+
+	con=Conexion()
+
+	estadios=con.obtenerEstadiosSinCoordenadas()
+
+	for estadio, nombre, direccion in estadios:
+
+		print(f"Estadio {estadio}")
+
+		try:
+
+			latitud, longitud=obtenerCoordenadasEstadio(nombre)
+
+			if latitud and longitud:
+
+				con.actualizarCoordenadasEstadio([latitud, longitud], estadio)
+
+			else:
+
+				latitud_2, longitud_2=obtenerCoordenadasEstadio(direccion)
+
+				if latitud_2 and longitud_2:
+
+					con.actualizarCoordenadasEstadio([latitud_2, longitud_2], estadio)
+
+				else:
+
+					print(f"No se han podido obtener las coordenadas del estadio {estadio}")
+
+		except Exception as e:
+
+			mensaje=f"Coordenadas Estadio: {estadio} - Motivo: {e}"
+
+			print(f"Error en coordenadas del estadio {estadio}")
+
+			crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
 
 def Pipeline_Proximos_Partidos_Equipo()->None:
 
@@ -383,3 +425,5 @@ def Pipeline_Proximos_Partidos_Equipo()->None:
 		print(f"Error en proximo partido de equipo {equipo} en temporada {temporada}")
 
 		crearArchivoLog(mensaje)
+
+	con.cerrarConexion()

@@ -48,7 +48,13 @@ def normalizarNombre(nombre:str)->str:
 
 	nfkd=unicodedata.normalize("NFKD", nombre)
 
-	return "".join([valor for valor in nfkd if not unicodedata.combining(valor)])
+	nombre_normalizado="".join([valor for valor in nfkd if not unicodedata.combining(valor)])
+
+	for caracter in ["(", ")", "–"]:
+
+		nombre_normalizado=nombre_normalizado.replace(caracter, "")
+
+	return nombre_normalizado.replace("  ", " ")
 
 def obtenerCoordenadasEstadio(estadio:str)->tuple:
 

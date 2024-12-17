@@ -112,10 +112,10 @@ def test_scraper_partido_estadio_obtener_informacion_datos_tecnicos_datos_correc
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
-		("atletico-madrid", "real-madrid", "202429286"),
-		("rayo-vallecano", "atletico-madrid", "202430031"),
-		("celtic-fc", "atletico-madrid", "2024555815"),
-		("feyenoord", "atletico-madrid", "2024555825"),
+		("valladolid", "atletico-madrid", "20256422"),
+		("sparta-praha", "atletico-madrid", "2025162171"),
+		("atletico-madrid", "sevilla", "20256430"),
+		("internazionale", "atletico-madrid", "2024645008"),
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
@@ -141,10 +141,10 @@ def test_scraper_partido_estadio_obtener_partido_estadio_error():
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
-		("atletico-madrid", "real-madrid", "202429286"),
-		("rayo-vallecano", "atletico-madrid", "202430031"),
-		("celtic-fc", "atletico-madrid", "2024555815"),
-		("feyenoord", "atletico-madrid", "2024555825"),
+		("valladolid", "atletico-madrid", "20256422"),
+		("sparta-praha", "atletico-madrid", "2025162171"),
+		("atletico-madrid", "sevilla", "20256430"),
+		("internazionale", "atletico-madrid", "2024645008"),
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )

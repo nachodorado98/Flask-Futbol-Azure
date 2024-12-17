@@ -11,7 +11,7 @@ from utils import existe_entorno, ejecutarDagEstadios, actualizarVariable, crear
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
-from pipelines import Pipeline_Estadios_Pais
+from pipelines import Pipeline_Estadios_Pais, Pipeline_Estadios_Coordenadas
 
 from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake
 
@@ -57,8 +57,10 @@ with DAG("dag_estadios",
 
 		tareas_pipeline_estadios_paises=PythonOperator(task_id="pipeline_estadios_paises", python_callable=Pipeline_Estadios_Pais, trigger_rule="none_failed_min_one_success")
 
+		tareas_pipeline_estadios_coordenadas=PythonOperator(task_id="pipeline_estadios_coordenadas", python_callable=Pipeline_Estadios_Coordenadas)
 
-		tareas_pipeline_estadios_paises
+
+		tareas_pipeline_estadios_paises >> tareas_pipeline_estadios_coordenadas
 
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:

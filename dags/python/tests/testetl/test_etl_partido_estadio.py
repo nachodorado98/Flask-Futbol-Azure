@@ -18,10 +18,10 @@ def test_extraer_data_partido_estadio_error_no_existe():
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
-		("atletico-madrid", "real-madrid", "202429286"),
-		("rayo-vallecano", "atletico-madrid", "202430031"),
-		("celtic-fc", "atletico-madrid", "2024555815"),
-		("feyenoord", "atletico-madrid", "2024555825"),
+		("valladolid", "atletico-madrid", "20256422"),
+		("sparta-praha", "atletico-madrid", "2025162171"),
+		("atletico-madrid", "sevilla", "20256430"),
+		("internazionale", "atletico-madrid", "2024645008"),
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
@@ -35,10 +35,10 @@ def test_extraer_data_partido_estadio(local, visitante, partido_id):
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
-		("atletico-madrid", "real-madrid", "202429286"),
-		("rayo-vallecano", "atletico-madrid", "202430031"),
-		("celtic-fc", "atletico-madrid", "2024555815"),
-		("feyenoord", "atletico-madrid", "2024555825"),
+		("valladolid", "atletico-madrid", "20256422"),
+		("sparta-praha", "atletico-madrid", "2025162171"),
+		("atletico-madrid", "sevilla", "20256430"),
+		("internazionale", "atletico-madrid", "2024645008"),
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
@@ -83,10 +83,10 @@ def test_cargar_data_partido_estadio_datos_error(conexion):
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
-		("atletico-madrid", "real-madrid", "202429286"),
-		("rayo-vallecano", "atletico-madrid", "202430031"),
-		("celtic-fc", "atletico-madrid", "2024555815"),
-		("feyenoord", "atletico-madrid", "2024555825"),
+		("valladolid", "atletico-madrid", "20256422"),
+		("sparta-praha", "atletico-madrid", "2025162171"),
+		("atletico-madrid", "sevilla", "20256430"),
+		("internazionale", "atletico-madrid", "2024645008"),
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
@@ -116,10 +116,10 @@ def test_cargar_data_partido_estadio(conexion, local, visitante, partido_id):
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
-		("atletico-madrid", "real-madrid", "202429286"),
-		("rayo-vallecano", "atletico-madrid", "202430031"),
-		("celtic-fc", "atletico-madrid", "2024555815"),
-		("feyenoord", "atletico-madrid", "2024555825"),
+		("valladolid", "atletico-madrid", "20256422"),
+		("sparta-praha", "atletico-madrid", "2025162171"),
+		("atletico-madrid", "sevilla", "20256430"),
+		("internazionale", "atletico-madrid", "2024645008"),
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
@@ -167,7 +167,7 @@ def test_cargar_data_partido_estadio_existente(conexion, local, visitante, parti
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id_ida", "partido_id_vuelta"],
 	[
-		("milan", "internazionale", "2024103419", "2024103133"),
+		("milan", "internazionale", "2024103419", "202524914"),
 		("roma", "lazio", "2024103401", "2024662727")
 	]
 )

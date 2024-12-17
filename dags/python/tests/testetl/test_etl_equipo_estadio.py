@@ -35,7 +35,8 @@ def test_extraer_data_equipo_estadio(equipo):
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
-	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",)]
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
+	("salzburgo",), ("lillestrom",)]
 )
 def test_limpiar_data_equipo_estadio(equipo):
 
@@ -74,7 +75,8 @@ def test_cargar_data_equipo_estadio_datos_error(conexion):
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
-	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",)]
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
+	("salzburgo",), ("lillestrom",)]
 )
 def test_cargar_data_equipo_estadio(conexion, equipo):
 
@@ -96,7 +98,8 @@ def test_cargar_data_equipo_estadio(conexion, equipo):
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
-	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",)]
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
+	("salzburgo",), ("lillestrom",)]
 )
 def test_cargar_data_equipo_estadio_existente(conexion, equipo):
 

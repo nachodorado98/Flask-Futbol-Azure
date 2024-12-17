@@ -665,3 +665,30 @@ class Conexion:
 		self.c.execute("""DELETE FROM proximos_partidos""")
 
 		self.confirmar()
+
+	# Metodo para obtener las direcciones de los estadios sin coordenadas
+	def obtenerEstadiosSinCoordenadas(self)->List[tuple]:
+
+		self.c.execute("""SELECT Estadio_Id, Nombre, Direccion
+							FROM estadios
+							WHERE Latitud IS NULL
+							OR Longitud IS NULL
+							ORDER BY Estadio_Id""")
+
+		estadios=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["nombre"],
+										estadio["direccion"]), estadios))
+
+	# Metodo para actualizar las coordenadas de un estadio
+	def actualizarCoordenadasEstadio(self, datos_estadio:List[float], estadio_id:str)->None:
+
+		datos_estadio.append(estadio_id)
+
+		self.c.execute("""UPDATE estadios
+							SET Latitud=%s, Longitud=%s
+							WHERE Estadio_Id=%s""",
+							tuple(datos_estadio))
+
+		self.confirmar()
