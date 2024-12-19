@@ -1,0 +1,105 @@
+import pytest
+
+def test_tabla_entrenadores_vacia(conexion):
+
+	conexion.c.execute("SELECT * FROM entrenadores")
+
+	assert not conexion.c.fetchall()
+
+def test_insertar_entrenador(conexion):
+
+	conexion.insertarEntrenador("entrenador")
+
+	conexion.c.execute("SELECT * FROM entrenadores")
+
+	assert len(conexion.c.fetchall())==1
+
+def test_existe_entrenador_no_existe(conexion):
+
+	assert not conexion.existe_entrenador("entrenador")
+
+def test_existe_entrenador_existe(conexion):
+
+	conexion.insertarEntrenador("entrenador")
+
+	assert conexion.existe_entrenador("entrenador")
+
+def test_actualizar_datos_entrenador_no_existe(conexion):
+
+	assert not conexion.existe_entrenador("entrenador")
+
+	datos=["Cholo", "atletico-madrid", "ar", "1", 100]
+
+	conexion.actualizarDatosEntrenador(datos, "entrenador")
+
+	assert not conexion.existe_entrenador("entrenador")
+
+@pytest.mark.parametrize(["datos_nuevos"],
+	[
+		(["Cholo", "atletico-madrid", "ar", "1", 100],),
+		([None, "atletico-madrid", "ar", "1", 100],),
+		(["Cholo", None, "ar", "1", 100],),
+		(["Cholo", "atletico-madrid", None, "1", 100],),
+		(["Cholo", "atletico-madrid", "ar", None, 100],),
+		(["Cholo", "atletico-madrid", "ar", "1", None],)
+	]
+)
+def test_actualizar_datos_entrenador(conexion, datos_nuevos):
+
+	conexion.insertarEntrenador("entrenador")
+
+	assert conexion.existe_entrenador("entrenador")
+
+	conexion.actualizarDatosEntrenador(datos_nuevos, "entrenador")
+
+	conexion.c.execute("SELECT * FROM entrenadores WHERE Entrenador_Id='entrenador'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["nombre"]==datos_nuevos[0]
+	assert datos_actualizados["equipo_id"]==datos_nuevos[1]
+	assert datos_actualizados["codigo_pais"]==datos_nuevos[2]
+	assert datos_actualizados["codigo_entrenador"]==datos_nuevos[3]
+	assert datos_actualizados["puntuacion"]==datos_nuevos[4]
+
+def test_obtener_entrenador_no_hay(conexion):
+
+	assert not conexion.obtenerEntrenadores()
+
+def test_obtener_entrenador(conexion):
+
+	for numero in range(1,11):
+
+		conexion.insertarEntrenador(f"entrenador-{numero}")
+
+	entrenadores=conexion.obtenerEntrenadores()
+
+	assert len(entrenadores)==10
+
+def test_obtener_entrenadores_equipos_no_hay(conexion):
+
+	assert not conexion.obtenerEntrenadoresEquipos()
+
+def test_obtener_entrenadores_equipos_unicos(conexion):
+
+	for numero in range(1,11):
+
+		conexion.c.execute(f"""INSERT INTO equipos (Equipo_Id, Entrenador_URL) VALUES('atletico-madrid-{numero}', 'entrenador-{numero}')""")
+
+	conexion.confirmar()
+
+	entrenadores=conexion.obtenerEntrenadoresEquipos()
+
+	assert len(entrenadores)==10
+
+def test_obtener_entrenadores_equipos_duplicados(conexion):
+
+	for numero in range(1,11):
+
+		conexion.c.execute(f"""INSERT INTO equipos (Equipo_Id, Entrenador_URL) VALUES('atletico-madrid-{numero}', 'entrenador')""")
+
+	conexion.confirmar()
+
+	entrenadores=conexion.obtenerEntrenadoresEquipos()
+
+	assert len(entrenadores)==1

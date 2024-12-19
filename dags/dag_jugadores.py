@@ -56,10 +56,12 @@ with DAG("dag_jugadores",
 
 	with TaskGroup("pipelines_jugadores") as tareas_pipelines_jugadores:
 
+		tarea_pipeline_jugadores_equipo=PythonOperator(task_id="pipeline_jugadores_equipo", python_callable=Pipeline_Jugadores_Equipo, trigger_rule="none_failed_min_one_success")
+
 		tareas_pipeline_jugadores_detalle=PythonOperator(task_id="pipeline_jugadores", python_callable=Pipeline_Jugadores)
 
 
-		tareas_pipeline_jugadores_detalle
+		tarea_pipeline_jugadores_equipo >> tareas_pipeline_jugadores_detalle
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
@@ -73,8 +75,6 @@ with DAG("dag_jugadores",
 
 	tarea_ejecutar_dag_jugadores=PythonOperator(task_id="ejecutar_dag_jugadores", python_callable=ejecutarDagJugadores)
 
-	tarea_pipeline_jugadores_equipo=PythonOperator(task_id="pipeline_jugadores_equipo", python_callable=Pipeline_Jugadores_Equipo, trigger_rule="none_failed_min_one_success")
-
 	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=lambda: data_lake_disponible_creado("subir_data_lake.subir_jugadores_data_lake"))
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
@@ -82,6 +82,6 @@ with DAG("dag_jugadores",
 	tarea_dag_jugadores_completado=PythonOperator(task_id="dag_jugadores_completado", python_callable=lambda: actualizarVariable("DAG_JUGADORES_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_jugadores >> tareas_entorno >> tarea_pipeline_jugadores_equipo >> tareas_pipelines_jugadores >> tarea_data_lake_disponible >> [tareas_subir_data_lake, tarea_log_data_lake]
+tarea_ejecutar_dag_jugadores >> tareas_entorno >> tareas_pipelines_jugadores >> tarea_data_lake_disponible >> [tareas_subir_data_lake, tarea_log_data_lake]
 
 tareas_subir_data_lake >> tarea_dag_jugadores_completado

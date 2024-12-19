@@ -72,6 +72,8 @@ def conexion():
 
 	con.c.execute("DELETE FROM jugadores")
 
+	con.c.execute("DELETE FROM entrenadores")
+
 	con.c.execute("DELETE FROM temporada_jugadores")
 
 	con.c.execute("DELETE FROM proximos_partidos")
@@ -148,6 +150,8 @@ def pytest_sessionfinish(session, exitstatus):
 	con.c.execute("DELETE FROM competiciones")
 
 	con.c.execute("DELETE FROM jugadores")
+
+	con.c.execute("DELETE FROM entrenadores")
 
 	con.c.execute("DELETE FROM temporada_jugadores")
 

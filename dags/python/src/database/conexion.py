@@ -277,8 +277,8 @@ class Conexion:
 		partidos=self.c.fetchall()
 
 		return list(map(lambda partido: (partido["partido_id"],
-											partido["equipo_id_local"],
-											partido["equipo_id_visitante"]), partidos))
+										partido["equipo_id_local"],
+										partido["equipo_id_visitante"]), partidos))
 
 	# Metodo para obtener el valor de una variable
 	def obtenerValorVariable(self, nombre_variable:str)->Optional[str]:
@@ -692,3 +692,56 @@ class Conexion:
 							tuple(datos_estadio))
 
 		self.confirmar()
+
+	#Metodo para insertar un entrenador
+	def insertarEntrenador(self, entrenador:str)->None:
+
+		self.c.execute("""INSERT INTO entrenadores (Entrenador_Id)
+							VALUES(%s)""",
+							(entrenador,))
+
+		self.confirmar()
+
+	# Metodo para saber si existe el entrenador
+	def existe_entrenador(self, entrenador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM entrenadores
+							WHERE Entrenador_Id=%s""",
+							(entrenador_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos de un entrenador
+	def actualizarDatosEntrenador(self, datos_entrenador:List[str], entrenador_id:str)->None:
+
+		datos_entrenador.append(entrenador_id)
+
+		self.c.execute("""UPDATE entrenadores
+							SET Nombre=%s, Equipo_Id=%s, Codigo_Pais=%s, Codigo_Entrenador=%s, Puntuacion=%s
+							WHERE Entrenador_Id=%s""",
+							tuple(datos_entrenador))
+		self.confirmar()
+
+	# Metodo para obtener los entrenadores
+	def obtenerEntrenadores(self)->List[tuple]:
+
+		self.c.execute("""SELECT Entrenador_Id
+						FROM entrenadores
+						ORDER BY Entrenador_Id""")
+
+		entrenadores=self.c.fetchall()
+
+		return list(map(lambda entrenador: entrenador["entrenador_id"], entrenadores))
+
+	# Metodo para obtener los entrenadores unicos de los equipos
+	def obtenerEntrenadoresEquipos(self)->List[tuple]:
+
+		self.c.execute("""SELECT DISTINCT(Entrenador_URL) AS Entrenador
+							FROM equipos
+							WHERE Entrenador_URL IS NOT NULL
+							ORDER BY Entrenador_URL""")
+
+		entrenadores=self.c.fetchall()
+
+		return list(map(lambda entrenador: entrenador["entrenador"], entrenadores))
