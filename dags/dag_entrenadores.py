@@ -13,6 +13,8 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
 from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores
 
+from datalake import data_lake_disponible_creado, subirPaisesEntrenadoresDataLake
+
 
 with DAG("dag_entrenadores",
 		start_date=days_ago(1),
@@ -62,9 +64,23 @@ with DAG("dag_entrenadores",
 		tarea_pipeline_entrenadores_equipos >> tareas_pipeline_entrenadores_detalle
 
 
+	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
+
+		tarea_subir_paises_entrenadores_data_lake=PythonOperator(task_id="subir_paises_entrenadores_data_lake", python_callable=subirPaisesEntrenadoresDataLake, trigger_rule="none_failed_min_one_success")
+		
+
+		tarea_subir_paises_entrenadores_data_lake
+
+
 	tarea_ejecutar_dag_entrenadores=PythonOperator(task_id="ejecutar_dag_entrenadores", python_callable=ejecutarDagEntrenadores)
+
+	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=lambda: data_lake_disponible_creado("subir_data_lake.subir_paises_entrenadores_data_lake"))
+
+	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
 
 	tarea_dag_entrenadores_completado=PythonOperator(task_id="dag_entrenadores_completado", python_callable=lambda: actualizarVariable("DAG_ENTRENADORES_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_entrenadores >> tareas_entorno >> tareas_pipelines_entrenadores >> tarea_dag_entrenadores_completado
+tarea_ejecutar_dag_entrenadores >> tareas_entorno >> tareas_pipelines_entrenadores >> tarea_data_lake_disponible >> [tareas_subir_data_lake, tarea_log_data_lake]
+
+tareas_subir_data_lake >> tarea_dag_entrenadores_completado

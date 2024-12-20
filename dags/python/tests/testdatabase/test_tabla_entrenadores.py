@@ -103,3 +103,27 @@ def test_obtener_entrenadores_equipos_duplicados(conexion):
 	entrenadores=conexion.obtenerEntrenadoresEquipos()
 
 	assert len(entrenadores)==1
+
+def test_obtener_codigo_paises_entrenadores_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoPaisesEntrenadores()
+
+@pytest.mark.parametrize(["datos", "numero_paises"],
+	[
+		([("cholo-simeone-13","ar"),("f-torres-29366","es"),("luis-aragones-1","fr")], 3),
+		([("cholo-simeone-13","ar"),("f-torres-29366","es"),("luis-aragones-1",None)], 2),
+		([("cholo-simeone-13","ar"),("f-torres-29366","es"),("luis-aragones-1",None),("ranieri-10","it")], 3),
+		([("cholo-simeone-13","ar"),("f-torres-29366",None),("luis-aragones-1",None)], 1)
+	]
+)
+def test_obtener_codigo_paises_entrenadores(conexion, datos, numero_paises):
+
+	for entrenador, pais in datos:
+
+		conexion.insertarEntrenador(entrenador)
+
+		conexion.actualizarDatosEntrenador(["Cholo", "atletico-madrid", pais, "1", 100], entrenador)
+	
+	paises=conexion.obtenerCodigoPaisesEntrenadores()
+
+	assert len(paises)==numero_paises

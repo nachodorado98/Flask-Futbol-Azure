@@ -62,6 +62,7 @@ with DAG("dag_jugadores",
 
 
 		tarea_pipeline_jugadores_equipo >> tareas_pipeline_jugadores_detalle
+		
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
