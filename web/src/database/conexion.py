@@ -43,6 +43,8 @@ class Conexion:
 
 		self.c.execute("DELETE FROM jugadores")
 
+		self.c.execute("DELETE FROM entrenadores")
+
 		self.c.execute("DELETE FROM temporada_jugadores")
 
 		self.c.execute("DELETE FROM usuarios")
@@ -2022,3 +2024,46 @@ class Conexion:
 												proximo_partido["visitante"],
 												proximo_partido["escudo_visitante"],
 												proximo_partido["competicion"]), proximos_partidos))
+
+	# Metodo para comprobar si ya existe un entrenador
+	def existe_entrenador(self, entrenador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM entrenadores
+						WHERE entrenador_id=%s""",
+						(entrenador_id,))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener los datos de un entrenador
+	def obtenerDatosEntrenador(self, entrenador_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT en.entrenador_id, en.nombre,
+								CASE WHEN en.codigo_pais IS NULL
+										THEN '-1'
+										ELSE en.codigo_pais
+								END as pais,
+								CASE WHEN en.codigo_entrenador IS NULL
+										THEN '-1'
+										ELSE en.codigo_entrenador
+								END as entrenador,
+								en.puntuacion, e.equipo_id,
+								CASE WHEN e.escudo IS NULL
+										THEN -1
+										ELSE e.escudo
+								END as escudo_equipo
+						FROM entrenadores en
+						LEFT JOIN equipos e
+						ON en.equipo_id=e.equipo_id
+						WHERE en.entrenador_id=%s""",
+						(entrenador_id,))
+
+		entrenador=self.c.fetchone()
+
+		return None if not entrenador else (entrenador["entrenador_id"],
+											entrenador["nombre"],
+											entrenador["pais"],
+											entrenador["entrenador"],
+											entrenador["puntuacion"],
+											entrenador["equipo_id"],
+											entrenador["escudo_equipo"])

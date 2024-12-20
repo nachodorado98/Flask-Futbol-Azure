@@ -73,6 +73,8 @@ def conexion_entorno(conexion):
 	conexion.c.execute("""INSERT INTO proximos_partidos
 						VALUES('20200622', 'atletico-madrid', 'atletico-madrid', '2020-06-22', '22:00', 'Liga')""")
 
+	conexion.c.execute("""INSERT INTO entrenadores
+						VALUES('diego-pablo', 'Diego Simeone', 'atletico-madrid', 'ar', '13', 100)""")
 
 	conexion.confirmar()
 

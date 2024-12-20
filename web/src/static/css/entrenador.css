@@ -1,0 +1,17 @@
+/*----------------------------------------------------------ENTRENADOR-------------------------------------------------------*/
+.tarjeta-entrenador {
+    width: 100%;
+    max-width: 1000px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario)
+}
