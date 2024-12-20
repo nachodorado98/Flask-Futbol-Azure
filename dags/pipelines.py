@@ -8,7 +8,10 @@ from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Parti
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
 from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
+from python.src.etls import ETL_Entrenador
+
 from python.src.database.conexion import Conexion
+
 from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio
 
 def Pipeline_Equipos_Ligas()->None:
@@ -425,5 +428,53 @@ def Pipeline_Proximos_Partidos_Equipo()->None:
 		print(f"Error en proximo partido de equipo {equipo} en temporada {temporada}")
 
 		crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
+
+def Pipeline_Entrenadores_Equipos()->None:
+
+	con=Conexion()
+
+	entrenadores=con.obtenerEntrenadoresEquipos()
+
+	for entrenador in entrenadores:
+
+		try:
+
+			if not con.existe_entrenador(entrenador):
+
+				con.insertarEntrenador(entrenador)
+
+				print(f"Entrenador {entrenador} insertado")
+
+		except Exception as e:
+
+			mensaje=f"Entrenador Equipo: {entrenador} - Motivo: {e}"
+		
+			print(f"Error en entrenador equipo {entrenador}")
+
+			crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
+
+def Pipeline_Entrenadores()->None:
+
+	con=Conexion()
+
+	entrenadores=con.obtenerEntrenadores()
+
+	for entrenador in entrenadores:
+
+		try:
+
+			ETL_Entrenador(entrenador)
+
+		except Exception as e:
+
+			mensaje=f"Entrenador: {entrenador} - Motivo: {e}"
+
+			print(f"Error en entrenador {entrenador}")
+
+			crearArchivoLog(mensaje)
 
 	con.cerrarConexion()

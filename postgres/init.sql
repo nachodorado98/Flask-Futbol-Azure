@@ -113,6 +113,13 @@ CREATE TABLE partido_goleador (Partido_Id VARCHAR(255),
 								FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
 								FOREIGN KEY (Jugador_Id) REFERENCES jugadores (Jugador_Id) ON DELETE CASCADE);
 
+CREATE TABLE entrenadores (Entrenador_Id VARCHAR(255) PRIMARY KEY,
+							Nombre VARCHAR(255) DEFAULT NULL,
+							Equipo_Id VARCHAR(255) DEFAULT NULL,
+							Codigo_Pais VARCHAR(5) DEFAULT NULL,
+							Codigo_Entrenador VARCHAR(15) DEFAULT NULL,
+							Puntuacion INTEGER DEFAULT NULL);
+
 CREATE TABLE temporada_jugadores (Temporada INTEGER);
 
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,
@@ -123,7 +130,8 @@ VALUES ('DAG_EQUIPOS_EJECUTADO', 'False'),
 		('DAG_PARTIDOS_EJECUTADO', 'False'),
 		('DAG_COMPETICIONES_EJECUTADO', 'False'),
 		('DAG_JUGADORES_EJECUTADO', 'False'),
-		('DAG_ESTADIOS_EJECUTADO', 'False');
+		('DAG_ESTADIOS_EJECUTADO', 'False'),
+		('DAG_ENTRENADORES_EJECUTADO', 'False');
 
 CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						Correo VARCHAR(255),

@@ -15,9 +15,13 @@ def extraerDataEquipoEntrenador(equipo:str)->Optional[pd.DataFrame]:
 
 def limpiarDataEquipoEntrenador(tabla:pd.DataFrame)->pd.DataFrame:
 
-	tabla["Nombre_URL"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
-
 	tabla["Codigo_Entrenador"]=tabla["Entrenador_URL"].apply(limpiarCodigoImagen).apply(lambda codigo: None if not codigo or codigo=="nofoto_jugador" else int(codigo))
+
+	tabla["Codigo_Entrenador_String"]=tabla["Codigo_Entrenador"].apply(lambda codigo: "" if not codigo else str(codigo))
+
+	tabla["Nombre_Normalizado"]=tabla["Nombre"].apply(normalizarNombre).apply(lambda nombre: "-".join(nombre.lower().split(" ")))
+
+	tabla["Nombre_URL"]=tabla["Nombre_Normalizado"]+"-"+tabla["Codigo_Entrenador_String"]
 
 	tabla["Fecha"]=tabla["Fecha"].apply(limpiarFecha)
 

@@ -75,14 +75,23 @@ def ejecutarDagEstadios()->None:
 
 		raise Exception("Debes iniciar al menos una vez el DAG de los jugadores")
 
+def ejecutarDagEntrenadores()->None:
+
+	valor=obtenerValorVariable("DAG_ESTADIOS_EJECUTADO")
+
+	if not obtenerBoolCadena(valor):
+
+		raise Exception("Debes iniciar al menos una vez el DAG de los estadios")
+
 def ejecutarDagBackUp()->None:
 
 	valores_dags=[obtenerValorVariable("DAG_EQUIPOS_EJECUTADO"),
 					obtenerValorVariable("DAG_PARTIDOS_EJECUTADO"),
 					obtenerValorVariable("DAG_COMPETICIONES_EJECUTADO"),
 					obtenerValorVariable("DAG_JUGADORES_EJECUTADO"),
-					obtenerValorVariable("DAG_ESTADIOS_EJECUTADO")]
+					obtenerValorVariable("DAG_ESTADIOS_EJECUTADO"),
+					obtenerValorVariable("DAG_ENTRENADORES_EJECUTADO")]
 
 	if not all(map(obtenerBoolCadena, valores_dags)):
 
-		raise Exception("Debes iniciar al menos una vez el DAG de los equipos, de los partidos, de las competiciones, de los jugadores y de los estadios")
+		raise Exception("Debes iniciar al menos una vez el DAG de los equipos, partidos, competiciones, jugadores, estadios y entrenadores")

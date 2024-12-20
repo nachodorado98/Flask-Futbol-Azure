@@ -531,3 +531,47 @@ def subirPaisesEquiposDataLake():
 			crearArchivoLog(mensaje)
 
 	vaciarCarpeta(ruta_paises)
+
+def subirPaisesEntrenadoresDataLake():
+	
+	con=Conexion()
+
+	codigo_paises=con.obtenerCodigoPaisesEntrenadores()
+
+	codigo_paises_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, PAISES, codigo_paises)
+
+	con.cerrarConexion()
+
+	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	for codigo in codigo_paises_descargar:
+
+		print(f"Descargando pais {codigo}...")
+
+		try:
+
+			descargarImagen(URL_PAIS, codigo, ruta_paises)
+
+		except Exception as e:
+
+			mensaje=f"Pais: {codigo} - Motivo: {e}"
+
+			print(f"Error en pais con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de paises finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, PAISES, ruta_paises)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los paises al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_paises)

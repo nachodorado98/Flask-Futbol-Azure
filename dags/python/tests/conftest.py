@@ -19,6 +19,7 @@ from src.scrapers.scraper_competicion_campeones import ScraperCompeticionCampeon
 from src.scrapers.scraper_jugadores import ScraperJugadores
 from src.scrapers.scraper_jugador import ScraperJugador
 from src.scrapers.scraper_estadio import ScraperEstadio
+from src.scrapers.scraper_entrenador import ScraperEntrenador
 
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
@@ -70,6 +71,8 @@ def conexion():
 	con.c.execute("DELETE FROM competiciones")
 
 	con.c.execute("DELETE FROM jugadores")
+
+	con.c.execute("DELETE FROM entrenadores")
 
 	con.c.execute("DELETE FROM temporada_jugadores")
 
@@ -129,6 +132,11 @@ def scraper_estadio():
 
 	return ScraperEstadio("riyadh-air-metropolitano-23")
 
+@pytest.fixture
+def scraper_entrenador():
+
+	return ScraperEntrenador("diego-simeone-13")
+
 def pytest_sessionfinish(session, exitstatus):
 
 	con=Conexion()
@@ -142,6 +150,8 @@ def pytest_sessionfinish(session, exitstatus):
 	con.c.execute("DELETE FROM competiciones")
 
 	con.c.execute("DELETE FROM jugadores")
+
+	con.c.execute("DELETE FROM entrenadores")
 
 	con.c.execute("DELETE FROM temporada_jugadores")
 
