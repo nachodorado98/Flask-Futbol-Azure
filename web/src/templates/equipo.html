@@ -161,7 +161,7 @@
         {% endif %}
 
         {% if datos_equipo[13] %}
-        <div class="info-entrenador">
+        <div class="info-entrenador" onclick="window.location.href='/entrenador/{{ datos_equipo[24] }}'">
             <p><strong>{{ datos_equipo[11] }}</strong></p>
 
             {% if datos_equipo[12]==-1 %}

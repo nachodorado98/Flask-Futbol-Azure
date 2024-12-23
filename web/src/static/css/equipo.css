@@ -90,6 +90,7 @@
     width: 130px;
     height: 130px;
     border: 2px solid black;
+    cursor: pointer;
 }
 
 .info-equipo-imagenes .estadio-equipo {

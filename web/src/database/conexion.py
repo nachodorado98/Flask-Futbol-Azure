@@ -399,7 +399,8 @@ class Conexion:
 								CASE WHEN c.competicion_id IS NULL
 										THEN False
 										ELSE True
-								END as competicion_existe
+								END as competicion_existe,
+								e.entrenador_url as entrenador_id
 						FROM equipos e
 						LEFT JOIN equipo_estadio ee
 						ON e.equipo_id=ee.equipo_id
@@ -435,7 +436,8 @@ class Conexion:
 										equipo["estadio_equipo"],
 										equipo["codigo_competicion"],
 										equipo["competicion_existe"],
-										equipo["equipo_pais"])
+										equipo["equipo_pais"],
+										equipo["entrenador_id"])
 
 	# Metodo para obtener el partido siguiente de un partido
 	def obtenerPartidoSiguiente(self, partido_id:str, equipo_id:str)->Optional[str]:
@@ -2047,11 +2049,15 @@ class Conexion:
 										THEN '-1'
 										ELSE en.codigo_entrenador
 								END as entrenador,
-								en.puntuacion, e.equipo_id,
+								en.puntuacion, e.equipo_id, e.nombre as nombre_equipo,
 								CASE WHEN e.escudo IS NULL
 										THEN -1
 										ELSE e.escudo
-								END as escudo_equipo
+								END as escudo_equipo,
+								CASE WHEN en.equipo_id IS NULL
+										THEN False
+										ELSE True
+								END as equipo_existe
 						FROM entrenadores en
 						LEFT JOIN equipos e
 						ON en.equipo_id=e.equipo_id
@@ -2066,4 +2072,6 @@ class Conexion:
 											entrenador["entrenador"],
 											entrenador["puntuacion"],
 											entrenador["equipo_id"],
-											entrenador["escudo_equipo"])
+											entrenador["nombre_equipo"],
+											entrenador["escudo_equipo"],
+											entrenador["equipo_existe"])

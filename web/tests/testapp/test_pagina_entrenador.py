@@ -42,4 +42,56 @@ def test_pagina_entrenador_entrenador(cliente, conexion_entorno):
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert "diego-pablo" in contenido
+		assert '<div class="tarjeta-entrenador"' in contenido
+		assert '<p class="nombre">' in contenido
+		assert '<img class="pais-entrenador"' in contenido
+		assert '<img class="entrenador"' in contenido
+		assert '<div class="info-entrenador-imagenes">' in contenido
+		assert '<div class="info-entrenador-equipo"' in contenido
+		assert '<div class="info-entrenador-puntuacion">' in contenido
+
+def test_pagina_entrenador_entrenador_sin_equipo(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""UPDATE entrenadores SET equipo_id=NULL""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/entrenador/diego-pablo")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-entrenador-imagenes">' in contenido
+		assert '<div class="info-entrenador-equipo"' not in contenido
+
+def test_pagina_entrenador_entrenador_sin_puntuacion(cliente, conexion_entorno):
+
+	conexion_entorno.c.execute("""UPDATE entrenadores SET puntuacion=NULL""")
+
+	conexion_entorno.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+												"fecha-nacimiento":"1998-02-16",
+												"equipo":"atletico-madrid"})
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/entrenador/diego-pablo")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="info-entrenador-imagenes">' in contenido
+		assert '<div class="info-entrenador-puntuacion">' not in contenido

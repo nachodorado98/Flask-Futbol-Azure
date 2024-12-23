@@ -51,7 +51,7 @@ def test_pagina_equipo_equipo(cliente, conexion_entorno):
 		assert '<img class="pais-equipo"' in contenido
 		assert '<p class="temporadas">' in contenido
 		assert '<div class="info-equipo-imagenes">' in contenido
-		assert '<div class="info-entrenador">' in contenido
+		assert '<div class="info-entrenador"' in contenido
 		assert '<div class="info-equipo">' in contenido
 		assert '<div class="info-estadio"' in contenido
 		assert '<div class="info-jugador"' in contenido

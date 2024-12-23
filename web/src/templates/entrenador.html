@@ -11,7 +11,50 @@
 {% block principal %}
 
 <div class="tarjeta-entrenador">
-	{{ datos_entrenador }}
+
+	<p class="nombre">
+
+		<strong>{{ datos_entrenador[1] }}</strong>
+
+		{% if datos_entrenador[2]=='-1' %}
+            <img class="pais-entrenador" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="pais-entrenador" src="{{ url_imagen_pais }}{{ datos_entrenador[2] }}.png" alt="Pais Icon">
+        {% endif %}
+
+	</p>
+
+	{% if datos_entrenador[3]=='-1' %}
+        <img class="entrenador" src="{{ url_for('static', filename='imagenes/iconos/no_entrenador.png') }}" alt="Entrenador Icon">
+    {% else %}
+        <img class="entrenador" src="{{ url_imagen_entrenador }}{{ datos_entrenador[3] }}.png" alt="Entrenador Icon">
+    {% endif %}
+
+
+    <div class="info-entrenador-imagenes">
+
+        {% if datos_entrenador[8] %}
+        <div class="info-entrenador-equipo" onclick="window.location.href='/equipo/{{ datos_entrenador[5] }}'">
+            <p><strong>{{ datos_entrenador[6] }}</strong></p>
+
+            {% if datos_entrenador[7]==-1 %}
+		        <img class="equipo-entrenador" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+		    {% else %}
+		        <img class="equipo-entrenador" src="{{ url_imagen_escudo }}{{ datos_entrenador[7] }}.png" alt="Equipo Icon">
+		    {% endif %}
+
+        </div>
+        {% endif %}
+
+        {% if datos_entrenador[4] %}
+        <div class="info-entrenador-puntuacion">
+            <p><strong>Valoracion</strong></p>
+            <h4>{{ datos_entrenador[4] }}</h4>
+        </div>
+        {% endif %}
+
+    </div>
+
 </div>
 
 {% endblock principal %}
