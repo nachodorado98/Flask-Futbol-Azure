@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect
 from flask_login import login_required, current_user
 
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas
@@ -240,3 +240,31 @@ def pagina_partidos_asistidos():
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+
+@bp_partidos.route("/partidos/proximos")
+@login_required
+def pagina_partidos_proximos():
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	nombre_equipo=con.obtenerNombreEquipo(equipo)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	proximos_partidos=con.obtenerProximosPartidosEquipo(equipo, 100)
+
+	con.cerrarConexion()
+
+	if not proximos_partidos:
+
+		return redirect("/partidos")
+
+	return render_template("proximos_partidos.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							nombre_equipo=nombre_equipo,
+							estadio_equipo=estadio_equipo,
+							proximos_partidos=proximos_partidos,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

@@ -935,7 +935,7 @@ def test_pagina_partidos_sin_proximos_partidos(cliente, conexion_entorno):
 	assert respuesta.status_code==200
 	assert '<div class="tarjetas-proximos-partidos">' not in contenido
 	assert '<div class="tarjetas-proximos-partidos-wrapper">' not in contenido
-	assert '<div class="tarjeta-proximo-partido">' not in contenido
+	assert '<div class="tarjeta-proximo-partido"' not in contenido
 	assert '<div class="info-proximo-partido">' not in contenido
 	assert '<div class="tarjeta-no-proximo-partido">' in contenido
 
@@ -953,7 +953,7 @@ def test_pagina_partidos_con_proximo_partido(cliente, conexion_entorno):
 	assert respuesta.status_code==200
 	assert '<div class="tarjetas-proximos-partidos">' in contenido
 	assert '<div class="tarjetas-proximos-partidos-wrapper">' in contenido
-	assert '<div class="tarjeta-proximo-partido">' in contenido
+	assert '<div class="tarjeta-proximo-partido"' in contenido
 	assert '<div class="info-proximo-partido">' in contenido
 	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 
