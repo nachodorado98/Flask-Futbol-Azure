@@ -4,6 +4,10 @@ from src.utilidades.utils import datos_correctos, generarHash, correo_enviado
 
 from src.database.conexion import Conexion
 
+from src.datalake.conexion_data_lake import ConexionDataLake
+
+from src.config import CONTENEDOR
+
 bp_registro=Blueprint("registro", __name__)
 
 
@@ -38,5 +42,23 @@ def singin():
 	con.insertarUsuario(usuario, correo, generarHash(contrasena), nombre, apellido, fecha_nacimiento, equipo)
 
 	con.cerrarConexion()
+
+	try:
+
+		dl=ConexionDataLake()
+
+		if not dl.existe_carpeta(CONTENEDOR, "usuarios"):
+
+			dl.crearCarpeta(CONTENEDOR, "usuarios")
+
+		dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/perfil")
+
+		dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/imagenes")
+
+		dl.cerrarConexion()
+
+	except Exception as e:
+
+		print(f"Error en conexion con datalake: {e}")
 
 	return render_template("singin.html", nombre=nombre, correo_correcto=correo_enviado(correo, nombre), equipo=equipo)

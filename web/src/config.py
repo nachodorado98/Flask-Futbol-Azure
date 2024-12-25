@@ -1,5 +1,7 @@
-CUENTA="" # Nombre del Data Lake
-CLAVE="" # Clave del Data Lake
+from .datalake.confconexiondatalake import CUENTA_DL, CLAVE_DL
+
+CUENTA=CUENTA_DL
+CLAVE=CLAVE_DL
 CONTENEDOR="contenedorequipos"
 URL_DATALAKE=f"https://{CUENTA}.blob.core.windows.net/{CONTENEDOR}"
 URL_DATALAKE_ESCUDOS=f"{URL_DATALAKE}/escudos/"

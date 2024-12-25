@@ -1,6 +1,8 @@
 import pytest
 
-def test_pagina_registro(cliente):
+from src.config import CONTENEDOR
+
+def test_pagina_registro(cliente, datalake):
 
 	respuesta=cliente.get("/registro")
 
@@ -8,6 +10,12 @@ def test_pagina_registro(cliente):
 
 	respuesta.status_code==200
 	assert "<h1>Crear Una Cuenta</h1>" in contenido
+
+	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
+
+	datalake.crearCarpeta(CONTENEDOR, "usuarios")
+
+	datalake.cerrarConexion()
 
 @pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
 	[
@@ -27,7 +35,7 @@ def test_pagina_registro(cliente):
 		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti?co")
 	]
 )
-def test_pagina_singin_datos_incorrectos(cliente, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":correo, "nombre":nombre,
 											"apellido":apellido, "contrasena":contrasena,
@@ -40,14 +48,16 @@ def test_pagina_singin_datos_incorrectos(cliente, usuario, correo, nombre, apell
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
+	assert not datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
+
+	datalake.cerrarConexion()
+
 @pytest.mark.parametrize(["usuario"],
 	[("nacho98",),("naCho98",),("nacho",),("amanditaa",),("amanda99",)]
 )
-def test_pagina_singin_usuario_existente(cliente, conexion_entorno, usuario):
+def test_pagina_singin_usuario_existente(cliente, conexion_entorno, datalake, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.es", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atletico-madrid")
-
-	conexion_entorno.confirmar()
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
@@ -60,10 +70,14 @@ def test_pagina_singin_usuario_existente(cliente, conexion_entorno, usuario):
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
+	assert not datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
+
+	datalake.cerrarConexion()
+
 @pytest.mark.parametrize(["equipo"],
 	[("atm",),("atleti",),("equipo",),("atleticomadrid",),("atletico madrid",),("atleti-madrid",)]
 )
-def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, equipo):
+def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
@@ -76,6 +90,10 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, equipo):
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
+	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
+
+	datalake.cerrarConexion()
+
 @pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
 	[
 		("nacho98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1999-07-16", "atletico-madrid"),
@@ -87,7 +105,7 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, equipo):
 		("golden9", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1990-02-16", "atletico-madrid")
 	]
 )
-def test_pagina_singin_correcto(cliente, conexion_entorno, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":correo, "nombre":nombre,
 											"apellido":apellido, "contrasena":contrasena,
@@ -109,6 +127,12 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, usuario, correo, nomb
 
 	assert len(usuarios)==1
 
+	assert datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
+
+	datalake.eliminarCarpeta(CONTENEDOR, f"usuarios/{usuario}")
+
+	datalake.cerrarConexion()
+
 @pytest.mark.parametrize(["usuarios_agregar"],
 	[
 		(["nacho98", "naCho98", "nacho", "amanditaa","amanda99"],),
@@ -118,7 +142,7 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, usuario, correo, nomb
 		(["nacho98", "amanda99"],)
 	]
 )
-def test_pagina_singin_correctos(cliente, conexion_entorno, usuarios_agregar):
+def test_pagina_singin_correctos(cliente, conexion_entorno, datalake, usuarios_agregar):
 
 	for usuario in usuarios_agregar:
 
@@ -132,3 +156,31 @@ def test_pagina_singin_correctos(cliente, conexion_entorno, usuarios_agregar):
 	usuarios=conexion_entorno.c.fetchall()
 
 	assert len(usuarios)==len(usuarios_agregar)
+
+	for usuario in usuarios_agregar:
+
+		assert datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
+
+		datalake.eliminarCarpeta(CONTENEDOR, f"usuarios/{usuario}")
+
+	datalake.cerrarConexion()
+
+def test_pagina_singin_carpeta_usuarios_no_existe(cliente, conexion_entorno, datalake):
+
+	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
+
+	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios")
+
+	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+											"fecha-nacimiento":"1998-02-16",
+											"equipo":"atletico-madrid"})
+
+	contenido=respuesta.data.decode()
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
+
+	datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+
+	datalake.cerrarConexion()

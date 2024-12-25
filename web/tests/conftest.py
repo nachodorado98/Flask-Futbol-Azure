@@ -5,6 +5,7 @@ sys.path.append("..")
 import pytest
 from src import crear_app
 from src.database.conexion import Conexion
+from src.datalake.conexion_data_lake import ConexionDataLake
 from confmain import config
 from src.utilidades.utils import vaciarCarpeta
 
@@ -79,6 +80,11 @@ def conexion_entorno(conexion):
 	conexion.confirmar()
 
 	return conexion
+
+@pytest.fixture()
+def datalake():
+
+    return ConexionDataLake()
 
 def pytest_sessionfinish(session, exitstatus):
 
