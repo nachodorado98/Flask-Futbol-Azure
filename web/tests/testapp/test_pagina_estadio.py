@@ -10,14 +10,11 @@ def test_pagina_estadio_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_estadio_estadio_no_existe(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_no_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -29,14 +26,11 @@ def test_pagina_estadio_estadio_no_existe(cliente, conexion_entorno):
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_estadio_estadio(cliente, conexion_entorno):
+def test_pagina_estadio_estadio(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -61,18 +55,15 @@ def test_pagina_estadio_estadio(cliente, conexion_entorno):
 		assert "/estadio/mapa/mapa_small_estadio_user_" in contenido
 		assert '<img class="no-mapa"' not in contenido
 
-def test_pagina_estadio_estadio_sin_equipo(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_sin_equipo(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""DELETE FROM equipo_estadio""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -84,18 +75,15 @@ def test_pagina_estadio_estadio_sin_equipo(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="equipo-estadio">' not in contenido
 
-def test_pagina_estadio_estadio_sin_direccion(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_sin_direccion(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET direccion=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -107,18 +95,15 @@ def test_pagina_estadio_estadio_sin_direccion(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="direccion">' not in contenido
 
-def test_pagina_estadio_estadio_sin_fundacion(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_sin_fundacion(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET fecha=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -130,18 +115,15 @@ def test_pagina_estadio_estadio_sin_fundacion(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="fecha-fundacion">' not in contenido
 
-def test_pagina_estadio_estadio_sin_espectadores(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_sin_espectadores(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET capacidad=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -153,18 +135,15 @@ def test_pagina_estadio_estadio_sin_espectadores(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="espectadores">' not in contenido
 
-def test_pagina_estadio_estadio_sin_ancho(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_sin_ancho(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET ancho=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -176,18 +155,15 @@ def test_pagina_estadio_estadio_sin_ancho(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="dimensiones">' not in contenido
 
-def test_pagina_estadio_estadio_sin_largo(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_sin_largo(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET largo=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -199,14 +175,11 @@ def test_pagina_estadio_estadio_sin_largo(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadio"' in contenido
 		assert '<p class="dimensiones">' not in contenido
 
-def test_pagina_estadio_estadio_no_asistido(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_no_asistido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -220,14 +193,11 @@ def test_pagina_estadio_estadio_no_asistido(cliente, conexion_entorno):
 		assert "Veces Asistido" in contenido
 		assert '<p class="valor-circulo-numero-veces-asistido"><strong>0</strong></p>' in contenido
 
-def test_pagina_estadio_estadio_asistido(cliente, conexion_entorno):
+def test_pagina_estadio_estadio_asistido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -248,18 +218,15 @@ def test_pagina_estadio_estadio_asistido(cliente, conexion_entorno):
 @pytest.mark.parametrize(["veces"],
 	[(10,),(2,),(16,),(7,),(22,)]
 )
-def test_pagina_estadio_estadio_asistido_varias_veces(cliente, conexion_entorno, veces):
+def test_pagina_estadio_estadio_asistido_varias_veces(cliente, conexion_entorno, password_hash, veces):
 
 	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -286,18 +253,15 @@ def test_pagina_estadio_estadio_asistido_varias_veces(cliente, conexion_entorno,
 		assert "Veces Asistido" in contenido
 		assert f'<p class="valor-circulo-numero-veces-asistido"><strong>{veces}</strong></p>' in contenido
 
-def test_pagina_estadio_error_mapas(cliente, conexion_entorno):
+def test_pagina_estadio_error_mapas(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -310,14 +274,11 @@ def test_pagina_estadio_error_mapas(cliente, conexion_entorno):
 		assert "/estadio/mapa/mapa_small_estadio_user_" not in contenido
 		assert '<img class="no-mapa"' in contenido
 
-def test_pagina_estadio_mapa_small(cliente, conexion_entorno):
+def test_pagina_estadio_mapa_small(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -350,14 +311,11 @@ def test_pagina_estadio_mapa_small(cliente, conexion_entorno):
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_estadio_mapa_small_usuarios(cliente, conexion_entorno, usuario):
+def test_pagina_estadio_mapa_small_usuarios(cliente, conexion_entorno, password_hash, usuario):
+
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 		
@@ -391,14 +349,11 @@ def test_pagina_estadio_mapa_small_usuarios(cliente, conexion_entorno, usuario):
 			assert "[40.436, -3.599]" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_estadio_mapa_small_otro_usuario(cliente, conexion_entorno):
+def test_pagina_estadio_mapa_small_otro_usuario(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"otro", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "otro", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 		
@@ -436,10 +391,7 @@ def test_pagina_estadio_mapa_small_otro_usuario(cliente, conexion_entorno):
 		
 		conexion_entorno.confirmar()
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 		
@@ -474,14 +426,11 @@ def test_pagina_mapa_estadio_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mapa_estadio_mapa_no_existe(cliente, conexion_entorno):
+def test_pagina_mapa_estadio_mapa_no_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -489,14 +438,11 @@ def test_pagina_mapa_estadio_mapa_no_existe(cliente, conexion_entorno):
 
 			cliente_abierto.get("/estadio/mapa/nombre_mapa.html")
 
-def test_pagina_mapa_estadio_mapa_small_existe(cliente, conexion_entorno):
+def test_pagina_mapa_estadio_mapa_small_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

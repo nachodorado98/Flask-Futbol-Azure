@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template, redirect, request
 from flask_login import login_required, current_user
+import os
 
 from src.database.conexion import Conexion
+
+from src.utilidades.utils import crearCarpeta, extraerExtension
 
 bp_anadir_partido_asistido=Blueprint("anadir_partido_asistido", __name__)
 
@@ -56,6 +59,7 @@ def pagina_insertar_partido_asistido():
 	partido_id=request.form.get("partido_anadir")
 	comentario=request.form.get("comentario")
 	partido_asistido_favorito=request.form.get("partido-favorito")
+	archivos=request.files
 
 	con=Conexion()
 
@@ -84,6 +88,26 @@ def pagina_insertar_partido_asistido():
 	if not existe_partido_asistido_favorito and partido_asistido_favorito:
 
 		con.insertarPartidoAsistidoFavorito(partido_id, current_user.id)
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	crearCarpeta(os.path.join(ruta, "templates", "imagenes", current_user.id))
+
+	if "imagen" in archivos:
+
+		imagen=archivos["imagen"]
+
+		extension=extraerExtension(imagen.filename)
+
+		if imagen.filename!="" and extension in ("png", "jpg", "jpeg"):
+
+			ruta_carpeta=os.path.join(ruta, "templates", "imagenes", current_user.id)
+
+			archivo_imagen=f"{current_user.id}_{partido_id}.{extension}"
+
+			ruta_imagen=os.path.join(ruta_carpeta, archivo_imagen)
+
+			imagen.save(ruta_imagen)
 
 	con.cerrarConexion()
 

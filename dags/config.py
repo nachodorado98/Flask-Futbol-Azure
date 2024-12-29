@@ -42,5 +42,5 @@ TABLA_JUGADORES="tablas/jugadores"
 TABLA_PARTIDO_GOLEADOR="tablas/partido_goleador"
 
 EQUIPO_ID=369 # Atletico de Madrid. Numero del escudo realmente, no el equipo_id. La web crea asi la URL
-TEMPORADA_INICIO=2024 # Año de inicio minimo: 1921. Año de inicio maximo: Año actual
+TEMPORADA_INICIO=2025 # Año de inicio minimo: 1921. Año de inicio maximo: Año actual
 MES_FIN_TEMPORADA=6 # Mes para indicar un cambio de temporada. El mes 6, Junio, sera el ultimo mes de la temporada actual.

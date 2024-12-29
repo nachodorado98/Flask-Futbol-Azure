@@ -105,6 +105,44 @@
     color: #bdc3c7;
 }
 
+.contenedor-imagen {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.imagen-partido-asistido {
+    color: var(--color-secundario);
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+#imagen {
+    display: none;
+}
+
+.boton-seleccionar-imagen {
+    display: inline-block;
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.boton-seleccionar-imagen:hover {
+    transform: scale(1.03);
+}
+
+.nombre-archivo-imagen {
+  font-size: 14px;
+  color: var(--color-secundario);
+  margin-left: 10px;
+}
+
 .botones-formulario-anadir-partido-asistido {
     display: flex;
     justify-content: center;
@@ -130,5 +168,4 @@
 .boton-submit-formulario-anadir-partido-asistido:hover,
 .boton-cancelar-formulario-anadir-partido-asistido:hover {
     transform: scale(1.05);
-    background-color: var(--color-fondo);
 }

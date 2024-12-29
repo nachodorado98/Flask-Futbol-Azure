@@ -1,6 +1,8 @@
 import pytest
+import os
 
 from src.config import CONTENEDOR
+from src.utilidades.utils import vaciarCarpeta
 
 def test_pagina_registro(cliente, datalake):
 
@@ -16,6 +18,10 @@ def test_pagina_registro(cliente, datalake):
 	datalake.crearCarpeta(CONTENEDOR, "usuarios")
 
 	datalake.cerrarConexion()
+
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
+	vaciarCarpeta(ruta_carpeta_imagenes)
 
 @pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
 	[
@@ -52,6 +58,10 @@ def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nom
 
 	datalake.cerrarConexion()
 
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
+	assert not os.path.exists(ruta_carpeta_imagenes+f"/{usuario}")
+
 @pytest.mark.parametrize(["usuario"],
 	[("nacho98",),("naCho98",),("nacho",),("amanditaa",),("amanda99",)]
 )
@@ -74,6 +84,12 @@ def test_pagina_singin_usuario_existente(cliente, conexion_entorno, datalake, us
 
 	datalake.cerrarConexion()
 
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
+	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
+
+	assert not os.path.exists(ruta_carpeta_imagenes_usuario)
+
 @pytest.mark.parametrize(["equipo"],
 	[("atm",),("atleti",),("equipo",),("atleticomadrid",),("atletico madrid",),("atleti-madrid",)]
 )
@@ -93,6 +109,12 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, 
 	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
 
 	datalake.cerrarConexion()
+
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
+	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, "nacho98")
+
+	assert not os.path.exists(ruta_carpeta_imagenes_usuario)
 
 @pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
 	[
@@ -133,6 +155,14 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, co
 
 	datalake.cerrarConexion()
 
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
+	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
+
+	assert os.path.exists(ruta_carpeta_imagenes_usuario)
+
+	vaciarCarpeta(ruta_carpeta_imagenes)
+
 @pytest.mark.parametrize(["usuarios_agregar"],
 	[
 		(["nacho98", "naCho98", "nacho", "amanditaa","amanda99"],),
@@ -157,13 +187,21 @@ def test_pagina_singin_correctos(cliente, conexion_entorno, datalake, usuarios_a
 
 	assert len(usuarios)==len(usuarios_agregar)
 
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
 	for usuario in usuarios_agregar:
 
 		assert datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
 
 		datalake.eliminarCarpeta(CONTENEDOR, f"usuarios/{usuario}")
 
+		ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
+
+		assert os.path.exists(ruta_carpeta_imagenes_usuario)
+
 	datalake.cerrarConexion()
+
+	vaciarCarpeta(ruta_carpeta_imagenes)
 
 def test_pagina_singin_carpeta_usuarios_no_existe(cliente, conexion_entorno, datalake):
 

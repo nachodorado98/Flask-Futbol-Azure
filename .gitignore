@@ -189,4 +189,5 @@ pyrightconfig.json
 /logs
 /plugins
 web/src/templates/mapas/
+web/src/templates/imagenes/
 dags/entorno

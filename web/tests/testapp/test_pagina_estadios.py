@@ -7,18 +7,15 @@ def test_pagina_estadios_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno):
+def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("DELETE FROM estadios")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -35,14 +32,11 @@ def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadios-visitados-cantidad">' not in contenido
 		assert '<div class="tarjetas-estadios-visitados-totales-cantidad">' not in contenido
 
-def test_pagina_estadios_estadios(cliente, conexion_entorno):
+def test_pagina_estadios_estadios(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -62,18 +56,15 @@ def test_pagina_estadios_estadios(cliente, conexion_entorno):
 		assert '<div class="tarjeta-estadios-visitados-cantidad">' not in contenido
 		assert '<div class="tarjetas-estadios-visitados-totales-cantidad">' not in contenido
 
-def test_pagina_estadios_estadios_top_no_existen(cliente, conexion_entorno):
+def test_pagina_estadios_estadios_top_no_existen(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET Capacidad=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

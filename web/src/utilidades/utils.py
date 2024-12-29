@@ -12,7 +12,6 @@ import fiona
 from shapely.geometry import Point
 import pandas as pd
 
-
 from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO_CORREO
 
 from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESTADIOS
@@ -287,7 +286,13 @@ def vaciarCarpeta(ruta:str)->None:
 
 			try:
 
-				os.remove(os.path.join(ruta, archivo))
+				if not os.path.isdir(os.path.join(ruta, archivo)):
+
+					os.remove(os.path.join(ruta, archivo))
+
+				else:
+
+					os.rmdir(os.path.join(ruta, archivo))
 
 			except Exception:
 				
@@ -446,3 +451,7 @@ def obtenerCompeticionesPartidosUnicas(partidos:List[tuple])->List[str]:
 	competiciones_ordenadas.append("Todo")
 
 	return competiciones_ordenadas
+
+def extraerExtension(archivo:str, extension_alternativa:str="jpg")->str:
+
+	return archivo.rsplit(".", 1)[1].lower() if "." in archivo else extension_alternativa

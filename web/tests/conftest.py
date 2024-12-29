@@ -24,6 +24,11 @@ def cliente(app):
 	return app.test_client()
 
 @pytest.fixture()
+def password_hash():
+
+	return "$2b$12$NZ.GhycT.kofGXpTgwyYuenY/BPbF1dpO7udruM.sKb09/46Gn7aK"
+
+@pytest.fixture()
 def conexion():
 
 	con=Conexion()
@@ -102,6 +107,12 @@ def pytest_sessionfinish(session, exitstatus):
 
 	ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
 
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
 	vaciarCarpeta(ruta_carpeta_mapas)
 
 	print("\nLimpieza de la carpeta mapas correcta")
+
+	vaciarCarpeta(ruta_carpeta_imagenes)
+
+	print("\nLimpieza de la carpeta imagenes correcta")

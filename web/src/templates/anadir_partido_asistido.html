@@ -14,7 +14,7 @@
 
     <p class="titulo-pagina-anadir-partido-asistido"><strong>Añadir Partido</strong></p>
 
-    <form class="formulario-anadir-partido-asistido" method="POST" action="/insertar_partido_asistido" autocomplete="off" novalidate>
+    <form class="formulario-anadir-partido-asistido" method="POST" action="/insertar_partido_asistido" autocomplete="off" enctype="multipart/form-data" novalidate>
 
         <div class="contenedor-select-boton">
 
@@ -57,14 +57,25 @@
             <textarea id="comentario" name="comentario" class="campo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
         </div>
 
+        <div class="contenedor-imagen">
+            <p class="imagen-partido-asistido"><strong>Subir Imagen Partido</strong></p>
+            <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel">Seleccionar Imagen</label>
+            <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
+            <p class="nombre-archivo-imagen" id="nombre-archivo-imagen">Ningún archivo seleccionado</p>
+        </div>
+
         <div class="botones-formulario-anadir-partido-asistido">
             <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">Añadir</button>
-            <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">Cancelar</button>
+            <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">
+                Cancelar
+            </button>
         </div>
 
     </form>
 
 </div>
+
+<script src="{{ url_for('static', filename='js/cargar_nombre_imagen.js') }}"></script>
 
 {% endblock principal %}
 

@@ -10,18 +10,15 @@ def test_pagina_mis_estadios_pais_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mis_estadios_pais_estadios_no_existen(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_estadios_no_existen(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("DELETE FROM estadios")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -33,14 +30,11 @@ def test_pagina_mis_estadios_pais_estadios_no_existen(cliente, conexion_entorno)
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais_partidos_asistidos_no_existen(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_partidos_asistidos_no_existen(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -52,18 +46,15 @@ def test_pagina_mis_estadios_pais_partidos_asistidos_no_existen(cliente, conexio
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais_estadios_asistidos_no_existen(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_estadios_asistidos_no_existen(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("DELETE FROM estadios")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -79,7 +70,7 @@ def test_pagina_mis_estadios_pais_estadios_asistidos_no_existen(cliente, conexio
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
 
@@ -87,12 +78,9 @@ def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, con
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -111,14 +99,11 @@ def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, con
 @pytest.mark.parametrize(["pais"],
 	[("se",),("ese",),("p",),("nl",),("pt",)]
 )
-def test_pagina_mis_estadios_pais_codigo_pais_no_existe(cliente, conexion_entorno, pais):
+def test_pagina_mis_estadios_pais_codigo_pais_no_existe(cliente, conexion_entorno, password_hash, pais):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -134,14 +119,11 @@ def test_pagina_mis_estadios_pais_codigo_pais_no_existe(cliente, conexion_entorn
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -172,18 +154,15 @@ def test_pagina_mis_estadios_pais(cliente, conexion_entorno):
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_" in contenido
 
-def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -214,18 +193,15 @@ def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_ent
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_" in contenido
 
-def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("UPDATE equipos SET Codigo_Pais=NULL")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -259,14 +235,11 @@ def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_ento
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, veces):
+def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, password_hash, veces):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -308,14 +281,11 @@ def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, veces)
 @pytest.mark.parametrize(["veces"],
 	[(2,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno, veces):
+def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno, password_hash, veces):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -356,18 +326,15 @@ def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno, veces):
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_" in contenido
 
-def test_pagina_mis_estadios_pais_sin_nombre_pais(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_sin_nombre_pais(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("UPDATE estadios SET Pais=NULL")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -387,14 +354,11 @@ def test_pagina_mis_estadios_pais_sin_nombre_pais(cliente, conexion_entorno):
 		assert '<span class="boton-estadios-mapa-text">Estadios de None</span>' in contenido
 		assert '<span class="boton-paises-mapa-text">None</span>' in contenido
 
-def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -414,14 +378,11 @@ def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno):
 		assert '<span class="boton-estadios-mapa-text">Estadios de España</span>' in contenido
 		assert '<span class="boton-paises-mapa-text">España</span>' in contenido
 
-def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -441,14 +402,11 @@ def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_
 @pytest.mark.parametrize(["pais"],
 	[("es0",),("es1",),("es2",),("es3",),("es4",)]
 )
-def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_entorno, pais):
+def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_entorno, password_hash, pais):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -475,18 +433,15 @@ def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_
 		assert '<button class="boton-desplegable"' in contenido
 		assert '<div id="menuDesplegable" class="menu-desplegable">' in contenido
 
-def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -503,14 +458,11 @@ def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno):
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_nacho98.html" not in contenido
 		assert '<img class="no-mapa"' in contenido
 
-def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -550,14 +502,11 @@ def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno):
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_mis_estadios_pais_mapa_small_usuarios(cliente, conexion_entorno, usuario):
+def test_pagina_mis_estadios_pais_mapa_small_usuarios(cliente, conexion_entorno, password_hash, usuario):
+
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -594,14 +543,11 @@ def test_pagina_mis_estadios_pais_mapa_small_usuarios(cliente, conexion_entorno,
 			assert "es.png" not in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"otro", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "otro", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -642,10 +588,7 @@ def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_ento
 
 		conexion_entorno.confirmar()
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -674,14 +617,11 @@ def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_ento
 			assert "pais.png" not in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -721,14 +661,11 @@ def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno):
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_mis_estadios_pais_mapa_detalle_usuarios(cliente, conexion_entorno, usuario):
+def test_pagina_mis_estadios_pais_mapa_detalle_usuarios(cliente, conexion_entorno, password_hash, usuario):
+
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -765,14 +702,11 @@ def test_pagina_mis_estadios_pais_mapa_detalle_usuarios(cliente, conexion_entorn
 			assert "es.png" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"otro", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "otro", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -813,10 +747,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_en
 
 		conexion_entorno.confirmar()
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -845,14 +776,11 @@ def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_en
 			assert "pais.png" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -891,14 +819,11 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno)
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_mis_estadios_pais_mapa_detalle_paises_usuarios(cliente, conexion_entorno, usuario):
+def test_pagina_mis_estadios_pais_mapa_detalle_paises_usuarios(cliente, conexion_entorno, password_hash, usuario):
+
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -934,14 +859,11 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises_usuarios(cliente, conexion
 			assert '"type": "FeatureCollection"' in contenido
 			assert '{"name": "Spain"}' in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, conexion_entorno):
+def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"otro", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "otro", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -981,10 +903,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, cone
 
 		conexion_entorno.confirmar()
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1021,14 +940,11 @@ def test_pagina_mapa_mis_estadios_pais_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mapa_mis_estadios_pais_mapa_no_existe(cliente, conexion_entorno):
+def test_pagina_mapa_mis_estadios_pais_mapa_no_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1036,14 +952,11 @@ def test_pagina_mapa_mis_estadios_pais_mapa_no_existe(cliente, conexion_entorno)
 
 			cliente_abierto.get("/estadios/mis_estadios_pais/mapa/nombre_mapa.html")
 
-def test_pagina_mapa_mis_estadios_pais_mapa_small_existe(cliente, conexion_entorno):
+def test_pagina_mapa_mis_estadios_pais_mapa_small_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1069,14 +982,11 @@ def test_pagina_mapa_mis_estadios_pais_mapa_small_existe(cliente, conexion_entor
 		assert "es.png" not in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mapa_mis_estadios_pais_mapa_detalle_existe(cliente, conexion_entorno):
+def test_pagina_mapa_mis_estadios_pais_mapa_detalle_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1102,14 +1012,11 @@ def test_pagina_mapa_mis_estadios_pais_mapa_detalle_existe(cliente, conexion_ent
 		assert "es.png" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mapa_mis_estadios_pais_mapa_detalle_paises_existe(cliente, conexion_entorno):
+def test_pagina_mapa_mis_estadios_pais_mapa_detalle_paises_existe(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

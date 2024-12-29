@@ -9,18 +9,15 @@ def test_pagina_mis_competiciones_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mis_competiciones_competiciones_no_existen(cliente, conexion_entorno):
+def test_pagina_mis_competiciones_competiciones_no_existen(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("DELETE FROM competiciones")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -32,14 +29,11 @@ def test_pagina_mis_competiciones_competiciones_no_existen(cliente, conexion_ent
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_competiciones_partidos_asistidos_no_existen(cliente, conexion_entorno):
+def test_pagina_mis_competiciones_partidos_asistidos_no_existen(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -51,18 +45,15 @@ def test_pagina_mis_competiciones_partidos_asistidos_no_existen(cliente, conexio
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_competiciones_competiciones_asistidas_no_existen(cliente, conexion_entorno):
+def test_pagina_mis_competiciones_competiciones_asistidas_no_existen(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("DELETE FROM competiciones")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -78,14 +69,11 @@ def test_pagina_mis_competiciones_competiciones_asistidas_no_existen(cliente, co
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_competiciones(cliente, conexion_entorno):
+def test_pagina_mis_competiciones(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")	
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -110,14 +98,11 @@ def test_pagina_mis_competiciones(cliente, conexion_entorno):
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno, veces):
+def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno, password_hash, veces):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -147,14 +132,11 @@ def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno, veces)
 		assert "Competiciones Asistidas" in contenido
 		assert '<p class="valor-circulo-competiciones-asistidas"><strong>1</strong></p>' in contenido
 
-def test_pagina_mis_competiciones_competicion_asistida(cliente, conexion_entorno):
+def test_pagina_mis_competiciones_competicion_asistida(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -175,14 +157,11 @@ def test_pagina_mis_competiciones_competicion_asistida(cliente, conexion_entorno
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_competiciones_competicion_asistida_varias_veces(cliente, conexion_entorno, veces):
+def test_pagina_mis_competiciones_competicion_asistida_varias_veces(cliente, conexion_entorno, password_hash, veces):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

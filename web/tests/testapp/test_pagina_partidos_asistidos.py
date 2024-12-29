@@ -9,18 +9,15 @@ def test_pagina_partidos_asistidos_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_partidos_asistidos_sin_partidos(cliente, conexion_entorno):
+def test_pagina_partidos_asistidos_sin_partidos(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("DELETE FROM partidos")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -37,14 +34,11 @@ def test_pagina_partidos_asistidos_sin_partidos(cliente, conexion_entorno):
 		assert '<div class="tarjeta-partido-asistidos"' not in contenido
 		assert '<div class="info-partido-asistidos">' not in contenido
 
-def test_pagina_partidos_asistidos_sin_partidos_asistidos(cliente, conexion_entorno):
+def test_pagina_partidos_asistidos_sin_partidos_asistidos(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -61,7 +55,7 @@ def test_pagina_partidos_asistidos_sin_partidos_asistidos(cliente, conexion_ento
 		assert '<div class="tarjeta-partido-asistidos"' not in contenido
 		assert '<div class="info-partido-asistidos">' not in contenido
 
-def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion):
+def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -77,12 +71,9 @@ def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -109,7 +100,7 @@ def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion):
 @pytest.mark.parametrize(["cantidad_partidos", "cantidad_partidos_asistidos"],
 	[(1,1),(2,1),(10,6),(7,3),(22,15)]
 )
-def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, cantidad_partidos, cantidad_partidos_asistidos):
+def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, password_hash, cantidad_partidos, cantidad_partidos_asistidos):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -131,12 +122,9 @@ def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, cantida
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -158,7 +146,7 @@ def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, cantida
 		assert "Partidos Asistidos" in contenido
 		assert f'<p class="valor-circulo-partidos-asistidos-totales"><strong>{cantidad_partidos_asistidos}</strong></p>' in contenido
 
-def test_pagina_partidos_asistidos_partido_casa_no_hay(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_casa_no_hay(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -177,12 +165,9 @@ def test_pagina_partidos_asistidos_partido_casa_no_hay(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -210,7 +195,7 @@ def test_pagina_partidos_asistidos_partido_casa_no_hay(cliente, conexion):
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' not in contenido
 
-def test_pagina_partidos_asistidos_partido_casa(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_casa(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -229,12 +214,9 @@ def test_pagina_partidos_asistidos_partido_casa(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -262,7 +244,7 @@ def test_pagina_partidos_asistidos_partido_casa(cliente, conexion):
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' in contenido
 
-def test_pagina_partidos_asistidos_partido_casa_local_fuera_de_casa(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_casa_local_fuera_de_casa(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -281,12 +263,9 @@ def test_pagina_partidos_asistidos_partido_casa_local_fuera_de_casa(cliente, con
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -314,7 +293,7 @@ def test_pagina_partidos_asistidos_partido_casa_local_fuera_de_casa(cliente, con
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' not in contenido
 
-def test_pagina_partidos_asistidos_partido_casa_visitante_en_casa(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_casa_visitante_en_casa(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -333,12 +312,9 @@ def test_pagina_partidos_asistidos_partido_casa_visitante_en_casa(cliente, conex
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -366,7 +342,7 @@ def test_pagina_partidos_asistidos_partido_casa_visitante_en_casa(cliente, conex
 		assert ' atleti</h4>' in contenido
 		assert ' rival</h4>' not in contenido
 
-def test_pagina_partidos_asistidos_partido_fuera_no_hay(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_fuera_no_hay(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -385,12 +361,9 @@ def test_pagina_partidos_asistidos_partido_fuera_no_hay(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -418,7 +391,7 @@ def test_pagina_partidos_asistidos_partido_fuera_no_hay(cliente, conexion):
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' not in contenido
 
-def test_pagina_partidos_asistidos_partido_fuera(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_fuera(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -437,12 +410,9 @@ def test_pagina_partidos_asistidos_partido_fuera(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -470,7 +440,7 @@ def test_pagina_partidos_asistidos_partido_fuera(cliente, conexion):
 		assert ' atleti</h4>' in contenido
 		assert ' rival</h4>' not in contenido
 
-def test_pagina_partidos_asistidos_partido_fuera_local_fuera_de_casa(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_fuera_local_fuera_de_casa(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -489,12 +459,9 @@ def test_pagina_partidos_asistidos_partido_fuera_local_fuera_de_casa(cliente, co
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -522,7 +489,7 @@ def test_pagina_partidos_asistidos_partido_fuera_local_fuera_de_casa(cliente, co
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' in contenido
 
-def test_pagina_partidos_asistidos_partido_fuera_visitante_en_casa(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_fuera_visitante_en_casa(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'atleti'),('rival', 'rival')""")
 
@@ -541,12 +508,9 @@ def test_pagina_partidos_asistidos_partido_fuera_visitante_en_casa(cliente, cone
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -574,7 +538,7 @@ def test_pagina_partidos_asistidos_partido_fuera_visitante_en_casa(cliente, cone
 		assert ' atleti</h4>' not in contenido
 		assert ' rival</h4>' not in contenido
 
-def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, conexion):
+def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -592,12 +556,9 @@ def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, cone
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -617,7 +578,7 @@ def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, cone
 		assert '<canvas id="grafico_tarta">' in contenido
 		assert "var datos_grafica_tarta=" in contenido
 
-def test_pagina_partidos_asistidos_equipo_mas_enfrentado(cliente, conexion):
+def test_pagina_partidos_asistidos_equipo_mas_enfrentado(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
 
@@ -635,12 +596,9 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -669,7 +627,7 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado(cliente, conexion):
 		([2, 4, 2, 13, 6, 5], 4, 13)
 	]
 )
-def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexion, partidos_equipos, equipo_mas_enfrentado, veces):
+def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexion, password_hash, partidos_equipos, equipo_mas_enfrentado, veces):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM')""")
 
@@ -696,12 +654,9 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 
 			conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -725,14 +680,11 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 		assert f"Rival{equipo_mas_enfrentado}" in contenido
 		assert f'<p class="valor-circulo-equipo-mas-enfrentado"><strong>{veces} veces</strong></p>' in contenido
 
-def test_pagina_partidos_asistidos_equipo_mas_enfrentado_contra_tu_equipo(cliente, conexion_entorno):
+def test_pagina_partidos_asistidos_equipo_mas_enfrentado_contra_tu_equipo(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -748,7 +700,7 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_contra_tu_equipo(client
 		assert '<p class="titulo-circulo-equipo-mas-enfrentado">' not in contenido
 		assert '<h2 class="mensaje-error">Error en la peticion. Not found</h2>' in contenido
 
-def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadios(cliente, conexion):
+def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadios(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -760,12 +712,9 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadios(cliente,
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -781,7 +730,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadios(cliente,
 		assert '<p class="titulo-circulo-estadio-mas-visitado">' not in contenido
 		assert '<h2 class="mensaje-error">Error en la peticion. Not found</h2>' in contenido
 
-def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadio_partido(cliente, conexion):
+def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadio_partido(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -795,12 +744,9 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadio_partido(c
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -816,7 +762,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadio_partido(c
 		assert '<p class="titulo-circulo-estadio-mas-visitado">' not in contenido
 		assert '<h2 class="mensaje-error">Error en la peticion. Not found</h2>' in contenido
 
-def test_pagina_partidos_asistidos_estadio_mas_visitado(cliente, conexion):
+def test_pagina_partidos_asistidos_estadio_mas_visitado(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
 
@@ -834,12 +780,9 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -868,7 +811,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado(cliente, conexion):
 		([2, 4, 2, 13, 6, 5], 4, 13)
 	]
 )
-def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion, partidos_equipos, estadio_mas_visitado, veces):
+def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion, password_hash, partidos_equipos, estadio_mas_visitado, veces):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM')""")
 
@@ -895,12 +838,9 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion
 
 			conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -924,7 +864,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion
 		assert f"Estadio{estadio_mas_visitado}" in contenido
 		assert f'<p class="valor-circulo-estadio-mas-visitado"><strong>{veces} veces</strong></p>' in contenido
 
-def test_pagina_partidos_asistidos_sin_partido_asistido_favorito(cliente, conexion):
+def test_pagina_partidos_asistidos_sin_partido_asistido_favorito(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
 
@@ -942,12 +882,9 @@ def test_pagina_partidos_asistidos_sin_partido_asistido_favorito(cliente, conexi
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -967,7 +904,7 @@ def test_pagina_partidos_asistidos_sin_partido_asistido_favorito(cliente, conexi
 		assert '<div class="circulo-partido-asistido-favorito-anadir">' in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 
-def test_pagina_partidos_asistidos_partido_asistido_favorito(cliente, conexion):
+def test_pagina_partidos_asistidos_partido_asistido_favorito(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
 
@@ -985,12 +922,9 @@ def test_pagina_partidos_asistidos_partido_asistido_favorito(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1012,7 +946,7 @@ def test_pagina_partidos_asistidos_partido_asistido_favorito(cliente, conexion):
 		assert '<div class="circulo-partido-asistido-favorito-anadir">' not in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
 
-def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competiciones(cliente, conexion):
+def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competiciones(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -1026,12 +960,9 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competiciones
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1047,7 +978,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competiciones
 		assert '<p class="titulo-circulo-estadio-mas-visitado">' not in contenido
 		assert '<h2 class="mensaje-error">Error en la peticion. Not found</h2>' in contenido
 
-def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competicion_partido(cliente, conexion):
+def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competicion_partido(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
@@ -1063,12 +994,9 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competicion_p
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1084,7 +1012,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competicion_p
 		assert '<p class="titulo-circulo-estadio-mas-visitado">' not in contenido
 		assert '<h2 class="mensaje-error">Error en la peticion. Not found</h2>' in contenido
 
-def test_pagina_partidos_asistidos_competicion_mas_asistida(cliente, conexion):
+def test_pagina_partidos_asistidos_competicion_mas_asistida(cliente, conexion, password_hash):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM'),('rival', 'Rival')""")
 
@@ -1102,12 +1030,9 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida(cliente, conexion):
 
 	conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -1136,7 +1061,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida(cliente, conexion):
 		([2, 4, 2, 13, 6, 5], 4, 13)
 	]
 )
-def test_pagina_partidos_asistidos_competicion_mas_asistida_varios(cliente, conexion, partidos_equipos, competicion_mas_asistida, veces):
+def test_pagina_partidos_asistidos_competicion_mas_asistida_varios(cliente, conexion, password_hash, partidos_equipos, competicion_mas_asistida, veces):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id, Nombre) VALUES('atletico-madrid', 'ATM')""")
 
@@ -1163,12 +1088,9 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_varios(cliente, cone
 
 			conexion.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

@@ -1,4 +1,7 @@
 import pytest
+import os
+
+from src.utilidades.utils import vaciarCarpeta
 
 def test_pagina_insertar_partido_asistido_sin_login(cliente):
 
@@ -11,14 +14,11 @@ def test_pagina_insertar_partido_asistido_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_insertar_partido_asistido_partido_no_existente(cliente, conexion_entorno):
+def test_pagina_insertar_partido_asistido_partido_no_existente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -36,14 +36,17 @@ def test_pagina_insertar_partido_asistido_partido_no_existente(cliente, conexion
 
 		assert not conexion_entorno.c.fetchall()
 
-def test_pagina_insertar_partido_asistido_partido_asistido_existente(cliente, conexion_entorno):
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_no_existo.png")
+
+		assert not os.path.exists(ruta_imagen)
+
+def test_pagina_insertar_partido_asistido_partido_asistido_existente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -69,17 +72,20 @@ def test_pagina_insertar_partido_asistido_partido_asistido_existente(cliente, co
 
 		assert len(conexion_entorno.c.fetchall())==1
 
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.png")
+
+		assert not os.path.exists(ruta_imagen)
+
 @pytest.mark.parametrize(["caracteres"],
 	[(300,),(256,),(1000,),(43575,)]
 )
-def test_pagina_insertar_partido_asistido_comentario_demasiado_extenso(cliente, conexion_entorno, caracteres):
+def test_pagina_insertar_partido_asistido_comentario_demasiado_extenso(cliente, conexion_entorno, password_hash, caracteres):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -97,14 +103,17 @@ def test_pagina_insertar_partido_asistido_comentario_demasiado_extenso(cliente, 
 
 		assert not conexion_entorno.c.fetchall()
 
-def test_pagina_insertar_partido_asistido_sin_comentario(cliente, conexion_entorno):
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.png")
+
+		assert not os.path.exists(ruta_imagen)
+
+def test_pagina_insertar_partido_asistido_sin_comentario(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -125,14 +134,17 @@ def test_pagina_insertar_partido_asistido_sin_comentario(cliente, conexion_entor
 		assert len(partidos)==1
 		assert partidos[0]["comentario"] is None
 
-def test_pagina_insertar_partido_asistido(cliente, conexion_entorno):
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.png")
+
+		assert not os.path.exists(ruta_imagen)
+
+def test_pagina_insertar_partido_asistido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -150,14 +162,17 @@ def test_pagina_insertar_partido_asistido(cliente, conexion_entorno):
 
 		assert len(conexion_entorno.c.fetchall())==1
 
-def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_entorno):
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.png")
+
+		assert not os.path.exists(ruta_imagen)
+
+def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -175,14 +190,87 @@ def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_en
 
 		assert len(conexion_entorno.c.fetchall())==1
 
-def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_no_favorito(cliente, conexion_entorno):
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.png")
+
+		assert not os.path.exists(ruta_imagen)
+
+def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		ruta_imagen_test=os.path.join(os.getcwd(), "testapp", "imagen_tests_no_valida.txt")
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		with open(ruta_imagen_test, "rb") as imagen_file:
+			
+			data["imagen"]=(imagen_file, "imagen_tests_no_valida.txt")
+
+			respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data, buffered=True, content_type="multipart/form-data")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert len(conexion_entorno.c.fetchall())==1
+
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.txt")
+
+		assert not os.path.exists(ruta_imagen)
+
+def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		ruta_imagen_test=os.path.join(os.getcwd(), "testapp", "imagen_tests.jpeg")
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		with open(ruta_imagen_test, "rb") as imagen_file:
+			
+			data["imagen"]=(imagen_file, "imagen_tests.jpeg")
+
+			respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data, buffered=True, content_type="multipart/form-data")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert len(conexion_entorno.c.fetchall())==1
+
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.jpeg")
+
+		assert os.path.exists(ruta_imagen)
+
+		vaciarCarpeta(ruta_carpeta_imagenes)
+
+def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_no_favorito(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -198,14 +286,11 @@ def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_no
 
 		assert not conexion_entorno.c.execute("SELECT * FROM partido_asistido_favorito")
 
-def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_si_favorito(cliente, conexion_entorno):
+def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_si_favorito(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -223,19 +308,16 @@ def test_pagina_insertar_partido_asistido_no_existe_partido_asistido_favorito_si
 
 		assert len(conexion_entorno.c.fetchall())==1
 
-def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_no_favorito(cliente, conexion_entorno):
+def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_no_favorito(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""INSERT INTO partidos
 						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -261,19 +343,16 @@ def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_no_fa
 
 		assert len(conexion_entorno.c.fetchall())==1
 
-def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_si_favorito(cliente, conexion_entorno):
+def test_pagina_insertar_partido_asistido_existe_partido_asistido_favorito_si_favorito(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.c.execute("""INSERT INTO partidos
 						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
 	conexion_entorno.confirmar()
 
-	with cliente as cliente_abierto:
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-												"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-												"fecha-nacimiento":"1998-02-16",
-												"equipo":"atletico-madrid"})
+	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

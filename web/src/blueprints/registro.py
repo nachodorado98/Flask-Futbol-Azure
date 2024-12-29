@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect
+import os
 
-from src.utilidades.utils import datos_correctos, generarHash, correo_enviado
+from src.utilidades.utils import datos_correctos, generarHash, correo_enviado, crearCarpeta
 
 from src.database.conexion import Conexion
 
@@ -42,6 +43,10 @@ def singin():
 	con.insertarUsuario(usuario, correo, generarHash(contrasena), nombre, apellido, fecha_nacimiento, equipo)
 
 	con.cerrarConexion()
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	crearCarpeta(os.path.join(ruta, "templates", "imagenes", usuario))
 
 	try:
 

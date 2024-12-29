@@ -9,7 +9,7 @@ from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSel
 from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
-from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas
+from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1039,3 +1039,15 @@ def test_obtener_competiciones_unicas():
 	competiciones_unicas=obtenerCompeticionesPartidosUnicas(partidos)
 
 	assert len(competiciones_unicas)==7
+
+@pytest.mark.parametrize(["archivo", "extension"],
+	[
+		("mipdf.pdf", "pdf"),
+		("miimagen.jpeg", "jpeg"),
+		("imagen", "jpg"),
+		("mitxt.txt", "txt"),
+	]
+)
+def test_extraer_extension(archivo, extension):
+
+	assert extraerExtension(archivo)==extension
