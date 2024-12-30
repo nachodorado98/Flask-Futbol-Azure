@@ -2779,3 +2779,53 @@ def test_obtener_numero_veces_estadio_partido_asistido_mismo_varias_veces(conexi
 
 	assert len(partidos_asistidos)==20
 	assert veces==20
+
+def test_actualizar_imagen_partido_asistido_no_existe_partido(conexion):
+
+	assert not conexion.existe_partido("20190622")
+
+	conexion.actualizarImagenPartidoAsistido("20190622", "nacho", "imagen.png")
+
+	assert not conexion.existe_partido("20190622")
+
+def test_actualizar_imagen_partido_asistido_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+	conexion_entorno.actualizarImagenPartidoAsistido("20190622", "nacho", "imagen.png")
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+def test_actualizar_imagen_partido_asistido_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.actualizarImagenPartidoAsistido("20190622", "nacho", "imagen.png")
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+def test_actualizar_imagen_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT Imagen FROM partidos_asistidos")
+
+	imagen=conexion_entorno.c.fetchone()["imagen"]
+
+	assert imagen==None
+
+	conexion_entorno.actualizarImagenPartidoAsistido("20190622", "nacho", "imagen.png")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT Imagen FROM partidos_asistidos")
+
+	imagen=conexion_entorno.c.fetchone()["imagen"]
+
+	assert imagen=="imagen.png"

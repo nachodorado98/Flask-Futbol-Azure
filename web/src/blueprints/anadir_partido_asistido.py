@@ -6,6 +6,10 @@ from src.database.conexion import Conexion
 
 from src.utilidades.utils import crearCarpeta, extraerExtension
 
+from src.datalake.conexion_data_lake import ConexionDataLake
+
+from src.config import CONTENEDOR
+
 bp_anadir_partido_asistido=Blueprint("anadir_partido_asistido", __name__)
 
 
@@ -108,6 +112,22 @@ def pagina_insertar_partido_asistido():
 			ruta_imagen=os.path.join(ruta_carpeta, archivo_imagen)
 
 			imagen.save(ruta_imagen)
+
+			try:
+
+				dl=ConexionDataLake()
+
+				dl.subirArchivo(CONTENEDOR, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
+
+				dl.cerrarConexion()
+
+				con.actualizarImagenPartidoAsistido(partido_id, current_user.id, archivo_imagen)
+
+				os.remove(ruta_imagen)
+
+			except Exception:
+
+				print(f"Error al subir imagen {archivo_imagen} al datalake")
 
 	con.cerrarConexion()
 

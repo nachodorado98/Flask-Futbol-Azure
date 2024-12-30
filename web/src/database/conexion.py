@@ -2075,3 +2075,14 @@ class Conexion:
 											entrenador["nombre_equipo"],
 											entrenador["escudo_equipo"],
 											entrenador["equipo_existe"])
+
+	# Metodo para actualizar la imagen de un partido asistido
+	def actualizarImagenPartidoAsistido(self, partido_id:str, usuario:str, imagen:str)->None:
+
+		self.c.execute("""UPDATE partidos_asistidos
+							SET Imagen=%s
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(imagen, partido_id, usuario))
+
+		self.confirmar()

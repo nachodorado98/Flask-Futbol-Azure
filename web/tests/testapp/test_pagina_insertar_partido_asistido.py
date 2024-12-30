@@ -2,6 +2,7 @@ import pytest
 import os
 
 from src.utilidades.utils import vaciarCarpeta
+from src.config import CONTENEDOR
 
 def test_pagina_insertar_partido_asistido_sin_login(cliente):
 
@@ -196,11 +197,14 @@ def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_en
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion_entorno, datalake):
 
 	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+											"fecha-nacimiento":"1998-02-16",
+											"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -223,6 +227,16 @@ def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion
 		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
 
 		assert len(conexion_entorno.c.fetchall())==1
+		
+		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+
+		objeto_archivo_imagen=datalake.obtenerFile(CONTENEDOR, "usuarios/nacho98/imagenes", "nacho98_20190622.txt")
+
+		assert not objeto_archivo_imagen.exists()
+
+		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+
+		datalake.cerrarConexion()
 
 		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
 
@@ -230,11 +244,14 @@ def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno, datalake):
 
 	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+											"fecha-nacimiento":"1998-02-16",
+											"equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -258,11 +275,21 @@ def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno, 
 
 		assert len(conexion_entorno.c.fetchall())==1
 
+		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+		
+		objeto_archivo_imagen=datalake.obtenerFile(CONTENEDOR, "usuarios/nacho98/imagenes", "nacho98_20190622.jpeg")
+		
+		assert objeto_archivo_imagen.exists()
+
+		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+
+		datalake.cerrarConexion()
+
 		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
 
 		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.jpeg")
 
-		assert os.path.exists(ruta_imagen)
+		assert not os.path.exists(ruta_imagen)
 
 		vaciarCarpeta(ruta_carpeta_imagenes)
 
