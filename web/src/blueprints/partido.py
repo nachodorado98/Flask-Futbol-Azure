@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_USUARIOS
 
 bp_partido=Blueprint("partido", __name__)
 
@@ -112,7 +112,8 @@ def pagina_partido_asistido(partido_id:str):
 							partido_id_asistido_anterior=partido_id_asistido_anterior,
 							partido_id_asistido_siguiente=partido_id_asistido_siguiente,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")
 
 @bp_partido.route("/partido/<partido_id>/asistido/quitar_partido_favorito")
 @login_required

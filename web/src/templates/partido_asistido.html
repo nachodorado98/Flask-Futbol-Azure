@@ -41,6 +41,18 @@
 
     </div>
 
+    <div class="contenedor-imagen">
+        <div class="imagen">
+
+            {% if partido_asistido[10]=='-1' %}
+                <img class="imagen-partido" src="{{ url_for('static', filename='imagenes/iconos/no_imagen.png') }}" alt="Imagen Icon">
+            {% else %}
+                <img class="imagen-partido" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido[10] }}" alt="Imagen Icon">
+            {% endif %}
+
+        </div>
+    </div>
+
     <div class="contenedor-comentario">
 
         {% if partido_asistido[9] %}

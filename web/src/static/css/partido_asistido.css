@@ -156,6 +156,19 @@
     background-color: var(--color-fondo);
 }
 
+.contenedor-imagen {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.imagen-partido {
+    margin-bottom: 5px;
+    height: 225px;
+    border: 2px solid black;
+}
+
 .tarjeta-partido-asistido-detalle .contenedor-botones-asistido {
     display: flex;
     justify-content: center;

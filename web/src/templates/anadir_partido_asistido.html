@@ -61,7 +61,10 @@
             <p class="imagen-partido-asistido"><strong>Subir Imagen Partido</strong></p>
             <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel">Seleccionar Imagen</label>
             <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
-            <p class="nombre-archivo-imagen" id="nombre-archivo-imagen">Ningún archivo seleccionado</p>
+            <div class="previsualizacion">
+              <p id="mensaje" class="mensaje">No se ha seleccionado archivo</p>
+              <img class="imagen-preview" id="preview" src="" alt="Previsualización">
+            </div>
         </div>
 
         <div class="botones-formulario-anadir-partido-asistido">
@@ -75,7 +78,7 @@
 
 </div>
 
-<script src="{{ url_for('static', filename='js/cargar_nombre_imagen.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
 
 {% endblock principal %}
 

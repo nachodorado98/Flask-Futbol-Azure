@@ -137,7 +137,17 @@
     transform: scale(1.03);
 }
 
-.nombre-archivo-imagen {
+.previsualizacion {
+  text-align: center;
+}
+
+.imagen-preview{
+    display: none;
+    max-width: 125px;
+    margin-left: 20px;
+}
+
+.mensaje {
   font-size: 14px;
   color: var(--color-secundario);
   margin-left: 10px;
