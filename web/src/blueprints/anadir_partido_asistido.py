@@ -164,3 +164,63 @@ def pagina_actualizar_comentario_partido_asistido(partido_id:str):
 	con.cerrarConexion()
 
 	return redirect(f"/partido/{partido_id}/asistido")
+
+@bp_anadir_partido_asistido.route("/actualizar_imagen_partido_asistido/<partido_id>", methods=["POST"])
+@login_required
+def pagina_actualizar_imagen_partido_asistido(partido_id:str):
+
+	archivos=request.files
+
+	con=Conexion()
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/anadir_partido_asistido")
+
+	if not con.existe_partido_asistido(partido_id, current_user.id):
+
+		con.cerrarConexion()
+
+		return redirect("/anadir_partido_asistido")
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	crearCarpeta(os.path.join(ruta, "templates", "imagenes", current_user.id))
+
+	if "imagen" in archivos:
+
+		imagen=archivos["imagen"]
+
+		extension=extraerExtension(imagen.filename)
+
+		if imagen.filename!="" and extension in ("png", "jpg", "jpeg"):
+
+			ruta_carpeta=os.path.join(ruta, "templates", "imagenes", current_user.id)
+
+			archivo_imagen=f"{current_user.id}_{partido_id}.{extension}"
+
+			ruta_imagen=os.path.join(ruta_carpeta, archivo_imagen)
+
+			imagen.save(ruta_imagen)
+
+			try:
+
+				dl=ConexionDataLake()
+
+				dl.subirArchivo(CONTENEDOR, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
+
+				dl.cerrarConexion()
+
+				con.actualizarImagenPartidoAsistido(partido_id, current_user.id, archivo_imagen)
+
+				os.remove(ruta_imagen)
+
+			except Exception:
+
+				print(f"Error al subir imagen {archivo_imagen} al datalake")
+
+	con.cerrarConexion()
+
+	return redirect(f"/partido/{partido_id}/asistido")

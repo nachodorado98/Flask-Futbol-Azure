@@ -42,15 +42,35 @@
     </div>
 
     <div class="contenedor-imagen">
-        <div class="imagen">
 
-            {% if partido_asistido[10]=='-1' %}
-                <img class="imagen-partido" src="{{ url_for('static', filename='imagenes/iconos/no_imagen.png') }}" alt="Imagen Icon">
-            {% else %}
+        {% if partido_asistido[10]=='-1' %}
+
+            <form action="/actualizar_imagen_partido_asistido/{{ partido_asistido[1] }}" method="POST" enctype="multipart/form-data" novalidate>
+
+                <div class="contenedor-subir-imagen">
+                    <p class="imagen-partido-asistido"><strong>Subir Imagen Partido</strong></p>
+                    <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>Seleccionar Imagen</label>
+                    <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
+                    <div class="previsualizacion">
+                      <p id="mensaje" class="mensaje">No se ha seleccionado archivo</p>
+                      <img class="imagen-preview" id="preview" src="" alt="Previsualización">
+                    </div>
+                </div>
+
+                <div class="botones-anadir-imagen-partido-asistido">
+                    <button type="submit" class="boton-anadir-imagen-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                        Confirmar Imagen
+                    </button>
+                </div>
+
+            </form>
+
+        {% else %}
+            <div class="imagen">
                 <img class="imagen-partido" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido[10] }}" alt="Imagen Icon">
-            {% endif %}
+            </div>
+        {% endif %}
 
-        </div>
     </div>
 
     <div class="contenedor-comentario">
@@ -133,6 +153,7 @@
 <script src="{{ url_for('static', filename='js/abrir_comentar_partido_asistido.js') }}"></script>
 <script src="{{ url_for('static', filename='js/cerrar_comentar_partido_asistido.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
 
 {% endblock principal %}
 

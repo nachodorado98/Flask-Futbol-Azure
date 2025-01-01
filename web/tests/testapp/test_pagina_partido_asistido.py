@@ -138,9 +138,9 @@ def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno, password_
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
 		assert '<div class="info-partido-asistido-detalle">' in contenido
 		assert '<div class="contenedor-imagen">' in contenido
-		assert '<div class="imagen">' in contenido
-		assert "/no_imagen.png" in contenido
-		assert "/nacho98_20190622.jpeg" not in contenido
+		assert '<div class="imagen">' not in contenido
+		assert '<div class="contenedor-subir-imagen">' in contenido
+		assert '<div class="botones-anadir-imagen-partido-asistido">' in contenido
 
 def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake):
 
@@ -172,7 +172,8 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 		assert '<div class="info-partido-asistido-detalle">' in contenido
 		assert '<div class="contenedor-imagen">' in contenido
 		assert '<div class="imagen">' in contenido
-		assert "/no_imagen.png" not in contenido
+		assert '<div class="contenedor-subir-imagen">' not in contenido
+		assert '<div class="botones-anadir-imagen-partido-asistido">' not in contenido
 		assert "/nacho98_20190622.jpeg" in contenido
 
 		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")

@@ -169,6 +169,72 @@
     border: 2px solid black;
 }
 
+.contenedor-subir-imagen {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.imagen-partido-asistido {
+    color: var(--color-secundario);
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+#imagen {
+    display: none;
+}
+
+.boton-seleccionar-imagen {
+    display: inline-block;
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.boton-seleccionar-imagen:hover {
+    transform: scale(1.03);
+}
+
+.previsualizacion {
+  text-align: center;
+}
+
+.imagen-preview{
+    display: none;
+    max-width: 125px;
+    margin-left: 20px;
+}
+
+.mensaje {
+  font-size: 14px;
+  color: var(--color-secundario);
+  margin-left: 10px;
+}
+
+.botones-anadir-imagen-partido-asistido .boton-anadir-imagen-partido-asistido {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botones-anadir-imagen-partido-asistido .boton-anadir-imagen-partido-asistido:hover {
+    transform: scale(1.05);
+    background-color: var(--color-fondo);
+}
+
 .tarjeta-partido-asistido-detalle .contenedor-botones-asistido {
     display: flex;
     justify-content: center;
