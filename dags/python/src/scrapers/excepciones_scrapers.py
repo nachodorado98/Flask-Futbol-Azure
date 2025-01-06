@@ -45,3 +45,6 @@ class EstadioError(Exception):
 
 class EntrenadorError(Exception):
     pass
+
+class JugadorEquiposError(Exception):
+    pass
