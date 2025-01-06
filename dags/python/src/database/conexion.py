@@ -554,7 +554,7 @@ class Conexion:
 
 		return list(map(lambda pais: pais["codigo_pais"], paises))
 
-	#Metodo para insertar un partido goleador
+	# Metodo para insertar un partido goleador
 	def insertarPartidoGoleador(self, partido_goleador:tuple)->None:
 
 		self.c.execute("""INSERT INTO partido_goleador
@@ -757,3 +757,37 @@ class Conexion:
 		paises=self.c.fetchall()
 
 		return list(map(lambda pais: pais["codigo_pais"], paises))
+
+	# Metodo para insertar un equipo de un jugador
+	def insertarEquipoJugador(self, equipo_jugador:tuple)->None:
+
+		self.c.execute("""INSERT INTO jugadores_equipo
+							VALUES(%s, %s, %s, %s, %s)""",
+							equipo_jugador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el equipo de un jugador
+	def existe_equipo_jugador(self, jugador_id:str, equipo_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM jugadores_equipo
+							WHERE Jugador_Id=%s
+							AND Equipo_Id=%s""",
+							(jugador_id, equipo_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos del equipo de un jugador
+	def actualizarDatosEquipoJugador(self, datos_equipo_jugador:List[str], jugador_id:str, equipo_id:str)->None:
+
+		datos_equipo_jugador.append(jugador_id)
+
+		datos_equipo_jugador.append(equipo_id)
+
+		self.c.execute("""UPDATE jugadores_equipo
+							SET Temporadas=%s, Goles=%s, Partidos=%s
+							WHERE Jugador_Id=%s
+							AND Equipo_Id=%s""",
+							tuple(datos_equipo_jugador))
+		self.confirmar()

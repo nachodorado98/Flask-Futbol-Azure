@@ -77,7 +77,7 @@ def test_cargar_data_partido_goleadores_error_no_existe(conexion):
 		("atletico-madrid", "internazionale", "2024645009")
 	]
 )
-def test_cargar_data_partido_competicion(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_goleadores(conexion, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -110,7 +110,7 @@ def test_cargar_data_partido_competicion(conexion, local, visitante, partido_id)
 		("atletico-madrid", "internazionale", "2024645009")
 	]
 )
-def test_cargar_data_partido_competicion_existentes(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_goleadores_existentes(conexion, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 

@@ -21,6 +21,7 @@ def test_conexion(conexion):
 	assert "competiciones" in tablas
 	assert "competiciones_campeones" in tablas
 	assert "jugadores" in tablas
+	assert "jugadores_equipo"
 	assert "partido_goleador" in tablas
 	assert "entrenadores" in tablas
 	assert "temporada_jugadores" in tablas
@@ -47,7 +48,7 @@ def test_tabla_vacia_llena(conexion):
 @pytest.mark.parametrize(["tabla"],
 	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("proximos_partidos",),
 	("partido_estadio",),("competiciones",),("competiciones_campeones",),("partido_competicion",),
-	("jugadores",),("partido_goleador",),("entrenadores",),("temporada_jugadores",)]
+	("jugadores",),("jugadores_equipo",),("partido_goleador",),("entrenadores",),("temporada_jugadores",)]
 )
 def test_tabla_vacia(conexion, tabla):
 
