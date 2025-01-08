@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from src.etl_jugador_seleccion import extraerDataJugadorSeleccion
+from src.etl_jugador_seleccion import extraerDataJugadorSeleccion, limpiarDataJugadorSeleccion
 from src.scrapers.excepciones_scrapers import JugadorSeleccionError
 
 @pytest.mark.parametrize(["endpoint"],
@@ -34,3 +34,19 @@ def test_extraer_data_jugador_seleccion(jugador):
 	assert isinstance(data, pd.DataFrame)
 	assert not data.empty
 	assert len(data.columns)==7
+	assert len(data)==1
+
+@pytest.mark.parametrize(["jugador"],
+	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
+	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
+)
+def test_limpiar_data_jugador_seleccion(jugador):
+
+	data=extraerDataJugadorSeleccion(jugador)
+
+	data_limpia=limpiarDataJugadorSeleccion(data)
+
+	assert isinstance(data_limpia, pd.DataFrame)
+	assert not data_limpia.empty
+	assert len(data_limpia.columns)==4
+	assert len(data_limpia)==1
