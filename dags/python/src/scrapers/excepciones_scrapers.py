@@ -48,3 +48,6 @@ class EntrenadorError(Exception):
 
 class JugadorEquiposError(Exception):
     pass
+
+class JugadorSeleccionError(Exception):
+    pass
