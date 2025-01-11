@@ -3,10 +3,10 @@ import os
 from utils import vaciarCarpeta, crearArchivoLog
 from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
 from config import URL_JUGADOR
-from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES, USUARIOS
+from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES, SELECCIONES, USUARIOS
 from config import TABLA_EQUIPOS, TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO
 from config import TABLA_COMPETICIONES, TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES
-from config import TABLA_PARTIDO_GOLEADOR
+from config import TABLA_PARTIDO_GOLEADOR, TABLA_JUGADORES_EQUIPO, TABLA_JUGADORES_SELECCION, TABLA_ENTRENADORES
 
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
@@ -39,7 +39,8 @@ def creacion_entorno_data_lake()->None:
 
 	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES, USUARIOS, TABLA_EQUIPOS,
 				TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO, TABLA_COMPETICIONES, 
-				TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES, TABLA_PARTIDO_GOLEADOR]
+				TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES, TABLA_PARTIDO_GOLEADOR,
+				TABLA_JUGADORES_EQUIPO, TABLA_JUGADORES_SELECCION, TABLA_ENTRENADORES]
 
 	crearEntornoDataLake(CONTENEDOR, carpetas)
 
@@ -234,7 +235,8 @@ def subirBackUpTablasDataLake()->None:
 	tabla_carpetas=[("equipos", TABLA_EQUIPOS), ("estadios", TABLA_ESTADIOS), ("equipo_estadio", TABLA_EQUIPO_ESTADIO),
 					("partidos", TABLA_PARTIDOS), ("partido_estadio", TABLA_PARTIDO_ESTADIO), ("competiciones", TABLA_COMPETICIONES),
 					("competiciones_campeones", TABLA_COMPETICIONES_CAMPEONES),("partido_competicion", TABLA_PARTIDO_COMPETICION),
-					("jugadores", TABLA_JUGADORES), ("partido_goleador", TABLA_PARTIDO_GOLEADOR)]
+					("jugadores", TABLA_JUGADORES), ("partido_goleador", TABLA_PARTIDO_GOLEADOR),("entrenadores", TABLA_ENTRENADORES),
+					("jugadores_equipo", TABLA_JUGADORES_EQUIPO), ("jugadores_seleccion", TABLA_JUGADORES_SELECCION)]
 
 	for tabla, carpeta in tabla_carpetas:
 
@@ -575,3 +577,47 @@ def subirPaisesEntrenadoresDataLake():
 			crearArchivoLog(mensaje)
 
 	vaciarCarpeta(ruta_paises)
+
+def subirSeleccionesJugadoresDataLake():
+	
+	con=Conexion()
+
+	codigo_selecciones=con.obtenerCodigoSeleccionesJugadores()
+
+	codigo_selecciones_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, SELECCIONES, codigo_selecciones)
+
+	con.cerrarConexion()
+
+	ruta_selecciones=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", SELECCIONES)
+
+	for codigo in codigo_selecciones_descargar:
+
+		print(f"Descargando seleccion {codigo}...")
+
+		try:
+
+			descargarImagen(URL_ESCUDO, codigo, ruta_selecciones)
+
+		except Exception as e:
+
+			mensaje=f"Seleccion: {codigo} - Motivo: {e}"
+
+			print(f"Error en seleccion con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de selecciones finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, SELECCIONES, ruta_selecciones)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir las selecciones al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_selecciones)

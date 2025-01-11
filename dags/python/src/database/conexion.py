@@ -821,3 +821,15 @@ class Conexion:
 							WHERE Jugador_Id=%s""",
 							tuple(datos_seleccion_jugador))
 		self.confirmar()
+
+	# Metodo para obtener los codigos de la seleccion de los jugadores
+	def obtenerCodigoSeleccionesJugadores(self)->List[str]:
+
+		self.c.execute("""SELECT DISTINCT(Codigo_Seleccion)
+							FROM jugadores_seleccion
+							WHERE Codigo_Seleccion IS NOT NULL
+							ORDER BY Codigo_Seleccion""")
+
+		selecciones=self.c.fetchall()
+
+		return list(map(lambda seleccion: seleccion["codigo_seleccion"], selecciones))
