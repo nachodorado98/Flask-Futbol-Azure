@@ -8,7 +8,7 @@ from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Parti
 from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_Competicion
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
 from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
-from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos
+from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion
 
 from python.src.database.conexion import Conexion
 
@@ -357,6 +357,28 @@ def Pipeline_Jugadores_Equipos()->None:
 		except Exception as e:
 
 			mensaje=f"Jugador Equipos: {jugador} - Motivo: {e}"
+
+			print(f"Error en jugador {jugador}")
+
+			crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
+
+def Pipeline_Jugadores_Seleccion()->None:
+
+	con=Conexion()
+
+	jugadores=con.obtenerJugadores()
+
+	for jugador in jugadores:
+
+		try:
+
+			ETL_Jugador_Seleccion(jugador)
+
+		except Exception as e:
+
+			mensaje=f"Jugador Seleccion: {jugador} - Motivo: {e}"
 
 			print(f"Error en jugador {jugador}")
 

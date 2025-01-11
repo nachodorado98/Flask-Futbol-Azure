@@ -113,6 +113,13 @@ CREATE TABLE jugadores_equipo (Jugador_Id VARCHAR(255),
 								FOREIGN KEY (Jugador_Id) REFERENCES jugadores (Jugador_Id) ON DELETE CASCADE,
 								FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE);
 
+CREATE TABLE jugadores_seleccion (Jugador_Id VARCHAR(255) PRIMARY KEY,
+									Codigo_Seleccion INTEGER,
+									Convocatorias INTEGER,
+									Goles INTEGER,
+									Asistencias INTEGER,
+									FOREIGN KEY (Jugador_Id) REFERENCES jugadores (Jugador_Id) ON DELETE CASCADE);
+
 CREATE TABLE partido_goleador (Partido_Id VARCHAR(255),
 								Jugador_Id VARCHAR(255),
 								Minuto INTEGER,

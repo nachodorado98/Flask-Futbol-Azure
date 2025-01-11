@@ -791,3 +791,33 @@ class Conexion:
 							AND Equipo_Id=%s""",
 							tuple(datos_equipo_jugador))
 		self.confirmar()
+
+	# Metodo para insertar la seleccion de un jugador
+	def insertarSeleccionJugador(self, seleccion_jugador:tuple)->None:
+
+		self.c.execute("""INSERT INTO jugadores_seleccion
+							VALUES(%s, %s, %s, %s, %s)""",
+							seleccion_jugador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe la seleccion de un jugador
+	def existe_seleccion_jugador(self, jugador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM jugadores_seleccion
+							WHERE Jugador_Id=%s""",
+							(jugador_id,))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos de la seleccion de un jugador
+	def actualizarDatosSeleccionJugador(self, datos_seleccion_jugador:List[str], jugador_id:str)->None:
+
+		datos_seleccion_jugador.append(jugador_id)
+
+		self.c.execute("""UPDATE jugadores_seleccion
+							SET Codigo_Seleccion=%s, Convocatorias=%s, Goles=%s, Asistencias=%s
+							WHERE Jugador_Id=%s""",
+							tuple(datos_seleccion_jugador))
+		self.confirmar()

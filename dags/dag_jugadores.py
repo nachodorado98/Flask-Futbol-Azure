@@ -11,7 +11,7 @@ from utils import existe_entorno, ejecutarDagJugadores, actualizarVariable, crea
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES
 
-from pipelines import Pipeline_Jugadores_Equipo, Pipeline_Jugadores, Pipeline_Jugadores_Equipos
+from pipelines import Pipeline_Jugadores_Equipo, Pipeline_Jugadores, Pipeline_Jugadores_Equipos, Pipeline_Jugadores_Seleccion
 
 from datalake import data_lake_disponible_creado, subirJugadoresDataLake, subirPaisesJugadoresDataLake
 
@@ -62,8 +62,10 @@ with DAG("dag_jugadores",
 
 		tareas_pipeline_jugadores_equipos=PythonOperator(task_id="pipeline_jugadores_equipos", python_callable=Pipeline_Jugadores_Equipos)
 
+		tareas_pipeline_jugadores_seleccion=PythonOperator(task_id="pipeline_jugadores_seleccion", python_callable=Pipeline_Jugadores_Seleccion)
 
-		tarea_pipeline_jugadores_equipo >> tareas_pipeline_jugadores_detalle >> tareas_pipeline_jugadores_equipos
+
+		tarea_pipeline_jugadores_equipo >> tareas_pipeline_jugadores_detalle >> tareas_pipeline_jugadores_equipos >> tareas_pipeline_jugadores_seleccion
 		
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:

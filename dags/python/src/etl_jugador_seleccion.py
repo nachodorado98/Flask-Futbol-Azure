@@ -5,6 +5,8 @@ from .scrapers.scraper_jugador_seleccion import ScraperJugadorSeleccion
 
 from .utils import limpiarCodigoImagen
 
+from .database.conexion import Conexion
+
 def extraerDataJugadorSeleccion(jugador:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperJugadorSeleccion(jugador)
@@ -30,3 +32,31 @@ def limpiarDataJugadorSeleccion(tabla:pd.DataFrame)->pd.DataFrame:
 	columnas=["Codigo_Seleccion", "Convocatorias", "Goles", "Asistencias"]
 
 	return tabla[columnas]
+
+def cargarDataJugadorSeleccion(tabla:pd.DataFrame, jugador_id:str)->None:
+
+	datos_jugador_seleccion=tabla.values.tolist()[0]
+
+	con=Conexion()
+
+	if not con.existe_jugador(jugador_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar la seleccion del jugador {jugador_id}. No existe")
+
+	try:
+
+		if not con.existe_seleccion_jugador(jugador_id):
+
+			con.insertarSeleccionJugador([jugador_id]+datos_jugador_seleccion)
+
+		con.actualizarDatosSeleccionJugador(datos_jugador_seleccion, jugador_id)
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar la seleccion del jugador {jugador_id}")
