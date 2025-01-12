@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_JUGADORES 
+from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_SELECCIONES 
 
 bp_jugador=Blueprint("jugador", __name__)
 
@@ -26,6 +26,10 @@ def pagina_jugador(jugador_id:str):
 
 	datos_jugador=con.obtenerDatosJugador(jugador_id)
 
+	equipos_jugador=con.obtenerEquiposJugador(jugador_id)
+
+	seleccion_jugador=con.obtenerSeleccionJugador(jugador_id)
+
 	con.cerrarConexion()
 
 	return render_template("jugador.html",
@@ -33,9 +37,12 @@ def pagina_jugador(jugador_id:str):
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							datos_jugador=datos_jugador,
+							equipos_jugador=equipos_jugador,
+							seleccion_jugador=seleccion_jugador,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_jugador=URL_DATALAKE_JUGADORES)
+							url_imagen_jugador=URL_DATALAKE_JUGADORES,
+							url_imagen_seleccion=URL_DATALAKE_SELECCIONES)
 
 @bp_jugador.route("/jugadores")
 @login_required

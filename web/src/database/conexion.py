@@ -2091,3 +2091,47 @@ class Conexion:
 							(imagen, partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener los equipos de un jugador
+	def obtenerEquiposJugador(self, jugador_id:str)->List[tuple]:
+
+		self.c.execute("""SELECT e.equipo_id, e.nombre,
+							CASE WHEN e.escudo IS NULL
+									THEN -1
+									ELSE e.escudo
+							END as escudo_equipo,
+							je.temporadas, je.goles, je.partidos
+							FROM jugadores_equipo je
+							LEFT JOIN equipos e
+							ON je.equipo_id=e.equipo_id
+							WHERE je.jugador_id=%s
+							ORDER BY je.partidos DESC""",
+							(jugador_id,))
+
+		equipos_jugador=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo_id"],
+										equipo["nombre"],
+										equipo["escudo_equipo"],
+										equipo["temporadas"],
+										equipo["goles"],
+										equipo["partidos"]), equipos_jugador))
+
+	# Metodo para obtener la seleccion de un jugador
+	def obtenerSeleccionJugador(self, jugador_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT CASE WHEN codigo_seleccion IS NULL
+									THEN -1
+									ELSE codigo_seleccion
+							END as seleccion,
+							convocatorias, goles, asistencias
+							FROM jugadores_seleccion
+							WHERE jugador_id=%s""",
+							(jugador_id,))
+
+		seleccion_jugador=self.c.fetchone()
+
+		return None if not seleccion_jugador else (seleccion_jugador["seleccion"],
+													seleccion_jugador["convocatorias"],
+													seleccion_jugador["goles"],
+													seleccion_jugador["asistencias"])

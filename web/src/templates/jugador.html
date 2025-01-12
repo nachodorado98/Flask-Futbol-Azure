@@ -4,7 +4,75 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jugador.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="tarjeta-equipos-jugador">
+
+    <p class="titulo-equipos-jugador"><strong>Equipos</strong></p>
+
+    <div class="tarjetas-equipos-jugador">
+        <div class="tarjetas-equipos-jugador-wrapper">
+
+        {% for equipo in equipos_jugador %}
+
+            <div class="tarjeta-equipo-jugador" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+
+                {% if equipo[2]==-1 %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
+                {% else %}
+                    <img src="{{ url_imagen_escudo }}{{ equipo[2] }}.png" alt="Escudo Icon">
+                {% endif %}
+
+                <h4><strong>{{ equipo[1] }}</strong></h4>
+
+                <div class="info-equipo-jugador">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/partidos.png') }}" alt="Partidos Icon">
+                    <p>{{ equipo[5] }}</p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/balon.png') }}" alt="Balon Icon">
+                    <p>{{ equipo[4] }}</p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/temporadas.png') }}" alt="Temporada Icon">
+                    <p>{{ equipo[3] }}</p>
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+         </div>
+    </div>
+
+</div>
+
+{% if seleccion_jugador %}
+
+    <div class="tarjeta-selecciones-jugador">
+
+        <p class="titulo-seleccion-jugador"><strong>Seleccion</strong></p>
+
+        <div class="tarjeta-seleccion-jugador">
+
+            {% if seleccion_jugador[0]==-1 %}
+                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Seleccion Icon">
+            {% else %}
+                <img src="{{ url_imagen_seleccion }}{{ seleccion_jugador[0] }}.png" alt="Seleccion Icon">
+            {% endif %}
+
+            <div class="info-seleccion-jugador">
+                <img src="{{ url_for('static', filename='imagenes/iconos/partidos.png') }}" alt="Partidos Icon">
+                <p>{{ seleccion_jugador[1] }}</p>
+                <img src="{{ url_for('static', filename='imagenes/iconos/balon.png') }}" alt="Balon Icon">
+                <p>{{ seleccion_jugador[2] }}</p>
+            </div>
+
+        </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

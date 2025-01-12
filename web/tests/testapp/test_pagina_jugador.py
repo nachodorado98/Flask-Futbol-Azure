@@ -45,6 +45,10 @@ def test_pagina_jugador_jugador(cliente, conexion_entorno, password_hash):
 		assert '<div class="info-jugador-puntuacion">' in contenido
 		assert '<div class="info-jugador-dorsal">' in contenido
 		assert '<div class="info-jugador-posicion">' in contenido
+		assert '<div class="tarjeta-equipos-jugador">' in contenido
+		assert '<div class="tarjetas-equipos-jugador-wrapper">' in contenido
+		assert '<div class="tarjeta-selecciones-jugador">' in contenido
+		assert '<div class="tarjeta-seleccion-jugador">' in contenido
 
 def test_pagina_jugador_jugador_sin_equipo(cliente, conexion_entorno, password_hash):
 
@@ -125,3 +129,23 @@ def test_pagina_jugador_jugador_sin_posicion(cliente, conexion_entorno, password
 		respuesta.status_code==200
 		assert '<div class="info-jugador-imagenes">' in contenido
 		assert '<div class="info-jugador-posicion">' not in contenido
+
+def test_pagina_jugador_jugador_sin_seleccion(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.c.execute("""DELETE FROM jugadores_seleccion""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/jugador/julian-alvarez")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-selecciones-jugador">' not in contenido
+		assert '<div class="tarjeta-seleccion-jugador">' not in contenido
