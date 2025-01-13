@@ -2829,3 +2829,43 @@ def test_actualizar_imagen_partido_asistido(conexion_entorno):
 	imagen=conexion_entorno.c.fetchone()["imagen"]
 
 	assert imagen=="imagen.png"
+
+def test_obtener_partidos_asistidos_usuario_estadio_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioEstadio("nacho", "atletico-madrid", "metropolitano")
+
+def test_obtener_partidos_asistidos_usuario_estadio_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioEstadio("nacho", "atletico-madrid", "metropolitano")
+
+def test_obtener_partidos_asistidos_usuario_estadio_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioEstadio("nacho", "atletico-madrid", "metropolitano")
+
+def test_obtener_partidos_asistidos_usuario_estadio_no_existe_estadio(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM estadios")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioEstadio("nacho", "atletico-madrid", "metropolitano")
+
+def test_obtener_partidos_asistidos_usuario_estadio_no_existe_estadio(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.obtenerPartidosAsistidosUsuarioEstadio("nacho", "atletico-madrid", "metropolitano")

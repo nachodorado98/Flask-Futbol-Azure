@@ -286,3 +286,35 @@ def visualizarMapaMisEstadiosPais(nombre_mapa:str):
 	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
 
 	return send_file(ruta_mapa)
+
+@bp_estadio.route("/estadios/mis_estadios/partidos_estadio/<estadio_id>")
+@login_required
+def pagina_mis_estadios_estadio_partidos_estadio(estadio_id:str):
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	partidos_asistidos_estadio=con.obtenerPartidosAsistidosUsuarioEstadio(current_user.id, equipo, estadio_id)
+
+	if not partidos_asistidos_estadio:
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	estadio=con.obtenerEstadio(estadio_id)
+
+	con.cerrarConexion()
+
+	return render_template("partidos_asistidos_estadio.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							partidos_asistidos_estadio=partidos_asistidos_estadio,
+							estadio=estadio,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
