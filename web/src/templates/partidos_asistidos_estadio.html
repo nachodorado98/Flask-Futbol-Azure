@@ -4,7 +4,30 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos_asistidos_estadio.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-partidos-asistidos-estadio">
+        <p class="titulo-circulo-partidos-asistidos-estadio">Partidos Asistidos</p>
+        <p class="valor-circulo-partidos-asistidos-estadio"><strong>{{ numero_partidos_asistidos_estadio }}</strong></p>
+    </div>
+    <div class="circulo-estadisticas-partidos-asistidos-estadio">
+        <canvas id="grafico_tarta"></canvas>
+        <script>var datos_grafica_tarta={{ resultados_partidos_asistidos_estadio | tojson | safe }};</script>
+        <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
+        
+    </div>
+    <div class="circulo-estadio">
+        <p class="titulo-circulo-estadio">{{ estadio[0] }}</p>
+        {% if estadio[1]==-1 %}
+            <img class="estadio" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon" onclick="window.location.href='/estadio/{{ estadio_id }}'">
+        {% else %}
+            <img class="estadio" src="{{ url_imagen_estadio }}{{ estadio[1] }}.png" alt="Estadio Icon" onclick="window.location.href='/estadio/{{ estadio_id }}'">
+        {% endif %}
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}
 

@@ -96,6 +96,7 @@ def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion, passw
 		assert '<div class="tarjetas-partidos-asistidos-wrapper">' in contenido
 		assert '<div class="tarjeta-partido-asistidos"' in contenido
 		assert '<div class="info-partido-asistidos">' in contenido
+		assert '<p class="valor-circulo-partidos-asistidos-totales"><strong>1</strong></p>' in contenido
 
 @pytest.mark.parametrize(["cantidad_partidos", "cantidad_partidos_asistidos"],
 	[(1,1),(2,1),(10,6),(7,3),(22,15)]
