@@ -117,6 +117,12 @@ def pagina_insertar_partido_asistido():
 
 				dl=ConexionDataLake()
 
+				if not dl.existe_carpeta(CONTENEDOR, f"usuarios/{current_user.id}"):
+
+					dl.crearCarpeta(CONTENEDOR, f"usuarios/{current_user.id}/perfil")
+
+					dl.crearCarpeta(CONTENEDOR, f"usuarios/{current_user.id}/imagenes")
+
 				dl.subirArchivo(CONTENEDOR, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
 
 				dl.cerrarConexion()
@@ -208,6 +214,12 @@ def pagina_actualizar_imagen_partido_asistido(partido_id:str):
 			try:
 
 				dl=ConexionDataLake()
+
+				if not dl.existe_carpeta(CONTENEDOR, f"usuarios/{current_user.id}"):
+
+					dl.crearCarpeta(CONTENEDOR, f"usuarios/{current_user.id}/perfil")
+
+					dl.crearCarpeta(CONTENEDOR, f"usuarios/{current_user.id}/imagenes")
 
 				dl.subirArchivo(CONTENEDOR, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
 

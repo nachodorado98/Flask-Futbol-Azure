@@ -113,3 +113,34 @@ def pagina_mis_equipos():
 							numero_equipos=len(equipos_enfrentados),
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_pais=URL_DATALAKE_PAISES)
+
+@bp_equipo.route("/equipos/mis_equipos/partidos_equipo/<equipo_id>")
+@login_required
+def pagina_mis_equipos_equipo_partidos_equipo(equipo_id:str):
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	partidos_asistidos_equipo=con.obtenerPartidosAsistidosUsuarioEquipo(current_user.id, equipo, equipo_id)
+
+	if not partidos_asistidos_equipo:
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	datos_equipo=con.obtenerDatosEquipo(equipo_id)
+
+	con.cerrarConexion()
+
+	return render_template("partidos_asistidos_equipo.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							partidos_asistidos_equipo=partidos_asistidos_equipo,
+							datos_equipo=datos_equipo,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_pais=URL_DATALAKE_PAISES)
