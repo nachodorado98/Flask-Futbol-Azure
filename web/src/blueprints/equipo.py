@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect
 from flask_login import login_required, current_user
 
+from src.utilidades.utils import limpiarResultadosPartidos
+
 from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_ENTRENADORES, URL_DATALAKE_PRESIDENTES
@@ -134,6 +136,8 @@ def pagina_mis_equipos_equipo_partidos_equipo(equipo_id:str):
 
 	datos_equipo=con.obtenerDatosEquipo(equipo_id)
 
+	resultados_partidos_asistidos_equipo=limpiarResultadosPartidos(partidos_asistidos_equipo)
+
 	con.cerrarConexion()
 
 	return render_template("partidos_asistidos_equipo.html",
@@ -142,5 +146,7 @@ def pagina_mis_equipos_equipo_partidos_equipo(equipo_id:str):
 							estadio_equipo=estadio_equipo,
 							partidos_asistidos_equipo=partidos_asistidos_equipo,
 							datos_equipo=datos_equipo,
+							numero_partidos_asistidos_equipo=len(partidos_asistidos_equipo),
+							resultados_partidos_asistidos_equipo=resultados_partidos_asistidos_equipo,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_pais=URL_DATALAKE_PAISES)
