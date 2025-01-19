@@ -2260,3 +2260,67 @@ class Conexion:
 											partido["partido_ganado"],
 											partido["partido_perdido"],
 											partido["partido_empatado"]), partidos))
+
+	# Metodo para obtener los partidos asistidos de un usuario de una competicion concreta
+	def obtenerPartidosAsistidosUsuarioCompeticion(self, usuario:str, equipo_id:str, competicion_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								p.competicion,
+								pe.estadio_id as estadio_partido,
+								CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_ganado,
+						       CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_perdido,
+   						       CASE WHEN p.resultado LIKE %s
+							            THEN 1
+							            ELSE 0
+						       END as partido_empatado
+						FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+	                    LEFT JOIN partidos p
+	                    ON pa.partido_id=p.partido_id
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
+						LEFT JOIN partido_competicion pc
+						ON p.partido_id=pc.partido_id
+						WHERE pc.competicion_id=%s
+						ORDER BY p.fecha DESC""",
+						(r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
+						r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
+						r'%Empate%', usuario, competicion_id))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"],
+											partido["estadio_partido"],
+											partido["partido_ganado"],
+											partido["partido_perdido"],
+											partido["partido_empatado"]), partidos))

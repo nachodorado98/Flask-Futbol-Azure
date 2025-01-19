@@ -104,3 +104,35 @@ def pagina_mis_competiciones():
 						numero_competiciones=len(competiciones_asistidos),
 						url_imagen_pais=URL_DATALAKE_PAISES,
 						url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+
+@bp_competicion.route("/competiciones/mis_competiciones/partidos_competicion/<competicion_id>")
+@login_required
+def pagina_mis_competiciones_competicion_partidos_competicion(competicion_id:str):
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	partidos_asistidos_competicion=con.obtenerPartidosAsistidosUsuarioCompeticion(current_user.id, equipo, competicion_id)
+
+	if not partidos_asistidos_competicion:
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	datos_competicion=con.obtenerDatosCompeticion(competicion_id)
+
+	con.cerrarConexion()
+
+	return render_template("partidos_asistidos_competicion.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							partidos_asistidos_competicion=partidos_asistidos_competicion,
+							datos_competicion=datos_competicion,
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

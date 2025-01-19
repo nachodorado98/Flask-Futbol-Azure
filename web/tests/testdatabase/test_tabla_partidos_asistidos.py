@@ -2905,3 +2905,43 @@ def test_obtener_partidos_asistidos_usuario_equipo(conexion_entorno):
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert conexion_entorno.obtenerPartidosAsistidosUsuarioEquipo("nacho", "atletico-madrid", "atletico-madrid")
+
+def test_obtener_partidos_asistidos_usuario_competicion_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioCompeticion("nacho", "atletico-madrid", "primera")
+
+def test_obtener_partidos_asistidos_usuario_competicion_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioCompeticion("nacho", "atletico-madrid", "primera")
+
+def test_obtener_partidos_asistidos_usuario_competicion_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioCompeticion("nacho", "atletico-madrid", "primera")
+
+def test_obtener_partidos_asistidos_usuario_competicion_no_existe_competicion(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM competiciones")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioCompeticion("nacho", "atletico-madrid", "primera")
+
+def test_obtener_partidos_asistidos_usuario_competicion(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.obtenerPartidosAsistidosUsuarioCompeticion("nacho", "atletico-madrid", "primera")
