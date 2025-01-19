@@ -4,7 +4,30 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos_asistidos_competicion.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-partidos-asistidos-competicion">
+        <p class="titulo-circulo-partidos-asistidos-competicion">Partidos Asistidos</p>
+        <p class="valor-circulo-partidos-asistidos-competicion"><strong>{{ numero_partidos_asistidos_competicion }}</strong></p>
+    </div>
+    <div class="circulo-estadisticas-partidos-asistidos-competicion">
+        <canvas id="grafico_tarta"></canvas>
+        <script>var datos_grafica_tarta={{ resultados_partidos_asistidos_competicion | tojson | safe }};</script>
+        <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
+        
+    </div>
+    <div class="circulo-competicion">
+        <p class="titulo-circulo-competicion">{{ datos_competicion[1] }}</p>
+        {% if datos_competicion[2]==-1 %}
+            <img class="competicion" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon" onclick="window.location.href='/competicion/{{ datos_competicion[0] }}'">
+        {% else %}
+            <img class="competicion" src="{{ url_imagen_competicion }}{{ datos_competicion[2] }}.png" alt="Competicion Icon" onclick="window.location.href='/competicion/{{ datos_competicion[0] }}'">
+        {% endif %}
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}
 

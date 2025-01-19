@@ -19,7 +19,7 @@
     </div>
     <div class="circulo-equipo">
         <p class="titulo-circulo-equipo">{{ datos_equipo[2] }}</p>
-        {% if equipo[4]==-1 %}
+        {% if datos_equipo[4]==-1 %}
             <img class="equipo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon" onclick="window.location.href='/equipo/{{ datos_equipo[0] }}'">
         {% else %}
             <img class="equipo" src="{{ url_imagen_escudo }}{{ datos_equipo[4] }}.png" alt="Equipo Icon" onclick="window.location.href='/equipo/{{ datos_equipo[0] }}'">
