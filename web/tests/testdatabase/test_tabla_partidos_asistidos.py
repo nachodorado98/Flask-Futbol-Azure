@@ -2945,3 +2945,143 @@ def test_obtener_partidos_asistidos_usuario_competicion(conexion_entorno):
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert conexion_entorno.obtenerPartidosAsistidosUsuarioCompeticion("nacho", "atletico-madrid", "primera")
+
+def test_actualizar_on_tour_partido_asistido_no_existe_partido(conexion):
+
+	assert not conexion.existe_partido("20190622")
+
+	conexion.actualizarOnTourPartidoAsistido("20190622", "nacho", True)
+
+	assert not conexion.existe_partido("20190622")
+
+def test_actualizar_on_tour_partido_asistido_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+	conexion_entorno.actualizarOnTourPartidoAsistido("20190622", "nacho", True)
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+def test_actualizar_on_tour_partido_asistido_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.actualizarOnTourPartidoAsistido("20190622", "nacho", True)
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+def test_actualizar_on_tour_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT On_Tour FROM partidos_asistidos")
+
+	on_tour=conexion_entorno.c.fetchone()["on_tour"]
+
+	assert not on_tour
+
+	conexion_entorno.actualizarOnTourPartidoAsistido("20190622", "nacho", True)
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT On_Tour FROM partidos_asistidos")
+
+	on_tour=conexion_entorno.c.fetchone()["on_tour"]
+
+	assert on_tour
+
+def test_actualizar_datos_on_tour_partido_asistido_no_existe_partido(conexion):
+
+	assert not conexion.existe_partido("20190622")
+
+	conexion.actualizarDatosOnTourPartidoAsistido("20190622", "nacho", "2019-06-21", "2019-06-23", True)
+
+	assert not conexion.existe_partido("20190622")
+
+def test_actualizar_datos_partido_asistido_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+	conexion_entorno.actualizarDatosOnTourPartidoAsistido("20190622", "nacho", "2019-06-21", "2019-06-23", True)
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+def test_actualizar_datos_on_tour_partido_asistido_no_existe_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.actualizarDatosOnTourPartidoAsistido("20190622", "nacho", "2019-06-21", "2019-06-23", True)
+
+	assert not conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta"],
+	[
+		("2019-06-25", "2019-06-23"),
+		("2019-07-21", "2019-06-23"),
+		("2020-06-22", "2019-06-22")
+	]
+)
+def test_actualizar_datos_on_tour_partido_asistido_fechas_invalidas(conexion_entorno, fecha_ida, fecha_vuelta):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos")
+
+	registro=conexion_entorno.c.fetchone()
+
+	assert not registro["on_tour"]
+	assert not registro["fecha_ida"]
+	assert not registro["fecha_vuelta"]
+	assert not registro["teletrabajo"]
+
+	with pytest.raises(Exception):
+
+		conexion_entorno.actualizarDatosOnTourPartidoAsistido("20190622", "nacho", fecha_ida, fecha_vuelta, True)
+
+@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta", "teletrabajo"],
+	[
+		("2019-06-21", "2019-06-23", True),
+		("2019-06-21", "2019-06-23", False),
+		("2019-06-22", "2019-06-22", True),
+		("2019-06-22", "2019-06-22", False)
+	]
+)
+def test_actualizar_datos_on_tour_partido_asistido(conexion_entorno, fecha_ida, fecha_vuelta, teletrabajo):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.existe_partido_asistido("20190622", "nacho")
+
+	conexion_entorno.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos")
+
+	registro=conexion_entorno.c.fetchone()
+
+	assert not registro["on_tour"]
+	assert not registro["fecha_ida"]
+	assert not registro["fecha_vuelta"]
+	assert not registro["teletrabajo"]
+
+	conexion_entorno.actualizarDatosOnTourPartidoAsistido("20190622", "nacho", fecha_ida, fecha_vuelta, teletrabajo)
+
+	conexion_entorno.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos")
+
+	registro=conexion_entorno.c.fetchone()
+
+	assert registro["on_tour"]
+	assert registro["fecha_ida"].strftime("%Y-%m-%d")==fecha_ida
+	assert registro["fecha_vuelta"].strftime("%Y-%m-%d")==fecha_vuelta
+	assert registro["teletrabajo"]==teletrabajo

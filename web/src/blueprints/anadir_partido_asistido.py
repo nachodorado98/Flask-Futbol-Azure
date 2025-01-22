@@ -4,7 +4,7 @@ import os
 
 from src.database.conexion import Conexion
 
-from src.utilidades.utils import crearCarpeta, extraerExtension
+from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
@@ -64,6 +64,9 @@ def pagina_insertar_partido_asistido():
 	comentario=request.form.get("comentario")
 	partido_asistido_favorito=request.form.get("partido-favorito")
 	archivos=request.files
+	fecha_ida=request.form.get("fecha-ida")
+	fecha_vuelta=request.form.get("fecha-vuelta")
+	teletrabajo=request.form.get("teletrabajo", default=False, type=bool)
 
 	con=Conexion()
 
@@ -134,6 +137,12 @@ def pagina_insertar_partido_asistido():
 			except Exception:
 
 				print(f"Error al subir imagen {archivo_imagen} al datalake")
+
+	fecha_partido=con.obtenerFechaPartido(partido_id)
+
+	if comprobarFechas(fecha_ida, fecha_vuelta, fecha_partido):
+
+		con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
 
 	con.cerrarConexion()
 

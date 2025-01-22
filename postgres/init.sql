@@ -163,8 +163,13 @@ CREATE TABLE partidos_asistidos (Asistido_Id VARCHAR(255) PRIMARY KEY,
 								Usuario VARCHAR(255),
 								Comentario VARCHAR(255) DEFAULT NULL,
 								Imagen VARCHAR(255) DEFAULT NULL,
+								On_Tour BOOL DEFAULT False,
+								Fecha_Ida DATE DEFAULT NULL,
+								Fecha_Vuelta DATE DEFAULT NULL,
+								Teletrabajo BOOL DEFAULT NULL,
 								FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
-								FOREIGN KEY (Usuario) REFERENCES usuarios (Usuario) ON DELETE CASCADE);
+								FOREIGN KEY (Usuario) REFERENCES usuarios (Usuario) ON DELETE CASCADE,
+								CONSTRAINT check_fechas CHECK (Fecha_Ida <= Fecha_Vuelta));
 
 CREATE TABLE partido_asistido_favorito (Partido_Id VARCHAR(255),
 										Usuario VARCHAR(255),

@@ -2324,3 +2324,37 @@ class Conexion:
 											partido["partido_ganado"],
 											partido["partido_perdido"],
 											partido["partido_empatado"]), partidos))
+
+	# Metodo para actualizar el campo on tour de un partido asistido
+	def actualizarOnTourPartidoAsistido(self, partido_id:str, usuario:str, on_tour:bool)->None:
+
+		self.c.execute("""UPDATE partidos_asistidos
+							SET On_Tour=%s
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(on_tour, partido_id, usuario))
+
+		self.confirmar()
+
+	# Metodo para obtener la fecha de un partido
+	def obtenerFechaPartido(self, partido_id:str)->str:
+
+		self.c.execute("""SELECT fecha
+						FROM partidos
+						WHERE partido_id=%s""",
+						(partido_id,))
+
+		fecha=self.c.fetchone()
+
+		return None if not fecha else fecha["fecha"].strftime("%Y-%m-%d")
+
+	# Metodo para actualizar ls datos del on tour de un partido asistido
+	def actualizarDatosOnTourPartidoAsistido(self, partido_id:str, usuario:str, fecha_ida:str, fecha_vuelta:str, teletrabajo:bool)->None:
+
+		self.c.execute("""UPDATE partidos_asistidos
+							SET On_Tour=True, Fecha_Ida=%s, Fecha_Vuelta=%s, Teletrabajo=%s
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(fecha_ida, fecha_vuelta, teletrabajo, partido_id, usuario))
+
+		self.confirmar()

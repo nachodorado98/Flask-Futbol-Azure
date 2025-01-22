@@ -952,3 +952,11 @@ def test_obtener_partidos_historial_entre_equipos(conexion):
 	assert historial[1][1]==1
 	assert historial[2][0]=="rival"
 	assert historial[2][1]==0
+
+def test_obtener_fecha_partido_no_existe_partido(conexion):
+
+	assert not conexion.obtenerFechaPartido("20190622")
+
+def test_obtener_fecha_partido(conexion_entorno):
+
+	assert conexion_entorno.obtenerFechaPartido("20190622")=="2019-06-22"

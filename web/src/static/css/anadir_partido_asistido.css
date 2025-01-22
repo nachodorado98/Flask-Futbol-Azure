@@ -153,6 +153,106 @@
   margin-left: 10px;
 }
 
+.contenedor-seccion-on-tour {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.contenedor-on-tour {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.contenedor-boton-on-tour{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icono-rail {
+    height: 25px;
+}
+
+.button-on-tour-partido-asistido {
+    color: var(--color-secundario);
+    font-size: 24px;
+}
+
+.icono-flecha {
+    height: 24px;
+}
+
+.seccion-on-tour-partido-asistido {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.titulo-seccion-on-tour {
+    color: var(--color-secundario);
+    font-size: 36px;
+}
+
+.contenedor-fechas {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+label {
+    margin-top: 5px;
+    color: var(--color-secundario);
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+input {
+    width: 25%;
+    padding: 5px;
+    margin-top: 3px;
+    box-sizing: border-box;
+}
+
+.contenedor-checkbox-teletrabajo {
+    display: flex;
+    align-items: center;
+}
+
+.contenedor-checkbox-teletrabajo input[type="checkbox"] {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.contenedor-checkbox-teletrabajo .teletrabajo-texto {
+    color: var(--color-secundario);
+    font-size: 20px;
+}
+
+.botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido:hover {
+    transform: scale(1.05);
+    background-color: var(--color-fondo);
+}
+
 .botones-formulario-anadir-partido-asistido {
     display: flex;
     justify-content: center;

@@ -67,6 +67,45 @@
             </div>
         </div>
 
+        <div class="contenedor-seccion-on-tour">
+
+            <div class="contenedor-on-tour">
+
+                <div id="contenedorOnTour"  class="contenedor-boton-on-tour">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
+                    <p  class="button-on-tour-partido-asistido"><strong>Añadir Datos On Tour</strong></p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha" id="botonOnTourPartidoAsistido">
+                </div>
+
+                <div class="seccion-on-tour-partido-asistido" id="contenedorOnTourPartidoAsistido" style="display: none;">
+
+                    <hr style="width: 700px">
+                    <p class="titulo-seccion-on-tour"><strong>Seccion On Tour</strong></p>
+
+                    <div class="contenedor-fechas">
+                        <label for="fecha-ida"><strong>Fecha Ida:</strong></label>
+                        <input type="date" id="fecha-ida" name="fecha-ida" required>
+                        <label for="fecha-vuelta"><strong>Fecha Vuelta:</strong></label>
+                        <input type="date" id="fecha-vuelta" name="fecha-vuelta" required>
+                    </div>
+
+                    <div class="contenedor-checkbox-teletrabajo">
+                        <input type="checkbox" id="teletrabajo" name="teletrabajo">
+                        <p class="teletrabajo-texto"><strong>Teletrabajo</strong></p>
+                    </div>
+
+                    <div class="botones-on-tour-partido-asistido">
+                        <button id="botonNoOnTourPartidoAsistido" class="boton-no-on-tour-partido-asistido" type="button">
+                            Cerrar
+                        </button>
+                    </div>
+                    
+                </div>
+
+            </div>
+
+        </div>
+
         <div class="botones-formulario-anadir-partido-asistido">
             <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">Añadir</button>
             <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">
@@ -79,6 +118,8 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/abrir_on_tour_partido_asistido.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cerrar_on_tour_partido_asistido.js') }}"></script>
 
 {% endblock principal %}
 

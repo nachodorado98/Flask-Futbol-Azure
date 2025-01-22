@@ -455,3 +455,21 @@ def obtenerCompeticionesPartidosUnicas(partidos:List[tuple])->List[str]:
 def extraerExtension(archivo:str, extension_alternativa:str="jpg")->str:
 
 	return archivo.rsplit(".", 1)[1].lower() if "." in archivo else extension_alternativa
+
+def comprobarFechas(fecha_ida:str, fecha_vuelta:str, fecha_partido:str)->bool:
+
+	try:
+
+		datetime_partido=datetime.strptime(fecha_partido, "%Y-%m-%d")
+
+		if datetime.strptime(fecha_ida, "%Y-%m-%d")<=datetime_partido and datetime.strptime(fecha_vuelta, "%Y-%m-%d")>=datetime_partido:
+
+			return True
+
+		else:
+
+			return False
+
+	except Exception:
+
+		return False

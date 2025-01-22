@@ -9,7 +9,7 @@ from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSel
 from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
-from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension
+from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1051,3 +1051,29 @@ def test_obtener_competiciones_unicas():
 def test_extraer_extension(archivo, extension):
 
 	assert extraerExtension(archivo)==extension
+
+@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta"],
+	[
+		("201811-01", "2019-06-23"),
+		("2018-11-01", "2019-0623"),
+		("01-11-2018", "2019-06-23"),
+		("2018-11-01", "23-06-2019"),
+		("2018-11-01", "2019-06-21"),
+		("2019-06-23", "2019-06-24"),
+		("2019-06-24", "2019-06-23")
+	]
+)
+def test_comprobar_fechas_fechas_invalidas(fecha_ida, fecha_vuelta):
+
+	assert not comprobarFechas(fecha_ida, fecha_vuelta, "2019-06-22")
+
+@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta"],
+	[
+		("2018-11-01", "2019-06-22"),
+		("2019-06-22", "2019-06-24"),
+		("2019-06-21", "2019-06-23")
+	]
+)
+def test_comprobar_fechas_fechas_validas(fecha_ida, fecha_vuelta):
+
+	assert comprobarFechas(fecha_ida, fecha_vuelta, "2019-06-22")
