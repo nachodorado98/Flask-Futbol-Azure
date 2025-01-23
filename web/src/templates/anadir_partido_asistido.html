@@ -18,7 +18,7 @@
 
         <div class="contenedor-select-boton">
 
-            <select class="select-partido" id="partido_anadir" name="partido_anadir" required>
+            <select class="select-partido" id="partido_anadir" name="partido_anadir" onchange="actualizarFechasPartidoAsistido()" required>
 
                 <option value="sin-seleccion"{% if not partido_id_anadir %} selected{% endif %} disabled hidden>
                     Selecciona un partido
@@ -84,9 +84,9 @@
 
                     <div class="contenedor-fechas">
                         <label for="fecha-ida"><strong>Fecha Ida:</strong></label>
-                        <input type="date" id="fecha-ida" name="fecha-ida" required>
+                        <input type="date" id="fecha-ida" name="fecha-ida" {% if fecha_partido %}max='{{ fecha_partido }}'{% endif %} required>
                         <label for="fecha-vuelta"><strong>Fecha Vuelta:</strong></label>
-                        <input type="date" id="fecha-vuelta" name="fecha-vuelta" required>
+                        <input type="date" id="fecha-vuelta" name="fecha-vuelta" {% if fecha_partido %}min='{{ fecha_partido }}'{% endif %} required>
                     </div>
 
                     <div class="contenedor-checkbox-teletrabajo">
@@ -95,6 +95,9 @@
                     </div>
 
                     <div class="botones-on-tour-partido-asistido">
+                        <button id="boton-borrar-campos-on-tour" class="boton-borrar-campos-on-tour" type="button">
+                            Restablecer
+                        </button>
                         <button id="botonNoOnTourPartidoAsistido" class="boton-no-on-tour-partido-asistido" type="button">
                             Cerrar
                         </button>
@@ -107,7 +110,9 @@
         </div>
 
         <div class="botones-formulario-anadir-partido-asistido">
-            <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">Añadir</button>
+            <button type="submit" class="boton-submit-formulario-anadir-partido-asistido">
+                Añadir Partido Asistido
+            </button>
             <button type="button" class="boton-cancelar-formulario-anadir-partido-asistido" onclick="pagina_anterior()">
                 Cancelar
             </button>
@@ -120,6 +125,8 @@
 <script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
 <script src="{{ url_for('static', filename='js/abrir_on_tour_partido_asistido.js') }}"></script>
 <script src="{{ url_for('static', filename='js/cerrar_on_tour_partido_asistido.js') }}"></script>
+<script src="{{ url_for('static', filename='js/formulario_partido_asistido.js') }}"></script>
+<script src="{{ url_for('static', filename='js/borrar_campos_on_tour.js') }}"></script>
 
 {% endblock principal %}
 

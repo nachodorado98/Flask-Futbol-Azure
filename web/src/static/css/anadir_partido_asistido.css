@@ -184,6 +184,7 @@
 
 .icono-flecha {
     height: 24px;
+    cursor: pointer;
 }
 
 .seccion-on-tour-partido-asistido {
@@ -209,6 +210,7 @@ label {
     color: var(--color-secundario);
     margin-right: 5px;
     margin-left: 10px;
+    font-size: 18px;
 }
 
 input {
@@ -235,7 +237,8 @@ input {
     font-size: 20px;
 }
 
-.botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido {
+.botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido,
+.botones-on-tour-partido-asistido .boton-borrar-campos-on-tour {
     background-color: var(--color-secundario);
     color: var(--color-primario);
     font-size: 20px;
@@ -246,9 +249,11 @@ input {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-left: 10px;
 }
 
-.botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido:hover {
+.botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido:hover,
+.botones-on-tour-partido-asistido .boton-borrar-campos-on-tour:hover {
     transform: scale(1.05);
     background-color: var(--color-fondo);
 }
