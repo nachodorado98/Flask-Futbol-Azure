@@ -1,3 +1,4 @@
+import pytest
 import os
 
 from src.utilidades.utils import vaciarCarpeta
@@ -90,6 +91,7 @@ def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno, passw
 		assert "/no_favorito_asistido.png" in contenido
 		assert "/favorito_asistido.png" not in contenido
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
+		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
 
 def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno, password_hash):
 
@@ -117,6 +119,7 @@ def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno, passw
 		assert "/no_favorito_asistido.png" in contenido
 		assert "/favorito_asistido.png" not in contenido
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
+		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
 
 def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno, password_hash):
 
@@ -183,6 +186,90 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
 
 		vaciarCarpeta(ruta_carpeta_imagenes)
+
+@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta", "fecha_ida_on_tour", "fecha_vuelta_on_tour"],
+	[
+		("2019-06-21", "2019-06-23", "21-06-2019", "23-06-2019"),
+		("2019-06-22", "2019-06-22", "22-06-2019", "22-06-2019"),
+		("2019-04-13", "2019-06-23", "13-04-2019", "23-06-2019"),
+		("2019-06-21", "2019-07-22", "21-06-2019", "22-07-2019"),
+		("2009-06-21", "2029-06-23", "21-06-2009", "23-06-2029")
+	]
+)
+def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno, password_hash, fecha_ida, fecha_vuelta, fecha_ida_on_tour, fecha_vuelta_on_tour):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "fecha-ida":fecha_ida, "fecha-vuelta":fecha_vuelta}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
+		assert '<div class="seccion-on-tour-partido-asistido">' in contenido
+		assert '<div class="contenedor-titulo-on-tour-partido-asistido">' in contenido
+		assert '<div class="contenedor-fechas-on-tour-partido-asistido">' in contenido
+		assert f"Fecha Ida: {fecha_ida_on_tour}" in contenido
+		assert f"Fecha Vuelta: {fecha_vuelta_on_tour}" in contenido
+		assert '<p class="teletrabajo-on-tour">' in contenido
+
+def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "fecha-ida":"2019-06-21", "fecha-vuelta":"2019-06-23"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
+		assert '<div class="seccion-on-tour-partido-asistido">' in contenido
+		assert '<div class="contenedor-titulo-on-tour-partido-asistido">' in contenido
+		assert '<div class="contenedor-fechas-on-tour-partido-asistido">' in contenido
+		assert '<p class="teletrabajo-on-tour">' in contenido
+		assert "Teletrabajo No" in contenido
+		assert "Teletrabajo Si" not in contenido
+
+def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "fecha-ida":"2019-06-21", "fecha-vuelta":"2019-06-23", "teletrabajo":True}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
+		assert '<div class="seccion-on-tour-partido-asistido">' in contenido
+		assert '<div class="contenedor-titulo-on-tour-partido-asistido">' in contenido
+		assert '<div class="contenedor-fechas-on-tour-partido-asistido">' in contenido
+		assert '<p class="teletrabajo-on-tour">' in contenido
+		assert "Teletrabajo No" not in contenido
+		assert "Teletrabajo Si" in contenido
 
 def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno, password_hash):
 

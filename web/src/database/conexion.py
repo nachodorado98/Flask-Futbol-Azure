@@ -1568,7 +1568,11 @@ class Conexion:
 								CASE WHEN pa.imagen IS NULL
 										THEN '-1'
 										ELSE pa.imagen
-								END as imagen_partido
+								END as imagen_partido,
+								pa.on_tour,
+								TO_CHAR(pa.fecha_ida, 'DD-MM-YYYY') AS fecha_ida_str,
+								TO_CHAR(pa.fecha_vuelta, 'DD-MM-YYYY') AS fecha_vuelta_str,
+								pa.teletrabajo
 							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 		                    LEFT JOIN partidos p
 		                    ON pa.partido_id=p.partido_id
@@ -1591,7 +1595,11 @@ class Conexion:
 											asistido["visitante"],
 											asistido["escudo_visitante"],
 											asistido["comentario"],
-											asistido["imagen_partido"])
+											asistido["imagen_partido"],
+											asistido["on_tour"],
+											asistido["fecha_ida_str"],
+											asistido["fecha_vuelta_str"],
+											asistido["teletrabajo"])
 
 	# Metodo para obtener el partido siguiente de un partido asistido de un usuario
 	def obtenerPartidoAsistidoUsuarioSiguiente(self, usuario:str, partido_id:str)->Optional[str]:

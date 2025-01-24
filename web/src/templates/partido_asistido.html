@@ -10,7 +10,7 @@
 
 {% block principal %}
 
-<div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
+<div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %} {% if partido_asistido[11] %} style="margin-bottom: 50px" {% endif %}>
 
     {% if partido_asistido_favorito %}
 
@@ -40,6 +40,41 @@
         {% endif %}
 
     </div>
+
+    {% if partido_asistido[11] %}
+
+        <div class="seccion-on-tour-partido-asistido">
+
+            <hr style="width: 700px">
+
+            <div class="contenedor-titulo-on-tour-partido-asistido">
+                <p class="titulo-seccion-on-tour">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
+                    <strong>DATOS ON TOUR</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
+                </p>
+            </div>
+
+            <div class="contenedor-fechas-on-tour-partido-asistido">
+                <div class="contenedor-fecha-on-tour">
+                    <p class="fecha-on-tour"><strong>Fecha Ida: {{ partido_asistido[12] }}</strong></p>
+                </div>
+                <div class="contenedor-fecha-on-tour">
+                    <p class="fecha-on-tour"><strong>Fecha Vuelta: {{ partido_asistido[13] }}</strong></p>
+                </div>
+            </div>
+
+            <p class="teletrabajo-on-tour">
+                {% if partido_asistido[14] %}
+                    <strong>Teletrabajo Si</strong>
+                {% else %}
+                    <strong>Teletrabajo No</strong>
+                {% endif %}
+            </p>
+
+        </div>
+
+    {% endif %}
 
     <div class="contenedor-imagen">
 

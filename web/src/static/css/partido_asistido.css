@@ -87,7 +87,7 @@
 }
 
 .contenedor-comentario .contenedor-no-comentario .no-comentario {
-    font-size: 30px;
+    font-size: 20px;
     margin: 0px;
     color: var(--color-secundario) 
 }
@@ -95,7 +95,7 @@
 .contenedor-comentario .contenedor-no-comentario .button-comentar-partido-asistido {
     background-color: var(--color-secundario);
     color: var(--color-primario);
-    font-size: 23px;
+    font-size: 20px;
     padding: 10px;
     margin-top: 0px;
     margin-bottom: 10px;
@@ -233,6 +233,51 @@
 .botones-anadir-imagen-partido-asistido .boton-anadir-imagen-partido-asistido:hover {
     transform: scale(1.05);
     background-color: var(--color-fondo);
+}
+
+.seccion-on-tour-partido-asistido {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.contenedor-titulo-on-tour-partido-asistido {
+    display: flex;
+    justify-content: center;
+}
+
+.titulo-seccion-on-tour {
+    color: var(--color-secundario);
+    font-size: 34px;
+}
+
+.icono-rail {
+    height: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.contenedor-fechas-on-tour-partido-asistido {
+    display: flex;
+    justify-content: center;
+}
+
+.contenedor-fecha-on-tour {
+    display: flex;
+    justify-content: center;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.fecha-on-tour {
+    color: var(--color-secundario);
+    font-size: 22px;
+}
+
+.teletrabajo-on-tour {
+    color: var(--color-secundario);
+    font-size: 22px;
 }
 
 .tarjeta-partido-asistido-detalle .contenedor-botones-asistido {
