@@ -2345,7 +2345,7 @@ class Conexion:
 		self.confirmar()
 
 	# Metodo para obtener la fecha de un partido
-	def obtenerFechaPartido(self, partido_id:str)->str:
+	def obtenerFechaPartido(self, partido_id:str)->Optional[str]:
 
 		self.c.execute("""SELECT fecha
 						FROM partidos
@@ -2366,3 +2366,22 @@ class Conexion:
 							(fecha_ida, fecha_vuelta, teletrabajo, partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener las fechas minimas y maximas de los partidos
+	def obtenerFechaMinimaMaximaPartidos(self, equipo_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT min(fecha) as minima, max(fecha) as maxima
+							FROM partidos
+							WHERE equipo_id_local=%s
+							OR equipo_id_visitante=%s""",
+							(equipo_id, equipo_id))
+
+		fechas=self.c.fetchone()
+
+		try:
+
+			return (fechas["minima"].strftime("%Y-%m-%d"), fechas["maxima"].strftime("%Y-%m-%d"))
+
+		except Exception:
+
+			return None

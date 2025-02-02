@@ -10,6 +10,7 @@ from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vac
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
 from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
+from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, obtenerAnoMesFechas, generarCalendario
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1077,3 +1078,100 @@ def test_comprobar_fechas_fechas_invalidas(fecha_ida, fecha_vuelta):
 def test_comprobar_fechas_fechas_validas(fecha_ida, fecha_vuelta):
 
 	assert comprobarFechas(fecha_ida, fecha_vuelta, "2019-06-22")
+
+
+@pytest.mark.parametrize(["ano_mes"],
+	[("202211",),("2019-13",),("11-2022",),("2019",),("06",)]
+)
+def test_obtener_primer_ultimo_dia_ano_mes_fechas_invalidas(ano_mes):
+
+	assert not obtenerPrimerUltimoDiaAnoMes(ano_mes)
+
+@pytest.mark.parametrize(["ano_mes", "primer_dia", "ultimo_dia"],
+	[
+		("2022-11", "2022-11-01", "2022-11-30"),
+		("2019-12", "2019-12-01", "2019-12-31"),
+		("2019-06", "2019-06-01", "2019-06-30"),
+		("2025-02", "2025-02-01", "2025-02-28")
+	]
+)
+def test_obtener_primer_ultimo_dia_ano_mes(ano_mes, primer_dia, ultimo_dia):
+
+	primer_ultimo_dia=obtenerPrimerUltimoDiaAnoMes(ano_mes)
+
+	assert primer_ultimo_dia[0]==primer_dia
+	assert primer_ultimo_dia[1]==ultimo_dia
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin"],
+	[
+		("201811-01", "2019-06-23"),
+		("2018-11-01", "2019-0623"),
+		("01-11-2018", "2019-06-23"),
+		("2018-11-01", "23-06-2019"),
+		("2019-06-22", "2019-04-13")
+	]
+)
+def test_obtener_ano_mes_fechas_fechas_invalidas(fecha_inicio, fecha_fin):
+
+	assert not obtenerAnoMesFechas(fecha_inicio, fecha_fin)
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin", "ano_mes"],
+	[
+		("2019-06-13", "2019-06-22", "2019-06"),
+		("2019-08-06", "2019-08-15", "2019-08"),
+		("1998-02-15", "1998-02-16", "1998-02")
+	]
+)
+def test_obtener_ano_mes_fechas_mismo_mes(fecha_inicio, fecha_fin, ano_mes):
+
+	anos_meses=obtenerAnoMesFechas(fecha_inicio, fecha_fin)
+
+	assert anos_meses[0]==ano_mes
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin", "rango_anos_meses"],
+	[
+		("2019-04-13", "2019-06-22", ["2019-04", "2019-05", "2019-06"]),
+		("2019-02-01", "2019-03-05", ["2019-02", "2019-03"]),
+		("2020-02-16", "2020-03-15", ["2020-02", "2020-03"]),
+		("2019-11-22", "2020-02-16", ["2019-11", "2019-12", "2020-01", "2020-02"]),
+	]
+)
+def test_obtener_ano_mes_fechas(fecha_inicio, fecha_fin, rango_anos_meses):
+
+	anos_meses=obtenerAnoMesFechas(fecha_inicio, fecha_fin)
+
+	assert len(anos_meses)==len(rango_anos_meses)
+
+	for ano_mes in anos_meses:
+
+		assert ano_mes in rango_anos_meses
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin"],
+	[
+		("201811-01", "2019-06-23"),
+		("2018-11-01", "2019-0623"),
+		("01-11-2018", "2019-06-23"),
+		("2018-11-01", "23-06-2019")
+	]
+)
+def test_generar_calendario_fechas_invalidas(fecha_inicio, fecha_fin):
+
+	assert not generarCalendario(fecha_inicio, fecha_fin)
+
+def test_generar_calendario_fechas_inversa():
+
+	semanas=generarCalendario("2019-06-22", "2019-04-13")
+
+	for semana in semanas:
+
+		for dia in semana:
+
+			assert dia==""
+
+def test_generar_calendario():
+
+	semanas=generarCalendario("2019-06-13", "2019-06-22")
+
+	assert len(semanas)==2
+	assert "" in semanas[0]
+	assert "" in semanas[1]

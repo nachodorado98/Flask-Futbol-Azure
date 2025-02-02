@@ -960,3 +960,35 @@ def test_obtener_fecha_partido_no_existe_partido(conexion):
 def test_obtener_fecha_partido(conexion_entorno):
 
 	assert conexion_entorno.obtenerFechaPartido("20190622")=="2019-06-22"
+
+def test_obtener_fecha_minima_maxima_partidos_no_existen_partidos(conexion):
+
+	assert not conexion.obtenerFechaMinimaMaximaPartidos("atletico-madrid")
+
+def test_obtener_fecha_minima_maxima_partidos_un_solo_partido(conexion_entorno):
+
+	fecha_minima, fecha_maxima=conexion_entorno.obtenerFechaMinimaMaximaPartidos("atletico-madrid")
+
+	assert fecha_minima=="2019-06-22"
+	assert fecha_maxima=="2019-06-22"
+
+@pytest.mark.parametrize(["fechas", "minima", "maxima"],
+	[
+		(["2019-06-22", "2020-01-20", "1998-02-16", "1999-08-06"], "1998-02-16", "2020-01-20"),
+	]
+)
+def test_obtener_fecha_minima_maxima_partidos_un_solo_partido(conexion, fechas, minima, maxima):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	for numero, fecha in enumerate(fechas):
+
+		conexion.c.execute(f"""INSERT INTO partidos
+									VALUES ('2019062{numero}', 'atletico-madrid', 'atletico-madrid', '{fecha}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.confirmar()
+											
+	fecha_minima, fecha_maxima=conexion.obtenerFechaMinimaMaximaPartidos("atletico-madrid")
+
+	assert fecha_minima==minima
+	assert fecha_maxima==maxima

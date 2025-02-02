@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect
 from flask_login import login_required, current_user
 
-from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas
+from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas, obtenerPrimerUltimoDiaAnoMes
+from src.utilidades.utils import obtenerAnoMesFechas, generarCalendario
 
 from src.database.conexion import Conexion
 
@@ -155,6 +156,44 @@ def pagina_partidos():
 							resultado_filtrado=resultado_filtrado,
 							local=local,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+
+@bp_partidos.route("/partidos/calendario/<ano_mes>")
+@login_required
+def pagina_partidos_calendario(ano_mes:str):
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	nombre_equipo=con.obtenerNombreEquipo(equipo)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	primer_ultimo_dia=obtenerPrimerUltimoDiaAnoMes(ano_mes)
+
+	if not primer_ultimo_dia:
+
+		return redirect("/partidos")
+
+	fecha_minima_maxima=con.obtenerFechaMinimaMaximaPartidos(equipo)
+
+	if not fecha_minima_maxima:
+
+		return redirect("/partidos")
+
+	anos_meses=obtenerAnoMesFechas(fecha_minima_maxima[0], fecha_minima_maxima[1])
+
+	semanas=generarCalendario(primer_ultimo_dia[0], primer_ultimo_dia[1])
+
+	return render_template("partidos_calendario.html",
+								usuario=current_user.id,
+								equipo=equipo,
+								nombre_equipo=nombre_equipo,
+								estadio_equipo=estadio_equipo,
+								ano_mes_calendario=ano_mes,
+								anos_meses=anos_meses,
+								semanas=semanas,
+								primer_ultimo_dia=primer_ultimo_dia)
 
 @bp_partidos.route("/partidos/asistidos")
 @login_required

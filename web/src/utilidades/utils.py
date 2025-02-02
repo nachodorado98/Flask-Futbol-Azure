@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from passlib.context import CryptContext
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -473,3 +473,79 @@ def comprobarFechas(fecha_ida:str, fecha_vuelta:str, fecha_partido:str)->bool:
 	except Exception:
 
 		return False
+
+def obtenerPrimerUltimoDiaAnoMes(ano_mes:str)->Optional[tuple]:
+
+	try:
+
+		ano_mes_datetime=datetime.strptime(ano_mes, "%Y-%m")
+
+		mes=ano_mes_datetime.month
+
+		ano=ano_mes_datetime.year
+
+		primer_dia=datetime(ano, mes, 1)
+
+		primer_dia_siguiente_mes=datetime(ano+1, 1, 1) if mes==12 else datetime(ano, mes+1, 1)
+
+		ultimo_dia=primer_dia_siguiente_mes-timedelta(days=1)
+
+		return primer_dia.strftime("%Y-%m-%d"), ultimo_dia.strftime("%Y-%m-%d")
+
+	except Exception:
+
+		return None
+
+def obtenerAnoMesFechas(fecha_inicio:str, fecha_fin:str)->Optional[List[str]]:
+
+	try:
+
+		inicio_datetime=datetime.strptime(fecha_inicio, "%Y-%m-%d").replace(day=1)
+
+		fin_datetime=datetime.strptime(fecha_fin, "%Y-%m-%d").replace(day=1)
+
+		anos_meses=[]
+
+		while inicio_datetime<=fin_datetime:
+
+			anos_meses.append(inicio_datetime.strftime("%Y-%m"))
+
+			if inicio_datetime.month==12:
+
+				inicio_datetime=inicio_datetime.replace(year=inicio_datetime.year + 1, month=1)
+
+			else:
+
+				inicio_datetime=inicio_datetime.replace(month=inicio_datetime.month + 1)
+
+		return anos_meses
+
+	except Exception:
+
+		return None
+
+def generarCalendario(fecha_inicio, fecha_fin)->List[Optional[List]]:
+
+	try:
+
+	    fecha_inicio_datetime=datetime.strptime(fecha_inicio, "%Y-%m-%d")
+
+	    fecha_fin_datetime=datetime.strptime(fecha_fin, "%Y-%m-%d")
+	    
+	    fechas=[fecha_inicio_datetime+timedelta(days=dia) for dia in range((fecha_fin_datetime-fecha_inicio_datetime).days+1)]
+	    
+	    dia_inicio_semana=fecha_inicio_datetime.weekday()
+	    
+	    dias_vacios_inicio=[""]*dia_inicio_semana
+	    
+	    dia_fin_semana=fecha_fin_datetime.weekday()
+	    
+	    dias_vacios_fin=[""]*(6-dia_fin_semana)
+	    
+	    fechas_completas=dias_vacios_inicio+[fecha.strftime("%Y-%m-%d") for fecha in fechas]+dias_vacios_fin
+	    
+	    return [fechas_completas[dia:dia+7] for dia in range(0, len(fechas_completas), 7)]
+
+	except Exception:
+
+		return []

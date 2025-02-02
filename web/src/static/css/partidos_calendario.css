@@ -1,0 +1,134 @@
+/*-----------------------------------------------------PARTIDOS CALENDARIO-----------------------------------------*/
+.tarjeta-calendario {
+    width: 100%;
+    max-width: 1100px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    margin-bottom: 40px;
+}
+
+.contenedor-titulo-calendario {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.titulo-pagina-calendario {
+    font-size: 45px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 1px;
+}
+
+.ano-mes-filtrado {
+    font-size: 22px;
+    margin-left: 10px;
+    color: var(--color-primario);
+    background-color: var(--color-secundario);
+    margin-bottom: 1px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+}
+
+.icono-flecha-fecha{
+    height: 20px;
+    margin-top: 15px;
+}
+
+.desplegable-contenedor {
+    position: relative;
+}
+
+.boton-desplegable {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-desplegable {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--color-primario);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 220px;
+    padding: 8px 0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.menu-desplegable .opcion-desplegable {
+    color: var(--color-secundario);
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 22px;
+}
+
+.menu-desplegable .opcion-desplegable:hover {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+}
+
+.dias-semana {
+    display: flex;
+    justify-content: center;
+    gap: 58px;
+    margin-bottom: 1px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--color-secundario);
+}
+
+.dias-semana p {
+    width: 70px;
+    text-align: center;
+}
+
+.calendario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+}
+
+.fila {
+    display: flex;
+    gap: 5px;
+}
+
+.dia {
+    width: 115px;
+    height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
+.dia:empty {
+    background-color: #f0f0f0;
+    border: 2px dashed #ccc;
+}

@@ -1,0 +1,63 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos_calendario.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-calendario">
+
+    <div class="contenedor-titulo-calendario">
+
+        <p class="titulo-pagina-calendario"><strong>Calendario del {{ nombre_equipo }}</strong></p>
+
+        <div class="desplegable-contenedor">
+            <strong class="ano-mes-filtrado">{{ ano_mes_calendario }}</strong>
+            <button class="boton-desplegable" onclick="desplegablePaises()">
+                <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-fecha"> 
+            </button>
+            <div id="menuDesplegable" class="menu-desplegable">
+                {% for ano_mes in anos_meses %}
+                    <a href="/partidos/calendario/{{ ano_mes }}" class="opcion-desplegable">
+                        <strong>{{ ano_mes }}</strong>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dias-semana">
+        <p>L</p>
+        <p>M</p>
+        <p>X</p>
+        <p>J</p>
+        <p>V</p>
+        <p>S</p>
+        <p>D</p>
+    </div>
+
+    <div class="calendario">
+        {% for semana in semanas %}
+            <div class="fila">
+                {% for dia in semana %}
+                    <div class="dia">
+                        {% if dia %}
+                            {{ dia }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+ </div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
