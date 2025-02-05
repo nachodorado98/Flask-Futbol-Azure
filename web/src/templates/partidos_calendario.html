@@ -23,8 +23,8 @@
             </button>
             <div id="menuDesplegable" class="menu-desplegable">
                 {% for ano_mes in anos_meses %}
-                    <a href="/partidos/calendario/{{ ano_mes }}" class="opcion-desplegable">
-                        <strong>{{ ano_mes }}</strong>
+                    <a href="/partidos/calendario/{{ ano_mes[0] }}" class="opcion-desplegable">
+                        <strong>{{ ano_mes[1] }}</strong>
                     </a>
                 {% endfor %}
             </div>
@@ -43,16 +43,54 @@
     </div>
 
     <div class="calendario">
+
         {% for semana in semanas %}
+
             <div class="fila">
+
                 {% for dia in semana %}
-                    <div class="dia">
-                        {% if dia %}
-                            {{ dia }}
+
+                    {% if dia %}
+
+                        {% if dia[2] %}
+                            <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
+
+                                <div class="contenido-partido">
+
+                                    {% if dia[2][6]==-1 %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                    {% else %}
+                                        <img src="{{ url_imagen_escudo }}{{ dia[2][6] }}.png" alt="Local Icon">
+                                    {% endif %}
+
+                                    <p>{{ dia[2][1] }}</p>
+
+                                    {% if dia[2][9]==-1 %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                                    {% else %}
+                                        <img src="{{ url_imagen_escudo }}{{ dia[2][9] }}.png" alt="Visitante Icon">
+                                    {% endif %}
+
+                                </div>
+
+                                    <p class="numero-dia">{{ dia[1] }}</p>
+
+                            </div>
+                        {% else %}
+                            <div class="dia-sin-partido">
+                                <div class="contenido-no-partido"></div>
+                                <p class="numero-dia">{{ dia[1] }}</p>
+                            </div>
                         {% endif %}
-                    </div>
+
+                    {% else %}
+                        <div class="dia-vacio"></div>
+                    {% endif %}
+
                 {% endfor %}
+
             </div>
+
         {% endfor %}
     </div>
 

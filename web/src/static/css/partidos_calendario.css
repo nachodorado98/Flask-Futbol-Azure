@@ -66,10 +66,12 @@
     background-color: var(--color-primario);
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    min-width: 220px;
+    min-width: 300px;
     padding: 8px 0;
     border-radius: 10px;
     transition: all 0.3s ease;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .menu-desplegable .opcion-desplegable {
@@ -113,22 +115,66 @@
     gap: 5px;
 }
 
-.dia {
-    width: 115px;
+.dia, .dia-sin-partido {
+    width: 120px;
     height: 92px;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    background-color: #ffffff;
+    background-color: var(--color-secundario);
     border: 2px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-size: 16px;
+}
+
+.dia {
+    cursor: pointer;
+}
+
+.contenido-partido {
+    width: 120px;
+    height: 34px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-secundario);
+}
+
+.contenido-partido img {
+    margin-top: 10px;
+    width: 32px;
+    height: 32px;
+}
+
+.contenido-partido p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.contenido-no-partido {
+    width: 120px;
+    height: 34px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-secundario);
+}
+
+.numero-dia {
+    font-size: 18px;
     font-weight: bold;
     color: #555;
 }
 
-.dia:empty {
-    background-color: #f0f0f0;
-    border: 2px dashed #ccc;
+.dia-vacio {
+    width: 120px;
+    height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e3e3e3;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

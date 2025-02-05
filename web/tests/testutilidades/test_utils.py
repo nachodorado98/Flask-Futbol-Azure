@@ -10,7 +10,8 @@ from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vac
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
 from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
-from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, obtenerAnoMesFechas, generarCalendario
+from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
+from src.utilidades.utils import cruzarPartidosCalendario
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1079,7 +1080,6 @@ def test_comprobar_fechas_fechas_validas(fecha_ida, fecha_vuelta):
 
 	assert comprobarFechas(fecha_ida, fecha_vuelta, "2019-06-22")
 
-
 @pytest.mark.parametrize(["ano_mes"],
 	[("202211",),("2019-13",),("11-2022",),("2019",),("06",)]
 )
@@ -1102,6 +1102,25 @@ def test_obtener_primer_ultimo_dia_ano_mes(ano_mes, primer_dia, ultimo_dia):
 	assert primer_ultimo_dia[0]==primer_dia
 	assert primer_ultimo_dia[1]==ultimo_dia
 
+@pytest.mark.parametrize(["ano_mes"],
+	[("202211",),("2019-13",),("11-2022",),("2019",),("06",)]
+)
+def test_mapear_ano_mes_fechas_invalidas(ano_mes):
+
+	assert not mapearAnoMes(ano_mes)
+
+@pytest.mark.parametrize(["ano_mes", "mapeo"],
+	[
+		("2022-11", "Noviembre 2022"),
+		("2019-12", "Diciembre 2019"),
+		("2019-06", "Junio 2019"),
+		("2025-02", "Febrero 2025")
+	]
+)
+def test_mapear_ano_mes(ano_mes, mapeo):
+
+	assert mapearAnoMes(ano_mes)==mapeo
+
 @pytest.mark.parametrize(["fecha_inicio", "fecha_fin"],
 	[
 		("201811-01", "2019-06-23"),
@@ -1117,9 +1136,9 @@ def test_obtener_ano_mes_fechas_fechas_invalidas(fecha_inicio, fecha_fin):
 
 @pytest.mark.parametrize(["fecha_inicio", "fecha_fin", "ano_mes"],
 	[
-		("2019-06-13", "2019-06-22", "2019-06"),
-		("2019-08-06", "2019-08-15", "2019-08"),
-		("1998-02-15", "1998-02-16", "1998-02")
+		("2019-06-13", "2019-06-22", ["2019-06", "Junio 2019"]),
+		("2019-08-06", "2019-08-15", ["2019-08", "Agosto 2019"]),
+		("1998-02-15", "1998-02-16", ["1998-02", "Febrero 1998"])
 	]
 )
 def test_obtener_ano_mes_fechas_mismo_mes(fecha_inicio, fecha_fin, ano_mes):
@@ -1130,10 +1149,10 @@ def test_obtener_ano_mes_fechas_mismo_mes(fecha_inicio, fecha_fin, ano_mes):
 
 @pytest.mark.parametrize(["fecha_inicio", "fecha_fin", "rango_anos_meses"],
 	[
-		("2019-04-13", "2019-06-22", ["2019-04", "2019-05", "2019-06"]),
-		("2019-02-01", "2019-03-05", ["2019-02", "2019-03"]),
-		("2020-02-16", "2020-03-15", ["2020-02", "2020-03"]),
-		("2019-11-22", "2020-02-16", ["2019-11", "2019-12", "2020-01", "2020-02"]),
+		("2019-04-13", "2019-06-22", [["2019-04", "Abril 2019"], ["2019-05", "Mayo 2019"], ["2019-06", "Junio 2019"]]),
+		("2019-02-01", "2019-03-05", [["2019-02", "Febrero 2019"], ["2019-03", "Marzo 2019"]]),
+		("2020-02-16", "2020-03-15", [["2020-02", "Febrero 2020"], ["2020-03", "Marzo 2020"]]),
+		("2019-11-22", "2020-02-16", [["2019-11", "Noviembre 2019"], ["2019-12", "Diciembre 2019"], ["2020-01", "Enero 2020"], ["2020-02", "Febrero 2020"]]),
 	]
 )
 def test_obtener_ano_mes_fechas(fecha_inicio, fecha_fin, rango_anos_meses):
@@ -1175,3 +1194,39 @@ def test_generar_calendario():
 	assert len(semanas)==2
 	assert "" in semanas[0]
 	assert "" in semanas[1]
+
+def test_cruzar_partidos_calendario_sin_calendario():
+
+	assert not cruzarPartidosCalendario([], [])
+
+def test_cruzar_partidos_calendario_sin_partidos():
+
+	semanas=generarCalendario("2019-06-01", "2019-06-30")
+
+	partidos_calendario=cruzarPartidosCalendario([], semanas)
+
+	partidos_filtrados= [[valor for valor in sublista if isinstance(valor, tuple) and valor[2] is not None] for sublista in partidos_calendario]
+
+	assert not [sublista for sublista in partidos_filtrados if sublista]
+
+@pytest.mark.parametrize(["fechas_partidos", "numero_partidos"],
+	[
+		(["2019-06-22", "2019-06-06", "2019-06-13", "2019-06-30"], 4),
+		(["2019-07-22", "2019-06-06", "2019-06-13", "2019-06-30"], 3),
+		(["2020-06-22", "2019-06-06", "2019-06-13", "2019-06-31"], 2),
+		(["2019-06-22", "2019-06-06"], 2)
+	]
+)
+def test_cruzar_partidos_calendario(fechas_partidos, numero_partidos):
+
+	partidos=[["id", "1-0", "22/06/2019", fecha] for fecha in fechas_partidos]
+
+	semanas=generarCalendario("2019-06-01", "2019-06-30")
+
+	partidos_calendario=cruzarPartidosCalendario(partidos, semanas)
+
+	partidos_filtrados= [[valor for valor in sublista if isinstance(valor, tuple) and valor[2] is not None] for sublista in partidos_calendario]
+
+	partidos_existen=[sublista for sublista in partidos_filtrados if sublista]
+
+	assert len(partidos_existen)==numero_partidos

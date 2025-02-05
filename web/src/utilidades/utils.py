@@ -496,7 +496,27 @@ def obtenerPrimerUltimoDiaAnoMes(ano_mes:str)->Optional[tuple]:
 
 		return None
 
-def obtenerAnoMesFechas(fecha_inicio:str, fecha_fin:str)->Optional[List[str]]:
+def mapearAnoMes(ano_mes:str)->Optional[str]:
+
+	meses_espanol={"January":"Enero", "February":"Febrero", "March":"Marzo", "April":"Abril",
+					"May":"Mayo", "June":"Junio", "July":"Julio", "August":"Agosto", "September":"Septiembre",
+					"October":"Octubre", "November":"Noviembre", "December":"Diciembre"}
+
+	try:
+
+		fecha=datetime.strptime(ano_mes, "%Y-%m")
+
+		mes_ingles=fecha.strftime("%B")
+		   
+		mes_espanol=meses_espanol[mes_ingles]
+		
+		return f"{mes_espanol} {fecha.year}"
+
+	except Exception:
+
+		return None
+
+def obtenerAnoMesFechas(fecha_inicio:str, fecha_fin:str)->Optional[List[List[str]]]:
 
 	try:
 
@@ -508,17 +528,19 @@ def obtenerAnoMesFechas(fecha_inicio:str, fecha_fin:str)->Optional[List[str]]:
 
 		while inicio_datetime<=fin_datetime:
 
-			anos_meses.append(inicio_datetime.strftime("%Y-%m"))
+			ano_mes=inicio_datetime.strftime("%Y-%m")
+
+			anos_meses.append([ano_mes, mapearAnoMes(ano_mes)])
 
 			if inicio_datetime.month==12:
 
-				inicio_datetime=inicio_datetime.replace(year=inicio_datetime.year + 1, month=1)
+				inicio_datetime=inicio_datetime.replace(year=inicio_datetime.year+1, month=1)
 
 			else:
 
-				inicio_datetime=inicio_datetime.replace(month=inicio_datetime.month + 1)
+				inicio_datetime=inicio_datetime.replace(month=inicio_datetime.month+1)
 
-		return anos_meses
+		return sorted(anos_meses, reverse=True)
 
 	except Exception:
 
@@ -528,23 +550,47 @@ def generarCalendario(fecha_inicio, fecha_fin)->List[Optional[List]]:
 
 	try:
 
-	    fecha_inicio_datetime=datetime.strptime(fecha_inicio, "%Y-%m-%d")
+		fecha_inicio_datetime=datetime.strptime(fecha_inicio, "%Y-%m-%d")
 
-	    fecha_fin_datetime=datetime.strptime(fecha_fin, "%Y-%m-%d")
-	    
-	    fechas=[fecha_inicio_datetime+timedelta(days=dia) for dia in range((fecha_fin_datetime-fecha_inicio_datetime).days+1)]
-	    
-	    dia_inicio_semana=fecha_inicio_datetime.weekday()
-	    
-	    dias_vacios_inicio=[""]*dia_inicio_semana
-	    
-	    dia_fin_semana=fecha_fin_datetime.weekday()
-	    
-	    dias_vacios_fin=[""]*(6-dia_fin_semana)
-	    
-	    fechas_completas=dias_vacios_inicio+[fecha.strftime("%Y-%m-%d") for fecha in fechas]+dias_vacios_fin
-	    
-	    return [fechas_completas[dia:dia+7] for dia in range(0, len(fechas_completas), 7)]
+		fecha_fin_datetime=datetime.strptime(fecha_fin, "%Y-%m-%d")
+		
+		fechas=[fecha_inicio_datetime+timedelta(days=dia) for dia in range((fecha_fin_datetime-fecha_inicio_datetime).days+1)]
+		
+		dia_inicio_semana=fecha_inicio_datetime.weekday()
+		
+		dias_vacios_inicio=[""]*dia_inicio_semana
+		
+		dia_fin_semana=fecha_fin_datetime.weekday()
+		
+		dias_vacios_fin=[""]*(6-dia_fin_semana)
+		
+		fechas_completas=dias_vacios_inicio+[fecha.strftime("%Y-%m-%d") for fecha in fechas]+dias_vacios_fin
+		
+		return [fechas_completas[dia:dia+7] for dia in range(0, len(fechas_completas), 7)]
+
+	except Exception:
+
+		return []
+
+def cruzarPartidosCalendario(partidos:List[tuple], calendario:List[List])->List[List[tuple]]:
+
+	try:
+
+		partidos_dict={partido[3]:partido for partido in partidos}
+
+		for fila in range(len(calendario)):
+
+			for celda in range(len(calendario[fila])):
+
+				fecha=calendario[fila][celda]
+
+				if fecha:
+
+					dia=datetime.strptime(fecha, "%Y-%m-%d").day
+
+					calendario[fila][celda]=(fecha, dia, partidos_dict[fecha]) if fecha in partidos_dict else (fecha, dia, None)
+
+		return calendario
 
 	except Exception:
 

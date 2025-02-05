@@ -992,3 +992,39 @@ def test_obtener_fecha_minima_maxima_partidos_un_solo_partido(conexion, fechas, 
 
 	assert fecha_minima==minima
 	assert fecha_maxima==maxima
+
+def test_obtener_partidos_equipo_calendario_no_existe_equipo(conexion):
+
+	assert not conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+
+def test_obtener_partidos_equipo_calendario_no_existe_partido(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	assert not conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+
+def test_obtener_partidos_equipo_calendario_no_ano_mes(conexion_entorno):
+
+	assert not conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-07")
+
+def test_obtener_partidos_equipo_calendario(conexion_entorno):
+
+	partidos=conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+
+	assert len(partidos)==1
+
+def test_obtener_partidos_equipo_calendario_marcador_penaltis(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+							VALUES ('20190622', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1 (5-3) 1', 'Empate')""")
+
+	conexion.confirmar()
+
+	partidos=conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+
+	assert len(partidos)==1
+	assert partidos[0][1]=="1-1"
