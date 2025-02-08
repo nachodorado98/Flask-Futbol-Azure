@@ -161,3 +161,88 @@ def test_pagina_partidos_calendario_con_partidos(cliente, conexion, password_has
 			assert f"/partido/201906{dia}" in contenido
 
 		assert '<div class="dia-sin-partido">' in contenido
+
+def test_pagina_partidos_calendario_no_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<button class="button-partidos-calendario-anterior"' not in contenido
+		assert '<button class="button-partidos-calendario-siguiente"' not in contenido
+		assert "/partidos/calendario/2019-05" not in contenido
+		assert "/partidos/calendario/2019-07" not in contenido
+
+def test_pagina_partidos_calendario_si_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES ('20190522', 'atletico-madrid', 'atletico-madrid', '2019-05-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<button class="button-partidos-calendario-anterior"' in contenido
+		assert '<button class="button-partidos-calendario-siguiente"' not in contenido
+		assert "/partidos/calendario/2019-05" in contenido
+		assert "/partidos/calendario/2019-07" not in contenido
+
+def test_pagina_partidos_calendario_no_ano_mes_anterior_si_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES ('20190722', 'atletico-madrid', 'atletico-madrid', '2019-07-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<button class="button-partidos-calendario-anterior"' not in contenido
+		assert '<button class="button-partidos-calendario-siguiente"' in contenido
+		assert "/partidos/calendario/2019-05" not in contenido
+		assert "/partidos/calendario/2019-07" in contenido
+
+def test_pagina_partidos_calendario_si_ano_mes_anterior_si_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES ('20190522', 'atletico-madrid', 'atletico-madrid', '2019-05-22', '22:00', 'Liga', '1-0', 'Victoria'),
+										('20190722', 'atletico-madrid', 'atletico-madrid', '2019-07-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<button class="button-partidos-calendario-anterior"' in contenido
+		assert '<button class="button-partidos-calendario-siguiente"' in contenido
+		assert "/partidos/calendario/2019-05" in contenido
+		assert "/partidos/calendario/2019-07" in contenido

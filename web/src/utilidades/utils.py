@@ -595,3 +595,31 @@ def cruzarPartidosCalendario(partidos:List[tuple], calendario:List[List])->List[
 	except Exception:
 
 		return []
+
+def ano_mes_anterior(ano_mes:str)->Optional[str]:
+
+	try:
+
+		ano_mes_dia=datetime.strptime(ano_mes, "%Y-%m").replace(day=15)
+
+		ano_mes_dia_anterior=ano_mes_dia-timedelta(days=30)
+
+		return ano_mes_dia_anterior.strftime("%Y-%m")
+
+	except Exception:
+
+		return None
+
+def ano_mes_siguiente(ano_mes:str)->Optional[str]:
+
+	try:
+
+		ano_mes_dia=datetime.strptime(ano_mes, "%Y-%m").replace(day=15)
+
+		ano_mes_dia_siguiente=ano_mes_dia+timedelta(days=30)
+
+		return ano_mes_dia_siguiente.strftime("%Y-%m")
+
+	except Exception:
+
+		return None

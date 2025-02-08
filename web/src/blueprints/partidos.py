@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template, request, redirect
 from flask_login import login_required, current_user
 
+from datetime import datetime
+
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas, obtenerPrimerUltimoDiaAnoMes
 from src.utilidades.utils import obtenerAnoMesFechas, generarCalendario, mapearAnoMes, cruzarPartidosCalendario
+from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente
 
 from src.database.conexion import Conexion
 
@@ -46,9 +49,9 @@ def pagina_partidos():
 
 	proximos_partidos=con.obtenerProximosPartidosEquipo(equipo, 1)
 
-	con.cerrarConexion()
-
 	if not partidos:
+
+		con.cerrarConexion()
 
 		return render_template("no_partidos.html",
 								usuario=current_user.id,
@@ -59,9 +62,16 @@ def pagina_partidos():
 								competicion_filtrada=None,
 								resultado_filtrado=None,
 								local=local,
+								ano_mes_calendario=None,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	temporada_filtrada=temporadas[0] if not temporada else temporada
+
+	fecha_ultimo_partido=con.obtenerFechaUltimoPartidoTemporada(equipo, str(temporada_filtrada))
+
+	ano_mes_calendario=datetime.strptime(fecha_ultimo_partido, "%Y-%m-%d").strftime("%Y-%m") if fecha_ultimo_partido else None
+
+	con.cerrarConexion()
 
 	partidos_filtrados=list(filter(lambda partido: partido[0].startswith(str(temporada_filtrada)), partidos))
 
@@ -76,6 +86,7 @@ def pagina_partidos():
 						competicion_filtrada=None,
 						resultado_filtrado=None,
 						local=local,
+						ano_mes_calendario=ano_mes_calendario,
 						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	competiciones_unicas=obtenerCompeticionesPartidosUnicas(partidos_filtrados)
@@ -101,6 +112,7 @@ def pagina_partidos():
 					competicion_filtrada=competicion_filtrada,
 					resultado_filtrado=None,
 					local=local,
+					ano_mes_calendario=ano_mes_calendario,
 					url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	resultado_filtrado="Todo" if not resultados else resultados
@@ -132,6 +144,7 @@ def pagina_partidos():
 								competicion_filtrada=competicion_filtrada,
 								resultado_filtrado=resultado_filtrado,
 								local=local,
+								ano_mes_calendario=ano_mes_calendario,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 	resultados_partidos_disputados=limpiarResultadosPartidos(partidos_filtrados_resultado)
@@ -155,6 +168,7 @@ def pagina_partidos():
 							competicion_filtrada=competicion_filtrada,
 							resultado_filtrado=resultado_filtrado,
 							local=local,
+							ano_mes_calendario=ano_mes_calendario,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 @bp_partidos.route("/partidos/calendario/<ano_mes>")
@@ -181,11 +195,17 @@ def pagina_partidos_calendario(ano_mes:str):
 
 		return redirect("/partidos")
 
+	anterior_ano_mes, siguiente_ano_mes=ano_mes_anterior(ano_mes), ano_mes_siguiente(ano_mes)
+
 	ano_mes_calendario=mapearAnoMes(ano_mes)
 
 	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, ano_mes)
 
 	anos_meses=obtenerAnoMesFechas(fecha_minima_maxima[0], fecha_minima_maxima[1])
+
+	ano_mes_anterior_boton=anterior_ano_mes if list(filter(lambda ano_mes: ano_mes[0]==anterior_ano_mes, anos_meses)) else None
+
+	ano_mes_siguiente_boton=siguiente_ano_mes if list(filter(lambda ano_mes: ano_mes[0]==siguiente_ano_mes, anos_meses)) else None
 
 	calendario=generarCalendario(primer_ultimo_dia[0], primer_ultimo_dia[1])
 
@@ -201,6 +221,8 @@ def pagina_partidos_calendario(ano_mes:str):
 								semanas=semanas,
 								primer_ultimo_dia=primer_ultimo_dia,
 								partidos_calendario=partidos_calendario,
+								ano_mes_anterior_boton=ano_mes_anterior_boton,
+								ano_mes_siguiente_boton=ano_mes_siguiente_boton,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
 
 @bp_partidos.route("/partidos/asistidos")

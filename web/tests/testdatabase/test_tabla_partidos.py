@@ -961,7 +961,15 @@ def test_obtener_fecha_partido(conexion_entorno):
 
 	assert conexion_entorno.obtenerFechaPartido("20190622")=="2019-06-22"
 
+def test_obtener_fecha_minima_maxima_partidos_no_existe_equipo(conexion):
+
+	assert not conexion.obtenerFechaMinimaMaximaPartidos("atletico-madrid")
+
 def test_obtener_fecha_minima_maxima_partidos_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
 
 	assert not conexion.obtenerFechaMinimaMaximaPartidos("atletico-madrid")
 
@@ -975,9 +983,11 @@ def test_obtener_fecha_minima_maxima_partidos_un_solo_partido(conexion_entorno):
 @pytest.mark.parametrize(["fechas", "minima", "maxima"],
 	[
 		(["2019-06-22", "2020-01-20", "1998-02-16", "1999-08-06"], "1998-02-16", "2020-01-20"),
+		(["2019-06-22", "2000-01-20", "1998-02-16", "1999-08-06"], "1998-02-16", "2019-06-22"),
+		(["2019-06-22", "2020-01-20", "1999-08-06"], "1999-08-06", "2020-01-20"),
 	]
 )
-def test_obtener_fecha_minima_maxima_partidos_un_solo_partido(conexion, fechas, minima, maxima):
+def test_obtener_fecha_minima_maxima_partidos(conexion, fechas, minima, maxima):
 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
 
@@ -1028,3 +1038,47 @@ def test_obtener_partidos_equipo_calendario_marcador_penaltis(conexion):
 
 	assert len(partidos)==1
 	assert partidos[0][1]=="1-1"
+
+def test_obtener_fecha_ultimo_partido_temporada_no_existe_equipo(conexion):
+
+	assert not conexion.obtenerFechaUltimoPartidoTemporada("atletico-madrid", "2019")
+
+def test_obtener_fecha_ultimo_partido_temporada_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	assert not conexion.obtenerFechaUltimoPartidoTemporada("atletico-madrid", "2019")
+
+def test_obtener_fecha_ultimo_partido_temporada_no_temporada(conexion_entorno):
+
+	assert not conexion_entorno.obtenerFechaUltimoPartidoTemporada("atletico-madrid", "2024")
+
+def test_obtener_fecha_ultimo_partido_temporada_un_solo_partido(conexion_entorno):
+
+	fecha=conexion_entorno.obtenerFechaUltimoPartidoTemporada("atletico-madrid", "2019")
+
+	assert fecha=="2019-06-22"
+
+@pytest.mark.parametrize(["fechas", "ultima_fecha"],
+	[
+		(["2019-06-22", "2019-06-12", "2019-06-15", "2019-06-21", "2019-06-02"], "2019-06-22"),
+		(["2019-12-22", "2019-07-12", "2019-01-15", "2019-11-21", "2019-12-12"], "2019-12-22"),
+		(["2019-12-22", "2019-07-12", "2019-01-15", "2021-11-21", "2020-12-12"], "2019-12-22")
+	]
+)
+def test_obtener_fecha_ultimo_partido_temporada_varios(conexion, fechas, ultima_fecha):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	for numero, fecha in enumerate(fechas):
+
+		conexion.c.execute(f"""INSERT INTO partidos
+									VALUES ('{fecha}-id', 'atletico-madrid', 'atletico-madrid', '{fecha}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.confirmar()
+
+	fecha=conexion.obtenerFechaUltimoPartidoTemporada("atletico-madrid", "2019")
+
+	assert fecha==ultima_fecha

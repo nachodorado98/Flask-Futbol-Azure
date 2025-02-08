@@ -11,7 +11,7 @@ from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMa
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
 from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
 from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
-from src.utilidades.utils import cruzarPartidosCalendario
+from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1230,3 +1230,41 @@ def test_cruzar_partidos_calendario(fechas_partidos, numero_partidos):
 	partidos_existen=[sublista for sublista in partidos_filtrados if sublista]
 
 	assert len(partidos_existen)==numero_partidos
+
+@pytest.mark.parametrize(["ano_mes"],
+	[("202211",),("2019-13",),("11-2022",),("2019",),("06",)]
+)
+def test_ano_mes_anterior_fechas_invalidas(ano_mes):
+
+	assert not ano_mes_anterior(ano_mes)
+
+@pytest.mark.parametrize(["ano_mes", "anterior"],
+	[
+		("2022-11", "2022-10"),
+		("2019-12", "2019-11"),
+		("2019-06", "2019-05"),
+		("2025-01", "2024-12")
+	]
+)
+def test_ano_mes_anterior(ano_mes, anterior):
+
+	assert ano_mes_anterior(ano_mes)==anterior
+
+@pytest.mark.parametrize(["ano_mes"],
+	[("202211",),("2019-13",),("11-2022",),("2019",),("06",)]
+)
+def test_ano_mes_siguiente_fechas_invalidas(ano_mes):
+
+	assert not ano_mes_siguiente(ano_mes)
+
+@pytest.mark.parametrize(["ano_mes", "siguiente"],
+	[
+		("2022-11", "2022-12"),
+		("2019-12", "2020-01"),
+		("2019-06", "2019-07"),
+		("2025-01", "2025-02")
+	]
+)
+def test_ano_mes_siguiente(ano_mes, siguiente):
+
+	assert ano_mes_siguiente(ano_mes)==siguiente

@@ -2370,7 +2370,7 @@ class Conexion:
 	# Metodo para obtener las fechas minimas y maximas de los partidos
 	def obtenerFechaMinimaMaximaPartidos(self, equipo_id:str)->Optional[tuple]:
 
-		self.c.execute("""SELECT min(fecha) as minima, max(fecha) as maxima
+		self.c.execute("""SELECT MIN(fecha) as minima, MAX(fecha) as maxima
 							FROM partidos
 							WHERE equipo_id_local=%s
 							OR equipo_id_visitante=%s""",
@@ -2387,7 +2387,7 @@ class Conexion:
 			return None
 
 	# Metodo para obtener los partidos de un equipo para el calendario
-	def obtenerPartidosEquipoCalendario(self, equipo_id:str, ano_mes:str)->List[tuple]:
+	def obtenerPartidosEquipoCalendario(self, equipo_id:str, ano_mes:str)->List[Optional[tuple]]:
 
 		self.c.execute("""SELECT p.partido_id,
 								CASE WHEN p.marcador LIKE %s
@@ -2453,3 +2453,23 @@ class Conexion:
 											partido["partido_ganado"],
 											partido["partido_perdido"],
 											partido["partido_empatado"]), partidos))
+
+	# Metodo para obtener la fecha del ultimo partido de una temporada
+	def obtenerFechaUltimoPartidoTemporada(self, equipo_id:str, temporada:str)->Optional[str]:
+
+		self.c.execute("""SELECT MAX(fecha) as ultima_fecha
+							FROM partidos
+							WHERE (equipo_id_local=%s
+							OR equipo_id_visitante=%s)
+							AND partido_id LIKE %s""",
+							(equipo_id, equipo_id, f"{temporada}%"))
+
+		fecha=self.c.fetchone()
+
+		try:
+
+			return fecha["ultima_fecha"].strftime("%Y-%m-%d")
+
+		except Exception:
+
+			return None

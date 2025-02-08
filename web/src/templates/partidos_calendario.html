@@ -42,56 +42,69 @@
         <p>D</p>
     </div>
 
-    <div class="calendario">
+    <div class="contenedor-calendario">
 
-        {% for semana in semanas %}
+        {% if ano_mes_anterior_boton %}
+            <button class="button-partidos-calendario-anterior" onclick="window.location.href='/partidos/calendario/{{ ano_mes_anterior_boton }}'"><</button>
+        {% endif %}
 
-            <div class="fila">
+        <div class="calendario">
 
-                {% for dia in semana %}
+            {% for semana in semanas %}
 
-                    {% if dia %}
+                <div class="fila">
 
-                        {% if dia[2] %}
-                            <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
+                    {% for dia in semana %}
 
-                                <div class="contenido-partido">
+                        {% if dia %}
 
-                                    {% if dia[2][6]==-1 %}
-                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
-                                    {% else %}
-                                        <img src="{{ url_imagen_escudo }}{{ dia[2][6] }}.png" alt="Local Icon">
-                                    {% endif %}
+                            {% if dia[2] %}
+                                <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
 
-                                    <p>{{ dia[2][1] }}</p>
+                                    <div class="contenido-partido">
 
-                                    {% if dia[2][9]==-1 %}
-                                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
-                                    {% else %}
-                                        <img src="{{ url_imagen_escudo }}{{ dia[2][9] }}.png" alt="Visitante Icon">
-                                    {% endif %}
+                                        {% if dia[2][6]==-1 %}
+                                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                        {% else %}
+                                            <img src="{{ url_imagen_escudo }}{{ dia[2][6] }}.png" alt="Local Icon">
+                                        {% endif %}
+
+                                        <p>{{ dia[2][1] }}</p>
+
+                                        {% if dia[2][9]==-1 %}
+                                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                                        {% else %}
+                                            <img src="{{ url_imagen_escudo }}{{ dia[2][9] }}.png" alt="Visitante Icon">
+                                        {% endif %}
+
+                                    </div>
+
+                                        <p class="numero-dia">{{ dia[1] }}</p>
 
                                 </div>
-
+                            {% else %}
+                                <div class="dia-sin-partido">
+                                    <div class="contenido-no-partido"></div>
                                     <p class="numero-dia">{{ dia[1] }}</p>
+                                </div>
+                            {% endif %}
 
-                            </div>
                         {% else %}
-                            <div class="dia-sin-partido">
-                                <div class="contenido-no-partido"></div>
-                                <p class="numero-dia">{{ dia[1] }}</p>
-                            </div>
+                            <div class="dia-vacio"></div>
                         {% endif %}
 
-                    {% else %}
-                        <div class="dia-vacio"></div>
-                    {% endif %}
+                    {% endfor %}
 
-                {% endfor %}
+                </div>
 
-            </div>
+            {% endfor %}
 
-        {% endfor %}
+        </div>
+
+        {% if ano_mes_siguiente_boton %}
+        <button class="button-partidos-calendario-siguiente" onclick="window.location.href='/partidos/calendario/{{ ano_mes_siguiente_boton }}'">></button>
+        {% endif %}
+
     </div>
 
  </div>

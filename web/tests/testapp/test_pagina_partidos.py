@@ -24,6 +24,7 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno, password_hash):
 	assert '<div class="tarjeta-proximos-partidos">' not in contenido
 	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 	assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
+	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' not in contenido
 
 def test_pagina_partidos_con_partido(cliente, conexion_entorno, password_hash):
 
@@ -48,6 +49,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno, password_hash):
 	assert '<div class="tarjeta-proximos-partidos">' in contenido
 	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 	assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
+	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' in contenido
 
 @pytest.mark.parametrize(["nombre_completo"],
 	[("atleti",),("atm",),("Club Atletico de Madrid",)]
@@ -1901,3 +1903,103 @@ def test_pagina_partidos_competicion_resultados(cliente, conexion, password_hash
 		for marcador_no in marcadores_no:
 
 			assert marcador_no not in contenido
+
+def test_pagina_partidos_calendario_solo_un_partido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	respuesta=cliente.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' in contenido
+
+def test_pagina_partidos_calendario_varios_mismo_mes(cliente, conexion, password_hash):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190502', 'atletico-madrid', 'rival', '2019-06-02', '22:00', 'Primera', '1-0', 'Victoria'),
+								('20190101', 'rival', 'atletico-madrid', '2019-06-01', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20190703', 'rival', 'atletico-madrid', '2019-06-03', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20191222', 'rival', 'atletico-madrid', '2019-06-12', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20190601', 'rival', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20190806', 'rival', 'atletico-madrid', '2019-06-26', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	respuesta=cliente.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' in contenido
+
+def test_pagina_partidos_calendario_varios_misma_temporada(cliente, conexion, password_hash):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190502', 'atletico-madrid', 'rival', '2019-05-02', '22:00', 'Primera', '1-0', 'Victoria'),
+								('20190101', 'rival', 'atletico-madrid', '2019-01-01', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20190703', 'rival', 'atletico-madrid', '2019-07-03', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20191222', 'rival', 'atletico-madrid', '2019-12-22', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20190601', 'rival', 'atletico-madrid', '2019-06-01', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20190806', 'rival', 'atletico-madrid', '2019-08-06', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	respuesta=cliente.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert '<a href="/partidos/calendario/2019-12" class="tipo-partidos-calendario">' in contenido
+
+@pytest.mark.parametrize(["temporada", "ano_mes"],
+	[
+		(2019, "2019-06"),
+		(2020, "2020-12"),
+		(2016, "2016-07"),
+		(2015, "2015-01"),
+		(2024, "2024-11"),
+		(1998, "1998-08")
+	]
+)
+def test_pagina_partidos_calendario_varios_diferentes_temporadas(cliente, conexion, password_hash, temporada, ano_mes):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Primera', '1-0', 'Victoria'),
+								('20190312', 'atletico-madrid', 'rival', '2019-03-12', '22:00', 'Primera', '1-0', 'Victoria'),
+								('20201201', 'rival', 'atletico-madrid', '2020-12-01', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20200822', 'rival', 'atletico-madrid', '2020-08-22', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20160722', 'atletico-madrid', 'rival', '2016-07-22', '22:00', 'Copa', '1-0', 'Victoria'),
+								('20160613', 'atletico-madrid', 'rival', '2016-06-13', '22:00', 'Copa', '1-0', 'Victoria'),
+								('20150104', 'rival', 'atletico-madrid', '2015-01-04', '22:00', 'Mundial', '1-0', 'Victoria'),
+								('20150103', 'rival', 'atletico-madrid', '2015-01-03', '22:00', 'Mundial', '1-0', 'Victoria'),
+								('20241122', 'atletico-madrid', 'rival', '2024-11-22', '22:00', 'Champions', '1-0', 'Victoria'),
+								('20240922', 'atletico-madrid', 'rival', '2024-09-22', '22:00', 'Champions', '1-0', 'Victoria'),
+								('19980216', 'rival', 'atletico-madrid', '1998-02-16', '22:00', 'Supercopa', '1-0', 'Victoria'),
+								('19980806', 'rival', 'atletico-madrid', '1998-08-06', '22:00', 'Supercopa', '1-0', 'Victoria')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get(f"/partidos?temporada={temporada}")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert f'<a href="/partidos/calendario/{ano_mes}" class="tipo-partidos-calendario">' in contenido
