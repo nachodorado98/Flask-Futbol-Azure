@@ -201,6 +201,10 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, ano_mes)
 
+	proximos_partidos_calendario=con.obtenerProximosPartidosEquipoCalendario(equipo, ano_mes)
+
+	partidos_totales_calendario=partidos_calendario+proximos_partidos_calendario
+
 	anos_meses=obtenerAnoMesFechas(fecha_minima_maxima[0], fecha_minima_maxima[1])
 
 	ano_mes_anterior_boton=anterior_ano_mes if list(filter(lambda ano_mes: ano_mes[0]==anterior_ano_mes, anos_meses)) else None
@@ -209,7 +213,7 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	calendario=generarCalendario(primer_ultimo_dia[0], primer_ultimo_dia[1])
 
-	semanas=cruzarPartidosCalendario(partidos_calendario, calendario)
+	semanas=cruzarPartidosCalendario(partidos_totales_calendario, calendario)
 
 	return render_template("partidos_calendario.html",
 								usuario=current_user.id,
@@ -219,8 +223,7 @@ def pagina_partidos_calendario(ano_mes:str):
 								ano_mes_calendario=ano_mes_calendario,
 								anos_meses=anos_meses,
 								semanas=semanas,
-								primer_ultimo_dia=primer_ultimo_dia,
-								partidos_calendario=partidos_calendario,
+								partidos_totales_calendario=partidos_totales_calendario,
 								ano_mes_anterior_boton=ano_mes_anterior_boton,
 								ano_mes_siguiente_boton=ano_mes_siguiente_boton,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS)

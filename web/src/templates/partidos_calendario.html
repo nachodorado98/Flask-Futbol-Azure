@@ -59,33 +59,42 @@
                         {% if dia %}
 
                             {% if dia[2] %}
-                                <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
 
-                                    <div class="contenido-partido">
+                                {% if dia[2][-1]==1 %}
+                                    <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
+                                {% else %}
+                                    <div class="dia-proximo">
+                                {% endif %}
 
-                                        {% if dia[2][6]==-1 %}
-                                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                        <div class="contenido-partido">
+
+                                            {% if dia[2][6]==-1 %}
+                                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                            {% else %}
+                                                <img src="{{ url_imagen_escudo }}{{ dia[2][6] }}.png" alt="Local Icon">
+                                            {% endif %}
+
+                                            <p>{{ dia[2][1] }}</p>
+
+                                            {% if dia[2][9]==-1 %}
+                                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                                            {% else %}
+                                                <img src="{{ url_imagen_escudo }}{{ dia[2][9] }}.png" alt="Visitante Icon">
+                                            {% endif %}
+
+                                        </div>
+
+                                        {% if dia[2][-1]==1 %}
+                                            <p class="numero-dia-partido">{{ dia[1] }}</p>
                                         {% else %}
-                                            <img src="{{ url_imagen_escudo }}{{ dia[2][6] }}.png" alt="Local Icon">
-                                        {% endif %}
-
-                                        <p>{{ dia[2][1] }}</p>
-
-                                        {% if dia[2][9]==-1 %}
-                                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
-                                        {% else %}
-                                            <img src="{{ url_imagen_escudo }}{{ dia[2][9] }}.png" alt="Visitante Icon">
+                                            <p class="numero-dia-partido-proximo">{{ dia[1] }}</p>
                                         {% endif %}
 
                                     </div>
-
-                                        <p class="numero-dia">{{ dia[1] }}</p>
-
-                                </div>
                             {% else %}
                                 <div class="dia-sin-partido">
                                     <div class="contenido-no-partido"></div>
-                                    <p class="numero-dia">{{ dia[1] }}</p>
+                                    <p class="numero-dia-no-partido">{{ dia[1] }}</p>
                                 </div>
                             {% endif %}
 

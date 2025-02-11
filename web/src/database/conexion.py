@@ -2452,7 +2452,8 @@ class Conexion:
 											partido["estadio_partido"],
 											partido["partido_ganado"],
 											partido["partido_perdido"],
-											partido["partido_empatado"]), partidos))
+											partido["partido_empatado"],
+											1), partidos))
 
 	# Metodo para obtener la fecha del ultimo partido de una temporada
 	def obtenerFechaUltimoPartidoTemporada(self, equipo_id:str, temporada:str)->Optional[str]:
@@ -2473,3 +2474,44 @@ class Conexion:
 		except Exception:
 
 			return None
+
+	# Metodo para obtener los proximos partidos de un equipo para el calendario
+	def obtenerProximosPartidosEquipoCalendario(self, equipo_id:str, ano_mes:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT pp.partido_id, pp.fecha, pp.hora,
+								pp.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								pp.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								pp.competicion
+						FROM proximos_partidos pp
+						LEFT JOIN equipos e1
+						ON pp.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON pp.equipo_id_visitante=e2.equipo_id
+						WHERE (pp.equipo_id_local=%s
+						OR pp.equipo_id_visitante=%s)
+						AND TO_CHAR(pp.fecha,'YYYY-MM')=%s
+						ORDER BY pp.fecha ASC""",
+						(equipo_id, equipo_id, ano_mes))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["hora"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["fecha"].strftime("%Y-%m-%d"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"],
+											0), partidos))

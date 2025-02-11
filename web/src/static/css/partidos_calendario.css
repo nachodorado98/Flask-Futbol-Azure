@@ -122,7 +122,7 @@
     gap: 5px;
 }
 
-.dia, .dia-sin-partido {
+.dia, .dia-sin-partido, .dia-proximo {
     width: 120px;
     height: 92px;
     justify-content: center;
@@ -154,7 +154,7 @@
 .contenido-partido p {
     font-size: 18px;
     font-weight: bold;
-    color: #555;
+    color: #000;
     margin-left: 5px;
     margin-right: 5px;
 }
@@ -168,10 +168,25 @@
     background-color: var(--color-secundario);
 }
 
-.numero-dia {
-    font-size: 18px;
+.numero-dia-partido,
+.numero-dia-no-partido,
+.numero-dia-partido-proximo {
+    font-size: 17px;
     font-weight: bold;
-    color: #555;
+}
+
+.numero-dia-no-partido {
+    color: #000;
+}
+
+.numero-dia-partido {
+    color: var(--color-secundario);
+    background-color: var(--color-primario);
+}
+
+.numero-dia-partido-proximo {
+    color: var(--color-secundario);
+    background-color: #555;
 }
 
 .dia-vacio {
