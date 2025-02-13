@@ -175,6 +175,8 @@ def pagina_partidos():
 @login_required
 def pagina_partidos_calendario(ano_mes:str):
 
+	proximos_partidos=True if request.args.get("proximos_partidos", default="false").lower() in ["true", "1", "yes"] else False
+
 	con=Conexion()
 
 	equipo=con.obtenerEquipo(current_user.id)
@@ -189,7 +191,7 @@ def pagina_partidos_calendario(ano_mes:str):
 
 		return redirect("/partidos")
 
-	fecha_minima_maxima=con.obtenerFechaMinimaMaximaPartidos(equipo)
+	fecha_minima_maxima=con.obtenerFechaMinimaMaximaPartidos(equipo) if not proximos_partidos else con.obtenerFechaMinimaMaximaProximosPartidos(equipo)
 
 	if not fecha_minima_maxima:
 
@@ -199,7 +201,7 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	ano_mes_calendario=mapearAnoMes(ano_mes)
 
-	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, ano_mes)
+	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, ano_mes) if not proximos_partidos else []
 
 	proximos_partidos_calendario=con.obtenerProximosPartidosEquipoCalendario(equipo, ano_mes)
 
@@ -226,7 +228,9 @@ def pagina_partidos_calendario(ano_mes:str):
 								partidos_totales_calendario=partidos_totales_calendario,
 								ano_mes_anterior_boton=ano_mes_anterior_boton,
 								ano_mes_siguiente_boton=ano_mes_siguiente_boton,
-								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+								proximos_partidos=proximos_partidos,
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+								fecha_minima_maxima=fecha_minima_maxima)
 
 @bp_partidos.route("/partidos/asistidos")
 @login_required
@@ -327,11 +331,17 @@ def pagina_partidos_proximos():
 
 	proximos_partidos=con.obtenerProximosPartidosEquipo(equipo, 100)
 
-	con.cerrarConexion()
-
 	if not proximos_partidos:
 
+		con.cerrarConexion()
+
 		return redirect("/partidos")
+
+	fecha_primer_proximo_partido=con.obtenerFechaPrimerProximoPartido(equipo)
+
+	con.cerrarConexion()
+
+	ano_mes_calendario=datetime.strptime(fecha_primer_proximo_partido, "%Y-%m-%d").strftime("%Y-%m") if fecha_primer_proximo_partido else None
 
 	return render_template("proximos_partidos.html",
 							usuario=current_user.id,
@@ -339,4 +349,5 @@ def pagina_partidos_proximos():
 							nombre_equipo=nombre_equipo,
 							estadio_equipo=estadio_equipo,
 							proximos_partidos=proximos_partidos,
+							ano_mes_calendario=ano_mes_calendario,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS)

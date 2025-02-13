@@ -14,7 +14,14 @@
 
     <div class="contenedor-titulo-calendario">
 
-        <p class="titulo-pagina-calendario"><strong>Calendario del {{ nombre_equipo }}</strong></p>
+        <p class="titulo-pagina-calendario">
+            <strong>Calendario del {{ nombre_equipo }}</strong>
+            {% if not proximos_partidos %}
+                <img src="{{ url_for('static', filename='imagenes/iconos/calendario.png') }}" alt="Calendario" height="35">
+            {% else %}
+                <img src="{{ url_for('static', filename='imagenes/iconos/proximo_partido.png') }}" alt="Proximo" height="35">
+            {% endif %}
+        </p>
 
         <div class="desplegable-contenedor">
             <strong class="ano-mes-filtrado">{{ ano_mes_calendario }}</strong>
@@ -23,9 +30,15 @@
             </button>
             <div id="menuDesplegable" class="menu-desplegable">
                 {% for ano_mes in anos_meses %}
-                    <a href="/partidos/calendario/{{ ano_mes[0] }}" class="opcion-desplegable">
-                        <strong>{{ ano_mes[1] }}</strong>
-                    </a>
+                    {% if not proximos_partidos %}
+                        <a href="/partidos/calendario/{{ ano_mes[0] }}" class="opcion-desplegable">
+                            <strong>{{ ano_mes[1] }}</strong>
+                        </a>
+                    {% else %}
+                        <a href="/partidos/calendario/{{ ano_mes[0] }}?proximos_partidos=True" class="opcion-desplegable">
+                            <strong>{{ ano_mes[1] }}</strong>
+                        </a>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -45,7 +58,11 @@
     <div class="contenedor-calendario">
 
         {% if ano_mes_anterior_boton %}
-            <button class="button-partidos-calendario-anterior" onclick="window.location.href='/partidos/calendario/{{ ano_mes_anterior_boton }}'"><</button>
+            {% if not proximos_partidos %}
+                <button class="button-partidos-calendario-anterior" onclick="window.location.href='/partidos/calendario/{{ ano_mes_anterior_boton }}'"><</button>
+            {% else %}
+                <button class="button-partidos-calendario-anterior" onclick="window.location.href='/partidos/calendario/{{ ano_mes_anterior_boton }}?proximos_partidos=True'"><</button>
+            {% endif %}
         {% endif %}
 
         <div class="calendario">
@@ -111,7 +128,11 @@
         </div>
 
         {% if ano_mes_siguiente_boton %}
-        <button class="button-partidos-calendario-siguiente" onclick="window.location.href='/partidos/calendario/{{ ano_mes_siguiente_boton }}'">></button>
+            {% if not proximos_partidos %}
+                <button class="button-partidos-calendario-siguiente" onclick="window.location.href='/partidos/calendario/{{ ano_mes_siguiente_boton }}'">></button>
+            {% else %}
+                <button class="button-partidos-calendario-siguiente" onclick="window.location.href='/partidos/calendario/{{ ano_mes_siguiente_boton }}?proximos_partidos=True'">></button>
+            {% endif %}
         {% endif %}
 
     </div>

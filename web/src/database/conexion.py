@@ -2515,3 +2515,41 @@ class Conexion:
 											partido["escudo_visitante"],
 											partido["competicion"],
 											0), partidos))
+
+	# Metodo para obtener las fechas minimas y maximas de los proximos partidos
+	def obtenerFechaMinimaMaximaProximosPartidos(self, equipo_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT MIN(fecha) as minima, MAX(fecha) as maxima
+							FROM proximos_partidos
+							WHERE equipo_id_local=%s
+							OR equipo_id_visitante=%s""",
+							(equipo_id, equipo_id))
+
+		fechas=self.c.fetchone()
+
+		try:
+
+			return (fechas["minima"].strftime("%Y-%m-%d"), fechas["maxima"].strftime("%Y-%m-%d"))
+
+		except Exception:
+
+			return None
+
+	# Metodo para obtener la fecha del primer proximo partido
+	def obtenerFechaPrimerProximoPartido(self, equipo_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT MIN(fecha) as primer_fecha
+							FROM proximos_partidos
+							WHERE equipo_id_local=%s
+							OR equipo_id_visitante=%s""",
+							(equipo_id, equipo_id))
+
+		fecha=self.c.fetchone()
+
+		try:
+
+			return fecha["primer_fecha"].strftime("%Y-%m-%d")
+
+		except Exception:
+
+			return None

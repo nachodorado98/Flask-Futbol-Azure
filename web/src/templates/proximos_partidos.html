@@ -9,7 +9,12 @@
 {% block partidos %}
 
 <div class="contenedor-titulo-proximos-partidos">
-    <h1>Proximos Partidos del {{ nombre_equipo }}</h1>
+    <h1>
+        Proximos Partidos del {{ nombre_equipo }}
+        <a href="/partidos/calendario/{{ ano_mes_calendario }}?proximos_partidos=True" class="tipo-partidos-calendario">
+            <img src="{{ url_for('static', filename='imagenes/iconos/proximo_partido.png') }}" alt="Proximo" height="35">
+        </a>
+    </h1>
 </div>
 
 {% endblock partidos %}
