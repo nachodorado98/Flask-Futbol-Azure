@@ -79,6 +79,8 @@
 
                                 {% if dia[2][-1]==1 %}
                                     <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
+                                {% elif dia[2][-1]==2 %}
+                                    <div class="dia-asistido" onclick="window.location.href='/partido/{{ dia[2][0] }}/asistido'">
                                 {% else %}
                                     <div class="dia-proximo">
                                 {% endif %}
@@ -103,6 +105,8 @@
 
                                         {% if dia[2][-1]==1 %}
                                             <p class="numero-dia-partido">{{ dia[1] }}</p>
+                                        {% elif dia[2][-1]==2 %}
+                                            <p class="numero-dia-partido-asistido">{{ dia[1] }}</p>
                                         {% else %}
                                             <p class="numero-dia-partido-proximo">{{ dia[1] }}</p>
                                         {% endif %}

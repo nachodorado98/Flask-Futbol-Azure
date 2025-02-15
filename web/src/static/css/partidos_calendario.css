@@ -122,7 +122,10 @@
     gap: 5px;
 }
 
-.dia, .dia-sin-partido, .dia-proximo {
+.dia,
+.dia-sin-partido,
+.dia-proximo,
+.dia-asistido {
     width: 120px;
     height: 92px;
     justify-content: center;
@@ -132,7 +135,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.dia {
+.dia,
+.dia-asistido {
     cursor: pointer;
 }
 
@@ -170,9 +174,11 @@
 
 .numero-dia-partido,
 .numero-dia-no-partido,
-.numero-dia-partido-proximo {
+.numero-dia-partido-proximo,
+.numero-dia-partido-asistido {
     font-size: 17px;
     font-weight: bold;
+    color: var(--color-secundario);
 }
 
 .numero-dia-no-partido {
@@ -180,13 +186,15 @@
 }
 
 .numero-dia-partido {
-    color: var(--color-secundario);
     background-color: var(--color-primario);
 }
 
 .numero-dia-partido-proximo {
-    color: var(--color-secundario);
     background-color: #555;
+}
+
+.numero-dia-partido-asistido {
+    background-color: var(--color-toogle);
 }
 
 .dia-vacio {

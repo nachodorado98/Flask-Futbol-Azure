@@ -2387,7 +2387,7 @@ class Conexion:
 			return None
 
 	# Metodo para obtener los partidos de un equipo para el calendario
-	def obtenerPartidosEquipoCalendario(self, equipo_id:str, ano_mes:str)->List[Optional[tuple]]:
+	def obtenerPartidosEquipoCalendario(self, equipo_id:str, usuario:str, ano_mes:str)->List[Optional[tuple]]:
 
 		self.c.execute("""SELECT p.partido_id,
 								CASE WHEN p.marcador LIKE %s
@@ -2420,7 +2420,11 @@ class Conexion:
    						       CASE WHEN p.resultado LIKE %s
 							            THEN 1
 							            ELSE 0
-						       END as partido_empatado
+						       END as partido_empatado,
+						       CASE WHEN pa.asistido_id IS NOT NULL
+										THEN 2
+										ELSE 1
+								END as tipo_partido
 						FROM partidos p
 						LEFT JOIN equipos e1
 						ON p.equipo_id_local=e1.equipo_id
@@ -2428,13 +2432,15 @@ class Conexion:
 						ON p.equipo_id_visitante=e2.equipo_id
 						LEFT JOIN partido_estadio pe
 						ON p.partido_id=pe.partido_id
+						LEFT JOIN (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+						ON p.partido_id=pa.partido_id
 						WHERE (p.equipo_id_local=%s
 						OR p.equipo_id_visitante=%s)
 						AND TO_CHAR(p.fecha,'YYYY-MM')=%s
 						ORDER BY p.fecha ASC""",
 						('%)%', r'\s*\(.*?\)\s*', r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
 						r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
-						r'%Empate%', equipo_id, equipo_id, ano_mes))
+						r'%Empate%', usuario, equipo_id, equipo_id, ano_mes))
 
 		partidos=self.c.fetchall()
 
@@ -2453,7 +2459,7 @@ class Conexion:
 											partido["partido_ganado"],
 											partido["partido_perdido"],
 											partido["partido_empatado"],
-											1), partidos))
+											partido["tipo_partido"]), partidos))
 
 	# Metodo para obtener la fecha del ultimo partido de una temporada
 	def obtenerFechaUltimoPartidoTemporada(self, equipo_id:str, temporada:str)->Optional[str]:

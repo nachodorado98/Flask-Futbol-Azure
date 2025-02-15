@@ -74,6 +74,8 @@ def test_pagina_partidos_calendario_con_partido_otra_fecha(cliente, conexion_ent
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 @pytest.mark.parametrize(["ano_mes"],
 	[("2019-08",),("2024-04",),("1998-01",),("1999-06",),("2004-11",)]
@@ -105,6 +107,8 @@ def test_pagina_partidos_calendario_con_partido_otra_fecha_varios(cliente, conex
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 def test_pagina_partidos_calendario_con_partido(cliente, conexion_entorno, password_hash):
 
@@ -135,6 +139,8 @@ def test_pagina_partidos_calendario_con_partido(cliente, conexion_entorno, passw
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 @pytest.mark.parametrize(["dias"],
 	[
@@ -185,6 +191,8 @@ def test_pagina_partidos_calendario_con_partidos(cliente, conexion, password_has
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 def test_pagina_partidos_calendario_no_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
 
@@ -300,6 +308,8 @@ def test_pagina_partidos_calendario_con_proximo_partido(cliente, conexion_entorn
 		assert '<p class="numero-dia-partido-proximo">' in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 def test_pagina_partidos_calendario_con_partido_y_proximo_partido(cliente, conexion_entorno, password_hash):
 
@@ -335,6 +345,8 @@ def test_pagina_partidos_calendario_con_partido_y_proximo_partido(cliente, conex
 		assert '<p class="numero-dia-partido-proximo">' in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 def test_pagina_partidos_calendario_proximos_sin_partidos_proximos(cliente, conexion_entorno, password_hash):
 
@@ -401,6 +413,8 @@ def test_pagina_partidos_calendario_proximos_con_partido_proximo_otra_fecha(clie
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 def test_pagina_partidos_calendario_proximos_con_proximo_partido(cliente, conexion_entorno, password_hash):
 
@@ -431,6 +445,8 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido(cliente, conexi
 		assert '<p class="numero-dia-partido-proximo">' in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
 
 def test_pagina_partidos_calendario_proximos_con_proximo_partido_y_partido(cliente, conexion_entorno, password_hash):
 
@@ -466,3 +482,92 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido_y_partido(clien
 		assert '<p class="numero-dia-partido-proximo">' in contenido
 		assert '<div class="dia-sin-partido">' in contenido
 		assert '?proximos_partidos=True' in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
+
+def test_pagina_partidos_calendario_con_partido_asistido_otro_usuario(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarUsuario("golden", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="dia" onclick="window.location.href' in contenido
+		assert "/partido/20190622'" in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
+
+def test_pagina_partidos_calendario_con_partido_asistido_otra_fecha(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-07")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="dia" onclick="window.location.href' not in contenido
+		assert "/partido/20190622'" not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
+		assert "/partido/20190622/asistido" not in contenido
+
+def test_pagina_partidos_calendario_con_partido_asistido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="dia" onclick="window.location.href' not in contenido
+		assert "/partido/20190622'" not in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' in contenido
+		assert "/partido/20190622/asistido" in contenido
+
+def test_pagina_partidos_calendario_con_partido_asistido_y_partido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190623", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="dia" onclick="window.location.href' in contenido
+		assert "/partido/20190622'" in contenido
+		assert '<div class="dia-asistido" onclick="window.location.href' in contenido
+		assert "/partido/20190623/asistido" in contenido

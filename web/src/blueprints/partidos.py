@@ -201,7 +201,7 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	ano_mes_calendario=mapearAnoMes(ano_mes)
 
-	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, ano_mes) if not proximos_partidos else []
+	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, current_user.id, ano_mes) if not proximos_partidos else []
 
 	proximos_partidos_calendario=con.obtenerProximosPartidosEquipoCalendario(equipo, ano_mes)
 

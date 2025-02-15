@@ -1005,7 +1005,7 @@ def test_obtener_fecha_minima_maxima_partidos(conexion, fechas, minima, maxima):
 
 def test_obtener_partidos_equipo_calendario_no_existe_equipo(conexion):
 
-	assert not conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+	assert not conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "golden", "2019-06")
 
 def test_obtener_partidos_equipo_calendario_no_existe_partido(conexion):
 
@@ -1013,17 +1013,18 @@ def test_obtener_partidos_equipo_calendario_no_existe_partido(conexion):
 
 	conexion.confirmar()
 
-	assert not conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+	assert not conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "golden", "2019-06")
 
 def test_obtener_partidos_equipo_calendario_no_ano_mes(conexion_entorno):
 
-	assert not conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-07")
+	assert not conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "golden", "2019-07")
 
 def test_obtener_partidos_equipo_calendario(conexion_entorno):
 
-	partidos=conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+	partidos=conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "golden", "2019-06")
 
 	assert len(partidos)==1
+	assert partidos[0][-1]==1
 
 def test_obtener_partidos_equipo_calendario_marcador_penaltis(conexion):
 
@@ -1034,10 +1035,32 @@ def test_obtener_partidos_equipo_calendario_marcador_penaltis(conexion):
 
 	conexion.confirmar()
 
-	partidos=conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "2019-06")
+	partidos=conexion.obtenerPartidosEquipoCalendario("atletico-madrid", "golden", "2019-06")
 
 	assert len(partidos)==1
 	assert partidos[0][1]=="1-1"
+
+def test_obtener_partidos_equipo_calendario_partido_asistido_usuario_no_existe(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
+
+	partidos=conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "nacho", "2019-06")
+
+	assert len(partidos)==1
+	assert partidos[0][-1]==1
+
+def test_obtener_partidos_equipo_calendario_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
+
+	partidos=conexion_entorno.obtenerPartidosEquipoCalendario("atletico-madrid", "golden", "2019-06")
+
+	assert len(partidos)==1
+	assert partidos[0][-1]==2
 
 def test_obtener_fecha_ultimo_partido_temporada_no_existe_equipo(conexion):
 
