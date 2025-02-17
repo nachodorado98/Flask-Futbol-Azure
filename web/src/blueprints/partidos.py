@@ -5,7 +5,7 @@ from datetime import datetime
 
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas, obtenerPrimerUltimoDiaAnoMes
 from src.utilidades.utils import obtenerAnoMesFechas, generarCalendario, mapearAnoMes, cruzarPartidosCalendario
-from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente
+from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
 
 from src.database.conexion import Conexion
 
@@ -203,9 +203,15 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	partidos_calendario=con.obtenerPartidosEquipoCalendario(equipo, current_user.id, ano_mes) if not proximos_partidos else []
 
+	resultados_partidos_calendario=limpiarResultadosPartidosCalendario(partidos_calendario)
+
+	partidos_asistidos_calendario=list(filter(lambda partido: partido[-1]==2, partidos_calendario))
+
 	proximos_partidos_calendario=con.obtenerProximosPartidosEquipoCalendario(equipo, ano_mes)
 
 	partidos_totales_calendario=partidos_calendario+proximos_partidos_calendario
+
+	datos_partido_proximo_calendario=con.obtenerProximosPartidosEquipo(equipo, 1)[0] if proximos_partidos else None
 
 	anos_meses=obtenerAnoMesFechas(fecha_minima_maxima[0], fecha_minima_maxima[1])
 
@@ -229,6 +235,10 @@ def pagina_partidos_calendario(ano_mes:str):
 								ano_mes_anterior_boton=ano_mes_anterior_boton,
 								ano_mes_siguiente_boton=ano_mes_siguiente_boton,
 								proximos_partidos=proximos_partidos,
+								numero_partidos_calendario=len(partidos_totales_calendario),
+								resultados_partidos_calendario=resultados_partidos_calendario,
+								numero_partidos_asistidos_calendario=len(partidos_asistidos_calendario),
+								datos_partido_proximo_calendario=datos_partido_proximo_calendario,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 								fecha_minima_maxima=fecha_minima_maxima)
 

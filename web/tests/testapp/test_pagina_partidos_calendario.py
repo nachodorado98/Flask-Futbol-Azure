@@ -527,7 +527,7 @@ def test_pagina_partidos_calendario_con_partido_asistido_otra_fecha(cliente, con
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_con_partido_asistido(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_asistido_calendario(cliente, conexion_entorno, password_hash):
 
 	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
 
@@ -571,3 +571,172 @@ def test_pagina_partidos_calendario_con_partido_asistido_y_partido(cliente, cone
 		assert "/partido/20190622'" in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' in contenido
 		assert "/partido/20190623/asistido" in contenido
+
+@pytest.mark.parametrize(["cantidad_partidos"],
+	[(1,),(2,),(10,),(7,),(22,)]
+)
+def test_pagina_partidos_calendario_partidos_totales(cliente, conexion, password_hash, cantidad_partidos):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	for numero in range(cantidad_partidos):
+
+		conexion.c.execute("""INSERT INTO partidos
+							VALUES (%s, 'atletico-madrid', 'rival', %s, '22:00', 'Liga', '1-0', 'Victoria')""",
+							(f"2019{numero+1}", f"2019-06-{numero+1:02}"))
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partidos-calendario-totales">' in contenido
+		assert '<p class="titulo-circulo-partidos-calendario-totales">' in contenido
+		assert "Partidos Junio 2019" in contenido
+		assert "Proximos Partidos Junio 2019" not in contenido
+		assert f'<p class="valor-circulo-partidos-calendario-totales"><strong>{cantidad_partidos}</strong></p>' in contenido
+
+def test_pagina_partidos_calendario_estadisticas(cliente, conexion, password_hash):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	conexion.c.execute("""INSERT INTO partidos
+						VALUES ('20191', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-estadisticas-partidos-calendario">' in contenido
+		assert '<canvas id="grafico_tarta">' in contenido
+		assert "var datos_grafica_tarta=" in contenido
+		assert '<div class="circulo-partido-proximo-calendario">' not in contenido
+		assert '<div class="tarjeta-partido-proximo-calendario">' not in contenido
+
+def test_pagina_partidos_calendario_sin_partido_asistido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partidos-calendario-asistidos">' in contenido
+		assert '<p class="titulo-circulo-partidos-calendario-asistidos">' in contenido
+		assert "Partidos Asistidos" in contenido
+		assert f'<p class="valor-circulo-partidos-calendario-asistidos"><strong>0</strong></p>' in contenido
+
+def test_pagina_partidos_calendario_con_partido_asistido(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partidos-calendario-asistidos">' in contenido
+		assert '<p class="titulo-circulo-partidos-calendario-asistidos">' in contenido
+		assert "Partidos Asistidos" in contenido
+		assert f'<p class="valor-circulo-partidos-calendario-asistidos"><strong>1</strong></p>' in contenido
+
+@pytest.mark.parametrize(["cantidad_partidos"],
+	[(1,),(2,),(10,),(7,),(22,)]
+)
+def test_pagina_partidos_calendario_proximos_partidos_totales(cliente, conexion, password_hash, cantidad_partidos):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
+
+	for numero in range(cantidad_partidos):
+
+		conexion.c.execute("""INSERT INTO proximos_partidos
+									VALUES(%s, 'atletico-madrid', 'atletico-madrid', %s, '22:00', 'Liga')""",
+									(f"2019{numero+1}", f"2019-06-{numero+1:02}"))					
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06?proximos_partidos=True")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partidos-calendario-totales">' in contenido
+		assert '<p class="titulo-circulo-partidos-calendario-totales">' in contenido
+		assert "Proximos Partidos Junio 2019" in contenido
+		assert f'<p class="valor-circulo-partidos-calendario-totales"><strong>{cantidad_partidos}</strong></p>' in contenido
+		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido
+		assert '<div class="circulo-partidos-calendario-asistidos">' not in contenido
+
+def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrado(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2020-06?proximos_partidos=True")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partido-proximo-calendario">' in contenido
+		assert '<div class="tarjeta-partido-proximo-calendario">' in contenido
+		assert '<p class="titulo-circulo-partido-proximo-calendario">' in contenido
+		assert "22/06/2020" in contenido
+		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido
+		assert '<div class="circulo-partidos-calendario-asistidos">' not in contenido
+
+def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrado_diferente(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos/calendario/2019-06?proximos_partidos=True")
+	
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div class="circulo-partido-proximo-calendario">' in contenido
+		assert '<div class="tarjeta-partido-proximo-calendario">' in contenido
+		assert '<p class="titulo-circulo-partido-proximo-calendario">' in contenido
+		assert "22/06/2020" in contenido
+		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido
+		assert '<div class="circulo-partidos-calendario-asistidos">' not in contenido

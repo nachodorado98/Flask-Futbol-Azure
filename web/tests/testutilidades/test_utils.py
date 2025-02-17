@@ -11,7 +11,7 @@ from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMa
 from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeometriasPaises, crearMapaMisEstadiosDetallePaises
 from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
 from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
-from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente
+from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1268,3 +1268,30 @@ def test_ano_mes_siguiente_fechas_invalidas(ano_mes):
 def test_ano_mes_siguiente(ano_mes, siguiente):
 
 	assert ano_mes_siguiente(ano_mes)==siguiente
+
+def test_limpiar_resultados_partidos_calendario_no_hay():
+
+	resultados=limpiarResultadosPartidosCalendario([])
+
+	assert isinstance(resultados, dict)
+	assert resultados["ganados"]==0
+	assert resultados["perdidos"]==0
+	assert resultados["empatados"]==0
+
+@pytest.mark.parametrize(["partidos", "ganados", "perdidos", "empatados"],
+	[
+		([(1, 0, 0, "-"), (0, 0, 1, "-"), (1, 0, 0, "-"), (0, 1, 0, "-"), (1, 0, 0, "-"), (1, 0, 0, "-")], 4, 1, 1),
+		([(0, 0, 0, "-"), (0, 0, 1, "-"), (1, 0, 0, "-"), (0, 1, 0, "-"), (1, 0, 0, "-"), (1, 0, 0, "-")], 3, 1, 1),
+		([(1, 0, 0, "-"), (0, 0, 1, "-"), (1, 0, 0, "-"), (0, 1, 0, "-"), (1, 0, 0, "-")], 3, 1, 1),
+		([(1, 0, 0, "-"), (0, 0, 1, "-"), (0, 1, 0, "-"), (0, 1, 0, "-"), (0, 1, 0, "-"), (1, 0, 0, "-")], 2, 3, 1),
+		([(1, 1, 1, "-"), (0, 0, 1, "-"), (1, 0, 0, "-"), (0, 1, 0, "-"), (1, 0, 0, "-"), (1, 0, 0, "-")], 4, 2, 2),
+	]
+)
+def test_limpiar_resultados_partidos_calendario(partidos, ganados, perdidos, empatados):
+
+	resultados=limpiarResultadosPartidosCalendario(partidos)
+
+	assert isinstance(resultados, dict)
+	assert resultados["ganados"]==ganados
+	assert resultados["perdidos"]==perdidos
+	assert resultados["empatados"]==empatados

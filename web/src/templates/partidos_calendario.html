@@ -6,7 +6,67 @@
 
 {% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
 
-{% block partidos %}{% endblock partidos %}
+{% block partidos %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-partidos-calendario-totales">
+        <p class="titulo-circulo-partidos-calendario-totales">
+            {% if not proximos_partidos %}
+                Partidos {{ ano_mes_calendario }}
+            {% else %}
+                Proximos Partidos {{ ano_mes_calendario }}
+            {% endif %}
+        </p>
+        <p class="valor-circulo-partidos-calendario-totales"><strong>{{ numero_partidos_calendario }}</strong></p>
+    </div>
+
+    {% if not proximos_partidos %}
+        <div class="circulo-estadisticas-partidos-calendario">
+            <canvas id="grafico_tarta"></canvas>
+            <script>var datos_grafica_tarta={{ resultados_partidos_calendario | tojson | safe }};</script>
+            <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
+        </div>
+        <div class="circulo-partidos-calendario-asistidos">
+            <p class="titulo-circulo-partidos-calendario-asistidos">Partidos Asistidos</p>
+            <p class="valor-circulo-partidos-calendario-asistidos"><strong>{{ numero_partidos_asistidos_calendario }}</strong></p>
+        </div>
+    {% else %}
+        {% if datos_partido_proximo_calendario %}
+            <div class="circulo-partido-proximo-calendario">
+                <div class="tarjeta-partido-proximo-calendario">
+
+                    <p class="titulo-circulo-partido-proximo-calendario"><strong>Proximo Partido</strong></p>
+
+                    <p><strong>{{ datos_partido_proximo_calendario[9] }}</strong></p>
+
+                    <div class="info-partido-proximo-calendario">
+
+                        {% if datos_partido_proximo_calendario[5]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        {% else %}
+                            <img src="{{ url_imagen_escudo }}{{ datos_partido_proximo_calendario[5] }}.png" alt="Local Icon">
+                        {% endif %}
+
+                        <h4>{{ datos_partido_proximo_calendario[2] }}</h4>
+
+                        {% if datos_partido_proximo_calendario[8]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                        {% else %}
+                            <img src="{{ url_imagen_escudo }}{{ datos_partido_proximo_calendario[8] }}.png" alt="Visitante Icon">
+                        {% endif %}
+
+                    </div>
+
+                     <p><strong>{{ datos_partido_proximo_calendario[1] }}</strong></p>
+
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+</div>
+
+{% endblock partidos %}
 
 {% block principal %}
 

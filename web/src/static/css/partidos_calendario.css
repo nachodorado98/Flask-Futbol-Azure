@@ -1,4 +1,131 @@
 /*-----------------------------------------------------PARTIDOS CALENDARIO-----------------------------------------*/
+.contenedor-lateral {
+    width: 260px;
+    position: fixed;
+    top: 60px;
+    bottom: 50px;
+    overflow-y: auto;
+}
+
+.contenedor-lateral-izq {
+    left: 0;
+    padding-top: 20px;
+    z-index: 1002;
+}
+
+.circulo-partidos-calendario-totales,
+.circulo-partidos-calendario-asistidos {
+    width: 175px;
+    height: 175px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 35px auto 10px 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-partidos-calendario-totales .titulo-circulo-partidos-calendario-totales,
+.circulo-partidos-calendario-asistidos .titulo-circulo-partidos-calendario-asistidos
+ {
+    margin: 2px 0;
+    margin-top: 30px;
+    padding: 0;
+    font-size: 19px;
+}
+
+.circulo-partidos-calendario-totales .valor-circulo-partidos-calendario-totales,
+.circulo-partidos-calendario-asistidos .valor-circulo-partidos-calendario-asistidos {
+    margin: 4px 0;
+    margin-top: 10px;
+    padding: 0;
+    font-size: 30px;
+}
+
+.circulo-estadisticas-partidos-calendario {
+    width: 175px;
+    height: 175px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 35px auto 10px 15px;
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+}
+
+.circulo-partido-proximo-calendario {
+    width: 180px;
+    height: 170px;
+    background-color: var(--color-fondo);
+    color: var(--color-fondo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 35px auto 10px 15px;
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+}
+
+.tarjeta-partido-proximo-calendario {
+    width: 170px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-partido-proximo-calendario .titulo-circulo-partido-proximo-calendario {
+    font-size: 20px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-partido-proximo-calendario p {
+    font-size: 14px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.info-partido-proximo-calendario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-partido-proximo-calendario img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 40px;
+    height: 40px;
+}
+
+.info-partido-proximo-calendario h4 {
+    font-size: 23px;
+    color: #fff;
+    margin: 2px;
+    color: var(--color-secundario) 
+}
+
 .tarjeta-calendario {
     width: 100%;
     max-width: 1150px;

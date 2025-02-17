@@ -623,3 +623,15 @@ def ano_mes_siguiente(ano_mes:str)->Optional[str]:
 	except Exception:
 
 		return None
+
+def limpiarResultadosPartidosCalendario(partidos_calendario:List[tuple])->Dict:
+
+	partidos_ganados=len(list(filter(lambda partido: partido[-4]==1, partidos_calendario)))
+
+	partidos_perdidos=len(list(filter(lambda partido: partido[-3]==1, partidos_calendario)))
+
+	partidos_empatados=len(list(filter(lambda partido: partido[-2]==1, partidos_calendario)))
+
+	return {"ganados":partidos_ganados,
+			"perdidos": partidos_perdidos,
+			"empatados": partidos_empatados}

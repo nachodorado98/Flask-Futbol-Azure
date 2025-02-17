@@ -176,10 +176,10 @@
     <img class="papelera-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/papelera.png') }}" alt="Papelera Icon" onclick="abrirVentanaEmergente()">
 
     <div id="ventana-emergente" class="ventana-emergente">
-        <div class="contenido-ventana-emergente">
+        <div class="contenido-ventana-emergente" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
             <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
             <h2>¿Estas seguro de eliminar este partido asistido?</h2>
-            <button class="boton-confirmar-eliminar-favorito" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/eliminar'">Si, eliminar el partido</button>
+            <button class="boton-confirmar-eliminar-favorito" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/eliminar'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>Si, eliminar el partido</button>
         </div>
     </div>
 
