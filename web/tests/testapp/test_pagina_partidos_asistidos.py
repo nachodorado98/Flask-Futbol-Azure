@@ -9,13 +9,11 @@ def test_pagina_partidos_asistidos_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_partidos_asistidos_sin_partidos(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_asistidos_sin_partidos(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM partidos")
+	conexion_entorno_usuario.c.execute("DELETE FROM partidos")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -34,9 +32,7 @@ def test_pagina_partidos_asistidos_sin_partidos(cliente, conexion_entorno, passw
 		assert '<div class="tarjeta-partido-asistidos"' not in contenido
 		assert '<div class="info-partido-asistidos">' not in contenido
 
-def test_pagina_partidos_asistidos_sin_partidos_asistidos(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_asistidos_sin_partidos_asistidos(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -71,7 +67,7 @@ def test_pagina_partidos_asistidos_con_partido_asistido(cliente, conexion, passw
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -123,7 +119,7 @@ def test_pagina_partidos_asistidos_partidos_asistidos(cliente, conexion, passwor
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -166,7 +162,7 @@ def test_pagina_partidos_asistidos_partido_casa_no_hay(cliente, conexion, passwo
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -215,7 +211,7 @@ def test_pagina_partidos_asistidos_partido_casa(cliente, conexion, password_hash
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -264,7 +260,7 @@ def test_pagina_partidos_asistidos_partido_casa_local_fuera_de_casa(cliente, con
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -313,7 +309,7 @@ def test_pagina_partidos_asistidos_partido_casa_visitante_en_casa(cliente, conex
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -362,7 +358,7 @@ def test_pagina_partidos_asistidos_partido_fuera_no_hay(cliente, conexion, passw
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -411,7 +407,7 @@ def test_pagina_partidos_asistidos_partido_fuera(cliente, conexion, password_has
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -460,7 +456,7 @@ def test_pagina_partidos_asistidos_partido_fuera_local_fuera_de_casa(cliente, co
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -509,7 +505,7 @@ def test_pagina_partidos_asistidos_partido_fuera_visitante_en_casa(cliente, cone
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -557,7 +553,7 @@ def test_pagina_partidos_asistidos_partidos_asistidos_estadisticas(cliente, cone
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -597,7 +593,7 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado(cliente, conexion, pass
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -655,7 +651,7 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 
 			conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -681,9 +677,7 @@ def test_pagina_partidos_asistidos_equipo_mas_enfrentado_varios(cliente, conexio
 		assert f"Rival{equipo_mas_enfrentado}" in contenido
 		assert f'<p class="valor-circulo-equipo-mas-enfrentado"><strong>{veces} veces</strong></p>' in contenido
 
-def test_pagina_partidos_asistidos_equipo_mas_enfrentado_contra_tu_equipo(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_asistidos_equipo_mas_enfrentado_contra_tu_equipo(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -713,7 +707,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadios(cliente,
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -745,7 +739,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_no_hay_estadio_partido(c
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -781,7 +775,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado(cliente, conexion, passw
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -839,7 +833,7 @@ def test_pagina_partidos_asistidos_estadio_mas_visitado_varios(cliente, conexion
 
 			conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -883,7 +877,7 @@ def test_pagina_partidos_asistidos_sin_partido_asistido_favorito(cliente, conexi
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -923,7 +917,7 @@ def test_pagina_partidos_asistidos_partido_asistido_favorito(cliente, conexion, 
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -961,7 +955,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competiciones
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -995,7 +989,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_no_hay_competicion_p
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -1031,7 +1025,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida(cliente, conexion, p
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -1089,7 +1083,7 @@ def test_pagina_partidos_asistidos_competicion_mas_asistida_varios(cliente, cone
 
 			conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 

@@ -98,13 +98,13 @@ def test_estadio_asistido_usuario_no_existe_usuario(conexion_entorno):
 
 def test_estadio_asistido_usuario_no_asistido(conexion_entorno):
 
-	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	assert not conexion_entorno.estadio_asistido_usuario("nacho", "metropolitano")
 
 def test_estadio_asistido_usuario(conexion_entorno):
 
-	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 

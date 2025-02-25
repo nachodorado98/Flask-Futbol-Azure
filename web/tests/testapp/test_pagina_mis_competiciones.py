@@ -9,13 +9,11 @@ def test_pagina_mis_competiciones_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mis_competiciones_competiciones_no_existen(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_competiciones_competiciones_no_existen(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM competiciones")
+	conexion_entorno_usuario.c.execute("DELETE FROM competiciones")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -29,9 +27,7 @@ def test_pagina_mis_competiciones_competiciones_no_existen(cliente, conexion_ent
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_competiciones_partidos_asistidos_no_existen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_competiciones_partidos_asistidos_no_existen(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -45,13 +41,11 @@ def test_pagina_mis_competiciones_partidos_asistidos_no_existen(cliente, conexio
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_competiciones_competiciones_asistidas_no_existen(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_competiciones_competiciones_asistidas_no_existen(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM competiciones")
+	conexion_entorno_usuario.c.execute("DELETE FROM competiciones")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -69,9 +63,7 @@ def test_pagina_mis_competiciones_competiciones_asistidas_no_existen(cliente, co
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_competiciones(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")	
+def test_pagina_mis_competiciones(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -98,9 +90,7 @@ def test_pagina_mis_competiciones(cliente, conexion_entorno, password_hash):
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno, password_hash, veces):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno_usuario, veces):
 
 	with cliente as cliente_abierto:
 
@@ -108,11 +98,11 @@ def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno, passwo
 
 		for numero in range(veces):
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partido_competicion VALUES('20190622{numero}', 'primera')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_competicion VALUES('20190622{numero}', 'primera')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 
@@ -132,9 +122,7 @@ def test_pagina_mis_competiciones_varias_veces(cliente, conexion_entorno, passwo
 		assert "Competiciones Asistidas" in contenido
 		assert '<p class="valor-circulo-competiciones-asistidas"><strong>1</strong></p>' in contenido
 
-def test_pagina_mis_competiciones_competicion_asistida(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_competiciones_competicion_asistida(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -157,9 +145,7 @@ def test_pagina_mis_competiciones_competicion_asistida(cliente, conexion_entorno
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_competiciones_competicion_asistida_varias_veces(cliente, conexion_entorno, password_hash, veces):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_competiciones_competicion_asistida_varias_veces(cliente, conexion_entorno_usuario, veces):
 
 	with cliente as cliente_abierto:
 
@@ -167,11 +153,11 @@ def test_pagina_mis_competiciones_competicion_asistida_varias_veces(cliente, con
 
 		for numero in range(veces):
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partido_competicion VALUES('20190622{numero}', 'primera')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_competicion VALUES('20190622{numero}', 'primera')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 

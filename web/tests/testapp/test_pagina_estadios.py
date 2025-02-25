@@ -7,13 +7,11 @@ def test_pagina_estadios_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno, password_hash):
+def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM estadios")
+	conexion_entorno_usuario.c.execute("DELETE FROM estadios")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -32,9 +30,7 @@ def test_pagina_estadios_estadios_no_existe(cliente, conexion_entorno, password_
 		assert '<div class="tarjeta-estadios-visitados-cantidad">' not in contenido
 		assert '<div class="tarjetas-estadios-visitados-totales-cantidad">' not in contenido
 
-def test_pagina_estadios_estadios(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_estadios_estadios(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -56,13 +52,11 @@ def test_pagina_estadios_estadios(cliente, conexion_entorno, password_hash):
 		assert '<div class="tarjeta-estadios-visitados-cantidad">' not in contenido
 		assert '<div class="tarjetas-estadios-visitados-totales-cantidad">' not in contenido
 
-def test_pagina_estadios_estadios_top_no_existen(cliente, conexion_entorno, password_hash):
+def test_pagina_estadios_estadios_top_no_existen(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE estadios SET Capacidad=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE estadios SET Capacidad=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 

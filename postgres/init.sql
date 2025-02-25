@@ -7,6 +7,23 @@ CREATE TABLE ligas_scrapear (Id INTEGER PRIMARY KEY,
 
 \copy ligas_scrapear (Id, Nombre) FROM '/docker-entrypoint-initdb.d/ligas.csv' WITH CSV HEADER;
 
+CREATE TABLE paises (Pais VARCHAR(50) PRIMARY KEY,
+					PaisIngles VARCHAR(50));
+
+\copy paises (Pais, PaisIngles) FROM '/docker-entrypoint-initdb.d/paises.csv' WITH CSV HEADER;
+
+CREATE TABLE ciudades (CodCiudad SERIAL PRIMARY KEY,
+						Ciudad VARCHAR(50),
+						Latitud VARCHAR(50),
+						Longitud VARCHAR(50),
+						Pais VARCHAR(50),
+						Siglas CHAR(3),
+						Tipo VARCHAR(50),
+						Poblacion INT,
+						FOREIGN KEY (Pais) REFERENCES paises (Pais));
+
+\copy ciudades (Ciudad, Latitud, Longitud, Pais, Siglas, Tipo, Poblacion) FROM '/docker-entrypoint-initdb.d/ciudades.csv' WITH CSV HEADER;
+
 CREATE TABLE equipos (Equipo_Id VARCHAR(255) PRIMARY KEY,
 						Nombre_Completo VARCHAR(255) DEFAULT NULL,
 						Nombre VARCHAR(255) DEFAULT NULL,
@@ -155,8 +172,10 @@ CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						Nombre VARCHAR(255),
 						Apellido VARCHAR(255),
 						Fecha_Nacimiento DATE,
+						CodCiudad INT,
 						Equipo_Id VARCHAR(255),
-						FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE);
+						FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
+						FOREIGN KEY (CodCiudad) REFERENCES ciudades (CodCiudad));
 
 CREATE TABLE partidos_asistidos (Asistido_Id VARCHAR(255) PRIMARY KEY,
 								Partido_Id VARCHAR(255),

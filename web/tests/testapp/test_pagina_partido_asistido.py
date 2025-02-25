@@ -13,9 +13,7 @@ def test_pagina_partido_asistido_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_partido_asistido_partido_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_partido_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -29,13 +27,11 @@ def test_pagina_partido_asistido_partido_no_existe(cliente, conexion_entorno, pa
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partido_asistido_equipo_no_pertenece(cliente, conexion_entorno, password_hash):
+def test_pagina_partido_asistido_equipo_no_pertenece(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -49,9 +45,7 @@ def test_pagina_partido_asistido_equipo_no_pertenece(cliente, conexion_entorno, 
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partido_asistido_partido_no_asistido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_partido_no_asistido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -65,9 +59,7 @@ def test_pagina_partido_asistido_partido_no_asistido(cliente, conexion_entorno, 
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -93,9 +85,7 @@ def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno, passw
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
 		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
 
-def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -121,9 +111,7 @@ def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno, passw
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
 		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
 
-def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -151,8 +139,7 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 
 		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":"atletico-madrid"})
+											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -196,9 +183,7 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 		("2009-06-21", "2029-06-23", "21-06-2009", "23-06-2029")
 	]
 )
-def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno, password_hash, fecha_ida, fecha_vuelta, fecha_ida_on_tour, fecha_vuelta_on_tour):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno_usuario, fecha_ida, fecha_vuelta, fecha_ida_on_tour, fecha_vuelta_on_tour):
 
 	with cliente as cliente_abierto:
 
@@ -221,9 +206,7 @@ def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno, password
 		assert f"Fecha Vuelta: {fecha_vuelta_on_tour}" in contenido
 		assert '<p class="teletrabajo-on-tour">' in contenido
 
-def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -246,9 +229,7 @@ def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_e
 		assert "Teletrabajo No" in contenido
 		assert "Teletrabajo Si" not in contenido
 
-def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -271,9 +252,7 @@ def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_e
 		assert "Teletrabajo No" not in contenido
 		assert "Teletrabajo Si" in contenido
 
-def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -289,14 +268,12 @@ def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(client
 		assert '<button class="button-partido-anterior-asistido"' not in contenido
 		assert '<button class="button-partido-siguiente-asistido"' not in contenido
 
-def test_pagina_partido_asistido_no_partido_anterior_si_partido_siguiente(cliente, conexion_entorno, password_hash):
+def test_pagina_partido_asistido_no_partido_anterior_si_partido_siguiente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 								VALUES('20245964', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -314,14 +291,12 @@ def test_pagina_partido_asistido_no_partido_anterior_si_partido_siguiente(client
 		assert '<button class="button-partido-anterior-asistido"' not in contenido
 		assert '<button class="button-partido-siguiente-asistido"' in contenido
 
-def test_pagina_partido_asistido_si_partido_anterior_no_partido_siguiente(cliente, conexion_entorno, password_hash):
+def test_pagina_partido_asistido_si_partido_anterior_no_partido_siguiente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 								VALUES('20245964', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -339,15 +314,13 @@ def test_pagina_partido_asistido_si_partido_anterior_no_partido_siguiente(client
 		assert '<button class="button-partido-anterior-asistido"' in contenido
 		assert '<button class="button-partido-siguiente-asistido"' not in contenido
 
-def test_pagina_partido_asistido_si_partido_anterior_si_partido_siguiente(cliente, conexion_entorno, password_hash):
+def test_pagina_partido_asistido_si_partido_anterior_si_partido_siguiente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
-								VALUES('20245964', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria'),
-									('202454564', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
+									VALUES('20245964', 'atletico-madrid', 'atletico-madrid', '2019-06-21', '22:00', 'Liga', '1-0', 'Victoria'),
+										('202454564', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -367,9 +340,7 @@ def test_pagina_partido_asistido_si_partido_anterior_si_partido_siguiente(client
 		assert '<button class="button-partido-anterior-asistido"' in contenido
 		assert '<button class="button-partido-siguiente-asistido"' in contenido
 
-def test_pagina_partido_asistido_partido_asistido_favorito(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_partido_asistido_favorito(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -388,9 +359,7 @@ def test_pagina_partido_asistido_partido_asistido_favorito(cliente, conexion_ent
 		assert "/favorito_asistido.png" in contenido
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' in contenido
 
-def test_pagina_partido_asistido_ventana_emergente_papelera_disponible(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partido_asistido_ventana_emergente_papelera_disponible(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 

@@ -9,17 +9,15 @@ def test_pagina_mis_equipos_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mis_equipos_equipos_no_existen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_equipos_equipos_no_existen(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		conexion_entorno.c.execute("""DELETE FROM equipos""")
+		conexion_entorno_usuario.c.execute("""DELETE FROM equipos""")
 
-		conexion_entorno.confirmar()
+		conexion_entorno_usuario.confirmar()
 
 		respuesta=cliente_abierto.get("/equipos/mis_equipos")
 
@@ -29,9 +27,7 @@ def test_pagina_mis_equipos_equipos_no_existen(cliente, conexion_entorno, passwo
 		assert respuesta.location==r"/login?next=%2Fequipos%2Fmis_equipos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_equipos_partidos_asistidos_no_existen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_equipos_partidos_asistidos_no_existen(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -53,7 +49,7 @@ def test_pagina_mis_equipos_equipos_enfrentados_no_existen(cliente, conexion, pa
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -75,15 +71,13 @@ def test_pagina_mis_equipos_equipos_enfrentados_no_existen(cliente, conexion, pa
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_equipos(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_equipos(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
 
-	conexion_entorno.c.execute("""INSERT INTO partidos VALUES('20190623', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos VALUES('20190623', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -110,13 +104,11 @@ def test_pagina_mis_equipos(cliente, conexion_entorno, password_hash):
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_equipos_varias_veces(cliente, conexion_entorno, password_hash, veces):
+def test_pagina_mis_equipos_varias_veces(cliente, conexion_entorno_usuario, veces):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -124,9 +116,9 @@ def test_pagina_mis_equipos_varias_veces(cliente, conexion_entorno, password_has
 
 		for numero in range(veces):
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 
@@ -143,15 +135,13 @@ def test_pagina_mis_equipos_varias_veces(cliente, conexion_entorno, password_has
 		assert '<div class="tarjeta-equipo-enfrentado"' in contenido
 		assert f"<h4>{veces} veces</h4>" in contenido
 
-def test_pagina_mis_equipos_equipo_enfrentado(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_equipos_equipo_enfrentado(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
 
-	conexion_entorno.c.execute("""INSERT INTO partidos VALUES('20190623', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos VALUES('20190623', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -174,13 +164,11 @@ def test_pagina_mis_equipos_equipo_enfrentado(cliente, conexion_entorno, passwor
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_equipos_equipo_enfrentado_varias_veces(cliente, conexion_entorno, password_hash, veces):
+def test_pagina_mis_equipos_equipo_enfrentado_varias_veces(cliente, conexion_entorno_usuario, veces):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -188,9 +176,9 @@ def test_pagina_mis_equipos_equipo_enfrentado_varias_veces(cliente, conexion_ent
 
 		for numero in range(veces):
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'rival', 'atletico-madrid', '2019-06-23', '20:00', 'Liga', '1-0', 'Victoria Local')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 

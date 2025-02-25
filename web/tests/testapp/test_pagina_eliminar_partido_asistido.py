@@ -7,9 +7,7 @@ def test_pagina_eliminar_partido_asistido_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_eliminar_partido_asistido_partido_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_eliminar_partido_asistido_partido_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -23,13 +21,11 @@ def test_pagina_eliminar_partido_asistido_partido_no_existe(cliente, conexion_en
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_eliminar_partido_asistido_equipo_no_pertenece(cliente, conexion_entorno, password_hash):
+def test_pagina_eliminar_partido_asistido_equipo_no_pertenece(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -43,9 +39,7 @@ def test_pagina_eliminar_partido_asistido_equipo_no_pertenece(cliente, conexion_
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_eliminar_partido_asistido_partido_no_asistido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_eliminar_partido_asistido_partido_no_asistido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -59,9 +53,7 @@ def test_pagina_eliminar_partido_asistido_partido_no_asistido(cliente, conexion_
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_eliminar_partido_asistido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_eliminar_partido_asistido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -71,7 +63,7 @@ def test_pagina_eliminar_partido_asistido(cliente, conexion_entorno, password_ha
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		assert conexion_entorno.obtenerPartidosAsistidosUsuario("nacho98")
+		assert conexion_entorno_usuario.obtenerPartidosAsistidosUsuario("nacho98")
 
 		respuesta=cliente_abierto.get("/partido/20190622/asistido/eliminar")
 
@@ -80,11 +72,9 @@ def test_pagina_eliminar_partido_asistido(cliente, conexion_entorno, password_ha
 		respuesta.status_code==302
 		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
-		assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho98")
+		assert not conexion_entorno_usuario.obtenerPartidosAsistidosUsuario("nacho98")
 
-def test_pagina_eliminar_partido_asistido_partido_favorito(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_eliminar_partido_asistido_partido_favorito(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -94,8 +84,8 @@ def test_pagina_eliminar_partido_asistido_partido_favorito(cliente, conexion_ent
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		assert conexion_entorno.obtenerPartidosAsistidosUsuario("nacho98")
-		assert conexion_entorno.obtenerPartidoAsistidoFavorito("nacho98")
+		assert conexion_entorno_usuario.obtenerPartidosAsistidosUsuario("nacho98")
+		assert conexion_entorno_usuario.obtenerPartidoAsistidoFavorito("nacho98")
 
 		respuesta=cliente_abierto.get("/partido/20190622/asistido/eliminar")
 
@@ -104,5 +94,5 @@ def test_pagina_eliminar_partido_asistido_partido_favorito(cliente, conexion_ent
 		respuesta.status_code==302
 		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
-		assert not conexion_entorno.obtenerPartidosAsistidosUsuario("nacho98")
-		assert not conexion_entorno.obtenerPartidoAsistidoFavorito("nacho98")
+		assert not conexion_entorno_usuario.obtenerPartidosAsistidosUsuario("nacho98")
+		assert not conexion_entorno_usuario.obtenerPartidoAsistidoFavorito("nacho98")

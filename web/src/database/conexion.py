@@ -57,11 +57,11 @@ class Conexion:
 
 	# Metodo para insertar un usuario
 	def insertarUsuario(self, usuario:str, correo:str, contrasena:str, nombre:str,
-						apellido:str, fecha_nacimiento:str, equipo_id:str)->None:
+						apellido:str, fecha_nacimiento:str, codciudad:int, equipo_id:str)->None:
 
 		self.c.execute("""INSERT INTO usuarios
-							VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-							(usuario, correo, contrasena, nombre, apellido, fecha_nacimiento, equipo_id))
+							VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+							(usuario, correo, contrasena, nombre, apellido, fecha_nacimiento, codciudad, equipo_id))
 
 		self.confirmar()
 
@@ -2559,3 +2559,50 @@ class Conexion:
 		except Exception:
 
 			return None
+
+	# Metodo para obtener los paises
+	def obtenerPaises(self)->List[str]:
+
+		self.c.execute("""SELECT DISTINCT(pais)
+	                 		FROM ciudades
+	                 		ORDER BY pais""")
+
+		paises=self.c.fetchall()
+
+		return list(map(lambda pais: pais["pais"], paises))
+
+	# Metodo para obtener las ciudades de un pais
+	def obtenerCiudadesPais(self, pais:str, poblacion:int=0)->List[str]:
+
+		self.c.execute("""SELECT ciudad
+	                 		FROM ciudades 
+	                 		WHERE pais=%s
+	                 		AND poblacion>=%s
+	                 		ORDER BY ciudad""",
+	                 		(pais, poblacion))
+
+		ciudades=self.c.fetchall()
+
+		return list(map(lambda ciudad: ciudad["ciudad"], ciudades))
+
+	# Metodo para obtener el codigo de una ciudad
+	def obtenerCodigoCiudad(self, ciudad:str)->Optional[int]:
+
+		self.c.execute("""SELECT codciudad
+							FROM ciudades
+							WHERE ciudad=%s""",
+							(ciudad,))
+
+		ciudad=self.c.fetchone()
+
+		return None if ciudad is None else ciudad["codciudad"]
+
+	# Metodo para comprobar si existe un codigo ciudad
+	def existe_codigo_ciudad(self, codigo_ciudad:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM ciudades
+						WHERE codciudad=%s""",
+						(codigo_ciudad,))
+
+		return False if not self.c.fetchone() else True

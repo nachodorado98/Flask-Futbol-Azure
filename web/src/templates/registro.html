@@ -22,14 +22,29 @@
         <input type="password" id="contrasena" name="contrasena" autocomplete="off" required>
         <span class="tooltip" id="tooltipContrasena">Minimo 8 caracteres, mayuscula, minuscula, numero y caracter especial</span>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" autocomplete="off" required>
+        <div class="container-nombre-apellido">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" autocomplete="off" required>
 
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido" autocomplete="off" required>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" autocomplete="off" required>
+        </div>
 
         <label for="fecha-nacimiento">Fecha Nacimiento:</label>
         <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
+
+        <div class="container-pais-ciudad">
+            <label for="pais">Pais:</label>
+            <select id="pais" name="pais"  onchange="actualizarCiudades()" required>
+                <option value="" selected disabled hidden>Selecciona un país</option>
+                {% for pais in paises %}
+                    <option value="{{ pais }}">{{ pais }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="ciudad">Ciudad:</label>
+            <select id="ciudad" name="ciudad" required></select>
+        </div>
 
         <label for="equipo">Equipo:</label>
         <select id="equipo" name="equipo" required>
@@ -46,5 +61,6 @@
 
 <script src="{{ url_for('static', filename='js/fecha_nacimiento.js') }}"></script>
 <script src="{{ url_for('static', filename='js/tooltips.js') }}"></script>
+<script src="{{ url_for('static', filename='js/actualizar_ciudades_pais.js') }}"></script>
 
 {% endblock principal %}

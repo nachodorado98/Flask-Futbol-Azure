@@ -7,13 +7,11 @@ def test_pagina_proximos_partidos_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_proximos_partidos_proximos_partidos_no_hay(cliente, conexion_entorno, password_hash):
+def test_pagina_proximos_partidos_proximos_partidos_no_hay(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM proximos_partidos")
+	conexion_entorno_usuario.c.execute("DELETE FROM proximos_partidos")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -27,9 +25,7 @@ def test_pagina_proximos_partidos_proximos_partidos_no_hay(cliente, conexion_ent
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_proximos_partidos_proximo_partido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_proximos_partidos_proximo_partido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -47,9 +43,7 @@ def test_pagina_proximos_partidos_proximo_partido(cliente, conexion_entorno, pas
 		assert '<div class="info-proximo-partido">' in contenido
 		assert '<a href="/partidos/calendario/2020-06?proximos_partidos=True" class="tipo-partidos-calendario">' in contenido
 
-def test_pagina_proximos_partidos_calendario_solo_un_proximo_partido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_proximos_partidos_calendario_solo_un_proximo_partido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -76,7 +70,7 @@ def test_pagina_proximos_partidos_calendario_varios(cliente, conexion, password_
 	
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 

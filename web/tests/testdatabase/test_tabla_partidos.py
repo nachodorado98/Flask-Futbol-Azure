@@ -1042,7 +1042,7 @@ def test_obtener_partidos_equipo_calendario_marcador_penaltis(conexion):
 
 def test_obtener_partidos_equipo_calendario_partido_asistido_usuario_no_existe(conexion_entorno):
 
-	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
 
@@ -1053,7 +1053,7 @@ def test_obtener_partidos_equipo_calendario_partido_asistido_usuario_no_existe(c
 
 def test_obtener_partidos_equipo_calendario_partido_asistido(conexion_entorno):
 
-	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
 

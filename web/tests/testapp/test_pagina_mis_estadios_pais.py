@@ -10,13 +10,11 @@ def test_pagina_mis_estadios_pais_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mis_estadios_pais_estadios_no_existen(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_estadios_no_existen(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM estadios")
+	conexion_entorno_usuario.c.execute("DELETE FROM estadios")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -30,9 +28,7 @@ def test_pagina_mis_estadios_pais_estadios_no_existen(cliente, conexion_entorno,
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais_partidos_asistidos_no_existen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_partidos_asistidos_no_existen(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -46,13 +42,11 @@ def test_pagina_mis_estadios_pais_partidos_asistidos_no_existen(cliente, conexio
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais_estadios_asistidos_no_existen(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_estadios_asistidos_no_existen(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM estadios")
+	conexion_entorno_usuario.c.execute("DELETE FROM estadios")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -70,15 +64,13 @@ def test_pagina_mis_estadios_pais_estadios_asistidos_no_existen(cliente, conexio
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
 
-	conexion_entorno.c.execute("UPDATE equipos SET Codigo_Pais=NULL")
+	conexion_entorno_usuario.c.execute("UPDATE equipos SET Codigo_Pais=NULL")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -99,9 +91,7 @@ def test_pagina_mis_estadios_pais_codigos_pais_estadio_equipo_nulos(cliente, con
 @pytest.mark.parametrize(["pais"],
 	[("se",),("ese",),("p",),("nl",),("pt",)]
 )
-def test_pagina_mis_estadios_pais_codigo_pais_no_existe(cliente, conexion_entorno, password_hash, pais):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_codigo_pais_no_existe(cliente, conexion_entorno_usuario, pais):
 
 	with cliente as cliente_abierto:
 
@@ -119,9 +109,7 @@ def test_pagina_mis_estadios_pais_codigo_pais_no_existe(cliente, conexion_entorn
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_mis_estadios_pais(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -154,13 +142,11 @@ def test_pagina_mis_estadios_pais(cliente, conexion_entorno, password_hash):
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_" in contenido
 
-def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -193,13 +179,11 @@ def test_pagina_mis_estadios_pais_codigo_pais_estadio_nulo(cliente, conexion_ent
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_" in contenido
 
-def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("UPDATE equipos SET Codigo_Pais=NULL")
+	conexion_entorno_usuario.c.execute("UPDATE equipos SET Codigo_Pais=NULL")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -235,9 +219,7 @@ def test_pagina_mis_estadios_pais_codigo_pais_equipo_nulo(cliente, conexion_ento
 @pytest.mark.parametrize(["veces"],
 	[(1,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, password_hash, veces):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno_usuario, veces):
 
 	with cliente as cliente_abierto:
 
@@ -245,11 +227,11 @@ def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, passwo
 
 		for numero in range(veces):
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero}', 'metropolitano')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero}', 'metropolitano')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 
@@ -281,9 +263,7 @@ def test_pagina_mis_estadios_pais_varias_veces(cliente, conexion_entorno, passwo
 @pytest.mark.parametrize(["veces"],
 	[(2,),(5,),(7,),(13,),(22,),(6,)]
 )
-def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno, password_hash, veces):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno_usuario, veces):
 
 	with cliente as cliente_abierto:
 
@@ -291,13 +271,13 @@ def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno, password_has
 
 		for numero in range(veces):
 
-			conexion_entorno.c.execute(f"""INSERT INTO estadios (Estadio_Id, Capacidad, Pais, Codigo_Pais, Latitud, Longitud) VALUES('estadio{numero}', 100000, 'España', 'es', 1.0, -1.0)""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO estadios (Estadio_Id, Capacidad, Pais, Codigo_Pais, Latitud, Longitud) VALUES('estadio{numero}', 100000, 'España', 'es', 1.0, -1.0)""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero}', 'estadio{numero}')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero}', 'estadio{numero}')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 
@@ -326,13 +306,11 @@ def test_pagina_mis_estadios_pais_varios(cliente, conexion_entorno, password_has
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_" in contenido
 
-def test_pagina_mis_estadios_pais_sin_nombre_pais(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_sin_nombre_pais(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("UPDATE estadios SET Pais=NULL")
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Pais=NULL")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -354,9 +332,7 @@ def test_pagina_mis_estadios_pais_sin_nombre_pais(cliente, conexion_entorno, pas
 		assert '<span class="boton-estadios-mapa-text">Estadios de None</span>' in contenido
 		assert '<span class="boton-paises-mapa-text">None</span>' in contenido
 
-def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -378,9 +354,7 @@ def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno, pas
 		assert '<span class="boton-estadios-mapa-text">Estadios de España</span>' in contenido
 		assert '<span class="boton-paises-mapa-text">España</span>' in contenido
 
-def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -402,9 +376,7 @@ def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_
 @pytest.mark.parametrize(["pais"],
 	[("es0",),("es1",),("es2",),("es3",),("es4",)]
 )
-def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_entorno, password_hash, pais):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_entorno_usuario, pais):
 
 	with cliente as cliente_abierto:
 
@@ -412,13 +384,13 @@ def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_
 
 		for numero in range(5):
 
-			conexion_entorno.c.execute(f"""INSERT INTO estadios (Estadio_Id, Capacidad, Pais, Codigo_Pais, Latitud, Longitud) VALUES('estadio{numero}', 100000, 'España', 'es{numero}', 1.0, -1.0)""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO estadios (Estadio_Id, Capacidad, Pais, Codigo_Pais, Latitud, Longitud) VALUES('estadio{numero}', 100000, 'España', 'es{numero}', 1.0, -1.0)""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos VALUES('20190622{numero}', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-			conexion_entorno.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero}', 'estadio{numero}')""")
+			conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio VALUES('20190622{numero}', 'estadio{numero}')""")
 
-			conexion_entorno.confirmar()
+			conexion_entorno_usuario.confirmar()
 
 			data={"partido_anadir":f"20190622{numero}", "comentario":"comentario"}
 
@@ -433,13 +405,11 @@ def test_pagina_mis_estadios_pais_con_paises_no_seleccionados(cliente, conexion_
 		assert '<button class="boton-desplegable"' in contenido
 		assert '<div id="menuDesplegable" class="menu-desplegable">' in contenido
 
-def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -458,9 +428,7 @@ def test_pagina_mis_estadios_pais_error_mapa(cliente, conexion_entorno, password
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_nacho98.html" not in contenido
 		assert '<img class="no-mapa"' in contenido
 
-def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -504,7 +472,7 @@ def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno, password
 )
 def test_pagina_mis_estadios_pais_mapa_small_usuarios(cliente, conexion_entorno, password_hash, usuario):
 
-	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -543,9 +511,9 @@ def test_pagina_mis_estadios_pais_mapa_small_usuarios(cliente, conexion_entorno,
 			assert "es.png" not in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
-	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -580,15 +548,13 @@ def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_ento
 
 	with cliente as cliente_abierto:
 
-		conexion_entorno.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad, Latitud, Longitud, Codigo_Estadio, Codigo_Pais) VALUES('estadio', 'Nombre Estadio', 100000, 1.0, -1.0, 22619, 'pais')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad, Latitud, Longitud, Codigo_Estadio, Codigo_Pais) VALUES('estadio', 'Nombre Estadio', 100000, 1.0, -1.0, 22619, 'pais')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partidos VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO partidos VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partido_estadio VALUES('20190623', 'estadio')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO partido_estadio VALUES('20190623', 'estadio')""")
 
-		conexion_entorno.confirmar()
-
-		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+		conexion_entorno_usuario.confirmar()
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -617,9 +583,7 @@ def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_ento
 			assert "pais.png" not in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -663,7 +627,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno, passwo
 )
 def test_pagina_mis_estadios_pais_mapa_detalle_usuarios(cliente, conexion_entorno, password_hash, usuario):
 
-	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -702,9 +666,9 @@ def test_pagina_mis_estadios_pais_mapa_detalle_usuarios(cliente, conexion_entorn
 			assert "es.png" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
-	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -739,15 +703,13 @@ def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_en
 
 	with cliente as cliente_abierto:
 
-		conexion_entorno.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad, Latitud, Longitud, Codigo_Estadio, Codigo_Pais) VALUES('estadio', 'Nombre Estadio', 100000, 1.0, -1.0, 22619, 'pais')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad, Latitud, Longitud, Codigo_Estadio, Codigo_Pais) VALUES('estadio', 'Nombre Estadio', 100000, 1.0, -1.0, 22619, 'pais')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partidos VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO partidos VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partido_estadio VALUES('20190623', 'estadio')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO partido_estadio VALUES('20190623', 'estadio')""")
 
-		conexion_entorno.confirmar()
-
-		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+		conexion_entorno_usuario.confirmar()
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -776,9 +738,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_en
 			assert "pais.png" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -821,7 +781,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno,
 )
 def test_pagina_mis_estadios_pais_mapa_detalle_paises_usuarios(cliente, conexion_entorno, password_hash, usuario):
 
-	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -859,9 +819,9 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises_usuarios(cliente, conexion
 			assert '"type": "FeatureCollection"' in contenido
 			assert '{"name": "Spain"}' in contenido
 
-def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, conexion_entorno, password_hash):
+def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
-	conexion_entorno.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -895,15 +855,13 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, cone
 
 	with cliente as cliente_abierto:
 
-		conexion_entorno.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad, Latitud, Longitud, Codigo_Estadio, Codigo_Pais) VALUES('estadio', 'Nombre Estadio', 100000, 41.9028, 12.4964, 22619, 'pais')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO estadios (Estadio_Id, Nombre, Capacidad, Latitud, Longitud, Codigo_Estadio, Codigo_Pais) VALUES('estadio', 'Nombre Estadio', 100000, 41.9028, 12.4964, 22619, 'pais')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partidos VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO partidos VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partido_estadio VALUES('20190623', 'estadio')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO partido_estadio VALUES('20190623', 'estadio')""")
 
-		conexion_entorno.confirmar()
-
-		conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+		conexion_entorno_usuario.confirmar()
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -940,9 +898,7 @@ def test_pagina_mapa_mis_estadios_pais_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mapa_mis_estadios_pais_mapa_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mapa_mis_estadios_pais_mapa_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -952,9 +908,7 @@ def test_pagina_mapa_mis_estadios_pais_mapa_no_existe(cliente, conexion_entorno,
 
 			cliente_abierto.get("/estadios/mis_estadios_pais/mapa/nombre_mapa.html")
 
-def test_pagina_mapa_mis_estadios_pais_mapa_small_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mapa_mis_estadios_pais_mapa_small_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -982,9 +936,7 @@ def test_pagina_mapa_mis_estadios_pais_mapa_small_existe(cliente, conexion_entor
 		assert "es.png" not in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mapa_mis_estadios_pais_mapa_detalle_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mapa_mis_estadios_pais_mapa_detalle_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -1012,9 +964,7 @@ def test_pagina_mapa_mis_estadios_pais_mapa_detalle_existe(cliente, conexion_ent
 		assert "es.png" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mapa_mis_estadios_pais_mapa_detalle_paises_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_mapa_mis_estadios_pais_mapa_detalle_paises_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 

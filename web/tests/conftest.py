@@ -93,6 +93,13 @@ def conexion_entorno(conexion):
 	return conexion
 
 @pytest.fixture()
+def conexion_entorno_usuario(conexion_entorno, password_hash):
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	return conexion_entorno
+
+@pytest.fixture()
 def datalake():
 
     return ConexionDataLake()

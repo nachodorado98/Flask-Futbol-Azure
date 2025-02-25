@@ -9,17 +9,15 @@ def test_pagina_anadir_partido_asistido_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_anadir_partido_asistido_partidos_no_existen(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partidos_no_existen(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		conexion_entorno.c.execute("""DELETE FROM partidos""")
+		conexion_entorno_usuario.c.execute("""DELETE FROM partidos""")
 
-		conexion_entorno.confirmar()
+		conexion_entorno_usuario.confirmar()
 
 		respuesta=cliente_abierto.get("/anadir_partido_asistido")
 
@@ -40,25 +38,23 @@ def test_pagina_anadir_partido_asistido_partidos_no_existen(cliente, conexion_en
 		assert '<div class="contenedor-seccion-on-tour">' not in contenido
 		assert '<div class="contenedor-on-tour">' not in contenido
 
-def test_pagina_anadir_partido_asistido_partidos_no_existen_equipo_usuario(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partidos_no_existen_equipo_usuario(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		conexion_entorno.c.execute("""DELETE FROM partidos""")
+		conexion_entorno_usuario.c.execute("""DELETE FROM partidos""")
 
-		conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival1'),('rival2')""")
+		conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('rival1'),('rival2')""")
 
-		conexion_entorno.c.execute("""INSERT INTO partidos
+		conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 										VALUES('20190622', 'rival1', 'rival2', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria'),
 												('20190623', 'rival2', 'rival2', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria'),
 												('20190624', 'rival1', 'rival1', '2019-06-24', '22:00', 'Liga', '1-0', 'Victoria'),
 												('20190625', 'rival2', 'rival1', '2019-06-25', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-		conexion_entorno.confirmar()
+		conexion_entorno_usuario.confirmar()
 
 		respuesta=cliente_abierto.get("/anadir_partido_asistido")
 
@@ -79,9 +75,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_existen_equipo_usuario(clien
 		assert '<div class="contenedor-seccion-on-tour">' not in contenido
 		assert '<div class="contenedor-on-tour">' not in contenido
 
-def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -106,17 +100,13 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(
 		assert '<div class="contenedor-seccion-on-tour">' in contenido
 		assert '<div class="contenedor-on-tour">' in contenido
 
-def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_recientes(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_recientes(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
-
-		conexion_entorno.confirmar()
+		conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
 
 		respuesta=cliente_abierto.get("/anadir_partido_asistido")
 
@@ -137,9 +127,7 @@ def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_reciente
 		assert '<div class="contenedor-seccion-on-tour">' not in contenido
 		assert '<div class="contenedor-on-tour">' not in contenido
 
-def test_pagina_obtener_fecha_partido_sin_partido_id(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_obtener_fecha_partido_sin_partido_id(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -153,9 +141,7 @@ def test_pagina_obtener_fecha_partido_sin_partido_id(cliente, conexion_entorno, 
 		assert "error" in contenido
 		assert "fecha_ida" not in contenido
 
-def test_pagina_obtener_fecha_partido_partido_id_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_obtener_fecha_partido_partido_id_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -169,9 +155,7 @@ def test_pagina_obtener_fecha_partido_partido_id_no_existe(cliente, conexion_ent
 		assert "error" in contenido
 		assert "fecha_ida" not in contenido
 
-def test_pagina_obtener_fecha_partido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_obtener_fecha_partido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -186,9 +170,7 @@ def test_pagina_obtener_fecha_partido(cliente, conexion_entorno, password_hash):
 		assert "fecha_ida" in contenido
 		assert "2019-06-22" in contenido
 
-def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -213,9 +195,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(clie
 		assert '<div class="contenedor-seccion-on-tour">' in contenido
 		assert '<div class="contenedor-on-tour">' in contenido
 
-def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_no_defecto(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_no_defecto(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -231,9 +211,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_no_defecto
 		assert '<option value="20190622" selected>' not in contenido
 		assert '<option value="20190622">' in contenido
 
-def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -251,9 +229,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cl
 		assert "max='2019-06-22'" in contenido
 		assert "min='2019-06-22'" in contenido
 
-def test_pagina_anadir_partido_asistido_partido_asistido_favorito_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_partido_asistido_favorito_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 

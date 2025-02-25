@@ -7,9 +7,7 @@ def test_pagina_entrenador_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_entrenador_entrenador_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_entrenador_entrenador_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -23,9 +21,7 @@ def test_pagina_entrenador_entrenador_no_existe(cliente, conexion_entorno, passw
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_entrenador_entrenador(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_entrenador_entrenador(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -44,13 +40,11 @@ def test_pagina_entrenador_entrenador(cliente, conexion_entorno, password_hash):
 		assert '<div class="info-entrenador-equipo"' in contenido
 		assert '<div class="info-entrenador-puntuacion">' in contenido
 
-def test_pagina_entrenador_entrenador_sin_equipo(cliente, conexion_entorno, password_hash):
+def test_pagina_entrenador_entrenador_sin_equipo(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE entrenadores SET equipo_id=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE entrenadores SET equipo_id=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -64,13 +58,11 @@ def test_pagina_entrenador_entrenador_sin_equipo(cliente, conexion_entorno, pass
 		assert '<div class="info-entrenador-imagenes">' in contenido
 		assert '<div class="info-entrenador-equipo"' not in contenido
 
-def test_pagina_entrenador_entrenador_sin_puntuacion(cliente, conexion_entorno, password_hash):
+def test_pagina_entrenador_entrenador_sin_puntuacion(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE entrenadores SET puntuacion=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE entrenadores SET puntuacion=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 

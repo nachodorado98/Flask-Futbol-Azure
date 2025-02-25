@@ -7,13 +7,11 @@ def test_pagina_competiciones_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_competiciones_competiciones_no_existe(cliente, conexion_entorno, password_hash):
+def test_pagina_competiciones_competiciones_no_existe(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM competiciones")
+	conexion_entorno_usuario.c.execute("DELETE FROM competiciones")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -28,9 +26,7 @@ def test_pagina_competiciones_competiciones_no_existe(cliente, conexion_entorno,
 		assert '<p class="titulo-pagina-competiciones">' in contenido
 		assert '<div class="tarjetas-competiciones-totales">' not in contenido
 
-def test_pagina_competiciones_competiciones(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_competiciones_competiciones(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -48,13 +44,11 @@ def test_pagina_competiciones_competiciones(cliente, conexion_entorno, password_
 		assert '<p class="titulo-top-competiciones">' in contenido
 		assert '<div class="tarjetas-competiciones-top-totales">' in contenido
 
-def test_pagina_competiciones_competiciones_top_no_existen(cliente, conexion_entorno, password_hash):
+def test_pagina_competiciones_competiciones_top_no_existen(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE equipos SET Puntuacion=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE equipos SET Puntuacion=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 

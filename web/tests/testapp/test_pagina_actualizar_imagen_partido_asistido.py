@@ -20,9 +20,7 @@ def test_pagina_actualizar_imagen_partido_asistido_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_actualizar_imagen_partido_asistido_partido_no_existente(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_actualizar_imagen_partido_asistido_partido_no_existente(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -44,10 +42,8 @@ def test_pagina_actualizar_imagen_partido_asistido_partido_no_existente(cliente,
 		assert respuesta.location=="/anadir_partido_asistido"
 		assert "Redirecting..." in contenido
 
-def test_pagina_actualizar_imagen_partido_asistido_partido_asistido_no_existente(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
-
+def test_pagina_actualizar_imagen_partido_asistido_partido_asistido_no_existente(cliente, conexion_entorno_usuario):
+	
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
@@ -68,9 +64,9 @@ def test_pagina_actualizar_imagen_partido_asistido_partido_asistido_no_existente
 		assert respuesta.location=="/anadir_partido_asistido"
 		assert "Redirecting..." in contenido
 
-		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert not conexion_entorno.c.fetchall()
+		assert not conexion_entorno_usuario.c.fetchall()
 
 def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, conexion_entorno, datalake):
 
@@ -78,8 +74,7 @@ def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, con
 
 		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":"atletico-madrid"})
+											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -124,14 +119,13 @@ def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, con
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno, datalake):
+def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno_usuario, datalake):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":"atletico-madrid"})
+											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -153,9 +147,9 @@ def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno, da
 		assert respuesta.location=="/partido/20190622/asistido"
 		assert "Redirecting..." in contenido
 
-		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		partidos=conexion_entorno.c.fetchall()
+		partidos=conexion_entorno_usuario.c.fetchall()
 
 		assert len(partidos)==1
 		assert partidos[0]["imagen"]=="nacho98_20190622.jpeg"
@@ -182,8 +176,7 @@ def test_pagina_actualizar_imagen_partido_asistido_sin_imagen(cliente, conexion_
 
 		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":"atletico-madrid"})
+											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 

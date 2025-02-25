@@ -9,13 +9,11 @@ def test_pagina_partidos_calendario_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_partidos_calendario_sin_partidos(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_sin_partidos(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM partidos")
+	conexion_entorno_usuario.c.execute("DELETE FROM partidos")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -29,9 +27,7 @@ def test_pagina_partidos_calendario_sin_partidos(cliente, conexion_entorno, pass
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partidos_calendario_ano_mes_error(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_ano_mes_error(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -45,9 +41,7 @@ def test_pagina_partidos_calendario_ano_mes_error(cliente, conexion_entorno, pas
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partidos_calendario_con_partido_otra_fecha(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_con_partido_otra_fecha(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -80,9 +74,7 @@ def test_pagina_partidos_calendario_con_partido_otra_fecha(cliente, conexion_ent
 @pytest.mark.parametrize(["ano_mes"],
 	[("2019-08",),("2024-04",),("1998-01",),("1999-06",),("2004-11",)]
 )
-def test_pagina_partidos_calendario_con_partido_otra_fecha_varios(cliente, conexion_entorno, password_hash, ano_mes):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_con_partido_otra_fecha_varios(cliente, conexion_entorno_usuario, ano_mes):
 
 	with cliente as cliente_abierto:
 
@@ -110,9 +102,7 @@ def test_pagina_partidos_calendario_con_partido_otra_fecha_varios(cliente, conex
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_con_partido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_con_partido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -160,7 +150,7 @@ def test_pagina_partidos_calendario_con_partidos(cliente, conexion, password_has
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -194,9 +184,7 @@ def test_pagina_partidos_calendario_con_partidos(cliente, conexion, password_has
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_no_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_no_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -212,13 +200,12 @@ def test_pagina_partidos_calendario_no_ano_mes_anterior_no_ano_mes_siguiente(cli
 		assert "/partidos/calendario/2019-05" not in contenido
 		assert "/partidos/calendario/2019-07" not in contenido
 
-def test_pagina_partidos_calendario_si_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_si_ano_mes_anterior_no_ano_mes_siguiente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 								VALUES ('20190522', 'atletico-madrid', 'atletico-madrid', '2019-05-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -234,13 +221,12 @@ def test_pagina_partidos_calendario_si_ano_mes_anterior_no_ano_mes_siguiente(cli
 		assert "/partidos/calendario/2019-05" in contenido
 		assert "/partidos/calendario/2019-07" not in contenido
 
-def test_pagina_partidos_calendario_no_ano_mes_anterior_si_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_no_ano_mes_anterior_si_ano_mes_siguiente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 								VALUES ('20190722', 'atletico-madrid', 'atletico-madrid', '2019-07-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -256,14 +242,13 @@ def test_pagina_partidos_calendario_no_ano_mes_anterior_si_ano_mes_siguiente(cli
 		assert "/partidos/calendario/2019-05" not in contenido
 		assert "/partidos/calendario/2019-07" in contenido
 
-def test_pagina_partidos_calendario_si_ano_mes_anterior_si_ano_mes_siguiente(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_si_ano_mes_anterior_si_ano_mes_siguiente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 								VALUES ('20190522', 'atletico-madrid', 'atletico-madrid', '2019-05-22', '22:00', 'Liga', '1-0', 'Victoria'),
 										('20190722', 'atletico-madrid', 'atletico-madrid', '2019-07-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -279,9 +264,7 @@ def test_pagina_partidos_calendario_si_ano_mes_anterior_si_ano_mes_siguiente(cli
 		assert "/partidos/calendario/2019-05" in contenido
 		assert "/partidos/calendario/2019-07" in contenido
 
-def test_pagina_partidos_calendario_con_proximo_partido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_con_proximo_partido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -311,14 +294,12 @@ def test_pagina_partidos_calendario_con_proximo_partido(cliente, conexion_entorn
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_con_partido_y_proximo_partido(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_y_proximo_partido(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO proximos_partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO proximos_partidos
 						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -348,13 +329,11 @@ def test_pagina_partidos_calendario_con_partido_y_proximo_partido(cliente, conex
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_proximos_sin_partidos_proximos(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_proximos_sin_partidos_proximos(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("DELETE FROM proximos_partidos")
+	conexion_entorno_usuario.c.execute("DELETE FROM proximos_partidos")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -368,9 +347,7 @@ def test_pagina_partidos_calendario_proximos_sin_partidos_proximos(cliente, cone
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partidos_calendario_proximos_ano_mes_error(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_proximos_ano_mes_error(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -384,9 +361,7 @@ def test_pagina_partidos_calendario_proximos_ano_mes_error(cliente, conexion_ent
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partidos_calendario_proximos_con_partido_proximo_otra_fecha(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_proximos_con_partido_proximo_otra_fecha(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -416,9 +391,7 @@ def test_pagina_partidos_calendario_proximos_con_partido_proximo_otra_fecha(clie
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_proximos_con_proximo_partido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_proximos_con_proximo_partido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -448,14 +421,12 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido(cliente, conexi
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_proximos_con_proximo_partido_y_partido(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_proximos_con_proximo_partido_y_partido(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO proximos_partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO proximos_partidos
 								VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -485,13 +456,11 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido_y_partido(clien
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_con_partido_asistido_otro_usuario(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_asistido_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.insertarUsuario("golden", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarUsuario("golden", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
-
-	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "golden", "comentario")
 
 	with cliente as cliente_abierto:
 
@@ -507,11 +476,9 @@ def test_pagina_partidos_calendario_con_partido_asistido_otro_usuario(cliente, c
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_con_partido_asistido_otra_fecha(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_asistido_otra_fecha(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
-
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
 
 	with cliente as cliente_abierto:
 
@@ -527,11 +494,9 @@ def test_pagina_partidos_calendario_con_partido_asistido_otra_fecha(cliente, con
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
 
-def test_pagina_partidos_calendario_con_partido_asistido_calendario(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_asistido_calendario(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
-
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
 
 	with cliente as cliente_abierto:
 
@@ -547,16 +512,14 @@ def test_pagina_partidos_calendario_con_partido_asistido_calendario(cliente, con
 		assert '<div class="dia-asistido" onclick="window.location.href' in contenido
 		assert "/partido/20190622/asistido" in contenido
 
-def test_pagina_partidos_calendario_con_partido_asistido_y_partido(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_asistido_y_partido(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 						VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-23', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-	conexion_entorno.confirmar()
+	conexion_entorno_usuario.confirmar()
 
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
-
-	conexion_entorno.insertarPartidoAsistido("20190623", "nacho98", "comentario")
+	conexion_entorno_usuario.insertarPartidoAsistido("20190623", "nacho98", "comentario")
 
 	with cliente as cliente_abierto:
 
@@ -587,7 +550,7 @@ def test_pagina_partidos_calendario_partidos_totales(cliente, conexion, password
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -613,7 +576,7 @@ def test_pagina_partidos_calendario_estadisticas(cliente, conexion, password_has
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -630,9 +593,7 @@ def test_pagina_partidos_calendario_estadisticas(cliente, conexion, password_has
 		assert '<div class="circulo-partido-proximo-calendario">' not in contenido
 		assert '<div class="tarjeta-partido-proximo-calendario">' not in contenido
 
-def test_pagina_partidos_calendario_sin_partido_asistido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_sin_partido_asistido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -648,11 +609,9 @@ def test_pagina_partidos_calendario_sin_partido_asistido(cliente, conexion_entor
 		assert "Partidos Asistidos" in contenido
 		assert f'<p class="valor-circulo-partidos-calendario-asistidos"><strong>0</strong></p>' in contenido
 
-def test_pagina_partidos_calendario_con_partido_asistido(cliente, conexion_entorno, password_hash):
+def test_pagina_partidos_calendario_con_partido_asistido(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
-
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
 
 	with cliente as cliente_abierto:
 
@@ -683,7 +642,7 @@ def test_pagina_partidos_calendario_proximos_partidos_totales(cliente, conexion,
 
 	conexion.confirmar()
 
-	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	with cliente as cliente_abierto:
 
@@ -701,9 +660,7 @@ def test_pagina_partidos_calendario_proximos_partidos_totales(cliente, conexion,
 		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido
 		assert '<div class="circulo-partidos-calendario-asistidos">' not in contenido
 
-def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrado(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrado(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -721,9 +678,7 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrad
 		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido
 		assert '<div class="circulo-partidos-calendario-asistidos">' not in contenido
 
-def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrado_diferente(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrado_diferente(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 

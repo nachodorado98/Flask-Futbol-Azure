@@ -7,9 +7,7 @@ def test_pagina_jugador_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_jugador_jugador_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_jugador_jugador_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -23,9 +21,7 @@ def test_pagina_jugador_jugador_no_existe(cliente, conexion_entorno, password_ha
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_jugador_jugador(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_jugador_jugador(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -50,13 +46,11 @@ def test_pagina_jugador_jugador(cliente, conexion_entorno, password_hash):
 		assert '<div class="tarjeta-selecciones-jugador">' in contenido
 		assert '<div class="tarjeta-seleccion-jugador">' in contenido
 
-def test_pagina_jugador_jugador_sin_equipo(cliente, conexion_entorno, password_hash):
+def test_pagina_jugador_jugador_sin_equipo(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE jugadores SET equipo_id=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE jugadores SET equipo_id=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -70,13 +64,11 @@ def test_pagina_jugador_jugador_sin_equipo(cliente, conexion_entorno, password_h
 		assert '<div class="info-jugador-imagenes">' in contenido
 		assert '<div class="info-jugador-equipo"' not in contenido
 
-def test_pagina_jugador_jugador_sin_puntuacion(cliente, conexion_entorno, password_hash):
+def test_pagina_jugador_jugador_sin_puntuacion(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE jugadores SET puntuacion=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE jugadores SET puntuacion=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -90,13 +82,11 @@ def test_pagina_jugador_jugador_sin_puntuacion(cliente, conexion_entorno, passwo
 		assert '<div class="info-jugador-imagenes">' in contenido
 		assert '<div class="info-jugador-puntuacion">' not in contenido
 
-def test_pagina_jugador_jugador_sin_dorsal(cliente, conexion_entorno, password_hash):
+def test_pagina_jugador_jugador_sin_dorsal(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE jugadores SET dorsal=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE jugadores SET dorsal=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -110,13 +100,11 @@ def test_pagina_jugador_jugador_sin_dorsal(cliente, conexion_entorno, password_h
 		assert '<div class="info-jugador-imagenes">' in contenido
 		assert '<div class="info-jugador-dorsal">' not in contenido
 
-def test_pagina_jugador_jugador_sin_posicion(cliente, conexion_entorno, password_hash):
+def test_pagina_jugador_jugador_sin_posicion(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""UPDATE jugadores SET posicion=NULL""")
+	conexion_entorno_usuario.c.execute("""UPDATE jugadores SET posicion=NULL""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -130,13 +118,11 @@ def test_pagina_jugador_jugador_sin_posicion(cliente, conexion_entorno, password
 		assert '<div class="info-jugador-imagenes">' in contenido
 		assert '<div class="info-jugador-posicion">' not in contenido
 
-def test_pagina_jugador_jugador_sin_seleccion(cliente, conexion_entorno, password_hash):
+def test_pagina_jugador_jugador_sin_seleccion(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""DELETE FROM jugadores_seleccion""")
+	conexion_entorno_usuario.c.execute("""DELETE FROM jugadores_seleccion""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 

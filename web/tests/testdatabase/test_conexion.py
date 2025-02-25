@@ -9,6 +9,8 @@ def test_conexion(conexion):
 	tablas=[tabla["relname"] for tabla in conexion.c.fetchall()]
 
 	assert "usuarios" in tablas 
+	assert "paises" in tablas
+	assert "ciudades" in tablas
 	assert "equipos" in tablas
 	assert "partidos" in tablas
 	assert "estadios" in tablas
@@ -32,13 +34,11 @@ def test_cerrar_conexion(conexion):
 
 	assert conexion.bbdd.closed
 
-def test_vaciar_bbdd(conexion_entorno):
+def test_vaciar_bbdd(conexion_entorno_usuario):
 
-	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
 
-	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
-
-	conexion_entorno.insertarPartidoAsistidoFavorito("20190622", "nacho")
+	conexion_entorno_usuario.insertarPartidoAsistidoFavorito("20190622", "nacho98")
 
 	tablas=["equipos", "partidos", "estadios", "equipo_estadio", "competiciones", "competiciones_campeones",
 			"partido_competicion", "jugadores", "jugadores_equipo", "jugadores_seleccion", "entrenadores",
@@ -46,14 +46,14 @@ def test_vaciar_bbdd(conexion_entorno):
 
 	for tabla in tablas:
 
-		conexion_entorno.c.execute(f"SELECT * FROM {tabla}")
+		conexion_entorno_usuario.c.execute(f"SELECT * FROM {tabla}")
 
-		assert conexion_entorno.c.fetchall()
+		assert conexion_entorno_usuario.c.fetchall()
 
-	conexion_entorno.vaciarBBDD()
+	conexion_entorno_usuario.vaciarBBDD()
 
 	for tabla in tablas:
 
-		conexion_entorno.c.execute(f"SELECT * FROM {tabla}")
+		conexion_entorno_usuario.c.execute(f"SELECT * FROM {tabla}")
 
-		assert not conexion_entorno.c.fetchall()
+		assert not conexion_entorno_usuario.c.fetchall()

@@ -8,13 +8,43 @@ body {
 }
 
 .container {
-    max-width: 400px;
+    max-width: 500px;
     margin: 40px auto;
     background-color: #fff;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
+}
+
+.container-nombre-apellido {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.container-nombre-apellido label {
+    margin-left: 10px;
+    margin-right: 5px;
+    color: #555;
+}
+
+.container-pais-ciudad {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.container-pais-ciudad label {
+    margin-left: 10px;
+    margin-right: 5px;
+    color: #555;
 }
 
 h1 {
@@ -87,10 +117,6 @@ p {
 a {
     color: #3897f0;
     text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
 }
 
 footer {

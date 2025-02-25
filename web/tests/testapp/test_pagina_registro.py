@@ -23,30 +23,29 @@ def test_pagina_registro(cliente, datalake):
 
 	vaciarCarpeta(ruta_carpeta_imagenes)
 
-@pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
+@pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "ciudad", "equipo"],
 	[
-		(None, "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", None, "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", None, "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", None, "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", None, "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", None, "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", None),
-		("carlos_456", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho1", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado2", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "12345678", "1998-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "2098-02-16", "atleti"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atleti?co")
+		(None, "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", None, "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", None, "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", None, "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", None, "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", None, "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", None),
+		("carlos_456", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho1", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado2", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "12345678", "1998-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "2098-02-16", "Madrid", "atleti"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti?co")
 	]
 )
-def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, ciudad, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":correo, "nombre":nombre,
 											"apellido":apellido, "contrasena":contrasena,
-											"fecha-nacimiento":fecha_nacimiento,
-											"equipo":equipo})
+											"fecha-nacimiento":fecha_nacimiento, "ciudad":ciudad, "equipo":equipo})
 
 	contenido=respuesta.data.decode()
 
@@ -67,12 +66,11 @@ def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nom
 )
 def test_pagina_singin_usuario_existente(cliente, conexion_entorno, datalake, usuario):
 
-	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.es", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atletico-madrid")
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.es", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", 103, "atletico-madrid")
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":"atletico-madrid"})
+											"fecha-nacimiento":"1998-02-16", "ciudad":"Madrid", "equipo":"atletico-madrid"})
 
 	contenido=respuesta.data.decode()
 
@@ -97,8 +95,7 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, 
 
 	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":equipo})
+											"fecha-nacimiento":"1998-02-16", "ciudad":"Madrid", "equipo":equipo})
 
 	contenido=respuesta.data.decode()
 
@@ -116,23 +113,47 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, 
 
 	assert not os.path.exists(ruta_carpeta_imagenes_usuario)
 
-@pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "equipo"],
+@pytest.mark.parametrize(["ciudad"],
+	[("madrid",),("MADRID",),("Barna",),("Bcn",),("Tokio",),("tokyo",)]
+)
+def test_pagina_singin_ciudad_no_existente(cliente, conexion_entorno, datalake, ciudad):
+
+	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
+											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+											"fecha-nacimiento":"1998-02-16", "ciudad":ciudad, "equipo":"atletico-madrid"})
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==302
+	assert respuesta.location=="/registro"
+	assert "<h1>Redirecting...</h1>" in contenido
+
+	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
+
+	datalake.cerrarConexion()
+
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+
+	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, "nacho98")
+
+	assert not os.path.exists(ruta_carpeta_imagenes_usuario)
+
+@pytest.mark.parametrize(["usuario", "correo", "nombre", "apellido", "contrasena", "fecha_nacimiento", "ciudad", "equipo"],
 	[
-		("nacho98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1999-07-16", "atletico-madrid"),
-		("golnachoen98", "nacho@golden.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "atletico-madrid"),
-		("golden98", "nacho@gmail.es", "nachogol", "dorado", "Ab!Golden19&9", "1998-02-01", "atletico-madrid"),
-		("golde98", "nacho@gmail.es", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-05-16", "atletico-madrid"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "16&goldenNacho&98", "1998-02-16", "atletico-madrid"),
-		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "2005-02-16", "atletico-madrid"),
-		("golden9", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1990-02-16", "atletico-madrid")
+		("nacho98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1999-07-16", "Madrid", "atletico-madrid"),
+		("golnachoen98", "nacho@golden.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atletico-madrid"),
+		("golden98", "nacho@gmail.es", "nachogol", "dorado", "Ab!Golden19&9", "1998-02-01", "Madrid", "atletico-madrid"),
+		("golde98", "nacho@gmail.es", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-05-16", "Madrid", "atletico-madrid"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "16&goldenNacho&98", "1998-02-16", "Madrid", "atletico-madrid"),
+		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "2005-02-16", "Madrid", "atletico-madrid"),
+		("golden9", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1990-02-16", "Madrid", "atletico-madrid")
 	]
 )
-def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, equipo):
+def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, ciudad, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":correo, "nombre":nombre,
 											"apellido":apellido, "contrasena":contrasena,
-											"fecha-nacimiento":fecha_nacimiento,
-											"equipo":equipo})
+											"fecha-nacimiento":fecha_nacimiento, "ciudad":ciudad, "equipo":equipo})
 
 	contenido=respuesta.data.decode()
 
@@ -172,14 +193,13 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, co
 		(["nacho98", "amanda99"],)
 	]
 )
-def test_pagina_singin_correctos(cliente, conexion_entorno, datalake, usuarios_agregar):
+def test_pagina_singins_correctos(cliente, conexion_entorno, datalake, usuarios_agregar):
 
 	for usuario in usuarios_agregar:
 
 		cliente.post("/singin", data={"usuario":usuario, "correo":"nacho@gmail.com", "nombre":"nacho",
 										"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-										"fecha-nacimiento":"1998-02-16",
-										"equipo":"atletico-madrid"})
+										"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 	conexion_entorno.c.execute("SELECT * FROM usuarios")
 
@@ -211,8 +231,7 @@ def test_pagina_singin_carpeta_usuarios_no_existe(cliente, conexion_entorno, dat
 
 	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16",
-											"equipo":"atletico-madrid"})
+											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 	contenido=respuesta.data.decode()
 

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, jsonify
 import os
 
 from src.utilidades.utils import datos_correctos, generarHash, correo_enviado, crearCarpeta
@@ -15,7 +15,28 @@ bp_registro=Blueprint("registro", __name__)
 @bp_registro.route("/registro")
 def registro():
 
-	return render_template("registro.html")
+	con=Conexion()
+
+	# paises=con.obtenerPaises()
+	paises=["España"]
+
+	con.cerrarConexion()
+
+	return render_template("registro.html",
+							paises=paises)
+
+@bp_registro.route("/ciudades_pais")
+def obtenerCiudadesPais():
+
+	pais=request.args.get("pais")
+
+	con=Conexion()
+
+	ciudades=con.obtenerCiudadesPais(pais, 25000)
+
+	con.cerrarConexion()
+
+	return jsonify(ciudades)
 
 @bp_registro.route("/singin", methods=["POST"])
 def singin():
@@ -27,6 +48,8 @@ def singin():
 	fecha_nacimiento=request.form.get("fecha-nacimiento")
 	equipo=request.form.get("equipo")
 	correo=request.form.get("correo")
+	pais=request.form.get("pais")
+	ciudad=request.form.get("ciudad")
 
 	if not datos_correctos(usuario, nombre, apellido, contrasena, fecha_nacimiento, equipo, correo):
 
@@ -34,13 +57,15 @@ def singin():
 
 	con=Conexion()
 
-	if con.existe_usuario(usuario) or not con.existe_equipo(equipo):
+	codigo_ciudad=con.obtenerCodigoCiudad(ciudad)
+
+	if con.existe_usuario(usuario) or not con.existe_equipo(equipo) or not con.existe_codigo_ciudad(codigo_ciudad):
 
 		con.cerrarConexion()
 
 		return redirect("/registro")
 
-	con.insertarUsuario(usuario, correo, generarHash(contrasena), nombre, apellido, fecha_nacimiento, equipo)
+	con.insertarUsuario(usuario, correo, generarHash(contrasena), nombre, apellido, fecha_nacimiento, codigo_ciudad, equipo)
 
 	con.cerrarConexion()
 

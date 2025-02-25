@@ -7,9 +7,7 @@ def test_pagina_anadir_partido_asistido_favorito_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_anadir_partido_asistido_favorito_partido_no_existe(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_favorito_partido_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -23,13 +21,11 @@ def test_pagina_anadir_partido_asistido_favorito_partido_no_existe(cliente, cone
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_anadir_partido_asistido_favorito_equipo_no_pertenece(cliente, conexion_entorno, password_hash):
+def test_pagina_anadir_partido_asistido_favorito_equipo_no_pertenece(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
+	conexion_entorno_usuario.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
@@ -43,9 +39,7 @@ def test_pagina_anadir_partido_asistido_favorito_equipo_no_pertenece(cliente, co
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_anadir_partido_asistido_favorito_partido_no_asistido(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_favorito_partido_no_asistido(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -59,9 +53,7 @@ def test_pagina_anadir_partido_asistido_favorito_partido_no_asistido(cliente, co
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_anadir_partido_asistido_favorito(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+def test_pagina_anadir_partido_asistido_favorito(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -89,14 +81,12 @@ def test_pagina_anadir_partido_asistido_favorito(cliente, conexion_entorno, pass
 		assert "/favorito_asistido.png" in contenido2
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' in contenido2
 
-def test_pagina_anadir_partido_asistido_favorito_partido_favorito_existe(cliente, conexion_entorno, password_hash):
+def test_pagina_anadir_partido_asistido_favorito_partido_favorito_existe(cliente, conexion_entorno_usuario):
 
-	conexion_entorno.c.execute("""INSERT INTO partidos
+	conexion_entorno_usuario.c.execute("""INSERT INTO partidos
 								VALUES('20190623', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
 
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", "atletico-madrid")
+	conexion_entorno_usuario.confirmar()
 
 	with cliente as cliente_abierto:
 
