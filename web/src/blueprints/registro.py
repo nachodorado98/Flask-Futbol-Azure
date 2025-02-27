@@ -9,6 +9,10 @@ from src.datalake.conexion_data_lake import ConexionDataLake
 
 from src.config import CONTENEDOR
 
+from src.kafka.kafka_utils import crearTopic, enviarMensajeKafka
+from src.kafka.configkafka import TOPIC
+
+
 bp_registro=Blueprint("registro", __name__)
 
 
@@ -69,6 +73,12 @@ def singin():
 
 	con.cerrarConexion()
 
+	crearTopic(TOPIC)
+
+	mensaje_correo={"categoria":"correo", "usuario":usuario, "nombre":nombre, "correo":correo}
+
+	correo_correcto=enviarMensajeKafka(TOPIC, mensaje_correo)
+
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
 	crearCarpeta(os.path.join(ruta, "templates", "imagenes", usuario))
@@ -91,4 +101,4 @@ def singin():
 
 		print(f"Error en conexion con datalake: {e}")
 
-	return render_template("singin.html", nombre=nombre, correo_correcto=correo_enviado(correo, nombre), equipo=equipo)
+	return render_template("singin.html", nombre=nombre, correo_correcto=correo_correcto, equipo=equipo)
