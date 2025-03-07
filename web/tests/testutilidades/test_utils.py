@@ -4,7 +4,7 @@ import geopandas as gpd
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
-from src.utilidades.utils import generarHash, comprobarHash, enviarCorreo, correo_enviado, anadirPuntos
+from src.utilidades.utils import generarHash, comprobarHash, anadirPuntos
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 from src.utilidades.utils import crearCarpeta, borrarCarpeta, vaciarCarpeta, vaciarCarpetaMapasUsuario
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
@@ -177,34 +177,6 @@ def test_comprobar_hash_contrasena_correcta(contrasena):
 	contrasena_hash=generarHash(contrasena)
 
 	assert comprobarHash(contrasena, contrasena_hash)
-
-def HTML()->str:
-
-	return 	"""<html>
-					<body>
-						<h1>¡Hola!</h1>
-						<p>Este es un <b>correo electrónico</b> enviado desde un script</p>
-					</body>
-				</html>
-			"""
-
-def test_enviar_correo_error():
-
-	with pytest.raises(Exception):
-
-		enviarCorreo("ignaciodoradoruiz@gmail.com", "asunto", HTML(), "ignaciodoradoruiz@gmail.com", "1234")
-
-def test_enviar_correo():
-
-	assert not enviarCorreo("ignaciodoradoruiz@gmail.com", "asunto", HTML())
-
-def test_correo_enviado_no_enviado():
-
-	assert not correo_enviado("ignaciodoradoruiz@gmail.com", "nombre", "ignaciodoradoruiz@gmail.com", "1234")
-
-def test_correo_enviado():
-
-	assert correo_enviado("ignaciodoradoruiz@gmail.com", "nombre")
 
 @pytest.mark.parametrize(["numero", "numero_puntos"],
 	[

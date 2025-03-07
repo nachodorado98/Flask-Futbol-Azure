@@ -89,6 +89,9 @@ def consumirMensajes(consumer:Consumer)->Optional[Dict]:
 
     try:
 
+        # Comando terminal para el Consumer
+        # kafka-console-consumer --bootstrap-server localhost:9092 --topic TOPIC
+
         mensaje=consumer.poll(1.0)
                 
         if not mensaje:

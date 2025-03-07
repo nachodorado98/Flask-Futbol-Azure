@@ -5,6 +5,8 @@ from confluent_kafka import Consumer
 from src.kafka.kafka_utils import kafka_consumer, crearTopic, subscribirseTOPIC, consumirMensajes, escribirLogKafka
 from src.kafka.configkafka import TOPIC
 
+from src.utilidades.utils import obtenerCorreoNombre, correo_enviado
+
 def conectarKafka(max_intentos:int=5)->Optional[Consumer]:
 
     intento=1
@@ -53,14 +55,26 @@ def ejecutarConsumer()->None:
 
         time.sleep(1)
 
-        if not mensaje:
+        if mensaje:
 
-            continue
+            datos_correo=obtenerCorreoNombre(mensaje)
 
-        else:
+            if datos_correo:
 
-            print(f"Mensaje: {mensaje}")
-            escribirLogKafka(f"Mensaje recibido: {mensaje}")
+                correo_correcto=correo_enviado(datos_correo[0], datos_correo[1])
+
+                if correo_correcto:
+
+                    escribirLogKafka(f"Correo enviado a la direccion: {datos_correo[0]}")
+
+                else:
+
+                    escribirLogKafka(f"Correo NO enviado a la direccion: {datos_correo[0]}")
+
+            else:
+
+                escribirLogKafka(f"Mensaje erroneo: {mensaje}")
+
 
 if __name__ == "__main__":
 

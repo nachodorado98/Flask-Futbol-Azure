@@ -67,6 +67,9 @@ def enviarMensajeKafka(topic:str, mensaje:dict, servidor_kafka:str=SERVIDOR)->bo
 
 		producer=kafka_producer(servidor_kafka)
 
+		# Comando terminal para el Producer
+		# kafka-console-producer --bootstrap-server localhost:9092 --topic TOPIC
+
 		producer.produce(topic, json.dumps(mensaje).encode("utf-8"))
 
 		producer.flush()

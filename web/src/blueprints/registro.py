@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, jsonify
 import os
 
-from src.utilidades.utils import datos_correctos, generarHash, correo_enviado, crearCarpeta
+from src.utilidades.utils import datos_correctos, generarHash, crearCarpeta
 
 from src.database.conexion import Conexion
 
