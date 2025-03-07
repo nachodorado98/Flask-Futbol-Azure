@@ -29,6 +29,7 @@ x-airflow-common:
 services:
   postgres:
     build: ./postgres
+    container_name: postgres
     ports:
       - 5432:5432
     volumes:
@@ -150,6 +151,7 @@ services:
 
   web:
     build: ./web
+    container_name: web
     ports:
      - 5000:5000
     volumes:
@@ -206,6 +208,15 @@ services:
       retries: 5
     depends_on:
       - zookeeper
+
+  consumer:
+    build: ./consumer
+    container_name: consumer
+    volumes:
+     - ./consumer:/app
+    depends_on:
+      - kafka
+    restart: always
       
 volumes:
   postgres-db-volume:

@@ -73,11 +73,17 @@ def singin():
 
 	con.cerrarConexion()
 
-	crearTopic(TOPIC)
+	try:
 
-	mensaje_correo={"categoria":"correo", "usuario":usuario, "nombre":nombre, "correo":correo}
+		crearTopic(TOPIC)
 
-	correo_correcto=enviarMensajeKafka(TOPIC, mensaje_correo)
+		mensaje_correo={"categoria":"correo", "usuario":usuario, "nombre":nombre, "correo":correo}
+
+		correo_correcto=enviarMensajeKafka(TOPIC, mensaje_correo)
+
+	except Exception:
+
+		correo_correcto=False
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 

@@ -8,8 +8,6 @@ from src.database.conexion import Conexion
 from src.datalake.conexion_data_lake import ConexionDataLake
 from confmain import config
 from src.utilidades.utils import vaciarCarpeta
-from confluent_kafka.admin import AdminClient
-from src.kafka.configkafka import SERVIDOR
 
 @pytest.fixture()
 def app():
@@ -105,11 +103,6 @@ def conexion_entorno_usuario(conexion_entorno, password_hash):
 def datalake():
 
     return ConexionDataLake()
-
-@pytest.fixture()
-def admin():
-
-	return AdminClient({"bootstrap.servers":SERVIDOR})
 
 def pytest_sessionfinish(session, exitstatus):
 

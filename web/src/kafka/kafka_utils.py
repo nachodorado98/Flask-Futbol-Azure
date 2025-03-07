@@ -1,12 +1,29 @@
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 import json
+from typing import Optional
 
 from .configkafka import SERVIDOR
 
-def crearTopic(topic:str)->None:
+def kafka_admin(servidor_kafka:str=SERVIDOR)->Optional[AdminClient]:
 
-	admin=AdminClient({"bootstrap.servers":SERVIDOR})
+	try:
+
+		admin=AdminClient({"bootstrap.servers":servidor_kafka})
+
+		admin.list_topics(timeout=5)
+
+		return admin
+
+	except Exception as e:
+
+		print(f"Error conectando a Kafka: {e}")
+
+		return None
+
+def crearTopic(topic:str, servidor_kafka:str=SERVIDOR)->None:
+
+	admin=kafka_admin(servidor_kafka)
 
 	if topic not in admin.list_topics().topics:
 
@@ -22,9 +39,25 @@ def crearTopic(topic:str)->None:
 
 		print(f"Topic {topic} creado")
 
+def kafka_producer(servidor_kafka:str=SERVIDOR)->Optional[Producer]:
+
+	try:
+
+		producer=Producer({"bootstrap.servers":servidor_kafka})
+
+		producer.list_topics(timeout=5)
+
+		return producer
+
+	except Exception as e:
+
+		print(f"Error conectando a Kafka: {e}")
+
+		return None
+
 def enviarMensajeKafka(topic:str, mensaje:dict, servidor_kafka:str=SERVIDOR)->bool:
 
-	admin=AdminClient({"bootstrap.servers":servidor_kafka})
+	admin=kafka_admin(servidor_kafka)
 
 	if topic not in admin.list_topics().topics:
 
@@ -32,7 +65,7 @@ def enviarMensajeKafka(topic:str, mensaje:dict, servidor_kafka:str=SERVIDOR)->bo
 
 	try:
 
-		producer=Producer({"bootstrap.servers":servidor_kafka})
+		producer=kafka_producer(servidor_kafka)
 
 		producer.produce(topic, json.dumps(mensaje).encode("utf-8"))
 
