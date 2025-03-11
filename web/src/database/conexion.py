@@ -2606,3 +2606,43 @@ class Conexion:
 						(codigo_ciudad,))
 
 		return False if not self.c.fetchone() else True
+
+	# Metodo para insertar un trayecto de un partido asistido
+	def insertarTrayectoPartidoAsistido(self, trayecto_id:str, partido_id, usuario:str, tipo_trayecto:str,
+						codciudad:int, transporte:str, estadio_id:str)->None:
+
+		self.c.execute("""INSERT INTO trayecto_partido_asistido
+							VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+							(trayecto_id, partido_id, usuario, tipo_trayecto, codciudad, transporte, estadio_id))
+
+		self.confirmar()
+
+	# Metodo para obtener la ciudad y pais de un usuario
+	def obtenerPaisCiudadUsuario(self, usuario:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT c.pais, c.ciudad
+						FROM usuarios u
+						JOIN ciudades c
+						ON u.codciudad=c.codciudad
+						WHERE u.usuario=%s""",
+						(usuario,))
+
+		ciudad_pais=self.c.fetchone()
+
+		return None if not ciudad_pais else (ciudad_pais["pais"], ciudad_pais["ciudad"])
+
+	# Metodo para obtener el estadio de un partido
+	def obtenerEstadioPartido(self, partido_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT e.estadio_id, e.nombre
+						FROM partidos p
+						JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
+						JOIN estadios e
+						ON pe.estadio_id=e.estadio_id
+						WHERE p.partido_id=%s""",
+						(partido_id,))
+
+		estadio=self.c.fetchone()
+
+		return None if not estadio else (estadio["estadio_id"], estadio["nombre"])

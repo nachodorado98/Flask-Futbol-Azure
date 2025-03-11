@@ -83,3 +83,16 @@ def test_obtener_equipo_usuario_existen(conexion_entorno):
 	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
 	assert conexion_entorno.obtenerEquipo("nacho98")=="atletico-madrid"
+
+def test_obtener_pais_ciudad_usuario_usuario_no_existe(conexion):
+
+	assert not conexion.obtenerPaisCiudadUsuario("nacho98")
+
+def test_obtener_pais_ciudad_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	pais, ciudad=conexion_entorno.obtenerPaisCiudadUsuario("nacho98")
+
+	assert pais=="España"
+	assert ciudad=="Madrid"

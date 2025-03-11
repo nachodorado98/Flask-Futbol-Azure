@@ -241,3 +241,42 @@ def test_pagina_singin_carpeta_usuarios_no_existe(cliente, conexion_entorno, dat
 	datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
 
 	datalake.cerrarConexion()
+
+def test_pagina_obtener_ciudades_pais_sin_pais(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/ciudades_pais")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==400
+		assert "error" in contenido
+
+def test_pagina_obtener_ciudades_pais_pais_no_existe(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/ciudades_pais?pais=no_existo")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==404
+		assert "error" in contenido
+
+def test_pagina_obtener_ciudades_pais(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/ciudades_pais?pais=España")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==404
+		assert "error" not in contenido

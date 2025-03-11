@@ -1,7 +1,7 @@
 /*-------------------------------------------------ANADIR PARTIDO ASISTIDO-------------------------------------------------------*/
 .tarjeta-anadir-partido-asistido {
     width: 100%;
-    max-width: 870px;
+    max-width: 1700px;
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -196,43 +196,150 @@
 .titulo-seccion-on-tour {
     color: var(--color-secundario);
     font-size: 36px;
-}
-
-.contenedor-fechas {
-    width: 100%;
-    max-width: 600px;
-    margin-top: 15px;
     margin-bottom: 10px;
 }
 
-label {
+.contenedor-datos-ida,
+.contenedor-datos-vuelta {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 60px;
+}
+
+.titulo-datos-ida-on-tour,
+.titulo-datos-vuelta-on-tour {
+    color: var(--color-secundario);
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.contenedor-origen-destino {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    margin-right: 20px;
+}
+
+.contenedor-pais-ciudad-partido {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.texto-origen-destino {
+    color: var(--color-secundario);
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.contenedor-pais-ciudad-partido .select-pais-ciudad {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bdc3c7;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 150px;
+    max-width: 200px;
+    margin-right: 20px;
+}
+
+.contenedor-pais-ciudad-partido .select-estadio {
+    -webkit-appearance: none; 
+    -moz-appearance: none;
+    appearance: none; 
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bdc3c7;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: default;
+    min-width: 150px;
+    max-width: 300px;
+    margin-right: 20px;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.icono-flecha-derecha {
+    height: 60px;
+    width: 110px;
+    cursor: default;
+    margin-right: 20px;
+    margin-top: 10px;
+}
+
+.contenedor-fecha-transporte {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-right: 20px;
+}
+
+.contenedor-fecha-transporte label {
     margin-top: 5px;
     color: var(--color-secundario);
     margin-right: 5px;
-    margin-left: 10px;
+    margin-right: 10px;
     font-size: 18px;
 }
 
-input {
+.contenedor-fecha-transporte input {
     width: 25%;
     padding: 5px;
     margin-top: 3px;
     box-sizing: border-box;
+    margin-right: 40px;
+}
+
+.contenedor-fecha-transporte select {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #bdc3c7;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 200px;
+    max-width: 300px;
 }
 
 .contenedor-checkbox-teletrabajo {
     display: flex;
     align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 60px;
 }
 
-.contenedor-checkbox-teletrabajo input[type="checkbox"] {
+.contenedor-label-check {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-right: 20px;
+}
+
+.contenedor-label-check input[type="checkbox"] {
     width: 25px;
     height: 25px;
     margin-right: 10px;
     cursor: pointer;
 }
 
-.contenedor-checkbox-teletrabajo .teletrabajo-texto {
+.contenedor-label-check .teletrabajo-texto {
     color: var(--color-secundario);
     font-size: 20px;
 }

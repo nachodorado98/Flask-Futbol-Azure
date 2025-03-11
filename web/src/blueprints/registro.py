@@ -34,13 +34,16 @@ def obtenerCiudadesPais():
 
 	pais=request.args.get("pais")
 
+	if not pais:
+		return jsonify({"error": "No se especificó el pais"}), 400
+
 	con=Conexion()
 
 	ciudades=con.obtenerCiudadesPais(pais, 25000)
 
 	con.cerrarConexion()
 
-	return jsonify(ciudades)
+	return jsonify(ciudades) if ciudades else jsonify({"error": "Pais no encontrado"}), 404
 
 @bp_registro.route("/singin", methods=["POST"])
 def singin():

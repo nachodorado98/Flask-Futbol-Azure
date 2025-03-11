@@ -18,7 +18,7 @@
 
         <div class="contenedor-select-boton">
 
-            <select class="select-partido" id="partido_anadir" name="partido_anadir" onchange="actualizarFechasPartidoAsistido()" required>
+            <select class="select-partido" id="partido_anadir" name="partido_anadir" onchange="manejarCambioPartido()" required>
 
                 <option value="sin-seleccion"{% if not partido_id_anadir %} selected{% endif %} disabled hidden>
                     Selecciona un partido
@@ -82,16 +82,107 @@
                     <hr style="width: 700px">
                     <p class="titulo-seccion-on-tour"><strong>Seccion On Tour</strong></p>
 
-                    <div class="contenedor-fechas">
-                        <label for="fecha-ida"><strong>Fecha Ida:</strong></label>
-                        <input type="date" id="fecha-ida" name="fecha-ida" {% if fecha_partido %}max='{{ fecha_partido }}'{% endif %} required>
-                        <label for="fecha-vuelta"><strong>Fecha Vuelta:</strong></label>
-                        <input type="date" id="fecha-vuelta" name="fecha-vuelta" {% if fecha_partido %}min='{{ fecha_partido }}'{% endif %} required>
+                    <div class="contenedor-datos-ida">
+
+                        <p class="titulo-datos-ida-on-tour"><strong>- On Tour Ida -</strong></p>
+
+                        <div class="contenedor-origen-destino">
+
+                            <div class="contenedor-pais-ciudad-partido">
+                                <p class="texto-origen-destino"><strong>Origen:</strong></p>
+                                <select id="pais-ida" name="pais-ida" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-ida', 'ciudad-ida')" required>
+                                    <option value="{{ pais_usuario }}" selected disabled hidden>{{ pais_usuario }}</option>
+                                    {% for pais in paises %}
+                                        <option value="{{ pais }}">{{ pais }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select id="ciudad-ida" name="ciudad-ida" class="select-pais-ciudad" required>
+                                    <option value="{{ ciudad_usuario }}" selected disabled hidden>{{ ciudad_usuario }}</option>
+                                </select>
+                            </div>
+
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                            <div class="contenedor-pais-ciudad-partido">
+                                <p class="texto-origen-destino"><strong>Destino:</strong></p>
+                                <select id="ciudad-ida-estadio" name="ciudad-ida-estadio" class="select-estadio" required>
+                                    {% if estadio_partido %}
+                                        <option value="{{ estadio_partido[0] }}">{{ estadio_partido[1] }}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="contenedor-fecha-transporte">
+                            <label for="fecha-ida"><strong>Fecha:</strong></label>
+                            <input type="date" id="fecha-ida" name="fecha-ida" {% if fecha_partido %}max='{{ fecha_partido }}'{% endif %} required>
+
+                            <label for="transporte-ida"><strong>Transporte:</strong></label>
+                            <select id="transporte-ida" name="transporte-ida" class="select-transporte" required>
+                                <option value="" selected disabled hidden>Seleccione un transporte</option>
+                                {% for transporte in transportes %}
+                                    <option value="{{ transporte }}">{{ transporte }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+
                     </div>
 
-                    <div class="contenedor-checkbox-teletrabajo">
-                        <input type="checkbox" id="teletrabajo" name="teletrabajo">
-                        <p class="teletrabajo-texto"><strong>Teletrabajo</strong></p>
+                    <div class="contenedor-datos-vuelta">
+
+                        <p class="titulo-datos-vuelta-on-tour"><strong>- On Tour Vuelta -</strong></p>
+
+                        <div class="contenedor-origen-destino">
+
+                            <div class="contenedor-pais-ciudad-partido">
+                                <p class="texto-origen-destino"><strong>Origen:</strong></p>
+                                <select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio" class="select-estadio" required>
+                                    {% if estadio_partido %}
+                                        <option value="{{ estadio_partido[0] }}">{{ estadio_partido[1] }}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                            <div class="contenedor-pais-ciudad-partido">
+                                <p class="texto-origen-destino"><strong>Destino:</strong></p>
+                                <select id="pais-vuelta" name="pais-vuelta" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-vuelta', 'ciudad-vuelta')" required>
+                                    <option value="{{ pais_usuario }}" selected disabled hidden>{{ pais_usuario }}</option>
+                                    {% for pais in paises %}
+                                        <option value="{{ pais }}">{{ pais }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select id="ciudad-vuelta" name="ciudad-vuelta" class="select-pais-ciudad" required>
+                                    <option value="{{ ciudad_usuario }}" selected disabled hidden>{{ ciudad_usuario }}</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="contenedor-fecha-transporte">
+                            <label for="fecha-vuelta"><strong>Fecha:</strong></label>
+                            <input type="date" id="fecha-vuelta" name="fecha-vuelta" {% if fecha_partido %}min='{{ fecha_partido }}'{% endif %} required>
+
+                            <label for="transporte-vuelta"><strong>Transporte:</strong></label>
+                            <select id="transporte-vuelta" name="transporte-vuelta" class="select-transporte" required>
+                                <option value="" selected disabled hidden>Seleccione un transporte</option>
+                                {% for transporte in transportes %}
+                                    <option value="{{ transporte }}">{{ transporte }}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                     <div class="contenedor-checkbox-teletrabajo">
+                        <div class="contenedor-label-check">
+                            <input type="checkbox" id="teletrabajo" name="teletrabajo">
+                            <p class="teletrabajo-texto"><strong>Teletrabajo</strong></p>
+                        </div>
                     </div>
 
                     <div class="botones-on-tour-partido-asistido">
@@ -127,6 +218,7 @@
 <script src="{{ url_for('static', filename='js/cerrar_on_tour_partido_asistido.js') }}"></script>
 <script src="{{ url_for('static', filename='js/formulario_partido_asistido.js') }}"></script>
 <script src="{{ url_for('static', filename='js/borrar_campos_on_tour.js') }}"></script>
+<script src="{{ url_for('static', filename='js/actualizar_ciudades_pais.js') }}"></script>
 
 {% endblock principal %}
 

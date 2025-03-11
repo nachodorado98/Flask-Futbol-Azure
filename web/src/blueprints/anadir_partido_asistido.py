@@ -47,7 +47,15 @@ def pagina_anadir_partido_asistido():
 
 	fecha_partido=con.obtenerFechaPartido(partido_id_anadir) if partido_id_anadir else None
 
+	paises=con.obtenerPaises()
+
+	pais_usuario, ciudad_usuario=con.obtenerPaisCiudadUsuario(current_user.id)
+
+	estadio_partido=con.obtenerEstadioPartido(partido_id_anadir) if partido_id_anadir else None
+
 	con.cerrarConexion()
+
+	transportes=["Avion", "Tren", "Autobus", "Autobus Urbano", "Autobus Interurbano", "Coche", "Metro", "Cercanias", "Pie"]
 
 	return render_template("anadir_partido_asistido.html",
 							usuario=current_user.id,
@@ -57,7 +65,12 @@ def pagina_anadir_partido_asistido():
 							todos=todos,
 							partido_id_anadir=partido_id_anadir,
 							existe_partido_asistido_favorito=existe_partido_asistido_favorito,
-							fecha_partido=fecha_partido)
+							fecha_partido=fecha_partido,
+							paises=paises,
+							pais_usuario=pais_usuario,
+							ciudad_usuario=ciudad_usuario,
+							estadio_partido=estadio_partido,
+							transportes=transportes)
 
 @bp_anadir_partido_asistido.route("/fecha_partido")
 def obtenerFechaPartido():
@@ -75,6 +88,38 @@ def obtenerFechaPartido():
 	con.cerrarConexion()
 
 	return jsonify({"fecha_ida": fecha_partido}) if fecha_partido else jsonify({"error": "Partido no encontrado"}), 404
+
+@bp_anadir_partido_asistido.route("/ciudades_pais_trayectos")
+def obtenerCiudadesPais():
+
+	pais=request.args.get("pais")
+
+	if not pais:
+		return jsonify({"error": "No se especificó el pais"}), 400
+
+	con=Conexion()
+
+	ciudades=con.obtenerCiudadesPais(pais, 50000)
+
+	con.cerrarConexion()
+
+	return jsonify(ciudades) if ciudades else jsonify({"error": "Pais no encontrado"}), 404
+
+@bp_anadir_partido_asistido.route("/estadio_partido")
+def obtenerEstadioPartido():
+
+	partido_id=request.args.get("partido_id")
+
+	if not partido_id:
+		return jsonify({"error": "No se especificó el partido"}), 400
+
+	con=Conexion()
+
+	estadio_partido=con.obtenerEstadioPartido(partido_id)
+
+	con.cerrarConexion()
+
+	return jsonify({"estadio": estadio_partido}) if estadio_partido else jsonify({"error": "Partido no encontrado"}), 404
 		
 @bp_anadir_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
 @login_required
