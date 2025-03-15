@@ -113,7 +113,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
 		assert '<option value="España" selected disabled hidden>España</option>' in contenido
-		assert '<option value="Madrid" selected disabled hidden>Madrid</option>' in contenido
+		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="metropolitano">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
 		assert "max='2019-06-22'" not in contenido
@@ -155,7 +155,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes_
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
 		assert f'<option value="{pais}" selected disabled hidden>{pais}</option>' in contenido
-		assert f'<option value="{ciudad}" selected disabled hidden>{ciudad}</option>' in contenido
+		assert f'<option value="{ciudad}" selected>{ciudad}</option>' in contenido
 		assert '<option value="metropolitano">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
 		assert "max='2019-06-22'" not in contenido
@@ -199,7 +199,7 @@ def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_reciente
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' not in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' not in contenido
 		assert '<option value="España" selected disabled hidden>España</option>' not in contenido
-		assert '<option value="Madrid" selected disabled hidden>Madrid</option>' not in contenido
+		assert '<option value="Madrid" selected>Madrid</option>' not in contenido
 		assert '<option value="metropolitano">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' not in contenido
 		assert "max='2019-06-22'" not in contenido
@@ -365,7 +365,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(clie
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
 		assert '<option value="España" selected disabled hidden>España</option>' in contenido
-		assert '<option value="Madrid" selected disabled hidden>Madrid</option>' in contenido
+		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="metropolitano">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
 		assert "max='2019-06-22'" not in contenido
@@ -419,8 +419,47 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cl
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
 		assert '<option value="España" selected disabled hidden>España</option>' in contenido
-		assert '<option value="Madrid" selected disabled hidden>Madrid</option>' in contenido
+		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="metropolitano">Metropolitano</option>' in contenido
+		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
+		assert "max='2019-06-22'" in contenido
+		assert "min='2019-06-22'" in contenido
+
+def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto_sin_estadio(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("DELETE FROM estadios")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/anadir_partido_asistido?partido_id=20190622&todos=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<option value="sin-seleccion" selected disabled hidden>' not in contenido
+		assert '<option value="sin-seleccion" disabled hidden>' in contenido
+		assert '<option value="20190622" selected>' in contenido
+		assert '<option value="20190622">' not in contenido
+		assert '<div class="contenedor-seccion-on-tour">' in contenido
+		assert '<div class="contenedor-on-tour">' in contenido
+		assert '<div class="seccion-on-tour-partido-asistido"' in contenido
+		assert '<div class="contenedor-datos-ida">' in contenido
+		assert '<select id="pais-ida" name="pais-ida"' in contenido
+		assert '<select id="ciudad-ida" name="ciudad-ida"' in contenido
+		assert '<select id="ciudad-ida-estadio" name="ciudad-ida-estadio"' in contenido
+		assert '<select id="transporte-ida" name="transporte-ida"' in contenido
+		assert '<div class="contenedor-datos-vuelta">' in contenido
+		assert '<select id="pais-vuelta" name="pais-vuelta"' in contenido
+		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
+		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
+		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
+		assert '<option value="España" selected disabled hidden>España</option>' in contenido
+		assert '<option value="Madrid" selected>Madrid</option>' in contenido
+		assert '<option value="metropolitano">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
 		assert "max='2019-06-22'" in contenido
 		assert "min='2019-06-22'" in contenido

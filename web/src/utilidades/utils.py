@@ -11,6 +11,8 @@ import pandas as pd
 
 from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESTADIOS
 
+from .configutils import TRANSPORTES
+
 def usuario_correcto(usuario:str)->bool:
 
 	return bool(usuario and usuario.isalnum())
@@ -512,3 +514,12 @@ def limpiarResultadosPartidosCalendario(partidos_calendario:List[tuple])->Dict:
 	return {"ganados":partidos_ganados,
 			"perdidos": partidos_perdidos,
 			"empatados": partidos_empatados}
+
+def datos_trayectos_correctos(codigo_ciudad_ida:bool, codigo_ciudad_vuelta:bool, ciudad_ida_estadio:str,
+								ciudad_vuelta_estadio:str, estadio_partido:str, transporte_ida:str, transporte_vuelta:str)->bool:
+
+	estadio_correcto=ciudad_ida_estadio==ciudad_vuelta_estadio==estadio_partido
+
+	transportes_correctos=transporte_ida in TRANSPORTES and transporte_vuelta in TRANSPORTES
+
+	return True if codigo_ciudad_ida and codigo_ciudad_vuelta and estadio_correcto and transportes_correctos else False

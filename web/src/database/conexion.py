@@ -53,6 +53,8 @@ class Conexion:
 
 		self.c.execute("DELETE FROM proximos_partidos")
 
+		self.c.execute("DELETE FROM trayecto_partido_asistido")
+
 		self.confirmar()
 
 	# Metodo para insertar un usuario
@@ -2646,3 +2648,13 @@ class Conexion:
 		estadio=self.c.fetchone()
 
 		return None if not estadio else (estadio["estadio_id"], estadio["nombre"])
+
+	# Metodo para eliminar los trayectos de un partido asistido
+	def eliminarTrayectosPartidoAsistido(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""DELETE FROM trayecto_partido_asistido
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(partido_id, usuario))
+
+		self.confirmar()

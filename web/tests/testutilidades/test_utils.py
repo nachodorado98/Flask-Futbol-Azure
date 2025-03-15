@@ -12,6 +12,7 @@ from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeome
 from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
 from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
 from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
+from src.utilidades.utils import datos_trayectos_correctos
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1267,3 +1268,30 @@ def test_limpiar_resultados_partidos_calendario(partidos, ganados, perdidos, emp
 	assert resultados["ganados"]==ganados
 	assert resultados["perdidos"]==perdidos
 	assert resultados["empatados"]==empatados
+
+@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "estadio_partido", "transporte_ida", "transporte_vuelta"],
+	[
+		(None, 2, "metropolitano", "metropolitano", "metropolitano", "Avion", "Avion"),
+		(1, None, "metropolitano", "metropolitano", "metropolitano",  "Avion", "Avion"),
+		(1, 2, "otro", "metropolitano", "metropolitano",  "Avion", "Avion"),
+		(1, 2, "metropolitano", "otro", "metropolitano",  "Avion", "Avion"),
+		(1, 2, "metropolitano", "metropolitano", "otro",  "Avion", "Avion"),
+		(1, 2, "metropolitano", "metropolitano", "metropolitano",  "transporte", "Avion"),
+		(1, 2, "metropolitano", "metropolitano", "metropolitano", "Avion", "transporte")
+	]
+)
+def test_datos_trayectos_correctos_no_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta):
+
+	assert not datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta)
+
+@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "estadio_partido", "transporte_ida", "transporte_vuelta"],
+	[
+		(1, 2, "metropolitano", "metropolitano", "metropolitano",  "Autobus", "Avion"),
+		(2, 2, "metropolitano", "metropolitano", "metropolitano",  "Avion", "Avion"),
+		(1, 2, "otro", "otro", "otro",  "Avion", "Tren"),
+		(1, 2, "otro", "otro", "otro",  "Coche", "Coche")
+	]
+)
+def test_datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta):
+
+	assert datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta)

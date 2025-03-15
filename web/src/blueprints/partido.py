@@ -227,6 +227,8 @@ def pagina_eliminar_partido_asistido(partido_id:str):
 
 	con.eliminarPartidoAsistidoFavorito(partido_id, current_user.id)
 
+	con.eliminarTrayectosPartidoAsistido(partido_id, current_user.id)
+
 	con.cerrarConexion()
 
 	return redirect("/partidos/asistidos")

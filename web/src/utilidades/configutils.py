@@ -1,0 +1,1 @@
+TRANSPORTES=["Avion", "Tren", "Autobus", "Autobus Urbano", "Autobus Interurbano", "Coche", "Metro", "Cercanias", "Pie"]

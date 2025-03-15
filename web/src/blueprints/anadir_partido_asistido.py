@@ -4,7 +4,8 @@ import os
 
 from src.database.conexion import Conexion
 
-from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas
+from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, datos_trayectos_correctos
+from src.utilidades.configutils import TRANSPORTES
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
@@ -55,8 +56,6 @@ def pagina_anadir_partido_asistido():
 
 	con.cerrarConexion()
 
-	transportes=["Avion", "Tren", "Autobus", "Autobus Urbano", "Autobus Interurbano", "Coche", "Metro", "Cercanias", "Pie"]
-
 	return render_template("anadir_partido_asistido.html",
 							usuario=current_user.id,
 							equipo=equipo,
@@ -70,7 +69,7 @@ def pagina_anadir_partido_asistido():
 							pais_usuario=pais_usuario,
 							ciudad_usuario=ciudad_usuario,
 							estadio_partido=estadio_partido,
-							transportes=transportes)
+							transportes=TRANSPORTES)
 
 @bp_anadir_partido_asistido.route("/fecha_partido")
 def obtenerFechaPartido():
@@ -129,8 +128,14 @@ def pagina_insertar_partido_asistido():
 	comentario=request.form.get("comentario")
 	partido_asistido_favorito=request.form.get("partido-favorito")
 	archivos=request.files
+	ciudad_ida=request.form.get("ciudad-ida")
+	ciudad_ida_estadio=request.form.get("ciudad-ida-estadio")
 	fecha_ida=request.form.get("fecha-ida")
+	transporte_ida=request.form.get("transporte-ida")
+	ciudad_vuelta=request.form.get("ciudad-vuelta")
+	ciudad_vuelta_estadio=request.form.get("ciudad-vuelta-estadio")
 	fecha_vuelta=request.form.get("fecha-vuelta")
+	transporte_vuelta=request.form.get("transporte-vuelta")
 	teletrabajo=request.form.get("teletrabajo", default=False, type=bool)
 
 	con=Conexion()
@@ -208,6 +213,28 @@ def pagina_insertar_partido_asistido():
 	if comprobarFechas(fecha_ida, fecha_vuelta, fecha_partido):
 
 		con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
+
+		codigo_ciudad_ida=con.obtenerCodigoCiudad(ciudad_ida)
+
+		codigo_ciudad_vuelta=con.obtenerCodigoCiudad(ciudad_vuelta)
+
+		estadio_partido=con.obtenerEstadioPartido(partido_id)
+
+		if not estadio_partido:
+
+			con.cerrarConexion()
+
+			return redirect("/partidos/asistidos")
+
+		estadio_partido_id=estadio_partido[0]
+
+		if datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido_id, transporte_ida, transporte_vuelta):
+
+			trayecto_id=f"id_{partido_id}_{current_user.id}"
+
+			con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, estadio_partido_id)
+
+			con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_vuelta, transporte_vuelta, estadio_partido_id)
 
 	con.cerrarConexion()
 
