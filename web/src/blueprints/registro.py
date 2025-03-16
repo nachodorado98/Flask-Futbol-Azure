@@ -94,17 +94,9 @@ def singin():
 
 	try:
 
-		dl=ConexionDataLake()
+		mensaje_datalake={"categoria":"datalake_usuario", "usuario":usuario}
 
-		if not dl.existe_carpeta(CONTENEDOR, "usuarios"):
-
-			dl.crearCarpeta(CONTENEDOR, "usuarios")
-
-		dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/perfil")
-
-		dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/imagenes")
-
-		dl.cerrarConexion()
+		enviarMensajeKafka(TOPIC, mensaje_datalake)
 
 	except Exception as e:
 

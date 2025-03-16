@@ -4,7 +4,7 @@ import os
 from src.config import CONTENEDOR
 from src.utilidades.utils import vaciarCarpeta
 
-def test_pagina_registro(cliente, datalake):
+def test_pagina_registro(cliente):
 
 	respuesta=cliente.get("/registro")
 
@@ -12,12 +12,6 @@ def test_pagina_registro(cliente, datalake):
 
 	respuesta.status_code==200
 	assert "<h1>Crear Una Cuenta</h1>" in contenido
-
-	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
-
-	datalake.crearCarpeta(CONTENEDOR, "usuarios")
-
-	datalake.cerrarConexion()
 
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
@@ -41,7 +35,7 @@ def test_pagina_registro(cliente, datalake):
 		("golden98", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", "Madrid", "atleti?co")
 	]
 )
-def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, ciudad, equipo):
+def test_pagina_singin_datos_incorrectos(cliente, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, ciudad, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":correo, "nombre":nombre,
 											"apellido":apellido, "contrasena":contrasena,
@@ -53,10 +47,6 @@ def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nom
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
-	assert not datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
-
-	datalake.cerrarConexion()
-
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
 	assert not os.path.exists(ruta_carpeta_imagenes+f"/{usuario}")
@@ -64,7 +54,7 @@ def test_pagina_singin_datos_incorrectos(cliente, datalake, usuario, correo, nom
 @pytest.mark.parametrize(["usuario"],
 	[("nacho98",),("naCho98",),("nacho",),("amanditaa",),("amanda99",)]
 )
-def test_pagina_singin_usuario_existente(cliente, conexion_entorno, datalake, usuario):
+def test_pagina_singin_usuario_existente(cliente, conexion_entorno, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.es", "nachogolden", "dorado", "Ab!CdEfGhIJK3LMN", "1998-02-16", 103, "atletico-madrid")
 
@@ -78,10 +68,6 @@ def test_pagina_singin_usuario_existente(cliente, conexion_entorno, datalake, us
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
-	assert not datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
-
-	datalake.cerrarConexion()
-
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
 	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
@@ -91,7 +77,7 @@ def test_pagina_singin_usuario_existente(cliente, conexion_entorno, datalake, us
 @pytest.mark.parametrize(["equipo"],
 	[("atm",),("atleti",),("equipo",),("atleticomadrid",),("atletico madrid",),("atleti-madrid",)]
 )
-def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, equipo):
+def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
@@ -103,10 +89,6 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, 
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
 
-	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
-
-	datalake.cerrarConexion()
-
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
 	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, "nacho98")
@@ -116,7 +98,7 @@ def test_pagina_singin_equipo_no_existente(cliente, conexion_entorno, datalake, 
 @pytest.mark.parametrize(["ciudad"],
 	[("madrid",),("MADRID",),("Barna",),("Bcn",),("Tokio",),("tokyo",)]
 )
-def test_pagina_singin_ciudad_no_existente(cliente, conexion_entorno, datalake, ciudad):
+def test_pagina_singin_ciudad_no_existente(cliente, conexion_entorno, ciudad):
 
 	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
 											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
@@ -127,10 +109,6 @@ def test_pagina_singin_ciudad_no_existente(cliente, conexion_entorno, datalake, 
 	assert respuesta.status_code==302
 	assert respuesta.location=="/registro"
 	assert "<h1>Redirecting...</h1>" in contenido
-
-	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
-
-	datalake.cerrarConexion()
 
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
@@ -149,7 +127,7 @@ def test_pagina_singin_ciudad_no_existente(cliente, conexion_entorno, datalake, 
 		("golden9", "nacho@gmail.es", "nacho", "dorado", "Ab!CdEfGhIJK3LMN", "1990-02-16", "Madrid", "atletico-madrid")
 	]
 )
-def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, ciudad, equipo):
+def test_pagina_singin_correcto(cliente, conexion_entorno, usuario, correo, nombre, apellido, contrasena, fecha_nacimiento, ciudad, equipo):
 
 	respuesta=cliente.post("/singin", data={"usuario":usuario, "correo":correo, "nombre":nombre,
 											"apellido":apellido, "contrasena":contrasena,
@@ -170,12 +148,6 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, co
 
 	assert len(usuarios)==1
 
-	assert datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
-
-	datalake.eliminarCarpeta(CONTENEDOR, f"usuarios/{usuario}")
-
-	datalake.cerrarConexion()
-
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
 	ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
@@ -193,7 +165,7 @@ def test_pagina_singin_correcto(cliente, conexion_entorno, datalake, usuario, co
 		(["nacho98", "amanda99"],)
 	]
 )
-def test_pagina_singins_correctos(cliente, conexion_entorno, datalake, usuarios_agregar):
+def test_pagina_singins_correctos(cliente, conexion_entorno, usuarios_agregar):
 
 	for usuario in usuarios_agregar:
 
@@ -211,36 +183,11 @@ def test_pagina_singins_correctos(cliente, conexion_entorno, datalake, usuarios_
 
 	for usuario in usuarios_agregar:
 
-		assert datalake.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}")
-
-		datalake.eliminarCarpeta(CONTENEDOR, f"usuarios/{usuario}")
-
 		ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
 
 		assert os.path.exists(ruta_carpeta_imagenes_usuario)
 
-	datalake.cerrarConexion()
-
 	vaciarCarpeta(ruta_carpeta_imagenes)
-
-def test_pagina_singin_carpeta_usuarios_no_existe(cliente, conexion_entorno, datalake):
-
-	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
-
-	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios")
-
-	respuesta=cliente.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
-
-	contenido=respuesta.data.decode()
-
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98")
-
-	datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
-
-	datalake.cerrarConexion()
 
 def test_pagina_obtener_ciudades_pais_sin_pais(cliente, conexion_entorno_usuario):
 

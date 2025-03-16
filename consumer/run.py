@@ -5,7 +5,9 @@ from confluent_kafka import Consumer
 from src.kafka.kafka_utils import kafka_consumer, crearTopic, subscribirseTOPIC, consumirMensajes, escribirLogKafka
 from src.kafka.configkafka import TOPIC
 
-from src.utilidades.utils import obtenerCorreoNombre, correo_enviado
+from src.datalake.conexion_data_lake import ConexionDataLake
+
+from src.utilidades.utils import obtenerClave, obtenerCorreoUsuarioNombre, correo_enviado, crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios
 
 def conectarKafka(max_intentos:int=5)->Optional[Consumer]:
 
@@ -33,6 +35,48 @@ def conectarKafka(max_intentos:int=5)->Optional[Consumer]:
 
     raise Exception("Error, imposible conectar")
 
+def realizarFuncionalidadCorreo(mensaje:str)->None:
+
+    datos_correo=obtenerCorreoUsuarioNombre(mensaje)
+
+    if datos_correo:
+
+        correo_correcto=correo_enviado(datos_correo[0], datos_correo[2])
+
+        if correo_correcto:
+
+            escribirLogKafka(f"Correo del usuario {datos_correo[1]} enviado a la direccion: {datos_correo[0]}")
+
+        else:
+
+            escribirLogKafka(f"Correo del usuario {datos_correo[1]} NO enviado a la direccion: {datos_correo[0]}")
+
+    else:
+
+            escribirLogKafka("Correo NO enviado")
+
+def realizarFuncionalidadDataLakeUsuario(mensaje:str)->None:
+
+    usuario=obtenerClave(mensaje, "usuario")
+
+    if usuario:
+
+        if crearCarpetaDataLakeUsuario():
+
+            escribirLogKafka("Carpeta usuarios creada")
+
+            if crearCarpetaDataLakeUsuarios(usuario):
+
+                escribirLogKafka(f"Carpeta del usuario {usuario} creada correctamente en el DataLake")
+
+            else:
+
+                escribirLogKafka(f"Carpeta del usuario {usuario} NO creada correctamente en el DataLake")
+
+        else:
+
+            escribirLogKafka("Carpeta usuarios NO creada")
+
 def ejecutarConsumer()->None:
 
     consumer=conectarKafka()
@@ -53,28 +97,21 @@ def ejecutarConsumer()->None:
 
         mensaje=consumirMensajes(consumer)
 
-        time.sleep(1)
-
         if mensaje:
 
-            datos_correo=obtenerCorreoNombre(mensaje)
+            categoria=obtenerClave(mensaje, "categoria")
 
-            if datos_correo:
+            if categoria=="correo":
 
-                correo_correcto=correo_enviado(datos_correo[0], datos_correo[1])
+                realizarFuncionalidadCorreo(mensaje)                
 
-                if correo_correcto:
+            elif categoria=="datalake_usuario":
 
-                    escribirLogKafka(f"Correo enviado a la direccion: {datos_correo[0]}")
-
-                else:
-
-                    escribirLogKafka(f"Correo NO enviado a la direccion: {datos_correo[0]}")
+                realizarFuncionalidadDataLakeUsuario(mensaje)
 
             else:
 
                 escribirLogKafka(f"Mensaje erroneo: {mensaje}")
-
 
 if __name__ == "__main__":
 

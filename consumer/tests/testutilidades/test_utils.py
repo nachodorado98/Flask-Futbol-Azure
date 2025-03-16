@@ -1,5 +1,9 @@
 import pytest
-from src.utilidades.utils import enviarCorreo, correo_enviado, convertirMensaje, obtenerCorreoNombre
+
+from src.utilidades.utils import enviarCorreo, correo_enviado, convertirMensaje, obtenerClave, obtenerCorreoUsuarioNombre
+from src.utilidades.utils import crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios
+
+from src.config import CONTENEDOR
 
 def HTML()->str:
 
@@ -40,17 +44,80 @@ def test_convertir_mensaje():
 	assert isinstance(mensaje_diccionario, dict)
 	assert mensaje_diccionario=={"mensaje":"Hola"}
 
-def test_obtener_correo_nombre_error():
+def test_obtener_clave_error():
 
-	assert not obtenerCorreoNombre("mensaje")
+	assert not obtenerClave("mensaje", "clave")
 
-def test_obtener_correo_nombre_error_claves():
+def test_obtener_clave_error_claves():
 
-	assert not obtenerCorreoNombre('{"mensaje":"Hola"}')
+	assert not obtenerClave('{"mensaje":"Hola"}', "clave")
 
-def test_obtener_correo_nombre_error_claves():
+def test_obtener_clave():
 
-	correo, nombre=obtenerCorreoNombre('{"correo":"correo", "nombre":"nombre"}')
+	clave=obtenerClave('{"clave":"clave"}', "clave")
+
+	assert clave=="clave"
+
+def test_obtener_correo_usuario_nombre_error():
+
+	assert not obtenerCorreoUsuarioNombre("mensaje")
+
+def test_obtener_correo_usuario_nombre_error_claves():
+
+	assert not obtenerCorreoUsuarioNombre('{"mensaje":"Hola"}')
+
+def test_obtener_correo_usuario_nombre():
+
+	correo, usuario, nombre=obtenerCorreoUsuarioNombre('{"correo":"correo", "usuario":"usuario", "nombre":"nombre"}')
 
 	assert correo=="correo"
+	assert usuario=="usuario"
 	assert nombre=="nombre"
+
+def test_crear_carpeta_data_lake_usuario_no_existe(datalake):
+
+	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
+
+	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios")
+
+	crearCarpetaDataLakeUsuario()
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+
+	datalake.cerrarConexion()
+
+def test_crear_carpeta_data_lake_usuario_existe(datalake):
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+
+	crearCarpetaDataLakeUsuario()
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+
+	datalake.cerrarConexion()
+
+def test_crear_carpeta_data_lake_usuarios_no_existe(datalake):
+
+	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
+
+	crearCarpetaDataLakeUsuario()
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+
+	crearCarpetaDataLakeUsuarios("nacho")
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+
+	datalake.cerrarConexion()
+
+def test_crear_carpeta_data_lake_usuarios_existe(datalake):
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+
+	crearCarpetaDataLakeUsuarios("nacho")
+
+	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+
+	datalake.cerrarConexion()

@@ -6,6 +6,10 @@ from typing import Optional, Dict
 
 from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO_CORREO
 
+from src.datalake.conexion_data_lake import ConexionDataLake
+
+from src.config import CONTENEDOR
+
 def enviarCorreo(destino:str, asunto:str, template_correo:str,
 				origen:str=CORREO_LOGIN, contrasena:str=CONTRASENA_LOGIN)->None:
 
@@ -135,14 +139,64 @@ def convertirMensaje(mensaje:str)->Optional[Dict]:
 		print(f"Error convirtiendo mensaje a diccionario: {e}")
 		return
 
-def obtenerCorreoNombre(mensaje:str)->Optional[tuple]:
+def obtenerClave(mensaje:str, clave:str)->Optional[str]:
 
 	try:
 
 		mensaje_diccionario=convertirMensaje(mensaje)
 
-		return mensaje_diccionario["correo"], mensaje_diccionario["nombre"]
+		return mensaje_diccionario[clave]
 
 	except Exception:
 
 		return
+
+def obtenerCorreoUsuarioNombre(mensaje:str)->Optional[tuple]:
+
+	correo=obtenerClave(mensaje, "correo")
+	usuario=obtenerClave(mensaje, "usuario")
+	nombre=obtenerClave(mensaje, "nombre")
+
+	return (correo, usuario, nombre) if correo and usuario and nombre else None
+
+def crearCarpetaDataLakeUsuario()->bool:
+
+	try:
+
+		dl=ConexionDataLake()
+
+		if not dl.existe_carpeta(CONTENEDOR, "usuarios"):
+
+			dl.crearCarpeta(CONTENEDOR, "usuarios")
+
+		dl.cerrarConexion()
+
+		return True
+
+	except Exception as e:
+
+		print(f"Error en conexion con datalake: {e}")
+
+		return False
+
+def crearCarpetaDataLakeUsuarios(usuario:str)->bool:
+
+	try:
+
+		dl=ConexionDataLake()
+
+		if not dl.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}"):
+
+			dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/perfil")
+
+			dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/imagenes")
+
+		dl.cerrarConexion()
+
+		return True
+
+	except Exception as e:
+
+		print(f"Error en conexion con datalake: {e}")
+
+		return False

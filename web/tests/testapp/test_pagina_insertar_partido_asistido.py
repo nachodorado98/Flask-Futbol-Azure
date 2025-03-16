@@ -194,13 +194,11 @@ def test_pagina_insertar_partido_asistido_comentario_limite(cliente, conexion_en
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion_entorno, datalake):
+def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion_entorno_usuario, datalake):
+
+	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -220,9 +218,9 @@ def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion
 		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
 
-		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert len(conexion_entorno.c.fetchall())==1
+		assert len(conexion_entorno_usuario.c.fetchall())==1
 		
 		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
 
@@ -240,13 +238,11 @@ def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno, datalake):
+def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno_usuario, datalake):
+
+	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
 
 	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
-											"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
-											"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
@@ -266,9 +262,9 @@ def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno, 
 		assert respuesta.location=="/partidos/asistidos"
 		assert "Redirecting..." in contenido
 
-		conexion_entorno.c.execute("SELECT * FROM partidos_asistidos")
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert len(conexion_entorno.c.fetchall())==1
+		assert len(conexion_entorno_usuario.c.fetchall())==1
 
 		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
 		
