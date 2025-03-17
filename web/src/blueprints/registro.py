@@ -5,8 +5,6 @@ from src.utilidades.utils import datos_correctos, generarHash, crearCarpeta
 
 from src.database.conexion import Conexion
 
-from src.datalake.conexion_data_lake import ConexionDataLake
-
 from src.config import CONTENEDOR
 
 from src.kafka.kafka_utils import crearTopic, enviarMensajeKafka

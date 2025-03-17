@@ -135,6 +135,8 @@ def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 
 def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake):
 
+	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/singin", data={"usuario":"nacho98", "correo":"nacho@gmail.com", "nombre":"nacho",
