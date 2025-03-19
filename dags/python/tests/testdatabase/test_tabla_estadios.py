@@ -193,3 +193,69 @@ def test_actualizar_coordenadas_estadio(conexion, datos_nuevos):
 
 	assert datos_actualizados["latitud"]==datos_nuevos[0]
 	assert datos_actualizados["longitud"]==datos_nuevos[1]
+
+def test_obtener_estadios_sin_ciudad_no_estadios(conexion):
+
+	assert not conexion.obtenerEstadiosSinCiudad()
+
+def test_obtener_estadios_sin_ciudad_con_ciudad(conexion):
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	assert not conexion.obtenerEstadiosSinCiudad()
+
+@pytest.mark.parametrize(["latitud", "longitud"],
+	[(40, None), (None, -3), (None, None)]
+)
+def test_obtener_estadios_sin_ciudad_sin_ciudad_sin_coordenadas(conexion, latitud, longitud):
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				latitud, longitud, None, 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	assert not conexion.obtenerEstadiosSinCiudad()
+
+def test_obtener_estadios_sin_ciudad(conexion):
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, None, 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	estadios=conexion.obtenerEstadiosSinCiudad()
+
+	assert estadios[0][0]=="vicente-calderon"
+	assert estadios[0][1]==40
+	assert estadios[0][2]==-3
+
+def test_actualizar_ciudad_estadio_no_existe(conexion):
+
+	assert not conexion.existe_estadio("estadio")
+
+	conexion.actualizarCiudadEstadio("Madrid", "estadio")
+
+	assert not conexion.existe_estadio("estadio")
+
+@pytest.mark.parametrize(["ciudad"],
+	[("Toledo",),("Segovia",),("Avila",),("Guadalajara",)]
+)
+def test_actualizar_ciudad_estadio(conexion, ciudad):
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	assert conexion.existe_estadio("vicente-calderon")
+
+	conexion.actualizarCiudadEstadio(ciudad, "vicente-calderon")
+
+	conexion.c.execute("SELECT Ciudad FROM estadios WHERE Estadio_Id='vicente-calderon'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["ciudad"]==ciudad

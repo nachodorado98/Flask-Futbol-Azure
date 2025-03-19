@@ -1,6 +1,6 @@
 import pytest
 
-def test_tabla_competiciones_llena(conexion):
+def test_tabla_ciudades_llena(conexion):
 
 	conexion.c.execute("SELECT * FROM ciudades")
 

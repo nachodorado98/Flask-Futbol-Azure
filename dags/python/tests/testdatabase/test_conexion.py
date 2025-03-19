@@ -27,6 +27,8 @@ def test_conexion(conexion):
 	assert "entrenadores" in tablas
 	assert "temporada_jugadores" in tablas
 	assert "variables" in tablas
+	assert "paises" in tablas
+	assert "ciudades" in tablas
 
 def test_cerrar_conexion(conexion):
 

@@ -281,3 +281,45 @@ def obtenerArchivosNoExistenDataLake(nombre_contenedor:str, nombre_carpeta:str, 
 	archivos_carpeta_contenedor_limpios=[archivo.name.split(f"{nombre_carpeta}/")[1] for archivo in archivos_carpeta_contenedor]
 
 	return list(filter(lambda archivo: f"{archivo}.{extension}" not in archivos_carpeta_contenedor_limpios, archivos_comprobar))
+
+def obtenerCiudadMasCercana(latitud:float, longitud:str, distancia_minima:int=2, umbral_maximo:int=5, umbral_minimo:int=2)->Optional[tuple]:
+
+	conexion=Conexion()
+
+	ciudades=conexion.obtenerCiudadesMasCercanas(latitud, longitud)
+
+	conexion.cerrarConexion()
+
+	if not ciudades:
+
+		raise Exception("No hay ciudades cercanas")
+
+	if len(ciudades)==1:
+
+		return ciudades[0][0], ciudades[0][1]
+
+	ciudad_distancia, ciudad_prioridad=ciudades[0], ciudades[1]
+
+	diferencia_distancias=ciudad_prioridad[2]-ciudad_distancia[2]
+
+	if ciudad_distancia[2]<1:
+
+		return ciudad_distancia[0], ciudad_distancia[1]
+
+	elif diferencia_distancias>=umbral_maximo:
+
+		return ciudad_distancia[0], ciudad_distancia[1]
+
+	elif diferencia_distancias<=umbral_minimo:
+
+		return ciudad_prioridad[0], ciudad_prioridad[1]
+
+	else:
+
+		if ciudad_prioridad[3]<ciudad_distancia[3]:
+
+			return ciudad_prioridad[0], ciudad_prioridad[1]
+
+		else:
+
+			return ciudad_distancia[0], ciudad_distancia[1]

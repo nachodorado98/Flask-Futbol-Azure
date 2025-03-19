@@ -833,3 +833,70 @@ class Conexion:
 		selecciones=self.c.fetchall()
 
 		return list(map(lambda seleccion: seleccion["codigo_seleccion"], selecciones))
+
+	# Metodo para obtener los estadios que su ciudad no estan en ciudades
+	def obtenerEstadiosSinCiudad(self)->List[tuple]:
+
+		self.c.execute("""SELECT e.Estadio_Id, e.Latitud, e.Longitud
+							FROM estadios e  
+							LEFT JOIN ciudades c  
+							ON e.Ciudad= c.Ciudad  
+							WHERE c.ciudad IS NULL
+							AND e.Latitud IS NOT NULL
+							AND e.Longitud IS NOT NULL
+							ORDER BY e.Estadio_Id""")
+
+		estadios=self.c.fetchall()
+
+		return list(map(lambda estadio: (estadio["estadio_id"],
+										estadio["latitud"],
+										estadio["longitud"]), estadios))
+
+	# Metodo para obtener las ciudades mas cercanas de una latitud y longitud por distancia y por tipo
+	def obtenerCiudadesMasCercanas(self, latitud:float, longitud:float)->Optional[List[tuple]]:
+
+		self.c.execute("""WITH CiudadesOrdenadas AS (
+								SELECT Ciudad, Pais, tipo,
+							        2 * 6371 * ASIN(SQRT(
+							            POWER(SIN((RADIANS(%s::numeric) - RADIANS(Latitud::numeric)) / 2), 2) +
+							            COS(RADIANS(%s::numeric)) * COS(RADIANS(Latitud::numeric)) *
+							            POWER(SIN((RADIANS(%s::numeric) - RADIANS(Longitud::numeric)) / 2), 2)
+							        ))::numeric AS Distancia,
+							        CASE 
+							            WHEN tipo='Capital' THEN 1 
+							            WHEN tipo='Capital Comunidad' THEN 2 
+							            WHEN tipo='Capital Provincia' THEN 3 
+							            WHEN tipo='Ciudad' THEN 4 
+							            ELSE 5
+							        END AS Prioridad
+							    FROM Ciudades
+							    ORDER BY Distancia ASC
+							    LIMIT 5)
+							SELECT * FROM ((SELECT Ciudad, Pais, Distancia, tipo, Prioridad
+							FROM CiudadesOrdenadas
+						    ORDER BY Prioridad ASC, Distancia ASC
+						    LIMIT 1)
+							UNION
+							(SELECT Ciudad, Pais, Distancia, tipo, Prioridad
+						    FROM CiudadesOrdenadas
+						    ORDER BY Distancia ASC, Prioridad ASC
+						    LIMIT 1)) as TablaFinal
+						    ORDER BY Distancia ASC""",
+						    (latitud, latitud, longitud))
+
+		ciudades_mas_cercanas=self.c.fetchall()
+
+		return list(map(lambda ciudad: (ciudad["ciudad"],
+										ciudad["pais"],
+										float(ciudad["distancia"]),
+										ciudad["prioridad"]), ciudades_mas_cercanas))
+
+	# Metodo para actualizar los datos de una ciudad de un estadio
+	def actualizarCiudadEstadio(self, ciudad:str, estadio_id:str)->None:
+
+		self.c.execute("""UPDATE estadios
+							SET Ciudad=%s
+							WHERE Estadio_Id=%s""",
+							(ciudad, estadio_id))
+
+		self.confirmar()

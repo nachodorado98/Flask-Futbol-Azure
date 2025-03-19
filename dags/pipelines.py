@@ -12,7 +12,7 @@ from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Sel
 
 from python.src.database.conexion import Conexion
 
-from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio
+from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio, obtenerCiudadMasCercana
 
 def Pipeline_Equipos_Ligas()->None:
 
@@ -441,6 +441,32 @@ def Pipeline_Estadios_Coordenadas()->None:
 			mensaje=f"Coordenadas Estadio: {estadio} - Motivo: {e}"
 
 			print(f"Error en coordenadas del estadio {estadio}")
+
+			crearArchivoLog(mensaje)
+
+	con.cerrarConexion()
+
+def Pipeline_Estadios_Ciudades()->None:
+
+	con=Conexion()
+
+	estadios=con.obtenerEstadiosSinCiudad()
+
+	for estadio, latitud, longitud in estadios:
+
+		print(f"Estadio {estadio}")
+
+		try:
+
+			ciudad, pais=obtenerCiudadMasCercana(latitud, longitud)
+
+			con.actualizarCiudadEstadio(ciudad, estadio)
+
+		except Exception as e:
+
+			mensaje=f"Ciudad Estadio: {estadio} - Motivo: {e}"
+
+			print(f"Error en ciudad del estadio {estadio}")
 
 			crearArchivoLog(mensaje)
 

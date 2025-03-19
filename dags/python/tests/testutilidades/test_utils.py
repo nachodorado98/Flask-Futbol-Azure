@@ -9,6 +9,7 @@ from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
 from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
 from src.utils import obtenerBoolCadena, subirTablaDataLake, limpiarMinuto, obtenerArchivosNoExistenDataLake
+from src.utils import obtenerCiudadMasCercana
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -744,3 +745,45 @@ def test_obtener_archivos_no_existen_data_lake_varios_no_existen_todos(datalake)
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
+
+def test_obtener_ciudad_mas_cercana_muy_lejana():
+
+	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(0, 0)
+
+	assert ciudad_cercana=="Sekondi"
+	assert pais_cercano=="Ghana"
+
+@pytest.mark.parametrize(["latitud", "longitud", "ciudad", "pais"],
+	[
+		(40.4523667, -3.6907254, "Madrid", "España"),
+		(39.4745279, -0.35815663617491666, "Valencia", "España"),
+		(37.383878, -5.970467, "Sevilla", "España"),
+		(40.34037465, -3.760651172703595, "Leganes", "España")
+	]
+)
+def test_obtener_ciudad_mas_cercana_una_ciudad(latitud, longitud, ciudad, pais):
+
+	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(latitud, longitud)
+
+	assert ciudad_cercana==ciudad
+	assert pais_cercano==pais
+
+@pytest.mark.parametrize(["latitud", "longitud", "ciudad", "pais"],
+	[
+		(40.3257247, -3.7149326452090587, "Getafe", "España"),
+		(40.43605295, -3.599715809726445, "Madrid", "España"),
+		(37.35653545, -5.981756556248882, "Sevilla", "España"),
+		(39.49464255, -0.3638622397351148, "Valencia", "España"),
+		(39.94420835, -0.10340461367963182, "Villareal", "España"),
+		(42.79666245, -1.63713113716193, "Pamplona", "España"),
+		(25.66911025, -100.24435594300363, "Monterrey", "México"),
+		(38.7526893, -9.184689881825172, "Lisbon", "Portugal"),
+		(47.8163956, 12.998243910546709, "Salzburg", "Austria")
+	]
+)
+def test_obtener_ciudad_mas_cercana_dos_ciudades(latitud, longitud, ciudad, pais):
+
+	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(latitud, longitud)
+
+	assert ciudad_cercana==ciudad
+	assert pais_cercano==pais
