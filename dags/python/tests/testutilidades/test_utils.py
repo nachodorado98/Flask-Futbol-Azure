@@ -9,7 +9,8 @@ from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
 from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
 from src.utils import obtenerBoolCadena, subirTablaDataLake, limpiarMinuto, obtenerArchivosNoExistenDataLake
-from src.utils import obtenerCiudadMasCercana
+from src.utils import obtenerCiudadMasCercana, obtenerPosiblesCiudadesCaracteres, filtrarCiudadesPalabrasIrrelevantes
+from src.utils import filtrarCiudadDireccion, obtenerCiudadMasAcertada
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -787,3 +788,144 @@ def test_obtener_ciudad_mas_cercana_dos_ciudades(latitud, longitud, ciudad, pais
 
 	assert ciudad_cercana==ciudad
 	assert pais_cercano==pais
+
+def test_obtener_posibles_ciudades_caracteres_cadena_vacia():
+
+	assert not obtenerPosiblesCiudadesCaracteres("")
+
+def test_obtener_posibles_ciudades_caracteres_caracter_especial():
+
+	assert not obtenerPosiblesCiudadesCaracteres("-")
+
+@pytest.mark.parametrize(["direccion", "numero"],
+	[
+		("Calle universidad, 25, 42300 El Burgo de Osma (Soria)", 3),
+		("P.º Martiricos, s/n, Palma-Palmilla, 29011 Málaga", 4),
+		("Av. de Concha Espina, 1, 28036 Madrid", 2),
+		("Av. Teresa de Calcuta, s/n, 28903 Getafe, Madrid", 3),
+		("Rua José Maria Nicolau - Portugal", 2),
+		("Via Futebol Clube do Porto, 4350-415 Porto, Portugal", 3),
+		("Prince Talal Bin Mansour Rd, King Abdulaziz International Airport, Jeddah 23737, Arabia Saudí", 4),
+		("C. Bajada de las Piscinas, 6D, 37770 Guijuelo, Salamanca", 3),
+		("P.º de la Arboleda, 3, 42200, Soria", 2),
+		("Avenida de la Palmera, 41012, Sevilla", 2),
+		("  , , Avenida de Balaídos,,,", 1),
+		("24 Willie Mays Plaza, San Francisco, CA 94107, Estados Unidos", 3),
+		("Piazzale Angelo Moratti, 20151 Milano MI, Italia", 3),
+		("Janefield St, Glasgow G40 3RE, Reino Unido", 3)
+	]
+)
+def test_obtener_posibles_ciudades_caracteres(direccion, numero):
+
+	posibles_ciudades=obtenerPosiblesCiudadesCaracteres(direccion)
+
+	assert len(posibles_ciudades)==numero
+
+def test_filtrar_ciudades_palabras_irrelevantes_lista_vacia():
+
+	assert not filtrarCiudadesPalabrasIrrelevantes([])
+
+@pytest.mark.parametrize(["posibles_ciudades", "numero"],
+	[
+		(['Calle universidad', 'El Burgo de Osma', 'Soria'], 2),
+	    (['P º Martiricos', 'Palma', 'Palmilla', 'Málaga'], 3),
+	    (['Av de Concha Espina', 'Madrid'], 1),
+	    (['Av Teresa de Calcuta', 'Getafe', 'Madrid'], 2),
+	    (['Rua José Maria Nicolau', 'Portugal'], 1),
+	    (['Via Futebol Clube do Porto', 'Porto', 'Portugal'], 2),
+	    (['Prince Talal Bin Mansour Rd', 'King Abdulaziz International Airport', 'Jeddah', 'Arabia Saudí'], 2),
+	    (['C Bajada de las Piscinas', 'Guijuelo', 'Salamanca'], 2),
+	    (['P º de la Arboleda', 'Soria'], 1),
+	    (['Avenida de la Palmera', 'Sevilla'], 1),
+	    (['Avenida de Balaídos'], 0),
+	    (['Willie Mays Plaza', 'San Francisco', 'Estados Unidos'], 2),
+	    (['Piazzale Angelo Moratti', 'Milano MI', 'Italia'], 2),
+	    (['Janefield St', 'Glasgow G RE', 'Reino Unido'], 3)
+	]
+)
+def test_filtrar_ciudades_palabras_irrelevantes(posibles_ciudades, numero):
+
+	nuevas_posibles_ciudades=filtrarCiudadesPalabrasIrrelevantes(posibles_ciudades)
+
+	assert len(nuevas_posibles_ciudades)==numero
+
+def test_filtrar_ciudad_direccion_cadena_vacia():
+
+	assert not filtrarCiudadDireccion("")
+
+def test_filtrar_ciudad_direccion_caracter_especial():
+
+	assert not filtrarCiudadDireccion("-")
+
+@pytest.mark.parametrize(["direccion", "numero"],
+	[
+		("Calle universidad, 25, 42300 El Burgo de Osma (Soria)", 1),
+		("P.º Martiricos, s/n, Palma-Palmilla, 29011 Málaga", 2),
+		("Av. de Concha Espina, 1, 28036 Madrid", 1),
+		("Av. Teresa de Calcuta, s/n, 28903 Getafe, Madrid", 2),
+		("Rua José Maria Nicolau - Portugal", 0),
+		("Via Futebol Clube do Porto, 4350-415 Porto, Portugal", 1),
+		("Prince Talal Bin Mansour Rd, King Abdulaziz International Airport, Jeddah 23737, Arabia Saudí", 1),
+		("C. Bajada de las Piscinas, 6D, 37770 Guijuelo, Salamanca", 2),
+		("P.º de la Arboleda, 3, 42200, Soria", 1),
+		("Avenida de la Palmera, 41012, Sevilla", 1),
+		("  , , Avenida de Balaídos,,,", 0),
+		("24 Willie Mays Plaza, San Francisco, CA 94107, Estados Unidos", 1),
+		("Piazzale Angelo Moratti, 20151 Milano MI, Italia", 0),
+		("Janefield St, Glasgow G40 3RE, Reino Unido", 0)
+	]
+)
+def test_filtrar_ciudad_direccion(direccion, numero):
+
+	ciudades_existen=filtrarCiudadDireccion(direccion)
+
+	assert len(ciudades_existen)==numero
+
+@pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
+	[
+
+		(38.7526893, -9.184689881825172, "-", "Lisbon"),
+		(37.35653545, -5.981756556248882, "", "Sevilla"),
+		(47.8163956, 12.998243910546709, "Stadionstraße 2/3, 5071 Kleßheim, Austria", "Salzburg"),
+		(41.8966, 12.4823, "Viale dei Gladiatori, 2 / Via del Foro Italico", "Rome"),
+		(55.8614, -4.2571, "Janefield St, Glasgow G40 3RE, Reino Unido", "Glasgow"),
+		(50.0752, 14.4381, "Tyršovo nábřeží 4381, Zlín, Czech Republic, 760 01", "Prague")
+	]
+)
+def test_obtener_ciudad_mas_acertada_no_existen_ciudades_direccion(latitud, longitud, direccion, ciudad):
+
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+
+@pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
+	[
+		(47.8163956, 12.998243910546709, "Stadionstraße 2/3, 5071 Salzburg, Austria", "Salzburg"),
+		(40.3257247, -3.7149326452090587, "Av. Teresa de Calcuta, s/n, 28903 Getafe, Madrid", "Getafe"),
+		(40.43605295, -3.599715809726445, "Av. de Luis Aragonés, 4, 28022 Madrid", "Madrid"),
+		(41.3472, 2.0750, "Avinguda Baix Llobregat, 100 08940 Cornellà de Llobregat", "Cornellà de Llobregat")
+	]
+)
+def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_en_direccion(latitud, longitud, direccion, ciudad):
+
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+
+@pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
+	[
+		(40.3257247, -3.7149326452090587, "Stadionstraße 2/3, 5071 Salzburg, Austria", "Salzburg"),
+		(41.3472, 2.0750, "Av. de Luis Aragonés, 4, 28022 Madrid", "Madrid"),
+		(47.8163956, 12.998243910546709, "Avinguda Baix Llobregat, 100 08940 Cornellà de Llobregat", "Cornellà de Llobregat"),
+		(48.8417, 2.2567, "24 Rue du Commandant Guilbaud, 75016 Paris, Francia", "Paris")
+	]
+)
+def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_una_ciudad_direccion(latitud, longitud, direccion, ciudad):
+
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+
+@pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
+	[
+		(40.3257247, -3.7149326452090587, "Av. Teresa de Calcuta, s/n, 28903 Tokyo, Madrid", "Getafe"),
+		(36.7337, -4.4257, "P.º Martiricos, s/n, Palma-Valencia, 29011 Málaga", "Malaga")
+	]
+)
+def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_mas_de_una_ciudad_direccion(latitud, longitud, direccion, ciudad):
+
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad

@@ -6,6 +6,7 @@ import wget
 import os
 import requests
 import pandas as pd
+import re
 
 from .datalake.conexion_data_lake import ConexionDataLake
 from .database.conexion import Conexion
@@ -282,7 +283,7 @@ def obtenerArchivosNoExistenDataLake(nombre_contenedor:str, nombre_carpeta:str, 
 
 	return list(filter(lambda archivo: f"{archivo}.{extension}" not in archivos_carpeta_contenedor_limpios, archivos_comprobar))
 
-def obtenerCiudadMasCercana(latitud:float, longitud:str, distancia_minima:int=2, umbral_maximo:int=5, umbral_minimo:int=2)->Optional[tuple]:
+def obtenerCiudadMasCercana(latitud:float, longitud:str, distancia_minima:int=2, umbral_maximo:int=5, umbral_minimo:int=2)->tuple:
 
 	conexion=Conexion()
 
@@ -323,3 +324,107 @@ def obtenerCiudadMasCercana(latitud:float, longitud:str, distancia_minima:int=2,
 		else:
 
 			return ciudad_distancia[0], ciudad_distancia[1]
+
+def obtenerPosiblesCiudadesCaracteres(direccion:str)->List[Optional[str]]:
+
+	try:
+
+		if not direccion.strip():
+
+			return []
+
+		direccion=direccion.replace("/", ",").replace("(", ",").replace(")", ",").replace("-", ",")
+		
+		partes=direccion.split(",")
+
+		posibles_ciudades=[]
+
+		for parte in partes:
+
+			parte=re.sub(r"\d+", "", parte)
+
+			parte=re.sub(r"\W+", " ", parte, flags=re.UNICODE)
+
+			parte=parte.strip()
+			
+
+			if len(parte)>2:
+
+				posibles_ciudades.append(parte)
+
+		return posibles_ciudades
+
+	except Exception:
+
+		return []
+
+def filtrarCiudadesPalabrasIrrelevantes(ciudades:List[str])->List[Optional[str]]:
+
+	PALABRAS_IRRELEVANTES=["calle", "c.", "av", "avenida", "paseo", "p.º", "plaza", "carrer", "rua", "via",
+							"bulevar", "boulevard", "camino", "paseig", "road", "strasse", "allee", "stadium", "dr",
+							"stadionstraße", "street", "rue", "corso", "viale", "autopista", "carretera", "ul", "s/n",
+							"p º", "ul ", "camí", "rúa", "c del", "ctra", "c los", "straße", "c "]
+
+	PALABRAS_IRRELEVANTES_INCLUIDAS=["airport", "universidad", "street", "piazzale", "plaza", "paseo", "calle", " rd", "club",
+									"ciudad", "dirección", "finca", "passeig", " road", " gate", "kalea", " way", "platz",
+									"väg"]
+
+	ciudades_filtradas=[]
+
+	try:
+
+		for ciudad in ciudades:
+
+			ciudad_minuscula=ciudad.lower()
+
+			ciudad_palabra_irrelevante=[ciudad_minuscula for palabra_irrelevante in PALABRAS_IRRELEVANTES if ciudad_minuscula.startswith(palabra_irrelevante)]
+
+			ciudad_palabra_irrelevante_incluidas=[ciudad_minuscula for palabra_irrelevante in PALABRAS_IRRELEVANTES_INCLUIDAS if palabra_irrelevante in ciudad_minuscula]
+
+			if not ciudad_palabra_irrelevante and not ciudad_palabra_irrelevante_incluidas:
+
+				ciudades_filtradas.append(ciudad)
+
+		return ciudades_filtradas
+
+	except Exception:
+
+		return []
+
+def filtrarCiudadDireccion(direccion:str)->List[Optional[str]]:
+
+	posibles_ciudades=obtenerPosiblesCiudadesCaracteres(direccion)
+
+	posibles_ciudades_filtradas=filtrarCiudadesPalabrasIrrelevantes(posibles_ciudades)
+
+	conexion=Conexion()
+
+	ciudades_existen=list(filter(lambda ciudad: conexion.existe_ciudad(ciudad), posibles_ciudades_filtradas))
+
+	conexion.cerrarConexion()
+
+	return ciudades_existen
+
+def obtenerCiudadMasAcertada(latitud:float, longitud:str, direccion:str)->str:
+
+	ciudad_coordenadas, pais_corrdenadas=obtenerCiudadMasCercana(latitud, longitud)
+
+	ciudades_existen=filtrarCiudadDireccion(direccion)
+
+	if not ciudades_existen:
+
+		return ciudad_coordenadas
+
+	elif ciudad_coordenadas in ciudades_existen:
+
+		return ciudad_coordenadas
+
+	else:
+
+		if len(ciudades_existen)==1:
+
+			return ciudades_existen[0]
+
+		else:
+
+			return ciudad_coordenadas

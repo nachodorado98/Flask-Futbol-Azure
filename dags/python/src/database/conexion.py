@@ -837,7 +837,7 @@ class Conexion:
 	# Metodo para obtener los estadios que su ciudad no estan en ciudades
 	def obtenerEstadiosSinCiudad(self)->List[tuple]:
 
-		self.c.execute("""SELECT e.Estadio_Id, e.Latitud, e.Longitud
+		self.c.execute("""SELECT e.Estadio_Id, e.Latitud, e.Longitud, e.Direccion
 							FROM estadios e  
 							LEFT JOIN ciudades c  
 							ON e.Ciudad= c.Ciudad  
@@ -850,7 +850,8 @@ class Conexion:
 
 		return list(map(lambda estadio: (estadio["estadio_id"],
 										estadio["latitud"],
-										estadio["longitud"]), estadios))
+										estadio["longitud"],
+										estadio["direccion"]), estadios))
 
 	# Metodo para obtener las ciudades mas cercanas de una latitud y longitud por distancia y por tipo
 	def obtenerCiudadesMasCercanas(self, latitud:float, longitud:float)->Optional[List[tuple]]:
@@ -900,3 +901,13 @@ class Conexion:
 							(ciudad, estadio_id))
 
 		self.confirmar()
+
+	# Metodo para saber si existe una ciudad
+	def existe_ciudad(self, ciudad:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM ciudades
+							WHERE Ciudad=%s""",
+							(ciudad,))
+
+		return False if self.c.fetchone() is None else True

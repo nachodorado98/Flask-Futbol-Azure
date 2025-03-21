@@ -40,3 +40,17 @@ def test_obtener_ciudades_mas_cercanas(conexion, latitud, longitud):
 	ciudades=conexion.obtenerCiudadesMasCercanas(latitud, longitud)
 
 	assert len(ciudades)==2
+
+@pytest.mark.parametrize(["ciudad"],
+	[("jkjkjkjjk",), ("MADRID",), ("barna",), ("london",), ("Andorra La Vella",), ("Tokio",)]
+)
+def test_existe_ciudad_no_existe(conexion, ciudad):
+
+	assert not conexion.existe_ciudad(ciudad)
+
+@pytest.mark.parametrize(["ciudad"],
+	[("Madrid",), ("Barcelona",), ("London",), ("Andorra la Vella",), ("Tokyo",)]
+)
+def test_existe_ciudad(conexion, ciudad):
+
+	assert conexion.existe_ciudad(ciudad)

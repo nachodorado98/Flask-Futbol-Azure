@@ -12,7 +12,8 @@ from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Sel
 
 from python.src.database.conexion import Conexion
 
-from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio, obtenerCiudadMasCercana
+from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio, obtenerCiudadMasAcertada
+
 
 def Pipeline_Equipos_Ligas()->None:
 
@@ -452,13 +453,13 @@ def Pipeline_Estadios_Ciudades()->None:
 
 	estadios=con.obtenerEstadiosSinCiudad()
 
-	for estadio, latitud, longitud in estadios:
+	for estadio, latitud, longitud, direccion in estadios:
 
 		print(f"Estadio {estadio}")
 
 		try:
 
-			ciudad, pais=obtenerCiudadMasCercana(latitud, longitud)
+			ciudad=obtenerCiudadMasAcertada(latitud, longitud, direccion)
 
 			con.actualizarCiudadEstadio(ciudad, estadio)
 
