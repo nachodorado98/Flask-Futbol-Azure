@@ -15,7 +15,7 @@ def test_insertar_trayecto_partido_asistido(conexion_entorno, partido_id, usuari
 
 	conexion_entorno.insertarPartidoAsistido(partido_id, usuario, "comentario")
 
-	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id", partido_id, usuario, "I", 103, "Transporte", "metropolitano")
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id", partido_id, usuario, "I", 103, "Transporte", 103)
 
 	conexion_entorno.c.execute("SELECT * FROM trayecto_partido_asistido")
 
@@ -32,9 +32,9 @@ def test_insertar_trayecto_partido_asistido_ida_vuelta(conexion_entorno, partido
 
 	conexion_entorno.insertarPartidoAsistido(partido_id, usuario, "comentario")
 
-	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_ida", partido_id, usuario, "I", 103, "Transporte", "metropolitano")
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_ida", partido_id, usuario, "I", 103, "Transporte", 103)
 
-	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_vuelta", partido_id, usuario, "V", 103, "Transporte", "metropolitano")
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_vuelta", partido_id, usuario, "V", 103, "Transporte", 103)
 
 	conexion_entorno.c.execute("SELECT * FROM trayecto_partido_asistido")
 
@@ -104,7 +104,7 @@ def test_eliminar_trayectos_partido_asistido(conexion_entorno):
 
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
-	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_ida", "20190622", "nacho", "I", 103, "Transporte", "metropolitano")
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_ida", "20190622", "nacho", "I", 103, "Transporte", 103)
 
 	conexion_entorno.c.execute("SELECT * FROM trayecto_partido_asistido")
 

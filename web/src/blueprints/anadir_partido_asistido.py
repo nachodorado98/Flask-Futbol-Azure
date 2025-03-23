@@ -233,15 +233,21 @@ def pagina_insertar_partido_asistido():
 
 			return redirect("/partidos/asistidos")
 
-		estadio_partido_id=estadio_partido[0]
+		ciudad_estadio=estadio_partido[0]
 
-		if datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido_id, transporte_ida, transporte_vuelta):
+		if datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio, transporte_ida, transporte_vuelta):
 
-			trayecto_id=f"id_{partido_id}_{current_user.id}"
+			codigo_ciudad_ida_estadio=con.obtenerCodigoCiudad(ciudad_ida_estadio)
 
-			con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, estadio_partido_id)
+			codigo_ciudad_vuelta_estadio=con.obtenerCodigoCiudad(ciudad_vuelta_estadio)
 
-			con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_vuelta, transporte_vuelta, estadio_partido_id)
+			if codigo_ciudad_ida_estadio and codigo_ciudad_vuelta_estadio:
+
+				trayecto_id=f"id_{partido_id}_{current_user.id}"
+
+				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_ida_estadio)
+
+				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_vuelta, transporte_vuelta, codigo_ciudad_vuelta_estadio)
 
 	con.cerrarConexion()
 

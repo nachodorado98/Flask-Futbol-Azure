@@ -15,7 +15,7 @@ def test_obtener_ciudades_pais(conexion):
 	assert conexion.obtenerCiudadesPais("España")
 
 @pytest.mark.parametrize(["poblacion", "cantidad"],
-	[(10000, 650),(100000, 61),(1000000, 2)]
+	[(10000, 651),(100000, 61),(1000000, 2)]
 )
 def test_obtener_ciudades_pais_poblacion_limite(conexion, poblacion, cantidad):
 

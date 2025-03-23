@@ -1119,9 +1119,17 @@ def test_obtener_estadio_partido_no_existe_estadio(conexion_entorno):
 
 	assert not conexion_entorno.obtenerEstadioPartido("20190623")
 
+def test_obtener_estadio_partido_no_existe_ciudad_estadio(conexion_entorno):
+
+	conexion_entorno.c.execute("UPDATE estadios SET ciudad=NULL")
+
+	conexion_entorno.confirmar()
+
+	assert not conexion_entorno.obtenerEstadioPartido("20190622")
+
 def test_obtener_estadio_partido(conexion_entorno):
 
 	estadio=conexion_entorno.obtenerEstadioPartido("20190622")
 
-	assert estadio[0]=="metropolitano"
+	assert estadio[0]=="Madrid"
 	assert estadio[1]=="Metropolitano"

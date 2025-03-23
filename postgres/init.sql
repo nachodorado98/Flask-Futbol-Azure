@@ -200,13 +200,13 @@ CREATE TABLE trayecto_partido_asistido (Trayecto_Id VARCHAR(255) PRIMARY KEY,
 										Partido_Id VARCHAR(255),
 										Usuario VARCHAR(255),
 										Tipo_Trayecto CHAR(1),
-										CodCiudad INT,
+										CodCiudad_Origen INT,
 										Transporte VARCHAR(255),
-										Estadio_Id VARCHAR(255),
+										CodCiudad_Destino INT,
 										FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
 										FOREIGN KEY (Usuario) REFERENCES usuarios (Usuario) ON DELETE CASCADE,
-										FOREIGN KEY (CodCiudad) REFERENCES ciudades (CodCiudad),
-										FOREIGN KEY (Estadio_Id) REFERENCES estadios (Estadio_Id));
+										FOREIGN KEY (CodCiudad_Origen) REFERENCES ciudades (CodCiudad),
+										FOREIGN KEY (CodCiudad_Destino) REFERENCES ciudades (CodCiudad));
 
 DELETE FROM paises WHERE pais IN ('Anguila', 'Antigua y Barbuda', 'Aruba', 'Bahamas', 'Barbados', 'Bermudas', 'Cabo Verde', 
     'Comoras', 'Dominica', 'Fiyi', 'Granada', 'Guadalupe', 'Guam', 'Guayana Francesa', 'Isla de Man', 'Isla de Navidad', 

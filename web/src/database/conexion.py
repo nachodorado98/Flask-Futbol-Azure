@@ -2636,18 +2636,19 @@ class Conexion:
 	# Metodo para obtener el estadio de un partido
 	def obtenerEstadioPartido(self, partido_id:str)->Optional[tuple]:
 
-		self.c.execute("""SELECT e.estadio_id, e.nombre
+		self.c.execute("""SELECT e.ciudad, e.nombre
 						FROM partidos p
 						JOIN partido_estadio pe
 						ON p.partido_id=pe.partido_id
 						JOIN estadios e
 						ON pe.estadio_id=e.estadio_id
-						WHERE p.partido_id=%s""",
+						WHERE p.partido_id=%s
+						AND e.ciudad IS NOT NULL""",
 						(partido_id,))
 
 		estadio=self.c.fetchone()
 
-		return None if not estadio else (estadio["estadio_id"], estadio["nombre"])
+		return None if not estadio else (estadio["ciudad"], estadio["nombre"])
 
 	# Metodo para eliminar los trayectos de un partido asistido
 	def eliminarTrayectosPartidoAsistido(self, partido_id:str, usuario:str)->None:

@@ -516,10 +516,10 @@ def limpiarResultadosPartidosCalendario(partidos_calendario:List[tuple])->Dict:
 			"empatados": partidos_empatados}
 
 def datos_trayectos_correctos(codigo_ciudad_ida:bool, codigo_ciudad_vuelta:bool, ciudad_ida_estadio:str,
-								ciudad_vuelta_estadio:str, estadio_partido:str, transporte_ida:str, transporte_vuelta:str)->bool:
+								ciudad_vuelta_estadio:str, ciudad_estadio_partido:str, transporte_ida:str, transporte_vuelta:str)->bool:
 
-	estadio_correcto=ciudad_ida_estadio==ciudad_vuelta_estadio==estadio_partido
+	ciudad_correcta=ciudad_ida_estadio==ciudad_vuelta_estadio==ciudad_estadio_partido
 
 	transportes_correctos=transporte_ida in TRANSPORTES and transporte_vuelta in TRANSPORTES
 
-	return True if codigo_ciudad_ida and codigo_ciudad_vuelta and estadio_correcto and transportes_correctos else False
+	return True if codigo_ciudad_ida and codigo_ciudad_vuelta and ciudad_correcta and transportes_correctos else False

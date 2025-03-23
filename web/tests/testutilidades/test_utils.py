@@ -1269,29 +1269,29 @@ def test_limpiar_resultados_partidos_calendario(partidos, ganados, perdidos, emp
 	assert resultados["perdidos"]==perdidos
 	assert resultados["empatados"]==empatados
 
-@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "estadio_partido", "transporte_ida", "transporte_vuelta"],
+@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "ciudad_estadio_partido", "transporte_ida", "transporte_vuelta"],
 	[
-		(None, 2, "metropolitano", "metropolitano", "metropolitano", "Avion", "Avion"),
-		(1, None, "metropolitano", "metropolitano", "metropolitano",  "Avion", "Avion"),
-		(1, 2, "otro", "metropolitano", "metropolitano",  "Avion", "Avion"),
-		(1, 2, "metropolitano", "otro", "metropolitano",  "Avion", "Avion"),
-		(1, 2, "metropolitano", "metropolitano", "otro",  "Avion", "Avion"),
-		(1, 2, "metropolitano", "metropolitano", "metropolitano",  "transporte", "Avion"),
-		(1, 2, "metropolitano", "metropolitano", "metropolitano", "Avion", "transporte")
+		(None, 2, "Madrid", "Madrid", "Madrid", "Avion", "Avion"),
+		(1, None, "Madrid", "Madrid", "Madrid",  "Avion", "Avion"),
+		(1, 2, "Otra", "Madrid", "Madrid",  "Avion", "Avion"),
+		(1, 2, "Madrid", "Otra", "Madrid",  "Avion", "Avion"),
+		(1, 2, "Madrid", "Madrid", "Otra",  "Avion", "Avion"),
+		(1, 2, "Madrid", "Madrid", "Madrid",  "transporte", "Avion"),
+		(1, 2, "Madrid", "Madrid", "Madrid", "Avion", "transporte")
 	]
 )
-def test_datos_trayectos_correctos_no_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta):
+def test_datos_trayectos_correctos_no_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta):
 
-	assert not datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta)
+	assert not datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta)
 
-@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "estadio_partido", "transporte_ida", "transporte_vuelta"],
+@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "ciudad_estadio_partido", "transporte_ida", "transporte_vuelta"],
 	[
-		(1, 2, "metropolitano", "metropolitano", "metropolitano",  "Autobus", "Avion"),
-		(2, 2, "metropolitano", "metropolitano", "metropolitano",  "Avion", "Avion"),
-		(1, 2, "otro", "otro", "otro",  "Avion", "Tren"),
-		(1, 2, "otro", "otro", "otro",  "Coche", "Coche")
+		(1, 2, "Madrid", "Madrid", "Madrid",  "Autobus", "Avion"),
+		(2, 2, "Madrid", "Madrid", "Madrid",  "Avion", "Avion"),
+		(1, 2, "Otra", "Otra", "Otra",  "Avion", "Tren"),
+		(1, 2, "Otra", "Otra", "Otra",  "Coche", "Coche")
 	]
 )
-def test_datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta):
+def test_datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta):
 
-	assert datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, estadio_partido, transporte_ida, transporte_vuelta)
+	assert datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta)

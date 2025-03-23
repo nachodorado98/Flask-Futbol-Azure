@@ -589,25 +589,25 @@ def test_pagina_insertar_partido_asistido_on_tour_con_teletrabajo(cliente, conex
 		assert registro["fecha_vuelta"].strftime("%Y-%m-%d")==fecha_vuelta
 		assert registro["teletrabajo"]
 
-@pytest.mark.parametrize(["ciudad_ida", "estadio_ida", "transporte_ida", "ciudad_vuelta", "estadio_vuelta", "transporte_vuelta"],
+@pytest.mark.parametrize(["ciudad_ida", "ciudad_ida_estadio", "transporte_ida", "ciudad_vuelta", "ciudad_vuelta_estadio", "transporte_vuelta"],
 	[
-		("ciudad_ida", "metropolitano", "Avion", "Madrid", "metropolitano", "Avion"),
-		("Madrid", "estadio_ida", "Avion", "Madrid", "metropolitano", "Avion"),
-		("Madrid", "metropolitano", "Avion", "ciudad_vuelta", "metropolitano", "Avion"),
-		("Madrid", "metropolitano", "Avion", "Madrid", "estadio_vuelta", "Avion"),
-		("Madrid", "estadio_ida", "Avion", "Madrid", "estadio_vuelta", "Avion"),
-		("Madrid", "metropolitano", "transporte", "Madrid", "metropolitano", "Avion"),
-		("Madrid", "metropolitano", "Avion", "Madrid", "metropolitano", "transporte")
+		("ciudad_ida", "Madrid", "Avion", "Madrid", "Madrid", "Avion"),
+		("Madrid", "ciudad_ida_estadio", "Avion", "Madrid", "Madrid", "Avion"),
+		("Madrid", "Madrid", "Avion", "ciudad_vuelta", "Madrid", "Avion"),
+		("Madrid", "Madrid", "Avion", "Madrid", "ciudad_vuelta_estadio", "Avion"),
+		("Madrid", "ciudad_ida_estadio", "Avion", "Madrid", "ciudad_vuelta_estadio", "Avion"),
+		("Madrid", "Madrid", "transporte", "Madrid", "Madrid", "Avion"),
+		("Madrid", "Madrid", "Avion", "Madrid", "Madrid", "transporte")
 	]
 )
-def test_pagina_insertar_partido_asistido_on_tour_trayectos_datos_error(cliente, conexion_entorno_usuario, ciudad_ida, estadio_ida, transporte_ida, ciudad_vuelta, estadio_vuelta, transporte_vuelta):
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_datos_error(cliente, conexion_entorno_usuario, ciudad_ida, ciudad_ida_estadio, transporte_ida, ciudad_vuelta, ciudad_vuelta_estadio, transporte_vuelta):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":ciudad_ida, "ciudad-ida-estadio":estadio_ida,
-			"fecha-ida":"2019-06-22", "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "ciudad-vuelta-estadio":estadio_vuelta,
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":ciudad_ida, "ciudad-ida-estadio":ciudad_ida_estadio,
+			"fecha-ida":"2019-06-22", "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "ciudad-vuelta-estadio":ciudad_vuelta_estadio,
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":transporte_vuelta, "teletrabajo":True}
 
 		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -640,8 +640,8 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_estadio_no_existente
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"metropolitano", "fecha-ida":"2019-06-22",
-			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"metropolitano", "fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"Madrid", "fecha-ida":"2019-06-22",
+			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"Madrid", "fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -663,6 +663,104 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_estadio_no_existente
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_no_existente(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Ciudad=NULL")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"Madrid", "fecha-ida":"2019-06-22",
+			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"Madrid", "fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos  WHERE on_tour=True")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+		assert not conexion_entorno_usuario.c.fetchall()
+
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_diferente(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Ciudad=NULL")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"Barcelona", "fecha-ida":"2019-06-22",
+			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"Barcelona", "fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos  WHERE on_tour=True")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+		assert not conexion_entorno_usuario.c.fetchall()
+
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_erroneas(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Ciudad='No Existo'")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"No Existo", "fecha-ida":"2019-06-22",
+			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"No Existo", "fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos  WHERE on_tour=True")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+		assert not conexion_entorno_usuario.c.fetchall()
 
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_sin_fecha(cliente, conexion_entorno_usuario):
 
@@ -670,8 +768,8 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_sin_fecha(cliente, c
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"metropolitano",
-			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"metropolitano", "transporte-vuelta":"Avion", "teletrabajo":True}
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"Madrid",
+			"transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"Madrid", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -707,8 +805,8 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos(cliente, conexion_en
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":ciudad_ida, "ciudad-ida-estadio":"metropolitano",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":ciudad_vuelta, "ciudad-vuelta-estadio":"metropolitano",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":ciudad_ida, "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":ciudad_vuelta, "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -740,5 +838,7 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos(cliente, conexion_en
 		assert vuelta["trayecto_id"]=="id_20190622_nacho98_V"
 		assert ida["tipo_trayecto"]=="I"
 		assert vuelta["tipo_trayecto"]=="V"
-		assert ida["codciudad"]==codigo_ciudad_ida
-		assert vuelta["codciudad"]==codigo_ciudad_vuelta
+		assert ida["codciudad_origen"]==codigo_ciudad_ida
+		assert vuelta["codciudad_origen"]==codigo_ciudad_vuelta
+		assert ida["codciudad_destino"]==103
+		assert vuelta["codciudad_destino"]==103

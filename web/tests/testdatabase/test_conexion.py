@@ -41,7 +41,7 @@ def test_vaciar_bbdd(conexion_entorno_usuario):
 
 	conexion_entorno_usuario.insertarPartidoAsistidoFavorito("20190622", "nacho98")
 
-	conexion_entorno_usuario.insertarTrayectoPartidoAsistido("trayecto_id", "20190622", "nacho98", "I", 103, "Transporte", "metropolitano")
+	conexion_entorno_usuario.insertarTrayectoPartidoAsistido("trayecto_id", "20190622", "nacho98", "I", 103, "Transporte", 103)
 
 	tablas=["equipos", "partidos", "estadios", "equipo_estadio", "competiciones", "competiciones_campeones",
 			"partido_competicion", "jugadores", "jugadores_equipo", "jugadores_seleccion", "entrenadores",
