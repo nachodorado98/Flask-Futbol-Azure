@@ -84,6 +84,13 @@ def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno_usuari
 		assert "/favorito_asistido.png" not in contenido
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
 		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
+		assert '<div class="tarjetas-mapas-trayectos">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' not in contenido
+		assert "iframe" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" not in contenido
+		assert '<img class="no-mapa"' not in contenido
 
 def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno_usuario):
 
@@ -110,6 +117,13 @@ def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno_usuari
 		assert "/favorito_asistido.png" not in contenido
 		assert '<h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>' not in contenido
 		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
+		assert '<div class="tarjetas-mapas-trayectos">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' not in contenido
+		assert "iframe" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" not in contenido
+		assert '<img class="no-mapa"' not in contenido
 
 def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 
@@ -207,6 +221,13 @@ def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno_usuario, 
 		assert f"Fecha Ida: {fecha_ida_on_tour}" in contenido
 		assert f"Fecha Vuelta: {fecha_vuelta_on_tour}" in contenido
 		assert '<p class="teletrabajo-on-tour">' in contenido
+		assert '<div class="tarjetas-mapas-trayectos">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' not in contenido
+		assert "iframe" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" not in contenido
+		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_entorno_usuario):
 
@@ -230,6 +251,13 @@ def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_e
 		assert '<p class="teletrabajo-on-tour">' in contenido
 		assert "Teletrabajo No" in contenido
 		assert "Teletrabajo Si" not in contenido
+		assert '<div class="tarjetas-mapas-trayectos">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' not in contenido
+		assert "iframe" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" not in contenido
+		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_entorno_usuario):
 
@@ -253,6 +281,13 @@ def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_e
 		assert '<p class="teletrabajo-on-tour">' in contenido
 		assert "Teletrabajo No" not in contenido
 		assert "Teletrabajo Si" in contenido
+		assert '<div class="tarjetas-mapas-trayectos">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' not in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' not in contenido
+		assert "iframe" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" not in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" not in contenido
+		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno_usuario):
 
@@ -379,3 +414,275 @@ def test_pagina_partido_asistido_ventana_emergente_papelera_disponible(cliente, 
 		assert '<img class="papelera-partido-asistido"' in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 		assert "/partido/20190622/asistido/eliminar" in contenido
+
+def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+ 
+		respuesta.status_code==200
+		assert '<div class="tarjetas-mapas-trayectos">' in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' in contenido
+		assert "iframe" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
+ 
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "trayectos")
+ 
+		ruta_mapa_ida=os.path.join(ruta_carpeta_mapas, "mapa_trayecto_ida_user_nacho98.html")
+ 
+		assert os.path.exists(ruta_mapa_ida)
+ 
+		with open(ruta_mapa_ida, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "[43.3667, -8.3833]" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "A Coruna" in contenido
+			assert "[40.436, -3.599]" in contenido
+			assert "/static/imagenes/iconos/destino.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "[[43.3667, -8.3833], [40.436, -3.599]]" in contenido
+			assert "solid red" in contenido
+			assert "solid blue" not in contenido
+			assert '"color": "red"' in contenido
+			assert '"color": "blue"' not in contenido
+			assert "background-color: #ffcccc" in contenido
+			assert "background-color: #95ebf7" not in contenido
+
+		ruta_mapa_vuelta=os.path.join(ruta_carpeta_mapas, "mapa_trayecto_vuelta_user_nacho98.html")
+ 
+		assert os.path.exists(ruta_mapa_vuelta)
+ 
+		with open(ruta_mapa_vuelta, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "[43.3667, -8.3833]" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "A Coruna" in contenido
+			assert "[40.436, -3.599]" in contenido
+			assert "/static/imagenes/iconos/destino.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "[[40.436, -3.599], [43.3667, -8.3833]]" in contenido
+			assert "solid red" not in contenido
+			assert "solid blue" in contenido
+			assert '"color": "red"' not in contenido
+			assert '"color": "blue"' in contenido
+			assert "background-color: #ffcccc" not in contenido
+			assert "background-color: #95ebf7" in contenido
+
+@pytest.mark.parametrize(["usuario"],
+	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
+)
+def test_pagina_partido_asistido_mapas_trayectos_usuarios(cliente, conexion_entorno, password_hash, usuario):
+
+	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+ 
+		respuesta.status_code==200
+		assert '<div class="tarjetas-mapas-trayectos">' in contenido
+		assert '<div class="tarjeta-mapa-trayecto-ida">' in contenido
+		assert '<div class="tarjeta-mapa-trayecto-vuelta">' in contenido
+		assert "iframe" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
+ 
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "trayectos")
+ 
+		ruta_mapa_ida=os.path.join(ruta_carpeta_mapas, f"mapa_trayecto_ida_user_{usuario}.html")
+ 
+		assert os.path.exists(ruta_mapa_ida)
+ 
+		with open(ruta_mapa_ida, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "[43.3667, -8.3833]" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "A Coruna" in contenido
+			assert "[40.436, -3.599]" in contenido
+			assert "/static/imagenes/iconos/destino.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "[[43.3667, -8.3833], [40.436, -3.599]]" in contenido
+			assert "solid red" in contenido
+			assert "solid blue" not in contenido
+			assert '"color": "red"' in contenido
+			assert '"color": "blue"' not in contenido
+			assert "background-color: #ffcccc" in contenido
+			assert "background-color: #95ebf7" not in contenido
+
+		ruta_mapa_vuelta=os.path.join(ruta_carpeta_mapas, f"mapa_trayecto_vuelta_user_{usuario}.html")
+ 
+		assert os.path.exists(ruta_mapa_vuelta)
+ 
+		with open(ruta_mapa_vuelta, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "[43.3667, -8.3833]" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "A Coruna" in contenido
+			assert "[40.436, -3.599]" in contenido
+			assert "/static/imagenes/iconos/destino.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "[[40.436, -3.599], [43.3667, -8.3833]]" in contenido
+			assert "solid red" not in contenido
+			assert "solid blue" in contenido
+			assert '"color": "red"' not in contenido
+			assert '"color": "blue"' in contenido
+			assert "background-color: #ffcccc" not in contenido
+			assert "background-color: #95ebf7" in contenido
+
+def test_pagina_mapa_partido_asistido_sin_login(cliente):
+
+	respuesta=cliente.get("/partido/20190622/asistido/trayecto/mapa/nombre_mapa", follow_redirects=True)
+
+	contenido=respuesta.data.decode()
+
+	assert respuesta.status_code==200
+	assert "<h1>Iniciar Sesión</h1>" in contenido
+
+def test_pagina_mapa_partido_asistido_mapa_trayecto_no_existe(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		with pytest.raises(FileNotFoundError):
+
+			cliente_abierto.get("/partido/20190622/asistido/trayecto/mapa/nombre_mapa.html")
+
+def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_existe(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		cliente_abierto.get("/partido/20190622/asistido")
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_nacho98.html")
+
+		contenido=respuesta.data.decode()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+		assert "[43.3667, -8.3833]" in contenido
+		assert "/static/imagenes/iconos/inicio.png" in contenido
+		assert "A Coruna" in contenido
+		assert "[40.436, -3.599]" in contenido
+		assert "/static/imagenes/iconos/destino.png" in contenido
+		assert "Metropolitano" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+		assert "[[43.3667, -8.3833], [40.436, -3.599]]" in contenido
+		assert "solid red" in contenido
+		assert "solid blue" not in contenido
+		assert '"color": "red"' in contenido
+		assert '"color": "blue"' not in contenido
+		assert "background-color: #ffcccc" in contenido
+		assert "background-color: #95ebf7" not in contenido
+
+def test_pagina_mapa_partido_asistido_mapa_trayecto_vuelta_existe(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		cliente_abierto.get("/partido/20190622/asistido")
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_nacho98.html")
+
+		contenido=respuesta.data.decode()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+		assert "[43.3667, -8.3833]" in contenido
+		assert "/static/imagenes/iconos/inicio.png" in contenido
+		assert "A Coruna" in contenido
+		assert "[40.436, -3.599]" in contenido
+		assert "/static/imagenes/iconos/destino.png" in contenido
+		assert "Metropolitano" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+		assert "[[40.436, -3.599], [43.3667, -8.3833]]" in contenido
+		assert "solid red" not in contenido
+		assert "solid blue" in contenido
+		assert '"color": "red"' not in contenido
+		assert '"color": "blue"' in contenido
+		assert "background-color: #ffcccc" not in contenido
+		assert "background-color: #95ebf7" in contenido

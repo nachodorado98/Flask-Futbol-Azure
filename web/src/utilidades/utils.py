@@ -195,17 +195,9 @@ def vaciarCarpetaMapasUsuario(ruta:str, nombre_usuario:str)->None:
 
 def obtenerCentroide(datos_estadios:List[tuple])->tuple:
 
-	latitudes=[latitud for nombre, latitud, longitud, escudo, pais in datos_estadios]
+	coordenadas=[(latitud, longitud) for nombre, latitud, longitud, escudo, pais in datos_estadios]
 
-	longitudes = [longitud for nombre, latitud, longitud, escudo, pais in datos_estadios]
-
-	try:
-
-		return (sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes))
-
-	except Exception:
-
-		raise Exception("Error en obtener el centroide")
+	return obtenerCentroideCoordenadas(coordenadas)
 
 def crearMapaMisEstadios(ruta:str, datos_estadios:List[tuple], nombre_mapa:str, centro_mapa:List=[50.0909, 10.1228], zoom:float=2.4)->None:
 
@@ -523,3 +515,82 @@ def datos_trayectos_correctos(codigo_ciudad_ida:bool, codigo_ciudad_vuelta:bool,
 	transportes_correctos=transporte_ida in TRANSPORTES and transporte_vuelta in TRANSPORTES
 
 	return True if codigo_ciudad_ida and codigo_ciudad_vuelta and ciudad_correcta and transportes_correctos else False
+
+def obtenerCentroideCoordenadas(coordenadas:List[tuple])->tuple:
+
+	latitudes=[latitud for latitud, longitud in coordenadas]
+
+	longitudes = [longitud for latitud, longitud in coordenadas]
+
+	try:
+
+		return (sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes))
+
+	except Exception:
+
+		raise Exception("Error en obtener el centroide")
+
+def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, zoom:float=5)->None:
+
+	tipo, transporte=datos_trayecto[0], datos_trayecto[1]
+	ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[2], datos_trayecto[3], datos_trayecto[4]
+	ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[5], datos_trayecto[6], datos_trayecto[7]
+
+	centroide=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+	colores={"I":["ffcccc", "red"], "V":["95ebf7", "blue"]}
+
+	try:
+
+		color=colores[tipo]
+
+		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
+
+
+		popup_origen_html=f"""
+					<div style="text-align: center;">
+						<h4>
+							{ciudad_origen}
+						</h4>
+						<img src="/static/imagenes/iconos/inicio.png" 
+							 alt="Inicio" style="width:250px;">
+					</div>
+					"""
+
+		icono_origen_html=f"""
+						<div style="background-color: #{color[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {color[1]}; border-width: 1px;"">
+							<img src="/static/imagenes/iconos/inicio.png" style="width: 23px; height: 23px; margin-top: 4px;">
+						</div>
+						"""
+
+		folium.Marker(location=[latitud_origen, longitud_origen],
+						popup=folium.Popup(popup_origen_html, max_width=400),
+						icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
+
+		popup_destino_html=f"""
+					<div style="text-align: center;">
+						<h4>
+							{ciudad_destino}
+						</h4>
+						<img src="/static/imagenes/iconos/destino.png" 
+							 alt="Destino" style="width:250px;">
+					</div>
+					"""
+
+		icono_destino_html=f"""
+						<div style="background-color: #{color[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {color[1]}; border-width: 1px;"">
+							<img src="/static/imagenes/iconos/destino.png" style="width: 23px; height: 23px; margin-top: 4px;">
+						</div>
+						"""
+
+		folium.Marker(location=[latitud_destino, longitud_destino],
+						popup=folium.Popup(popup_destino_html, max_width=400),
+						icon=folium.DivIcon(html=icono_destino_html)).add_to(mapa)
+
+		folium.PolyLine(locations=[[latitud_origen, longitud_origen], [latitud_destino, longitud_destino]], color=color[1], weight=2.5, opacity=1).add_to(mapa)
+
+		mapa.save(os.path.join(ruta, nombre_mapa))
+
+	except Exception as e:
+
+		raise Exception("Error al crear el mapa")

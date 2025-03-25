@@ -264,7 +264,7 @@ def test_pagina_estadio_mapa_small(cliente, conexion_entorno_usuario):
 		assert "iframe" in contenido
 		assert "/estadio/mapa/mapa_small_estadio_user_nacho98.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_estadio_user_nacho98.html")
 
@@ -305,7 +305,7 @@ def test_pagina_estadio_mapa_small_usuarios(cliente, conexion_entorno, password_
 		assert "iframe" in contenido
 		assert f"/estadio/mapa/mapa_small_estadio_user_{usuario}.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_small_estadio_user_{usuario}.html")
 
@@ -337,7 +337,7 @@ def test_pagina_estadio_mapa_small_otro_usuario(cliente, conexion_entorno_usuari
 
 		cliente_abierto.get("/estadio/metropolitano")
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_estadio_user_otro.html")
 

@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, send_file
 from flask_login import login_required, current_user
+import os
 
 from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_USUARIOS
+
+from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto
+
 
 bp_partido=Blueprint("partido", __name__)
 
@@ -92,6 +96,31 @@ def pagina_partido_asistido(partido_id:str):
 
 	partido_asistido=con.obtenerPartidoAsistidoUsuario(current_user.id, partido_id)
 
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas", "trayectos"), current_user.id)
+
+	trayecto_ida=con.obtenerTrayectoPartidoAsistido(partido_id, current_user.id, "I")
+
+	trayecto_vuelta=con.obtenerTrayectoPartidoAsistido(partido_id, current_user.id, "V")
+
+	nombre_mapa_ida=f"mapa_trayecto_ida_user_{current_user.id}.html"
+
+	nombre_mapa_vuelta=f"mapa_trayecto_vuelta_user_{current_user.id}.html"
+
+	mapas_correcto=True
+
+	try:
+
+		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayecto_ida, nombre_mapa_ida)
+
+		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayecto_vuelta, nombre_mapa_vuelta)
+
+	except Exception as e:
+
+		print(e)
+		mapas_correcto=False
+
 	partido_id_asistido_anterior=con.obtenerPartidoAsistidoUsuarioAnterior(current_user.id, partido_id)
 
 	partido_id_asistido_siguiente=con.obtenerPartidoAsistidoUsuarioSiguiente(current_user.id, partido_id)
@@ -111,9 +140,22 @@ def pagina_partido_asistido(partido_id:str):
 							partido_asistido_favorito=partido_asistido_favorito,
 							partido_id_asistido_anterior=partido_id_asistido_anterior,
 							partido_id_asistido_siguiente=partido_id_asistido_siguiente,
+							mapas_correcto=mapas_correcto,
+							nombre_mapa_ida=nombre_mapa_ida,
+							nombre_mapa_vuelta=nombre_mapa_vuelta,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")
+
+@bp_partido.route("/partido/<partido_id>/asistido/trayecto/mapa/<nombre_mapa>")
+@login_required
+def visualizarMapaTrayecto(partido_id:str, nombre_mapa:str):
+
+	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
+
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", "trayectos", nombre_mapa)
+
+	return send_file(ruta_mapa)
 
 @bp_partido.route("/partido/<partido_id>/asistido/quitar_partido_favorito")
 @login_required

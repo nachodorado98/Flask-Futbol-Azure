@@ -23,7 +23,8 @@ def creacionEntorno()->None:
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
 	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas"))
-
+	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas", "estadios"))
+	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas", "trayectos"))
 	crearCarpeta(os.path.join(ruta, "src", "templates", "imagenes"))
 
 # Funcion para crear la instancia de la aplicacion

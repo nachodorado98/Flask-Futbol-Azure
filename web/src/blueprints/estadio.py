@@ -41,7 +41,7 @@ def pagina_estadio(estadio_id:str):
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas"), current_user.id)
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas", "estadios"), current_user.id)
 
 	nombre_mapa_small_estadio=f"mapa_small_estadio_user_{current_user.id}.html"
 
@@ -49,7 +49,7 @@ def pagina_estadio(estadio_id:str):
 
 	try:
 
-		crearMapaEstadio(os.path.join(ruta, "templates", "mapas"), estadio, nombre_mapa_small_estadio)
+		crearMapaEstadio(os.path.join(ruta, "templates", "mapas", "estadios"), estadio, nombre_mapa_small_estadio)
 
 	except Exception as e:
 
@@ -79,7 +79,7 @@ def visualizarMapaEstadio(nombre_mapa:str):
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", "estadios", nombre_mapa)
 
 	return send_file(ruta_mapa)
 
@@ -143,7 +143,7 @@ def pagina_mis_estadios():
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas"), current_user.id)
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas", "estadios"), current_user.id)
 
 	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
 
@@ -159,13 +159,13 @@ def pagina_mis_estadios():
 
 		centroide=obtenerCentroide(datos_coordenadas)
 
-		crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_small, centroide)
+		crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas", "estadios"), datos_coordenadas, nombre_mapa_small, centroide)
 
-		crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_detalle, centroide)
+		crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas", "estadios"), datos_coordenadas, nombre_mapa_detalle, centroide)
 
 		coordenadas=con.obtenerCoordenadasEstadiosPartidosAsistidosUsuario(current_user.id, numero_estadios)
 
-		crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"), coordenadas, nombre_mapa_detalle_paises, centroide)
+		crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas", "estadios"), coordenadas, nombre_mapa_detalle_paises, centroide)
 
 	except Exception as e:
 
@@ -197,7 +197,7 @@ def visualizarMapaMisEstadios(nombre_mapa:str):
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", "estadios", nombre_mapa)
 
 	return send_file(ruta_mapa)
 
@@ -231,7 +231,7 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas"), current_user.id)
+	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas", "estadios"), current_user.id)
 
 	datos_coordenadas=con.obtenerDatosCoordenadasEstadiosPaisPartidosAsistidosUsuario(current_user.id, codigo_pais, numero_estadios)
 
@@ -247,13 +247,13 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 		centroide=obtenerCentroide(datos_coordenadas)
 
-		crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_small, centroide, 3)
+		crearMapaMisEstadios(os.path.join(ruta, "templates", "mapas", "estadios"), datos_coordenadas, nombre_mapa_small, centroide, 3)
 
-		crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas"), datos_coordenadas, nombre_mapa_detalle, centroide, 4.5)
+		crearMapaMisEstadiosDetalle(os.path.join(ruta, "templates", "mapas", "estadios"), datos_coordenadas, nombre_mapa_detalle, centroide, 4.5)
 
 		coordenadas=[(dato[1], dato[2]) for dato in datos_coordenadas]
 
-		crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas"), coordenadas, nombre_mapa_detalle_paises, centroide, 4.5)
+		crearMapaMisEstadiosDetallePaises(os.path.join(ruta, "templates", "mapas", "estadios"), coordenadas, nombre_mapa_detalle_paises, centroide, 4.5)
 	
 	except Exception as e:
 
@@ -285,7 +285,7 @@ def visualizarMapaMisEstadiosPais(nombre_mapa:str):
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	ruta_mapa=os.path.join(ruta, "templates", "mapas", nombre_mapa)
+	ruta_mapa=os.path.join(ruta, "templates", "mapas", "estadios", nombre_mapa)
 
 	return send_file(ruta_mapa)
 

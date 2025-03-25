@@ -2659,3 +2659,58 @@ class Conexion:
 							(partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener el trayecto de de un partido asistido
+	def obtenerTrayectoPartidoAsistido(self, partido_id:str, usuario:str, tipo_trayecto:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT t.Tipo_Trayecto, t.Transporte,
+								CASE WHEN t.Tipo_Trayecto='I'
+										THEN c1.Ciudad 
+										ELSE e.Nombre
+								END AS Ciudad_Origen,
+								CASE WHEN t.Tipo_Trayecto='I'
+										THEN cast(c1.Latitud AS FLOAT)
+										ELSE cast(e.Latitud AS FLOAT)
+								END as Latitud_Origen,
+								CASE WHEN t.Tipo_Trayecto='I'
+										THEN cast(c1.Longitud AS FLOAT)
+										ELSE cast(e.Longitud AS FLOAT)
+								END as Longitud_Origen,
+								CASE WHEN t.Tipo_Trayecto='I'
+										THEN e.Nombre
+										ELSE c2.Ciudad
+								END AS Ciudad_Destino,
+								CASE WHEN t.Tipo_Trayecto='I'
+										THEN cast(e.Latitud AS FLOAT)
+										ELSE cast(c2.Latitud AS FLOAT)
+								END as Latitud_Destino,
+								CASE WHEN t.Tipo_Trayecto='I'
+										THEN cast(e.Longitud AS FLOAT)
+										ELSE cast(c2.Longitud AS FLOAT)
+								END as Longitud_Destino
+							FROM trayecto_partido_asistido t
+							JOIN ciudades c1
+							ON t.CodCiudad_Origen=c1.CodCiudad
+							JOIN ciudades c2
+							ON t.CodCiudad_Destino=c2.CodCiudad
+							JOIN partidos p
+							ON t.partido_id=p.partido_id
+							JOIN partido_estadio pe
+							ON p.partido_id=pe.partido_id
+							JOIN estadios e
+							ON pe.estadio_id=e.estadio_id
+							WHERE t.Partido_Id=%s
+							AND t.Usuario=%s
+							AND t.Tipo_Trayecto=%s""",
+							(partido_id, usuario, tipo_trayecto))
+
+		trayecto=self.c.fetchone()
+
+		return None if not trayecto else (trayecto["tipo_trayecto"],
+											trayecto["transporte"],
+											trayecto["ciudad_origen"],
+											trayecto["latitud_origen"],
+											trayecto["longitud_origen"],
+											trayecto["ciudad_destino"],
+											trayecto["latitud_destino"],
+											trayecto["longitud_destino"])

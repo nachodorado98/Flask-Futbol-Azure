@@ -137,11 +137,15 @@ def pytest_sessionfinish(session, exitstatus):
 
 	print("\nLimpieza de la BBDD correcta")
 
-	ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+	ruta_carpeta_mapas_estadios=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
+
+	ruta_carpeta_mapas_trayectos=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "trayectos")
 
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
-	vaciarCarpeta(ruta_carpeta_mapas)
+	vaciarCarpeta(ruta_carpeta_mapas_estadios)
+
+	vaciarCarpeta(ruta_carpeta_mapas_trayectos)
 
 	print("\nLimpieza de la carpeta mapas correcta")
 

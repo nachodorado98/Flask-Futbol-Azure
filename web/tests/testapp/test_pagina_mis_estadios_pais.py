@@ -446,7 +446,7 @@ def test_pagina_mis_estadios_pais_mapa_small(cliente, conexion_entorno_usuario):
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_nacho98.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_mis_estadios_pais_es_user_nacho98.html")
 
@@ -490,7 +490,7 @@ def test_pagina_mis_estadios_pais_mapa_small_usuarios(cliente, conexion_entorno,
 		assert "iframe" in contenido
 		assert f"/estadios/mis_estadios_pais/mapa/mapa_small_mis_estadios_pais_es_user_{usuario}.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_small_mis_estadios_pais_es_user_{usuario}.html")
 
@@ -525,7 +525,7 @@ def test_pagina_mis_estadios_pais_mapa_small_otro_usuario(cliente, conexion_ento
 
 		cliente_abierto.get("/estadios/mis_estadios/es")
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_mis_estadios_pais_es_user_otro.html")
 
@@ -601,7 +601,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle(cliente, conexion_entorno_usuario
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_nacho98.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_mis_estadios_pais_es_user_nacho98.html")
 
@@ -645,7 +645,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_usuarios(cliente, conexion_entorn
 		assert "iframe" in contenido
 		assert f"/estadios/mis_estadios_pais/mapa/mapa_detalle_mis_estadios_pais_es_user_{usuario}.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_detalle_mis_estadios_pais_es_user_{usuario}.html")
 
@@ -680,7 +680,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_otro_usuario(cliente, conexion_en
 
 		cliente_abierto.get("/estadios/mis_estadios/es")
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_mis_estadios_pais_es_user_otro.html")
 
@@ -756,7 +756,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises(cliente, conexion_entorno_
 		assert "iframe" in contenido
 		assert "/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_nacho98.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_mis_estadios_pais_es_user_nacho98.html")
 
@@ -799,7 +799,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises_usuarios(cliente, conexion
 		assert "iframe" in contenido
 		assert f"/estadios/mis_estadios_pais/mapa/mapa_detalle_paises_mis_estadios_pais_es_user_{usuario}.html" in contenido
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_detalle_paises_mis_estadios_pais_es_user_{usuario}.html")
 
@@ -833,7 +833,7 @@ def test_pagina_mis_estadios_pais_mapa_detalle_paises_otro_usuario(cliente, cone
 
 		cliente_abierto.get("/estadios/mis_estadios/es")
 
-		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas")
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
 		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_mis_estadios_pais_es_user_otro.html")
 

@@ -839,6 +839,6 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos(cliente, conexion_en
 		assert ida["tipo_trayecto"]=="I"
 		assert vuelta["tipo_trayecto"]=="V"
 		assert ida["codciudad_origen"]==codigo_ciudad_ida
-		assert vuelta["codciudad_origen"]==codigo_ciudad_vuelta
+		assert vuelta["codciudad_origen"]==103
 		assert ida["codciudad_destino"]==103
-		assert vuelta["codciudad_destino"]==103
+		assert vuelta["codciudad_destino"]==codigo_ciudad_vuelta

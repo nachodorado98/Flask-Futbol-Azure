@@ -72,6 +72,24 @@
                 {% endif %}
             </p>
 
+             {% if mapas_correcto %}
+                <div class="tarjetas-mapas-trayectos">
+                    <div class="tarjeta-mapa-trayecto-ida">
+                        <div class="contenedor-mapa-trayecto-ida">
+                            <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}"></iframe>
+                        </div>
+                    </div>
+
+                     <div class="tarjeta-mapa-trayecto-vuelta">
+                        <div class="contenedor-mapa-trayecto-vuelta">
+                            <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_vuelta }}"></iframe>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
+            {% endif %}
+
         </div>
 
     {% endif %}

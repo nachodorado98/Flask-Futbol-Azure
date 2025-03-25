@@ -247,7 +247,7 @@ def pagina_insertar_partido_asistido():
 
 				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_ida_estadio)
 
-				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_vuelta, transporte_vuelta, codigo_ciudad_vuelta_estadio)
+				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_vuelta_estadio, transporte_vuelta, codigo_ciudad_vuelta)
 
 	con.cerrarConexion()
 
