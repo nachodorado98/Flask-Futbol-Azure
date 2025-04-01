@@ -6,7 +6,7 @@ from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_USUARIOS
 
-from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto
+from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto, crearMapaTrayectosIdaVuelta
 
 
 bp_partido=Blueprint("partido", __name__)
@@ -108,6 +108,8 @@ def pagina_partido_asistido(partido_id:str):
 
 	nombre_mapa_vuelta=f"mapa_trayecto_vuelta_user_{current_user.id}.html"
 
+	nombre_mapa_ida_vuelta=f"mapa_trayecto_ida_vuelta_user_{current_user.id}.html"
+
 	mapas_correcto=True
 
 	try:
@@ -115,6 +117,8 @@ def pagina_partido_asistido(partido_id:str):
 		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayecto_ida, nombre_mapa_ida)
 
 		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayecto_vuelta, nombre_mapa_vuelta)
+
+		crearMapaTrayectosIdaVuelta(os.path.join(ruta, "templates", "mapas", "trayectos"), [trayecto_ida, trayecto_vuelta], nombre_mapa_ida_vuelta)
 
 	except Exception as e:
 
@@ -143,6 +147,7 @@ def pagina_partido_asistido(partido_id:str):
 							mapas_correcto=mapas_correcto,
 							nombre_mapa_ida=nombre_mapa_ida,
 							nombre_mapa_vuelta=nombre_mapa_vuelta,
+							nombre_mapa_ida_vuelta=nombre_mapa_ida_vuelta,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")

@@ -73,17 +73,9 @@
             </p>
 
              {% if mapas_correcto %}
-                <div class="tarjetas-mapas-trayectos">
-                    <div class="tarjeta-mapa-trayecto-ida">
-                        <div class="contenedor-mapa-trayecto-ida">
-                            <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}"></iframe>
-                        </div>
-                    </div>
-
-                     <div class="tarjeta-mapa-trayecto-vuelta">
-                        <div class="contenedor-mapa-trayecto-vuelta">
-                            <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_vuelta }}"></iframe>
-                        </div>
+                <div class="tarjeta-mapa-trayecto-ida-vuelta-total" onclick="abrirVentanaEmergenteMapa()">
+                    <div class="contenedor-mapa-trayecto-ida-vuelta-total">
+                        <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida_vuelta }}"></iframe>
                     </div>
                 </div>
             {% else %}
@@ -197,9 +189,33 @@
         <div class="contenido-ventana-emergente" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
             <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
             <h2>¿Estas seguro de eliminar este partido asistido?</h2>
-            <button class="boton-confirmar-eliminar-favorito" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/eliminar'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>Si, eliminar el partido</button>
+            <button class="boton-confirmar-eliminar-favorito" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/eliminar'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                Si, eliminar el partido
+            </button>
         </div>
     </div>
+
+    {% if mapas_correcto %}
+        <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solamamiento con los contenedores laterales -->
+        <div id="ventana-emergente-mapa" class="ventana-emergente-mapa">
+            <div class="contenido-ventana-emergente-mapa">
+                <span class="cerrar-mapa" onclick="cerrarVentanaEmergenteMapa()">&times;</span>
+                <div class="botones-mapa-detalle-ida-vuelta">
+                    <button onclick="cambiarMapaTrayecto('/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}', this)" class="boton-mapa-ida-vuelta active">
+                        <span class="boton-mapa-ida-vuelta-text">Ida</span>
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_ida.png') }}" alt="Flecha Ida Icon" class="icono-trayecto-mapa">
+                    </button>
+                    <button onclick="cambiarMapaTrayecto('/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_vuelta }}', this)" class="boton-mapa-ida-vuelta">
+                        <span class="boton-mapa-ida-vuelta-text">Vuelta</span>
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vuelta.png') }}" alt="Flecha Vuelta Icon" class="icono-trayecto-mapa">
+                    </button>
+                </div>
+                <div class="contenedor-mapa-ida-vuelta-detalle">
+                    <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}" id="iframe-mapa-trayecto"></iframe>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
 </div>
 
@@ -207,6 +223,8 @@
 <script src="{{ url_for('static', filename='js/cerrar_comentar_partido_asistido.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
 <script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ventana_emergente_mapa.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cambio_mapa_trayectos_ida_vuelta.js') }}"></script>
 
 {% endblock principal %}
 
