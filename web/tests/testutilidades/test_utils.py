@@ -13,7 +13,7 @@ from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosU
 from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
 from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
 from src.utilidades.utils import datos_trayectos_correctos, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
-from src.utilidades.utils import crearMapaTrayectosIdaVuelta
+from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1854,3 +1854,54 @@ def test_crear_mapa_trayectos_ida_vuelta_diferente():
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
+
+def test_distancia_maxima_coordenadas_sin_coordenadas():
+
+    assert distancia_maxima_coordenadas([])==0 
+
+def test_distancia_maxima_coordenadas_una_coordenada():
+
+    assert distancia_maxima_coordenadas([(40.4168, -3.7038)])==0
+
+@pytest.mark.parametrize(["coordenadas", "distancia"],
+	[
+		([(40.4168, -3.7038), (48.8566, 2.3522)], 1053),
+		([(43.3623, -8.4115), (40.4168, -3.7038), (48.8566, 2.3522)], 1053),
+		([(0, 0), (0, 180)], 20004),
+		([(40.4168, -3.7038), (41.3874, 2.1686), (37.3891, -5.9845)], 830),
+		([(48.8566, 2.3522), (52.5200, 13.4050), (40.7128, -74.0060)], 6402),
+		([(34.0522, -118.2437), (40.7128, -74.0060), (19.4326, -99.1332)], 3944),
+		([(35.6895, 139.6917), (37.7749, -122.4194), (-33.8688, 151.2093)], 11934),
+		([(30.0444, 31.2357), (-1.286389, 36.817223), (-33.9249, 18.4241)], 7207)
+	]
+)
+def test_distancia_maxima_coordenadas(coordenadas, distancia):
+
+   assert round(distancia_maxima_coordenadas(coordenadas))==distancia
+
+def test_calcular_zoom_mapa_sin_coordenadas():
+
+    assert calcularZoomMapa([])==15 
+
+def test_calcular_zoom_mapa_una_coordenada():
+
+    assert calcularZoomMapa([(40.4168, -3.7038)])==15
+
+@pytest.mark.parametrize(["coordenadas"],
+	[
+		([(40.4168, -3.7038), (48.8566, 2.3522)],),
+		([(43.3623, -8.4115), (40.4168, -3.7038), (48.8566, 2.3522)],),
+		([(0, 0), (0, 180)],),
+		([(40.4168, -3.7038), (41.3874, 2.1686), (37.3891, -5.9845)],),
+		([(48.8566, 2.3522), (52.5200, 13.4050), (40.7128, -74.0060)],),
+		([(34.0522, -118.2437), (40.7128, -74.0060), (19.4326, -99.1332)],),
+		([(35.6895, 139.6917), (37.7749, -122.4194), (-33.8688, 151.2093)],),
+		([(30.0444, 31.2357), (-1.286389, 36.817223), (-33.9249, 18.4241)],)
+	]
+)
+def test_calcular_zoom_mapa(coordenadas):
+
+	zoom=calcularZoomMapa(coordenadas)
+
+	assert zoom>=1
+	assert zoom<=18

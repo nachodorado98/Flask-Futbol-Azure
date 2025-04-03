@@ -8,6 +8,8 @@ import geopandas as gpd
 import fiona
 from shapely.geometry import Point
 import pandas as pd
+from geopy.distance import geodesic
+import math
 
 from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESTADIOS
 
@@ -542,6 +544,8 @@ def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, ida_vuelt
 
 	try:
 
+		zoom=calcularZoomMapa([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
 		tipo_trayecto=tipo if not ida_vuelta else "IV"
 
 		constante_tipo_trayecto=constantes_tipo_trayecto[tipo_trayecto]
@@ -592,13 +596,15 @@ def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, ida_vuelt
 
 		raise Exception("Error al crear el mapa")
 
-def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str, zoom:float=5)->None:
+def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->None:
 
 	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[3], datos_trayecto[4]), (datos_trayecto[6], datos_trayecto[7])]]
 
 	centroide=obtenerCentroideCoordenadas(coordenadas_trayectos)
 
 	try:
+
+		zoom=calcularZoomMapa(coordenadas_trayectos)
 
 		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
 
@@ -656,7 +662,7 @@ def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str, z
 
 		raise Exception("Error al crear el mapa")
 
-def crearMapaTrayectosIdaVuelta(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str, zoom:float=5)->None:
+def crearMapaTrayectosIdaVuelta(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->None:
 
 	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[3], datos_trayecto[4]), (datos_trayecto[6], datos_trayecto[7])]]
 
@@ -669,3 +675,31 @@ def crearMapaTrayectosIdaVuelta(ruta:str, datos_trayectos:List[tuple], nombre_ma
 	else:
 
 		crearMapaTrayectos(ruta, datos_trayectos, nombre_mapa)
+
+def distancia_maxima_coordenadas(coordenadas:List[tuple])->int:
+    
+    if len(coordenadas)<2:
+        return 0 
+
+    max_distancia=0
+
+    for numero in range(len(coordenadas)):
+
+        for numero_siguiente in range(numero+1, len(coordenadas)):
+
+            distancia=geodesic(coordenadas[numero], coordenadas[numero_siguiente]).kilometers
+
+            max_distancia=max(max_distancia, distancia)
+
+    return max_distancia
+
+def calcularZoomMapa(coordenadas:List[tuple], C:int=15)->int:
+
+    if len(coordenadas)<2:
+        return 15
+
+    max_distancia=distancia_maxima_coordenadas(coordenadas)
+
+    zoom=C-math.log2(max_distancia+1)
+
+    return round(max(1, min(zoom, 18)))

@@ -281,19 +281,20 @@
 }
 
 .tarjeta-mapa-trayecto-ida-vuelta-total {
-    width: 300px;
-    height: 450px;
+    width: 500px;
+    height: 500px;
     margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 5px;
-    background-color: var(--color-fondo);
+    padding: 0px;
+    background-color: var(--color-primario);
     cursor: pointer;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .contenedor-mapa-trayecto-ida-vuelta-total {
+    width: 100%;
     margin-top: 15px;
     border-radius: 5px;
     overflow: hidden;
@@ -459,24 +460,6 @@
     border: none;
     pointer-events: none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .tarjeta-partido-asistido-detalle .contenedor-botones-asistido {
     display: flex;
