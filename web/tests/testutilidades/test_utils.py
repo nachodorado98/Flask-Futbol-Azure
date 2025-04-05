@@ -13,7 +13,7 @@ from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosU
 from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
 from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
 from src.utilidades.utils import datos_trayectos_correctos, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
-from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa
+from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -1353,7 +1353,7 @@ def test_crear_mapa_trayecto_sin_punto_error():
 
 	with pytest.raises(Exception):
 
-		crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', None, None, 'Metropolitano', None, None), "nacho_mapa_trayecto.html")
+		crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', None, None, 'Metropolitano', None, None, "coche", "13"), "nacho_mapa_trayecto.html")
 
 	assert not os.path.exists(ruta_html)
 
@@ -1373,21 +1373,21 @@ def test_crear_mapa_trayecto_tipo_error():
 
 	with pytest.raises(Exception):
 
-		crearMapaTrayecto(ruta_carpeta, ('N', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45), "nacho_mapa_trayecto.html")
+		crearMapaTrayecto(ruta_carpeta, ('N', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45, "coche", "13"), "nacho_mapa_trayecto.html")
 
 	assert not os.path.exists(ruta_html)
 
 	borrarCarpeta(ruta_carpeta)
 
-@pytest.mark.parametrize(["latitud_origen", "longitud_origen", "latitud_destino", "longitud_destino", "ida_vuelta"],
+@pytest.mark.parametrize(["latitud_origen", "longitud_origen", "latitud_destino", "longitud_destino", "ida_vuelta", "tipo"],
 	[
-		(40.01, -3.45, 30.11, -21.45, False),
-		(30.11, -21.45, 1.01, 9.86, True),
-		(1.01, 9.86, 30.11, -21.45, True),
-		(-2.34, 40.04, 40.01, -3.45, False)
+		(40.01, -3.45, 30.11, -21.45, False, "I"),
+		(30.11, -21.45, 1.01, 9.86, True, "IV"),
+		(1.01, 9.86, 30.11, -21.45, True, "IV"),
+		(-2.34, 40.04, 40.01, -3.45, False, "I")
 	]
 )
-def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, longitud_destino, ida_vuelta):
+def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, longitud_destino, ida_vuelta, tipo):
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1399,7 +1399,11 @@ def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, l
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino), "nacho_mapa_trayecto.html", ida_vuelta)
+	crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "pie", "23"), "nacho_mapa_trayecto.html", ida_vuelta)
+
+	latitud_media, longitud_media=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+	angulo=obtenerAngulo([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
 
 	assert os.path.exists(ruta_html)
 
@@ -1421,12 +1425,20 @@ def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, l
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert f"[[{latitud_origen}, {longitud_origen}], [{latitud_destino}, {longitud_destino}]]" in contenido
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
+		assert f"[{latitud_media}, {longitud_media}]" in contenido
+		assert f'"rotation": {angulo},' in contenido
+		assert "/static/imagenes/iconos/pie.png" in contenido
+		assert f'alt="Estadio_Transporte_{tipo}" style="width:50px;"' in contenido
+		assert "/contenedorequipos/estadios/23.png" in contenido
+		assert f'alt="Estadio_Transporte_{tipo}" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayecto_color_ida():
+def test_crear_mapa_trayecto_detalles_ida():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1438,7 +1450,7 @@ def test_crear_mapa_trayecto_color_ida():
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45), "nacho_mapa_trayecto.html")
+	crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "pie", "23"), "nacho_mapa_trayecto.html")
 
 	assert os.path.exists(ruta_html)
 
@@ -1462,12 +1474,16 @@ def test_crear_mapa_trayecto_color_ida():
 		assert "background-color: #ffcccc" in contenido
 		assert "background-color: #95ebf7" not in contenido
 		assert "background-color: #ffdd73" not in contenido
+		assert "/static/imagenes/iconos/pie.png" in contenido
+		assert 'alt="Estadio_Transporte_I" style="width:50px;"' in contenido
+		assert "/contenedorequipos/estadios/23.png" in contenido
+		assert 'alt="Estadio_Transporte_I" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayecto_color_vuelta():
+def test_crear_mapa_trayecto_detalles_vuelta():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1479,7 +1495,7 @@ def test_crear_mapa_trayecto_color_vuelta():
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('V', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45), "nacho_mapa_trayecto.html")
+	crearMapaTrayecto(ruta_carpeta, ('V', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "1", "autobus"), "nacho_mapa_trayecto.html")
 
 	assert os.path.exists(ruta_html)
 
@@ -1503,12 +1519,16 @@ def test_crear_mapa_trayecto_color_vuelta():
 		assert "background-color: #ffcccc" not in contenido
 		assert "background-color: #95ebf7" in contenido
 		assert "background-color: #ffdd73" not in contenido
+		assert "/contenedorequipos/estadios/1.png" in contenido
+		assert 'alt="Estadio_Transporte_V" style="width:200px;"' in contenido
+		assert "/static/imagenes/iconos/autobus.png" in contenido
+		assert 'alt="Estadio_Transporte_V" style="width:50px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayecto_color_ida_vuelta():
+def test_crear_mapa_trayecto_detalles_ida_vuelta():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1520,7 +1540,7 @@ def test_crear_mapa_trayecto_color_ida_vuelta():
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('V', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45), "nacho_mapa_trayecto.html", True)
+	crearMapaTrayecto(ruta_carpeta, ('V', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "avion", "22"), "nacho_mapa_trayecto.html", True)
 
 	assert os.path.exists(ruta_html)
 
@@ -1544,6 +1564,10 @@ def test_crear_mapa_trayecto_color_ida_vuelta():
 		assert "background-color: #ffcccc" not in contenido
 		assert "background-color: #95ebf7" not in contenido
 		assert "background-color: #ffdd73" in contenido
+		assert "/static/imagenes/iconos/avion.png" in contenido
+		assert 'alt="Estadio_Transporte_IV" style="width:50px;"' in contenido
+		assert "/contenedorequipos/estadios/22.png" in contenido
+		assert 'alt="Estadio_Transporte_IV" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
@@ -1586,8 +1610,8 @@ def test_crear_mapa_trayectos_sin_puntos_error(latitud_origen, longitud_origen, 
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino),
-							('V', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino)]
+		datos_trayectos=[('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13"),
+							('V', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13")]
 
 		crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1612,8 +1636,8 @@ def test_crear_mapa_trayectos_tipos_error(tipo_ida, tipo_vuelta):
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45),
-							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45)]
+		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45, "coche", "13"),
+							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45, "coche", "13")]
 
 		crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1633,10 +1657,18 @@ def test_crear_mapa_trayectos():
 
 	assert not os.path.exists(ruta_html)
 
-	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45),
-						("V", 'Transporte', 'Cuenca',-2.34, 40.04, 'Do Dragao', 1.01, 9.86)]
+	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "coche", "13"),
+						("V", 'Transporte', 'Cuenca', -2.34, 40.04, 'Do Dragao', 1.01, 9.86, "22", "transporte")]
 
 	crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
+
+	latitud_media_ida, longitud_media_ida=obtenerCentroideCoordenadas([(40.01, -3.45), (30.11, -21.45)])
+
+	angulo_ida=obtenerAngulo([(40.01, -3.45), (30.11, -21.45)])
+
+	latitud_media_vuelta, longitud_media_vuelta=obtenerCentroideCoordenadas([(-2.34, 40.04), (1.01, 9.86)])
+
+	angulo_vuelta=obtenerAngulo([(-2.34, 40.04), (1.01, 9.86)])
 
 	assert os.path.exists(ruta_html)
 
@@ -1658,11 +1690,25 @@ def test_crear_mapa_trayectos():
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert "[[40.01, -3.45], [30.11, -21.45]]" in contenido
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
+		assert f"[{latitud_media_ida}, {longitud_media_ida}]" in contenido
+		assert f'"rotation": {angulo_ida},' in contenido
+		assert "/static/imagenes/iconos/coche.png" in contenido
+		assert 'alt="Estadio_Transporte_I" style="width:50px;"' in contenido
+		assert "/contenedorequipos/estadios/13.png" in contenido
+		assert 'alt="Estadio_Transporte_I" style="width:200px;"' in contenido
 		assert "[-2.34, 40.04]" in contenido
 		assert "Cuenca" in contenido
 		assert "[1.01, 9.86]" in contenido
 		assert "Do Dragao" in contenido
 		assert "[[-2.34, 40.04], [1.01, 9.86]]" in contenido
+		assert f"[{latitud_media_vuelta}, {longitud_media_vuelta}]" in contenido
+		assert f'"rotation": {angulo_vuelta},' in contenido
+		assert "/contenedorequipos/estadios/22.png" in contenido
+		assert 'alt="Estadio_Transporte_V" style="width:200px;"' in contenido
+		assert "/static/imagenes/iconos/transporte.png" in contenido
+		assert 'alt="Estadio_Transporte_V" style="width:50px;"' in contenido
 		assert "solid red" in contenido
 		assert "solid blue" in contenido
 		assert "solid orange" not in contenido
@@ -1714,8 +1760,8 @@ def test_crear_mapa_trayectos_ida_vuelta_sin_puntos_error(latitud_origen, longit
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino),
-							('V', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino)]
+		datos_trayectos=[('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13"),
+							('V', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13")]
 
 		crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1740,8 +1786,8 @@ def test_crear_mapa_trayectos_ida_vuelta_tipos_error(tipo_ida, tipo_vuelta):
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 41.01, -5.45, 'Metropolitano', 43.01, -3.45),
-							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.01, -3.45)]
+		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 41.01, -5.45, 'Metropolitano', 43.01, -3.45, "coche", "13"),
+							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.01, -3.45, "coche", "13")]
 
 		crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1761,8 +1807,8 @@ def test_crear_mapa_trayectos_ida_vuelta_igual():
 
 	assert not os.path.exists(ruta_html)
 
-	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45),
-						("V", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45)]
+	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "coche", "13"),
+						("V", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "22", "pie")]
 
 	crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1786,6 +1832,8 @@ def test_crear_mapa_trayectos_ida_vuelta_igual():
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert "[[40.01, -3.45], [30.11, -21.45]]" in contenido
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
 		assert "solid red" not in contenido
 		assert "solid blue" not in contenido
 		assert "solid orange" in contenido
@@ -1812,8 +1860,8 @@ def test_crear_mapa_trayectos_ida_vuelta_diferente():
 
 	assert not os.path.exists(ruta_html)
 
-	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45),
-						("V", 'Transporte', 'Cuenca', 45.01, -6.45, 'Metropolitano', 30.11, -21.45)]
+	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "coche", "13"),
+						("V", 'Transporte', 'Cuenca', 45.01, -6.45, 'Metropolitano', 30.11, -21.45, "22", "avion")]
 
 	crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1837,6 +1885,8 @@ def test_crear_mapa_trayectos_ida_vuelta_diferente():
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert "[[40.01, -3.45], [30.11, -21.45]]" in contenido
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
 		assert "[45.01, -6.45]" in contenido
 		assert "Cuenca" in contenido
 		assert "[30.11, -21.45]" in contenido

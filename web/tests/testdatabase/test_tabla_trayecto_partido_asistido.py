@@ -166,6 +166,8 @@ def test_obtener_trayecto_partido_asistido_ida(conexion_entorno):
 	assert trayecto[3]!=trayecto[6]
 	assert trayecto[4]!=trayecto[7]
 	assert trayecto[5]=="Metropolitano"
+	assert trayecto[8]=="transporte"
+	assert trayecto[9]=="23"
 
 def test_obtener_trayecto_partido_asistido_vuelta(conexion_entorno):
 
@@ -173,13 +175,15 @@ def test_obtener_trayecto_partido_asistido_vuelta(conexion_entorno):
 
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
-	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_ida", "20190622", "nacho", "V", 103, "Transporte", 103)
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_vuelta", "20190622", "nacho", "V", 103, "Transporte Nacho", 103)
 
 	trayecto=conexion_entorno.obtenerTrayectoPartidoAsistido("20190622", "nacho", "V")
 
 	assert trayecto[0]=="V"
-	assert trayecto[1]=="Transporte"
+	assert trayecto[1]=="Transporte Nacho"
 	assert trayecto[2]=="Metropolitano"
 	assert trayecto[3]!=trayecto[6]
 	assert trayecto[4]!=trayecto[7]
 	assert trayecto[5]=="Madrid"
+	assert trayecto[8]=="23"
+	assert trayecto[9]=="transporte_nacho"

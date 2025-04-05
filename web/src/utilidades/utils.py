@@ -532,15 +532,38 @@ def obtenerCentroideCoordenadas(coordenadas:List[tuple])->tuple:
 
 		raise Exception("Error en obtener el centroide")
 
+def obtenerAngulo(coordenadas:List[tuple])->float:
+
+	if len(coordenadas)!=2:
+		return 0
+
+	(lat_origen, lon_origen), (lat_destino, lon_destino)=coordenadas
+
+	lat1_rad=math.radians(lat_origen)
+	lon1_rad=math.radians(lon_origen)
+	lat2_rad=math.radians(lat_destino)
+	lon2_rad=math.radians(lon_destino)
+ 
+	y=math.sin(lon2_rad-lon1_rad)*math.cos(lat2_rad)
+	x=math.cos(lat1_rad)*math.sin(lat2_rad)-math.sin(lat1_rad)*math.cos(lat2_rad)*math.cos(lon2_rad-lon1_rad)
+ 
+	angulo_rad=math.atan2(y, x)
+	angulo_deg=math.degrees(angulo_rad)
+ 
+	return (angulo_deg-90)%360
+
 def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, ida_vuelta:bool=False, zoom:float=5)->None:
 
 	tipo, transporte=datos_trayecto[0], datos_trayecto[1]
 	ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[2], datos_trayecto[3], datos_trayecto[4]
 	ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[5], datos_trayecto[6], datos_trayecto[7]
+	imagen_origen, imagen_destino=datos_trayecto[8], datos_trayecto[9]
 
 	centroide=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
 
-	constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa"], "V":["95ebf7", "blue", "estadio_mapa", "inicio"], "IV":["ffdd73", "orange", "inicio", "estadio_mapa"]}
+	constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200"],
+								"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50"],
+								"IV":["ffdd73", "orange", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200"]}
 
 	try:
 
@@ -553,36 +576,34 @@ def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, ida_vuelt
 		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
 
 		popup_origen_html=f"""
-					<div style="text-align: center;">
-						<h4>
-							{ciudad_origen}
-						</h4>
-					</div>
-					"""
+							<div style="text-align: center;">
+								<h4>{ciudad_origen}</h4>
+								<img src="{constante_tipo_trayecto[4]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo_trayecto}" style="width:{constante_tipo_trayecto[6]}px;">
+							</div>
+							"""
 
 		icono_origen_html=f"""
-						<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-							<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-						</div>
-						"""
+							<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+								<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+							</div>
+							"""
 
 		folium.Marker(location=[latitud_origen, longitud_origen],
 						popup=folium.Popup(popup_origen_html, max_width=400),
 						icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
 
 		popup_destino_html=f"""
-					<div style="text-align: center;">
-						<h4>
-							{ciudad_destino}
-						</h4>
-					</div>
-					"""
+							<div style="text-align: center;">
+								<h4>{ciudad_destino}</h4>
+								<img src="{constante_tipo_trayecto[5]}{imagen_destino}.png" alt="Estadio_Transporte_{tipo_trayecto}" style="width:{constante_tipo_trayecto[7]}px;">
+							</div>
+							"""
 
 		icono_destino_html=f"""
-						<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-							<img src="/static/imagenes/iconos/{constante_tipo_trayecto[3]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-						</div>
-						"""
+							<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+								<img src="/static/imagenes/iconos/{constante_tipo_trayecto[3]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+							</div>
+							"""
 
 		folium.Marker(location=[latitud_destino, longitud_destino],
 						popup=folium.Popup(popup_destino_html, max_width=400),
@@ -590,6 +611,16 @@ def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, ida_vuelt
 
 		folium.PolyLine(locations=[[latitud_origen, longitud_origen], [latitud_destino, longitud_destino]], color=constante_tipo_trayecto[1], weight=2.5, opacity=1).add_to(mapa)
 
+		angulo=obtenerAngulo([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+		folium.RegularPolygonMarker(location=(centroide[0], centroide[1]),
+									fill_color=constante_tipo_trayecto[1],
+									color=constante_tipo_trayecto[1],
+									fill_opacity=1,
+									number_of_sides=3,
+									radius=10,
+									rotation=angulo).add_to(mapa)
+		
 		mapa.save(os.path.join(ruta, nombre_mapa))
 
 	except Exception as e:
@@ -608,53 +639,65 @@ def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->
 
 		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
 
-		constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa"], "V":["95ebf7", "blue", "estadio_mapa", "inicio"]}
+		constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200"],
+									"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50"]}
 
 		for datos_trayecto in datos_trayectos:
 
 			tipo, transporte=datos_trayecto[0], datos_trayecto[1]
 			ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[2], datos_trayecto[3], datos_trayecto[4]
 			ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[5], datos_trayecto[6], datos_trayecto[7]
+			imagen_origen, imagen_destino=datos_trayecto[8], datos_trayecto[9]
 
 			constante_tipo_trayecto=constantes_tipo_trayecto[tipo]
 
 			popup_origen_html=f"""
-				<div style="text-align: center;">
-					<h4>
-						{ciudad_origen}
-					</h4>
-				</div>
-				"""
+								<div style="text-align: center;">
+									<h4>{ciudad_origen}</h4>
+									<img src="{constante_tipo_trayecto[4]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[6]}px;">
+								</div>
+								"""
 
 			icono_origen_html=f"""
-							<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-								<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-							</div>
-							"""
+								<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+									<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+								</div>
+								"""
 
 			folium.Marker(location=[latitud_origen, longitud_origen],
 							popup=folium.Popup(popup_origen_html, max_width=400),
 							icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
 
 			popup_destino_html=f"""
-						<div style="text-align: center;">
-							<h4>
-								{ciudad_destino}
-							</h4>
-						</div>
-						"""
+								<div style="text-align: center;">
+									<h4>{ciudad_destino}</h4>
+									<img src="{constante_tipo_trayecto[5]}{imagen_destino}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[7]}px;">
+								</div>
+								"""
 
 			icono_destino_html=f"""
-							<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-								<img src="/static/imagenes/iconos/{constante_tipo_trayecto[3]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-							</div>
-							"""
+								<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+									<img src="/static/imagenes/iconos/{constante_tipo_trayecto[3]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+								</div>
+								"""
 
 			folium.Marker(location=[latitud_destino, longitud_destino],
 							popup=folium.Popup(popup_destino_html, max_width=400),
 							icon=folium.DivIcon(html=icono_destino_html)).add_to(mapa)
 
 			folium.PolyLine(locations=[[latitud_origen, longitud_origen], [latitud_destino, longitud_destino]], color=constante_tipo_trayecto[1], weight=2.5, opacity=1).add_to(mapa)
+
+			angulo=obtenerAngulo([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+			centroide_trayecto_simple=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+			folium.RegularPolygonMarker(location=(centroide_trayecto_simple[0], centroide_trayecto_simple[1]),
+										fill_color=constante_tipo_trayecto[1],
+										color=constante_tipo_trayecto[1],
+										fill_opacity=1,
+										number_of_sides=3,
+										radius=10,
+										rotation=angulo).add_to(mapa)
 
 		mapa.save(os.path.join(ruta, nombre_mapa))
 
@@ -677,29 +720,29 @@ def crearMapaTrayectosIdaVuelta(ruta:str, datos_trayectos:List[tuple], nombre_ma
 		crearMapaTrayectos(ruta, datos_trayectos, nombre_mapa)
 
 def distancia_maxima_coordenadas(coordenadas:List[tuple])->int:
-    
-    if len(coordenadas)<2:
-        return 0 
+	
+	if len(coordenadas)<2:
+		return 0 
 
-    max_distancia=0
+	max_distancia=0
 
-    for numero in range(len(coordenadas)):
+	for numero in range(len(coordenadas)):
 
-        for numero_siguiente in range(numero+1, len(coordenadas)):
+		for numero_siguiente in range(numero+1, len(coordenadas)):
 
-            distancia=geodesic(coordenadas[numero], coordenadas[numero_siguiente]).kilometers
+			distancia=geodesic(coordenadas[numero], coordenadas[numero_siguiente]).kilometers
 
-            max_distancia=max(max_distancia, distancia)
+			max_distancia=max(max_distancia, distancia)
 
-    return max_distancia
+	return max_distancia
 
 def calcularZoomMapa(coordenadas:List[tuple], C:int=15)->int:
 
-    if len(coordenadas)<2:
-        return 15
+	if len(coordenadas)<2:
+		return 15
 
-    max_distancia=distancia_maxima_coordenadas(coordenadas)
+	max_distancia=distancia_maxima_coordenadas(coordenadas)
 
-    zoom=C-math.log2(max_distancia+1)
+	zoom=C-math.log2(max_distancia+1)
 
-    return round(max(1, min(zoom, 18)))
+	return round(max(1, min(zoom, 18)))

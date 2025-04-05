@@ -2687,7 +2687,15 @@ class Conexion:
 								CASE WHEN t.Tipo_Trayecto='I'
 										THEN cast(e.Longitud AS FLOAT)
 										ELSE cast(c2.Longitud AS FLOAT)
-								END as Longitud_Destino
+								END as Longitud_Destino,
+								CASE WHEN t.Tipo_Trayecto='I'
+									THEN REPLACE(LOWER(t.Transporte), ' ', '_')
+									ELSE cast(e.Codigo_Estadio AS VARCHAR)
+								END AS Imagen_Origen,
+								CASE WHEN t.Tipo_Trayecto='I'
+									THEN cast(e.Codigo_Estadio AS VARCHAR)
+									ELSE REPLACE(LOWER(t.Transporte), ' ', '_')
+								END AS Imagen_Destino
 							FROM trayecto_partido_asistido t
 							JOIN ciudades c1
 							ON t.CodCiudad_Origen=c1.CodCiudad
@@ -2713,4 +2721,6 @@ class Conexion:
 											trayecto["longitud_origen"],
 											trayecto["ciudad_destino"],
 											trayecto["latitud_destino"],
-											trayecto["longitud_destino"])
+											trayecto["longitud_destino"],
+											trayecto["imagen_origen"],
+											trayecto["imagen_destino"])
