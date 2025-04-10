@@ -6,7 +6,7 @@ from src.utilidades.utils import limpiarResultadosPartidos
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES
 
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
@@ -135,11 +135,11 @@ def pagina_mis_estadios():
 
 		return redirect("/partidos")
 
-	numero_estadios_asistidos_fecha=4
-
-	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, numero_estadios_asistidos_fecha)
+	estadios_asistidos_fecha=con.obtenerEstadiosPartidosAsistidosUsuarioFecha(current_user.id, 3)
 
 	paises_asistidos=con.obtenerPaisesEstadiosPartidosAsistidosUsuarioCantidad(current_user.id, numero_estadios)
+
+	estadios_competiciones_asistidos=con.obtenerEstadiosPartidosAsistidosUsuarioCompeticionCantidad(current_user.id, numero_estadios)
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
@@ -182,14 +182,15 @@ def pagina_mis_estadios():
 							numero_estadios=len(estadios_asistidos),
 							estadios_asistidos_fecha=estadios_asistidos_fecha,
 							paises_asistidos=paises_asistidos,
-							numero_paises=len(paises_asistidos),
+							estadios_competiciones_asistidos=estadios_competiciones_asistidos,
 							nombre_mapa_small=nombre_mapa_small,
 							nombre_mapa_detalle=nombre_mapa_detalle,
 							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
 							mapas_correcto=mapas_correcto,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
 
 @bp_estadio.route("/estadios/mis_estadios/mapa/<nombre_mapa>")
 @login_required

@@ -1955,3 +1955,24 @@ def test_calcular_zoom_mapa(coordenadas):
 
 	assert zoom>=1
 	assert zoom<=18
+
+def test_obtener_angulo_sin_coordenadas():
+
+	assert obtenerAngulo([])==0
+
+def test_obtener_angulo_una_coordenada():
+
+    assert obtenerAngulo([(40.4168, -3.7038)])==0
+
+@pytest.mark.parametrize(["coordenadas", "angulo"],
+	[
+		([(40.4168, -3.7038), (48.8566, 2.3522)], 294.9568909090499),
+		([(43.3623, -8.4115), (40.4168, -3.7038)], 38.45453138079378),
+		([(0, 0), (0, 180)], 0.0),
+		([(40.4168, -3.7038), (37.3891, -5.9845)], 121.10188212361169),
+		([(48.8566, 2.3522), (52.5200, 13.4050)], 328.1767424814429)
+	]
+)
+def test_obtener_angulo(coordenadas, angulo):
+
+    assert obtenerAngulo(coordenadas)==angulo

@@ -25,9 +25,44 @@
         {% endif %}
     </div>
 
-    <div class="circulo-paises-estadios-asistidos">
-        <p class="titulo-circulo-paises-estadios-asistidos">Paises Visitados</p>
-        <p class="valor-circulo-paises-estadios-asistidos"><strong>{{ numero_paises }}</strong></p>
+    <div class="tarjeta-mis-estadios-recientes">
+
+        <p class="titulo-mis-estadios-recientes"><strong>Ultimos Estadios Visitados</strong></p>
+
+            <div class="tarjetas-mis-estadios-recientes">
+                <div class="tarjetas-mis-estadios-recientes-wrapper">
+
+                {% for estadio_visitado_fecha in estadios_asistidos_fecha %}
+
+                    <div class="tarjeta-estadio-mis-estadios-recientes" onclick="window.location.href='/estadio/{{ estadio_visitado_fecha[0] }}'">
+
+                        <div class="info-estadio-mis-estadios-recientes">
+
+                            {% if estadio_visitado_fecha[2]==-1 %}
+                                <img class="estadio-estadio-mis-estadios-recientes" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                            {% else %}
+                                <img class="estadio-estadio-mis-estadios-recientes" src="{{ url_imagen_estadio }}{{ estadio_visitado_fecha[2] }}.png" alt="Estadio Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_visitado_fecha[1] }}</h4>
+
+                            {% if estadio_visitado_fecha[3]==-1 %}
+                                <img class="equipo-estadio-mis-estadios-recientes" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% else %}
+                                <img class="equipo-estadio-mis-estadios-recientes" src="{{ url_imagen_escudo }}{{ estadio_visitado_fecha[3] }}.png" alt="Equipo Icon">
+                            {% endif %}
+
+                            <h4>{{ estadio_visitado_fecha[5] }}</h4>
+
+                        </div>
+
+                    </div>
+                    
+                {% endfor %}
+
+                </div>
+
+            </div>
     </div>
 
  </div>
@@ -85,34 +120,36 @@
 
 <div class="contenedor-lateral contenedor-lateral-der">
 
-    <div class="tarjeta-mis-estadios-recientes">
+    <div class="tarjeta-mis-estadios-competiciones">
 
-        <p class="titulo-mis-estadios-recientes"><strong>Mis Estadios Más Recientes</strong></p>
+        <p class="titulo-mis-estadios-competiciones"><strong>Estadios Por Liga</strong></p>
 
-            <div class="tarjetas-mis-estadios-recientes">
-                <div class="tarjetas-mis-estadios-recientes-wrapper">
+        {% if estadios_competiciones_asistidos %}
 
-                {% for estadio_visitado_fecha in estadios_asistidos_fecha %}
+            <div class="tarjetas-mis-estadios-competiciones">
+                <div class="tarjetas-mis-estadios-competiciones-wrapper">
 
-                    <div class="tarjeta-estadio-mis-estadios-recientes" onclick="window.location.href='/estadio/{{ estadio_visitado_fecha[0] }}'">
+                {% for estadio_competicion_asistido in estadios_competiciones_asistidos %}
 
-                        <div class="info-estadio-mis-estadios-recientes">
+                    <div class="tarjeta-estadio-mis-estadios-competiciones" onclick="window.location.href='/estadios/mis_estadios/division/{{ estadio_competicion_asistido[1] }}'">
 
-                            {% if estadio_visitado_fecha[2]==-1 %}
-                                <img class="estadio-estadio-mis-estadios-recientes" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                        <div class="info-estadio-mis-estadios-competiciones">
+
+                            {% if estadio_competicion_asistido[3]=='-1' %}
+                                <img class="logo-competicion-estadio-mis-estadios-competiciones" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
                             {% else %}
-                                <img class="estadio-estadio-mis-estadios-recientes" src="{{ url_imagen_estadio }}{{ estadio_visitado_fecha[2] }}.png" alt="Estadio Icon">
+                                <img class="logo-competicion-estadio-mis-estadios-competiciones" src="{{ url_imagen_competicion }}{{ estadio_competicion_asistido[3] }}.png" alt="Competicion Icon">
                             {% endif %}
 
-                            <h4>{{ estadio_visitado_fecha[1] }}</h4>
+                            <h4>{{ estadio_competicion_asistido[0] }}</h4>
 
-                            {% if estadio_visitado_fecha[3]==-1 %}
-                                <img class="equipo-estadio-mis-estadios-recientes" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                            {% if estadio_competicion_asistido[4]=='-1' %}
+                                <img class="pais-estadio-mis-estadios-competiciones" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Competicion Icon">
                             {% else %}
-                                <img class="equipo-estadio-mis-estadios-recientes" src="{{ url_imagen_escudo }}{{ estadio_visitado_fecha[3] }}.png" alt="Equipo Icon">
+                                <img class="pais-estadio-mis-estadios-competiciones" src="{{ url_imagen_pais }}{{ estadio_competicion_asistido[4] }}.png" alt="Pais Competicion Icon">
                             {% endif %}
 
-                            <h4>{{ estadio_visitado_fecha[5] }}</h4>
+                            <h4>{{ estadio_competicion_asistido[5] }} / {{ estadio_competicion_asistido[6] }}</h4>
 
                         </div>
 
@@ -123,6 +160,9 @@
                 </div>
 
             </div>
+
+        {% endif %}
+        
     </div>
 
     <div class="tarjeta-paises-mis-estadios">

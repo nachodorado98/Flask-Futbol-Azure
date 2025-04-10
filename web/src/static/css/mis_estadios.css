@@ -185,36 +185,94 @@
     opacity: 0;
 }
 
-.circulo-paises-estadios-asistidos {
-    width: 193px;
-    height: 193px;
-    border-radius: 50%;
-    background-color: var(--color-footer);
+.tarjeta-mis-estadios-recientes {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 30px 5px;
+    padding: 3px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
     color: var(--color-secundario);
+    width: 330px;
+    position: fixed;
+    top: 505px;
+    bottom: 20px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-mis-estadios-recientes .titulo-mis-estadios-recientes {
+    font-size: 19px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-mis-estadios-recientes {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 0px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-mis-estadios-recientes::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-mis-estadios-recientes-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.tarjeta-estadio-mis-estadios-recientes {
+    width: 100%;
+    max-width: 800px;
+    margin: 4px auto;
+    padding: 6px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.info-estadio-mis-estadios-recientes {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin: 15px auto 10px 70px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    overflow: hidden;
-    cursor: default;
-    border: 3px solid #000;
 }
 
-.circulo-paises-estadios-asistidos .titulo-circulo-paises-estadios-asistidos {
-    margin: 2px 0;
-    margin-top: 30px;
-    padding: 0;
-    font-size: 22px;
+.info-estadio-mis-estadios-recientes .estadio-estadio-mis-estadios-recientes {
+    margin-right: 5px;
+    margin-left: 3px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    width: 30px;
+    height: 19.3px;
 }
 
-.circulo-paises-estadios-asistidos .valor-circulo-paises-estadios-asistidos {
-    margin: 4px 0;
-    margin-top: 10px;
-    padding: 0;
-    font-size: 30px;
+.info-estadio-mis-estadios-recientes .equipo-estadio-mis-estadios-recientes {
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+}
+
+.info-estadio-mis-estadios-recientes h4 {
+    font-size: 13px;
+    margin: 0px;
+    color: var(--color-secundario) 
 }
 
 .tarjeta-estadios-asistidos {
@@ -311,7 +369,7 @@
     height: 70px;
 }
 
-.tarjeta-mis-estadios-recientes {
+.tarjeta-mis-estadios-competiciones {
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -331,14 +389,14 @@
     padding-top: 10px;
 }
 
-.tarjeta-mis-estadios-recientes .titulo-mis-estadios-recientes {
+.tarjeta-mis-estadios-competiciones .titulo-mis-estadios-competiciones {
     font-size: 20px;
     margin: 5px;
     color: var(--color-secundario);
     margin-bottom: 7px;
 }
 
-.tarjetas-mis-estadios-recientes {
+.tarjetas-mis-estadios-competiciones {
     max-height: calc(805vh - 100px);
     overflow-y: auto;
     padding: 0px;
@@ -346,17 +404,17 @@
     margin-bottom: 20px;
 }
 
-.tarjetas-mis-estadios-recientes::-webkit-scrollbar {
+.tarjetas-mis-estadios-competiciones::-webkit-scrollbar {
     width: 0px;
 }
 
-.tarjetas-mis-estadios-recientes-wrapper {
+.tarjetas-mis-estadios-competiciones-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.tarjeta-estadio-mis-estadios-recientes {
+.tarjeta-estadio-mis-estadios-competiciones {
     width: 100%;
     max-width: 800px;
     margin: 4px auto;
@@ -371,23 +429,14 @@
     box-sizing: border-box;
 }
 
-.info-estadio-mis-estadios-recientes {
+.info-estadio-mis-estadios-competiciones {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.info-estadio-mis-estadios-recientes .estadio-estadio-mis-estadios-recientes {
+.info-estadio-mis-estadios-competiciones .logo-competicion-estadio-mis-estadios-competiciones {
     margin-right: 5px;
-    margin-left: 3px;
-    margin-bottom: 4px;
-    margin-top: 4px;
-    width: 35px;
-    height: 22.5px;
-}
-
-.info-estadio-mis-estadios-recientes .equipo-estadio-mis-estadios-recientes {
-    margin-right: 3px;
     margin-left: 5px;
     margin-bottom: 4px;
     margin-top: 4px;
@@ -395,8 +444,17 @@
     height: 30px;
 }
 
-.info-estadio-mis-estadios-recientes h4 {
-    font-size: 13px;
+.info-estadio-mis-estadios-competiciones .pais-estadio-mis-estadios-competiciones {
+    margin-right: 3px;
+    margin-left: 5px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    width: 40px;
+    height: 25.7px;
+}
+
+.info-estadio-mis-estadios-competiciones h4 {
+    font-size: 18px;
     margin: 0px;
     color: var(--color-secundario) 
 }

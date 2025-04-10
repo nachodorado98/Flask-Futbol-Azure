@@ -2724,3 +2724,48 @@ class Conexion:
 											trayecto["longitud_destino"],
 											trayecto["imagen_origen"],
 											trayecto["imagen_destino"])
+
+	# Metodo para obtener los estadios por competicion del equipo de los partidos asistidos de un usuario
+	def obtenerEstadiosPartidosAsistidosUsuarioCompeticionCantidad(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT eq.competicion AS competicion_nombre_simple, c.competicion_id AS codigo_competicion,
+								c.nombre AS competicion_nombre_patrocinio, c.codigo_logo AS codigo_logo,
+								c.codigo_pais, COUNT(DISTINCT e.estadio_id) as visitados,
+								(SELECT COUNT(DISTINCT e2.estadio_id)
+								    FROM equipo_estadio ee2
+								    JOIN estadios e2
+								    ON ee2.estadio_id=e2.estadio_id
+								    JOIN equipos eq2
+								    ON ee2.equipo_id=eq2.equipo_id
+								    WHERE eq2.competicion=eq.competicion
+								    AND eq2.codigo_competicion=eq.codigo_competicion
+								    AND e2.capacidad IS NOT NULL) AS total
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+		                    LEFT JOIN equipo_estadio ee
+		                    ON e.estadio_id=ee.estadio_id
+		                    LEFT JOIN equipos eq
+		                    ON ee.equipo_id=eq.equipo_id
+		                    LEFT JOIN competiciones c
+		                    ON eq.codigo_competicion=c.competicion_id
+							WHERE e.capacidad IS NOT NULL
+							AND eq.competicion IS NOT NULL
+							GROUP BY eq.competicion, eq.codigo_competicion, c.competicion_id, c.nombre, c.codigo_logo, c.codigo_pais
+							ORDER BY visitados DESC, total ASC
+							LIMIT %s""",
+							(usuario, numero))
+
+		estadios_competicion_asistidos=self.c.fetchall()
+
+		return list(map(lambda estadio_competicion: (estadio_competicion["competicion_nombre_simple"],
+													estadio_competicion["codigo_competicion"],
+													estadio_competicion["competicion_nombre_patrocinio"],
+													estadio_competicion["codigo_logo"],
+													estadio_competicion["codigo_pais"],
+													estadio_competicion["visitados"],
+													estadio_competicion["total"]), estadios_competicion_asistidos))
