@@ -2769,3 +2769,63 @@ class Conexion:
 													estadio_competicion["codigo_pais"],
 													estadio_competicion["visitados"],
 													estadio_competicion["total"]), estadios_competicion_asistidos))
+
+	# Metodo para obtener los estadios de una competicion del equipo de los partidos asistidos de un usuario
+	def obtenerEstadiosCompeticionPartidosAsistidosUsuario(self, usuario:str, competicion:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.estadio_id, e.nombre,
+							CASE WHEN e.codigo_estadio IS NULL
+					            THEN -1
+					            ELSE e.codigo_estadio
+					        END as codigo_estadio,
+					        MAX(CASE WHEN eq.escudo IS NULL
+				                THEN -1
+				                ELSE eq.escudo
+				            END) as escudo_equipo,
+					        MAX(CASE WHEN e.codigo_pais IS NULL
+				                THEN 
+				                	CASE WHEN eq.codigo_pais IS NULL
+				                		THEN '-1'
+				                		ELSE eq.codigo_pais
+				           			END
+				                ELSE e.codigo_pais
+				            END) as pais,
+						    MAX(CASE WHEN pa.partido_id IS NOT NULL
+						    	THEN 1
+						    	ELSE 0
+						    END) AS asistido
+							FROM equipos eq
+							JOIN equipo_estadio ee
+							ON eq.equipo_id=ee.equipo_id
+							JOIN estadios e
+							ON ee.estadio_id=e.estadio_id
+							JOIN competiciones c
+							ON eq.codigo_competicion=c.competicion_id
+							LEFT JOIN partido_estadio pe
+							ON pe.estadio_id=e.estadio_id
+							LEFT JOIN partidos p
+							ON p.partido_id=pe.partido_id
+							LEFT JOIN (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+							ON pa.partido_id=p.partido_id
+							WHERE eq.codigo_competicion=%s
+							AND e.capacidad IS NOT NULL
+							GROUP BY e.estadio_id, e.nombre, e.codigo_estadio, e.codigo_pais, eq.codigo_pais
+							ORDER BY asistido DESC, e.nombre ASC
+							LIMIT %s""",
+							(usuario, competicion, numero))
+
+		estadios_competicion_asistidos=self.c.fetchall()
+
+		return list(map(lambda estadio_competicion: (estadio_competicion["estadio_id"],
+													estadio_competicion["nombre"],
+													estadio_competicion["codigo_estadio"],
+													estadio_competicion["escudo_equipo"],
+													estadio_competicion["pais"],
+													estadio_competicion["asistido"]), estadios_competicion_asistidos))
+
+	# Metodo para obtener el logo de una competicion
+	def obtenerCodigoLogoCompeticion(self, competicion_id:str)->Optional[str]:
+
+		competicion=self.obtenerDatosCompeticion(competicion_id)
+
+		return None if not competicion else competicion[2]

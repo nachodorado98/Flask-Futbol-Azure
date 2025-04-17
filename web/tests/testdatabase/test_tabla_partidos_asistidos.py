@@ -3237,3 +3237,105 @@ def test_obtener_estadio_partido_asistido_competicion_cantidad_visitados_y_total
 	for estadio_competicion in estadios_competiciones:
 		assert estadio_competicion[-2]==1
 		assert estadio_competicion[-1]==2
+
+def test_obtener_estadio_competicion_partido_asistido_no_existe_usuario(conexion):
+ 
+ 	assert not conexion.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+def test_obtener_estadio_competicion_partido_asistido_no_existen_estadios(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM estadios")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+def test_obtener_estadio_competicion_partido_asistido_no_existe_competicion(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "no-existo", 5)
+
+def test_obtener_estadio_competicion_partido_asistido_no_existen_partidos(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	estadios=conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+	assert len(estadios)==1
+	assert estadios[0][-1]==0
+
+def test_obtener_estadio_competicion_partido_asistido_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	estadios=conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+	assert len(estadios)==1
+	assert estadios[0][-1]==0
+
+def test_obtener_estadio_competicion_partido_asistido_competicion_equipo_nula(conexion_entorno):
+
+	conexion_entorno.c.execute("UPDATE equipos SET Codigo_Competicion=NULL")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+def test_obtener_estadio_competicion_partido_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	estadios=conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+	assert len(estadios)==1
+	assert estadios[0][-1]==1
+
+def test_obtener_estadio_competicion_partido_asistido_otro_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarUsuario("otro", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	estadios=conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("otro", "primera", 5)
+
+	assert len(estadios)==1
+	assert estadios[0][-1]==0
+
+def test_obtener_estadio_competicion_partido_asistido_varios_estadios(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	for numero in range(1,10):
+
+		conexion_entorno.c.execute(f"""INSERT INTO equipos (Equipo_Id, Competicion, Codigo_Competicion) VALUES('equipo{numero}', 'Primera', 'primera')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO estadios (Estadio_Id, Capacidad) VALUES('estadio{numero}', 10000)""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO equipo_estadio VALUES('equipo{numero}', 'estadio{numero}')""")
+
+	conexion_entorno.confirmar()
+
+	estadios=conexion_entorno.obtenerEstadiosCompeticionPartidosAsistidosUsuario("nacho", "primera", 5)
+
+	assert len(estadios)==5
+	assert estadios[0][-1]==1
+
+	for estadio in estadios[1:]:
+		assert estadio[-1]==0

@@ -1,0 +1,76 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mis_estadios_division.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-estadios-asistidos-division">
+
+        {% if codigo_logo=='-1' %}
+            <img class="division" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+        {% else %}
+            <img class="division" src="{{ url_imagen_competicion }}{{ codigo_logo }}.png" alt="Competicion Icon">
+        {% endif %}
+        
+        <p class="titulo-circulo-estadios-asistidos-division">Estadios Visitados</p>
+        <p class="valor-circulo-estadios-asistidos-division"><strong>{{ numero_estadios_asistidos }} / {{ numero_estadios }}</strong></p>
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-estadios-asistidos-division">
+
+    <p class="titulo-pagina-estadios-asistidos-division">
+        <strong>Mis Estadios</strong>
+
+        {% if codigo_logo=='-1' %}
+            <img class="division" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+        {% else %}
+            <img class="division" src="{{ url_imagen_competicion }}{{ codigo_logo }}.png" alt="Competicion Icon">
+        {% endif %}
+    </p>
+
+    <div class="tarjetas-estadios-asistidos-division">
+        <div class="tarjetas-estadios-asistidos-division-wrapper">
+
+        {% for estadio in estadios_division %}
+
+            <div class="tarjeta-estadio-asistido-division" {% if estadio[5]==1 %}onclick="window.location.href='/estadio/{{ estadio[0] }}'" style="cursor: pointer;"{% else %}style="background-color: #d1d1d1;"{% endif %}>
+
+            <div class="info-estadio-asistido-division">
+
+                {% if estadio[2]==-1 %}
+                    <img class="estadio-estadio-asistido-division" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                {% else %}
+                    <img class="estadio-estadio-asistido-division" src="{{ url_imagen_estadio }}{{ estadio[2] }}.png" alt="Estadio Icon">
+                {% endif %}
+
+                <h4>{{ estadio[1] }}</h4>
+
+                {% if estadio[3]==-1 %}
+                    <img class="equipo-estadio-asistido-division" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Equipo Icon">
+                {% else %}
+                    <img class="equipo-estadio-asistido-division" src="{{ url_imagen_escudo }}{{ estadio[3] }}.png" alt="Equipo Icon">
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

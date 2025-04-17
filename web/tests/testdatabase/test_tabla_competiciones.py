@@ -49,3 +49,13 @@ def test_obtener_competiciones_top(conexion):
 
 	assert competiciones_top[0][0]=="comp7"
 	assert competiciones_top[-1][0]=="comp3"
+
+def test_obtener_codigo_logo_competicion_no_existe(conexion):
+
+	assert not conexion.obtenerCodigoLogoCompeticion("primera")
+
+def test_obtener_codigo_logo_competicion(conexion_entorno):
+
+	codigo_logo=conexion_entorno.obtenerCodigoLogoCompeticion("primera")
+
+	assert codigo_logo=="primera-division-ea"
