@@ -746,3 +746,19 @@ def calcularZoomMapa(coordenadas:List[tuple], C:int=15)->int:
 	zoom=C-math.log2(max_distancia+1)
 
 	return round(max(1, min(zoom, 18)))
+
+def obtenerNombreDivisionSeleccionado(divisiones:List[tuple], codigo_division:str)->Optional[str]:
+ 
+    try:
+ 
+        return list(filter(lambda division: division[1]==codigo_division, divisiones))[0][0]
+ 
+    except Exception:
+ 
+        return None
+
+def obtenerDivisionesNoSeleccionados(divisiones:List[tuple], codigo_division:str)->List[tuple]:
+ 
+    divisiones_no_seleccionados=list(filter(lambda division: division[1]!=codigo_division, divisiones))
+ 
+    return [(division[0], division[1], division[3]) for division in divisiones_no_seleccionados]

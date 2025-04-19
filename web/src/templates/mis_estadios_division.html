@@ -28,15 +28,45 @@
 
 <div class="tarjeta-estadios-asistidos-division">
 
-    <p class="titulo-pagina-estadios-asistidos-division">
-        <strong>Mis Estadios</strong>
+    <div class="contenedor-titulo-iconos-estadios-asistidos-division">
+        <div class="contenedor-titulo-iconos">
+            <p class="titulo-pagina-estadios-asistidos-division">
+                <strong>Mis Estadios de {{ nombre_division_seleccionado }}</strong>
+            </p>
 
-        {% if codigo_logo=='-1' %}
-            <img class="division" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
-        {% else %}
-            <img class="division" src="{{ url_imagen_competicion }}{{ codigo_logo }}.png" alt="Competicion Icon">
-        {% endif %}
-    </p>
+            <div class="division-contenedor">
+                {% if codigo_logo=='-1' %}
+                    <img class="division-icono" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Competicion Icon">
+                {% else %}
+                    <img class="division-icono" src="{{ url_imagen_competicion }}{{ codigo_logo }}.png" alt="Competicion Icon">
+                {% endif %}
+            </div>
+
+            {% if divisiones_no_seleccionados %}
+                <div class="desplegable-contenedor">
+                    <button class="boton-desplegable" onclick="desplegableMenu()">
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha-division"> 
+                    </button>
+
+                    <div id="menuDesplegable" class="menu-desplegable">
+                        {% for division_no_seleccionado in divisiones_no_seleccionados %}
+                            <a href="/estadios/mis_estadios/division/{{ division_no_seleccionado[1] }}" class="opcion-desplegable">
+                                <strong>{{ division_no_seleccionado[0] }}</strong>
+
+                                {% if division_no_seleccionado[2] == '-1' %}
+                                    <img class="division-icono-desplegable" src="{{ url_for('static', filename='imagenes/iconos/no_competicion.png') }}" alt="Division Icon">
+                                {% else %}
+                                    <img class="division-icono-desplegable" src="{{ url_imagen_competicion }}{{ division_no_seleccionado[2] }}.png" alt="Division Icon">
+                                {% endif %}
+
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
 
     <div class="tarjetas-estadios-asistidos-division">
         <div class="tarjetas-estadios-asistidos-division-wrapper">

@@ -52,12 +52,26 @@
      background-color: var(--color-primario);
      color: var(--color-secundario)
  }
+
+.tarjeta-estadios-asistidos-division {
+    margin-bottom: 15px;
+}
+
+.contenedor-titulo-iconos-estadios-asistidos-division {
+    margin-bottom: 15px;
+}
+
+.contenedor-titulo-iconos {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
  
- .tarjeta-estadios-asistidos-division .titulo-pagina-estadios-asistidos-division {
+.titulo-pagina-estadios-asistidos-division {
      font-size: 45px;
-     margin: 5px;
+     margin: 5px 0;
      color: var(--color-secundario);
-     margin-bottom: 15px;
  }
  
  .tarjeta-estadios-asistidos-division .division {
@@ -65,7 +79,66 @@
      width: 70px;
      height: 70px;
  }
- 
+
+.division-contenedor {
+    display: flex;
+    align-items: center;
+}
+
+.division-icono {
+    width: 60px;
+    height: 60px;
+    margin-right: -25px;
+}
+
+.icono-flecha-division {
+    height: 16px;
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+.desplegable-contenedor {
+    position: relative;
+}
+
+.boton-desplegable {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-desplegable {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--color-primario);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 350px;
+    padding: 8px 0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.menu-desplegable .opcion-desplegable {
+    color: var(--color-secundario);
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 22px;
+}
+
+.menu-desplegable .opcion-desplegable:hover {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+}
+
+.division-icono-desplegable {
+    width: 30px;
+    height: 30px;
+}
+
  .tarjetas-estadios-asistidos-division {
      max-height: calc(82vh - 100px);
      overflow-y: auto;

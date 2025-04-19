@@ -29,7 +29,7 @@ function desplegableNavBarUsuario() {
     toggleMenu('menuDesplegableNavBarUsuario');
 }
 
-function desplegablePaises() {
+function desplegableMenu() {
     toggleMenu('menuDesplegable');
 }
 

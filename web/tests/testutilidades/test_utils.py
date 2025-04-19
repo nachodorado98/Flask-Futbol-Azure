@@ -14,6 +14,7 @@ from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obt
 from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
 from src.utilidades.utils import datos_trayectos_correctos, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
 from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
+from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -239,7 +240,7 @@ def test_obtener_nombre_pais_seleccionado_no_esta(codigo_pais):
 		("it", "Italia")
 	]
 )
-def test_obtener_nombre_pais_seleccionado_no_esta(codigo_pais, nombre_pais):
+def test_obtener_nombre_pais_seleccionado(codigo_pais, nombre_pais):
 
 	paises=[("es", "España", 12), ("it", "Italia", 1), ("nl", "Países Bajos", 1),
 			("pt", "Portugal", 1), ("ss", "Escocia", 1)] 
@@ -266,7 +267,7 @@ def test_obtener_paises_no_seleccionados(codigo_pais):
 
 	paises_no_seleccionados=obtenerPaisesNoSeleccionados(paises, codigo_pais)
 
-	assert len(paises_no_seleccionados)
+	assert len(paises_no_seleccionados)==4
 
 def test_crear_carpeta_no_existe():
 
@@ -330,17 +331,17 @@ def crearHTML(ruta:str)->None:
 			<!DOCTYPE html>
 			<html>
 			<head>
-			    <title>Mi Archivo HTML</title>
+				<title>Mi Archivo HTML</title>
 			</head>
 			<body>
-			    <h1>Hola, este es mi archivo HTML creado con Python</h1>
+				<h1>Hola, este es mi archivo HTML creado con Python</h1>
 			</body>
 			</html>
 			"""
 
 	with open(ruta, "w") as html:
 
-	    html.write(contenido)
+		html.write(contenido)
 
 def test_vaciar_carpeta_llena():
 
@@ -504,17 +505,17 @@ def test_obtener_centroide():
 
 def test_obtener_centroide_datos_reales():
 
-    estadios=[("Estadio Santiago Bernabéu", 40.453054, -3.688344, 1, "1"),
-        		("Camp Nou", 41.380898, 2.122820, 1, "1"),
-		        ("Estadio Ramón Sánchez-Pizjuán", 37.384049, -5.970579, 1, "1"),
-		        ("Estadio de Mestalla", 39.474574, -0.358355, 1, "1"),
-		        ("San Mamés", 43.264130, -2.949721, 1, "1"),
-		        ("Estadio de Gran Canaria", 28.099731, -15.451081, 1, "1")]
+	estadios=[("Estadio Santiago Bernabéu", 40.453054, -3.688344, 1, "1"),
+				("Camp Nou", 41.380898, 2.122820, 1, "1"),
+				("Estadio Ramón Sánchez-Pizjuán", 37.384049, -5.970579, 1, "1"),
+				("Estadio de Mestalla", 39.474574, -0.358355, 1, "1"),
+				("San Mamés", 43.264130, -2.949721, 1, "1"),
+				("Estadio de Gran Canaria", 28.099731, -15.451081, 1, "1")]
 
-    centroide=((40.453054+41.380898+37.384049+39.474574+43.264130+28.099731)/6,
-        		(-3.688344+2.122820+-5.970579+-0.358355+-2.949721+-15.451081)/6)
+	centroide=((40.453054+41.380898+37.384049+39.474574+43.264130+28.099731)/6,
+				(-3.688344+2.122820+-5.970579+-0.358355+-2.949721+-15.451081)/6)
 
-    assert obtenerCentroide(estadios) == pytest.approx(centroide)
+	assert obtenerCentroide(estadios) == pytest.approx(centroide)
 
 def test_crear_mapa_mis_estadios_sin_puntos():
 
@@ -693,14 +694,14 @@ def test_obtener_geometria_pais_no_existen():
 	assert isinstance(geodataframe, gpd.geodataframe.GeoDataFrame)
 
 @pytest.mark.parametrize(["latitud", "longitud", "pais"],
-    [
-        (40.4168, -3.7038, "Spain"),
-        (48.8566, 2.3522, "France"), 
-        (51.5074, -0.1278, "England"),
-        (39.5696, 2.6502, "Spain-Mallorca"),
-        (28.1235, -15.4363, "Spain-LasPalmas"),
-        (41.9028, 12.4964, "Italy")
-    ]
+	[
+		(40.4168, -3.7038, "Spain"),
+		(48.8566, 2.3522, "France"), 
+		(51.5074, -0.1278, "England"),
+		(39.5696, 2.6502, "Spain-Mallorca"),
+		(28.1235, -15.4363, "Spain-LasPalmas"),
+		(41.9028, 12.4964, "Italy")
+	]
 )
 def test_obtener_geometria_pais(latitud, longitud, pais):
 
@@ -742,7 +743,7 @@ def test_obtener_geometrias_paises():
 	ruta_relativa=os.path.join(os.path.abspath(".."), "src", "static", "geojson")
 
 	coordenadas=[(40.4168, -3.7038),(48.8566, 2.3522),(51.5074, -0.1278),(39.5696, 2.6502),
-        		(28.1235, -15.4363),(41.9028, 12.4964)]
+				(28.1235, -15.4363),(41.9028, 12.4964)]
 
 	geodataframe=obtenerGeometriasPaises(ruta_relativa, coordenadas)
 
@@ -850,14 +851,14 @@ def test_crear_mapa_mis_estadios_detalle_paises_con_punto():
 	borrarCarpeta(ruta_carpeta)
 
 @pytest.mark.parametrize(["latitud", "longitud", "pais"],
-    [
-        (40.4168, -3.7038, "Spain"),
-        (48.8566, 2.3522, "France"), 
-        (51.5074, -0.1278, "England"),
-        (39.5696, 2.6502, "Spain-Mallorca"),
-        (28.1235, -15.4363, "Spain-LasPalmas"),
-        (41.9028, 12.4964, "Italy")
-    ]
+	[
+		(40.4168, -3.7038, "Spain"),
+		(48.8566, 2.3522, "France"), 
+		(51.5074, -0.1278, "England"),
+		(39.5696, 2.6502, "Spain-Mallorca"),
+		(28.1235, -15.4363, "Spain-LasPalmas"),
+		(41.9028, 12.4964, "Italy")
+	]
 )
 def test_crear_mapa_mis_estadios_detalle_paises_con_punto_paises(latitud, longitud, pais):
 
@@ -1331,13 +1332,13 @@ def test_obtener_centroide_coordenadas():
 
 def test_obtener_centroide_coordenadas_datos_reales():
 
-    coordenadas=[(40.453054, -3.688344),(41.380898, 2.122820),(37.384049, -5.970579),
-		        (39.474574, -0.358355),(43.264130, -2.949721),(28.099731, -15.451081)]
+	coordenadas=[(40.453054, -3.688344),(41.380898, 2.122820),(37.384049, -5.970579),
+				(39.474574, -0.358355),(43.264130, -2.949721),(28.099731, -15.451081)]
 
-    centroide=((40.453054+41.380898+37.384049+39.474574+43.264130+28.099731)/6,
-        		(-3.688344+2.122820+-5.970579+-0.358355+-2.949721+-15.451081)/6)
+	centroide=((40.453054+41.380898+37.384049+39.474574+43.264130+28.099731)/6,
+				(-3.688344+2.122820+-5.970579+-0.358355+-2.949721+-15.451081)/6)
 
-    assert obtenerCentroideCoordenadas(coordenadas)==pytest.approx(centroide)
+	assert obtenerCentroideCoordenadas(coordenadas)==pytest.approx(centroide)
 
 def test_crear_mapa_trayecto_sin_punto_error():
 
@@ -1907,11 +1908,11 @@ def test_crear_mapa_trayectos_ida_vuelta_diferente():
 
 def test_distancia_maxima_coordenadas_sin_coordenadas():
 
-    assert distancia_maxima_coordenadas([])==0 
+	assert distancia_maxima_coordenadas([])==0 
 
 def test_distancia_maxima_coordenadas_una_coordenada():
 
-    assert distancia_maxima_coordenadas([(40.4168, -3.7038)])==0
+	assert distancia_maxima_coordenadas([(40.4168, -3.7038)])==0
 
 @pytest.mark.parametrize(["coordenadas", "distancia"],
 	[
@@ -1931,11 +1932,11 @@ def test_distancia_maxima_coordenadas(coordenadas, distancia):
 
 def test_calcular_zoom_mapa_sin_coordenadas():
 
-    assert calcularZoomMapa([])==15 
+	assert calcularZoomMapa([])==15 
 
 def test_calcular_zoom_mapa_una_coordenada():
 
-    assert calcularZoomMapa([(40.4168, -3.7038)])==15
+	assert calcularZoomMapa([(40.4168, -3.7038)])==15
 
 @pytest.mark.parametrize(["coordenadas"],
 	[
@@ -1962,7 +1963,7 @@ def test_obtener_angulo_sin_coordenadas():
 
 def test_obtener_angulo_una_coordenada():
 
-    assert obtenerAngulo([(40.4168, -3.7038)])==0
+	assert obtenerAngulo([(40.4168, -3.7038)])==0
 
 @pytest.mark.parametrize(["coordenadas", "angulo"],
 	[
@@ -1975,4 +1976,52 @@ def test_obtener_angulo_una_coordenada():
 )
 def test_obtener_angulo(coordenadas, angulo):
 
-    assert obtenerAngulo(coordenadas)==angulo
+	assert obtenerAngulo(coordenadas)==angulo
+
+@pytest.mark.parametrize(["codigo_division"],
+	[("portugal",),("francia",),("turquia",),("escocia",)]
+)
+def test_obtener_nombre_division_seleccionado_no_esta(codigo_division):
+ 
+	divisiones=[("Primera", "primera", 12, "primera-division-ea"), ("Segunda", "segunda", 1, "segunda-division-hypermotion"),
+				("Bundesliga Austria", "austria", 1, "bundesliga-austriaca"), ("Liga Checa", "checa", 1, "chance-liga")] 
+ 
+	assert not obtenerNombreDivisionSeleccionado(divisiones, codigo_division)
+ 
+@pytest.mark.parametrize(["codigo_division", "nombre_division"],
+	[
+		("primera", "Primera"),
+		("segunda", "Segunda"),
+		("austria", "Bundesliga Austria"),
+		("checa", "Liga Checa")
+	]
+)
+def test_obtener_nombre_division_seleccionado(codigo_division, nombre_division):
+ 
+	divisiones=[("Primera", "primera", 12, "primera-division-ea"), ("Segunda", "segunda", 1, "segunda-division-hypermotion"),
+				("Bundesliga Austria", "austria", 1, "bundesliga-austriaca"), ("Liga Checa", "checa", 1, "chance-liga")] 
+ 
+	assert obtenerNombreDivisionSeleccionado(divisiones, codigo_division)==nombre_division
+
+def test_obtener_divisiones_no_seleccionados_no_existen():
+ 
+	assert not obtenerDivisionesNoSeleccionados([], "primera")
+ 
+def test_obtener_divisiones_no_seleccionados_solo_division():
+ 
+	divisiones=[("Primera", "primera", 12, "primera-division-ea")] 
+ 
+	assert not obtenerDivisionesNoSeleccionados(divisiones, "primera")
+ 
+@pytest.mark.parametrize(["codigo_division"],
+	[("primera",),("segunda",),("austria",),("checa",)]
+)
+def test_obtener_divisiones_no_seleccionados(codigo_division):
+ 
+	divisiones=[("Primera", "primera", 12, "primera-division-ea"), ("Segunda", "segunda", 1, "segunda-division-hypermotion"),
+				("Bundesliga Austria", "austria", 1, "bundesliga-austriaca"), ("Liga Checa", "checa", 1, "chance-liga")] 
+ 
+ 
+	divisiones_no_seleccionados=obtenerDivisionesNoSeleccionados(divisiones, codigo_division)
+ 
+	assert len(divisiones_no_seleccionados)==3

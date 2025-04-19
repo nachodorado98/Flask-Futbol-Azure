@@ -11,6 +11,7 @@ from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import obtenerCentroide, crearMapaMisEstadiosDetallePaises, crearMapaEstadio
+from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados
 
 bp_estadio=Blueprint("estadio", __name__)
 
@@ -353,6 +354,12 @@ def pagina_division_mis_estadios(codigo_division:str):
 
 	estadios_asistidos_division=list(filter(lambda estadio: estadio[5]==1, estadios_division))
 
+	estadios_competiciones_asistidos=con.obtenerEstadiosPartidosAsistidosUsuarioCompeticionCantidad(current_user.id, numero_estadios)
+
+	nombre_division_seleccionado=obtenerNombreDivisionSeleccionado(estadios_competiciones_asistidos, codigo_division)
+
+	divisiones_no_seleccionados=obtenerDivisionesNoSeleccionados(estadios_competiciones_asistidos, codigo_division)
+
 	con.cerrarConexion()
 
 	return render_template("mis_estadios_division.html",
@@ -363,6 +370,8 @@ def pagina_division_mis_estadios(codigo_division:str):
 							estadios_division=estadios_division,
 							numero_estadios=len(estadios_division),
 							numero_estadios_asistidos=len(estadios_asistidos_division),
+							nombre_division_seleccionado=nombre_division_seleccionado,
+							divisiones_no_seleccionados=divisiones_no_seleccionados,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
