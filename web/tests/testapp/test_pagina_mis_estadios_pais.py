@@ -353,6 +353,7 @@ def test_pagina_mis_estadios_pais_con_nombre_pais(cliente, conexion_entorno_usua
 		assert "<strong>Mis Estadios de España</strong>" in contenido
 		assert '<span class="boton-estadios-mapa-text">Estadios de España</span>' in contenido
 		assert '<span class="boton-paises-mapa-text">España</span>' in contenido
+		assert "<strong>Ciudades Visitadas de España</strong>" in contenido
 
 def test_pagina_mis_estadios_pais_sin_paises_no_seleccionados(cliente, conexion_entorno_usuario):
 
@@ -990,3 +991,52 @@ def test_pagina_mapa_mis_estadios_pais_mapa_detalle_paises_existe(cliente, conex
 		assert '"features": []' not in contenido
 		assert '"type": "FeatureCollection"' in contenido
 		assert '{"name": "Spain"}' in contenido
+
+def test_pagina_mis_estadios_pais_sin_ciudad(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("UPDATE estadios SET Ciudad=NULL")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/estadios/mis_estadios/es")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert '<p class="titulo-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert "<strong>Ciudades Visitadas de España</strong>" in contenido
+		assert '<div class="tarjetas-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert '<div class="info-estadio-mis-estadios-pais-ciudades-asistidas">' not in contenido
+		assert "<h4>1º - Madrid</h4>" not in contenido
+
+def test_pagina_mis_estadios_pais_con_ciudad(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/estadios/mis_estadios/es")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert '<p class="titulo-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert "<strong>Ciudades Visitadas de España</strong>" in contenido
+		assert '<div class="tarjetas-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert '<div class="info-estadio-mis-estadios-pais-ciudades-asistidas">' in contenido
+		assert "<h4>1º - Madrid</h4>" in contenido
+		assert "<h4>1 veces</h4>" in contenido

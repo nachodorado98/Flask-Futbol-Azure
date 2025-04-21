@@ -2829,3 +2829,48 @@ class Conexion:
 		competicion=self.obtenerDatosCompeticion(competicion_id)
 
 		return None if not competicion else competicion[2]
+
+	# Metodo para obtener las ciudades de los estadios de los partidos asistidos de un usuario por cantidad de veces visitadas
+	def obtenerCiudadesEstadiosPartidosAsistidosUsuarioCantidad(self, usuario:str, numero:int)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT e.pais, e.ciudad,
+							MAX(CASE WHEN e.codigo_pais IS NULL
+				                THEN 
+				                	CASE WHEN eq.codigo_pais IS NULL
+				                		THEN '-1'
+				                		ELSE eq.codigo_pais
+				           			END
+				                ELSE e.codigo_pais
+						    END) as codigo_pais,
+							COUNT(DISTINCT p.partido_id) as numero_veces
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN partido_estadio pe
+		                    ON p.partido_id=pe.partido_id
+		                    LEFT JOIN estadios e
+		                    ON pe.estadio_id=e.estadio_id
+		                    LEFT JOIN equipo_estadio ee
+							ON e.estadio_id=ee.estadio_id
+							LEFT JOIN equipos eq
+							ON ee.equipo_id=eq.equipo_id
+							WHERE e.capacidad IS NOT NULL
+							AND e.ciudad IS NOT NULL
+							GROUP BY e.pais, e.ciudad
+							ORDER BY numero_veces DESC, e.pais ASC
+							LIMIT %s""",
+							(usuario, numero))
+
+		ciudades_estadios_asistidos=self.c.fetchall()
+
+		return list(map(lambda ciudad: (ciudad["pais"],
+										ciudad["ciudad"],
+										ciudad["codigo_pais"],
+										ciudad["numero_veces"]), ciudades_estadios_asistidos))
+
+	# Metodo para obtener las ciudades de los estadios de los partidos asistidos de un usuario y un pais por cantidad de veces visitaas
+	def obtenerCiudadesEstadiosPaisPartidosAsistidosUsuarioCantidad(self, usuario:str, codigo_pais:str, numero:int)->List[Optional[tuple]]:
+
+		ciudades_estadios_asistidos=self.obtenerCiudadesEstadiosPartidosAsistidosUsuarioCantidad(usuario, numero)
+
+		return list(filter(lambda ciudad: ciudad[2]==codigo_pais, ciudades_estadios_asistidos))

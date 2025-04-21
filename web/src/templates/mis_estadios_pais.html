@@ -32,6 +32,42 @@
         {% endif %}
     </div>
 
+    <div class="tarjeta-mis-estadios-pais-ciudades-asistidas">
+
+        <p class="titulo-mis-estadios-pais-ciudades-asistidas">
+            <strong>Ciudades Visitadas de {{ nombre_pais_seleccionado }}</strong>
+        </p>
+
+            <div class="tarjetas-mis-estadios-pais-ciudades-asistidas">
+                <div class="tarjetas-mis-estadios-pais-ciudades-asistidas-wrapper">
+
+                {% for ciudad_estadio in ciudades_estadios_pais %}
+
+                    <div class="tarjeta-estadio-mis-estadios-pais-ciudades-asistidas">
+
+                        <div class="info-estadio-mis-estadios-pais-ciudades-asistidas">
+
+                            <h4>{{ loop.index }}º - {{ ciudad_estadio[1] }}</h4>
+
+                            {% if ciudad_estadio[2]=='-1' %}
+                                <img class="pais-ciudad" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                            {% else %}
+                                <img class="pais-ciudad" src="{{ url_imagen_pais }}{{ ciudad_estadio[2] }}.png" alt="Pais Icon">
+                            {% endif %}
+
+                            <h4>{{ ciudad_estadio[3] }} veces</h4>
+
+                        </div>
+
+                    </div>
+                    
+                {% endfor %}
+
+                </div>
+
+            </div>
+    </div>
+
 </div>
 
 <script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>

@@ -220,3 +220,10 @@ DELETE FROM paises WHERE pais IN ('Anguila', 'Antigua y Barbuda', 'Aruba', 'Baha
     'Liberia', 'Malawi', 'Malí', 'Mauritania', 'Mozambique', 'Namibia', 'Níger', 'Ruanda', 'Sierra Leona', 'Somalia', 'Sudán del Sur', 'Togo', 'Zambia',
     'Afganistán', 'Bután', 'Brunei', 'Camboya', 'Laos', 'Mongolia', 'Nepal', 'Timor Oriental', 'Uzbekistán', 'Tayikistán', 'Turkmenistán',
     'Papúa Nueva Guinea', 'Belice', 'Guyana', 'Haití', 'Surinam', 'Trinidad y Tobago');
+
+DELETE FROM ciudades
+WHERE (ciudad, pais, CodCiudad) IN (SELECT ciudad, pais, CodCiudad FROM ciudades
+								    WHERE (ciudad, pais) IN (SELECT ciudad, pais FROM ciudades
+													        GROUP BY ciudad, pais HAVING COUNT(*)>1)
+AND CodCiudad NOT IN (SELECT MIN(CodCiudad) FROM ciudades
+				        GROUP BY ciudad, pais HAVING COUNT(*)>1));

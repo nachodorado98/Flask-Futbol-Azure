@@ -262,6 +262,8 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 		print(e)
 		mapas_correcto=False
 
+	ciudades_estadios_pais=con.obtenerCiudadesEstadiosPaisPartidosAsistidosUsuarioCantidad(current_user.id, codigo_pais, numero_estadios)
+
 	con.cerrarConexion()
 
 	return render_template("mis_estadios_pais.html",
@@ -277,6 +279,7 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							nombre_mapa_detalle=nombre_mapa_detalle,
 							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
 							mapas_correcto=mapas_correcto,
+							ciudades_estadios_pais=ciudades_estadios_pais,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
