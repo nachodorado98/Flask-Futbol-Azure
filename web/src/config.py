@@ -1,8 +1,8 @@
-from .datalake.confconexiondatalake import CUENTA_DL, CLAVE_DL
+from .datalake.confconexiondatalake import CUENTA_DL, CLAVE_DL, CONTENEDOR_DL
 
 CUENTA=CUENTA_DL
 CLAVE=CLAVE_DL
-CONTENEDOR="contenedorequipos"
+CONTENEDOR=CONTENEDOR_DL
 URL_DATALAKE=f"https://{CUENTA}.blob.core.windows.net/{CONTENEDOR}"
 URL_DATALAKE_ESCUDOS=f"{URL_DATALAKE}/escudos/"
 URL_DATALAKE_ESTADIOS=f"{URL_DATALAKE}/estadios/"

@@ -1,3 +1,5 @@
+import os
+
 # Comandos BASH para crear las carpetas
 BASH_LOGS="cd ../../opt/airflow/dags && mkdir -p entorno/logs"
 BASH_ESCUDOS="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/escudos"
@@ -20,7 +22,7 @@ URL_PAIS="https://cdn.resfu.com/media/img/flags/round/"
 URL_JUGADOR="https://cdn.resfu.com/img_data/players/medium/"
 
 # Contenedor y carpetas para el datalake
-CONTENEDOR="contenedorequipos"
+CONTENEDOR=os.environ.get("AZURE_NAME_CONTAINER")
 ESCUDOS="escudos"
 ENTRENADORES="entrenadores"
 PRESIDENTES="presidentes"

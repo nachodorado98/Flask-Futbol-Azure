@@ -53,6 +53,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    env_file:
+      - .env
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -68,6 +70,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    env_file:
+      - .env
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -156,6 +160,8 @@ services:
      - 5000:5000
     volumes:
      - ./web:/app
+    env_file:
+      - .env
     depends_on:
       <<: *airflow-common-depends-on
 
@@ -214,6 +220,8 @@ services:
     container_name: consumer
     volumes:
      - ./consumer:/app
+    env_file:
+      - .env
     depends_on:
       - kafka
     restart: always
