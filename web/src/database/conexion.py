@@ -2874,3 +2874,87 @@ class Conexion:
 		ciudades_estadios_asistidos=self.obtenerCiudadesEstadiosPartidosAsistidosUsuarioCantidad(usuario, numero)
 
 		return list(filter(lambda ciudad: ciudad[2]==codigo_pais, ciudades_estadios_asistidos))
+
+	# Metodo para obtener los partidos asistidos de un usuario en una ciudad concreta
+	def obtenerPartidosAsistidosUsuarioCiudad(self, usuario:str, equipo_id:str, ciudad:str, codigo_pais:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								p.competicion,
+								pe.estadio_id as estadio_partido,
+								e.ciudad as ciudad_partido,
+								CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_ganado,
+						       CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_perdido,
+   						       CASE WHEN p.resultado LIKE %s
+							            THEN 1
+							            ELSE 0
+						       END as partido_empatado
+						FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+	                    LEFT JOIN partidos p
+	                    ON pa.partido_id=p.partido_id
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
+						LEFT JOIN estadios e
+						ON pe.estadio_id=e.estadio_id
+						WHERE LOWER(e.ciudad)=%s
+						AND e.codigo_pais=%s
+						ORDER BY p.fecha DESC""",
+						(r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
+						r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
+						r'%Empate%', usuario, ciudad.lower(), codigo_pais))
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+											partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"],
+											partido["estadio_partido"],
+											partido["ciudad_partido"],
+											partido["partido_ganado"],
+											partido["partido_perdido"],
+											partido["partido_empatado"]), partidos))
+
+	# Metodo para obtener la informacion de una ciudad
+	def obtenerCiudad(self, ciudad:str, codigo_pais:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT c.ciudad, c.pais, e.codigo_pais
+						FROM ciudades c
+						JOIN estadios e
+						ON c.ciudad=e.ciudad
+    					WHERE LOWER(c.ciudad)=%s
+    					AND e.codigo_pais=%s""",
+						(ciudad.lower(), codigo_pais))
+
+		ciudad=self.c.fetchone()
+
+		return None if not ciudad else (ciudad["ciudad"],
+										ciudad["pais"],
+										ciudad["codigo_pais"])

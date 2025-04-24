@@ -379,3 +379,40 @@ def pagina_division_mis_estadios(codigo_division:str):
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+
+@bp_estadio.route("/estadios/mis_estadios/<codigo_pais>/<ciudad>")
+@login_required
+def pagina_ciudad_mis_estadios(codigo_pais:str, ciudad:str):
+
+	con=Conexion()
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	partidos_asistidos_ciudad=con.obtenerPartidosAsistidosUsuarioCiudad(current_user.id, equipo, ciudad, codigo_pais)
+
+	if not partidos_asistidos_ciudad:
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	ciudad=con.obtenerCiudad(ciudad, codigo_pais)
+
+	resultados_partidos_asistidos_ciudad=limpiarResultadosPartidos(partidos_asistidos_ciudad)
+
+	con.cerrarConexion()
+
+	return render_template("partidos_asistidos_ciudad.html",
+							usuario=current_user.id,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							ciudad_id=ciudad,
+							codigo_pais=codigo_pais,
+							partidos_asistidos_ciudad=partidos_asistidos_ciudad,
+							ciudad=ciudad,
+							numero_partidos_asistidos_ciudad=len(partidos_asistidos_ciudad),
+							resultados_partidos_asistidos_ciudad=resultados_partidos_asistidos_ciudad,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_pais=URL_DATALAKE_PAISES)

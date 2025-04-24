@@ -43,7 +43,7 @@
 
                 {% for ciudad_estadio in ciudades_estadios_pais %}
 
-                    <div class="tarjeta-estadio-mis-estadios-pais-ciudades-asistidas">
+                    <div class="tarjeta-estadio-mis-estadios-pais-ciudades-asistidas" onclick="window.location.href='/estadios/mis_estadios/{{ codigo_pais }}/{{ ciudad_estadio[1].lower() }}'">
 
                         <div class="info-estadio-mis-estadios-pais-ciudades-asistidas">
 

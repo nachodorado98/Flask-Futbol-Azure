@@ -3607,3 +3607,59 @@ def test_obtener_ciudades_estadios_pais_partido_asistido_cantidad_varias_veces(c
 	assert len(partidos_asistidos)==20
 	assert len(ciudades_estadios)==1
 	assert ciudades_estadios[0][-1]==20
+
+def test_obtener_partidos_asistidos_usuario_ciudad_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "es")
+
+def test_obtener_partidos_asistidos_usuario_ciudad_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "es")
+
+def test_obtener_partidos_asistidos_usuario_ciudad_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "es")
+
+def test_obtener_partidos_asistidos_usuario_ciudad_no_existe_estadio(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM estadios")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "es")
+
+def test_obtener_partidos_asistidos_usuario_ciudad_no_existe_ciudad(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "no-existo", "es")
+
+def test_obtener_partidos_asistidos_usuario_ciudad_no_existe_codigo_pais(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "se")
+
+def test_obtener_partidos_asistidos_usuario_ciudad(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "es")

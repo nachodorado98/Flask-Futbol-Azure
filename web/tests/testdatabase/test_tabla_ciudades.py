@@ -58,3 +58,21 @@ def test_existe_codigo_ciudad_no_existe(conexion, codigo_ciudad):
 def test_existe_codigo_ciudad(conexion, codigo_ciudad):
 
 	assert conexion.existe_codigo_ciudad(codigo_ciudad)
+
+def test_obtener_ciudad_no_existe_ciudad(conexion):
+
+	assert not conexion.obtenerCiudad("no_existo", "es")
+
+def test_obtener_ciudad_no_existe_estadio(conexion):
+
+	assert not conexion.obtenerCiudad("Madrid", "es")
+
+def test_obtener_ciudad_no_existe_codigo_pais(conexion_entorno):
+
+	conexion_entorno.c.execute("UPDATE estadios SET Codigo_Pais=NULL")
+
+	assert not conexion_entorno.obtenerCiudad("Madrid", "es")
+
+def test_obtener_ciudad(conexion_entorno):
+
+	assert conexion_entorno.obtenerCiudad("Madrid", "es")

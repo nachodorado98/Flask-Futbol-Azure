@@ -1,0 +1,85 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/partidos_asistidos_ciudad.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-partidos-asistidos-ciudad">
+        <p class="titulo-circulo-partidos-asistidos-ciudad">Partidos Asistidos</p>
+        <p class="valor-circulo-partidos-asistidos-ciudad"><strong>{{ numero_partidos_asistidos_ciudad }}</strong></p>
+    </div>
+    <div class="circulo-estadisticas-partidos-asistidos-ciudad">
+        <canvas id="grafico_tarta"></canvas>
+        <script>var datos_grafica_tarta={{ resultados_partidos_asistidos_ciudad | tojson | safe }};</script>
+        <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
+        
+    </div>
+    <div class="circulo-ciudad">
+        <p class="titulo-circulo-ciudad">{{ ciudad[0] }}</p>
+        
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}
+
+<div class="contenedor-titulo-partidos-asistidos-ciudad">
+    
+    <h1>Partidos Asistidos en {{ ciudad[0] }}
+
+        {% if ciudad[2]=='-1' %}
+            <img class="pais-icono" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+        {% else %}
+            <img class="pais-icono" src="{{ url_imagen_pais }}{{ ciudad[2] }}.png" alt="Pais Icon">
+        {% endif %}
+
+    </h1>
+
+</div>
+
+{% endblock partidos %}
+
+{% block principal %}
+
+<div class="contenedor-tarjetas-partidos-asistidos-ciudad">
+
+    <div class="tarjetas-partidos-asistidos-ciudad">
+        <div class="tarjetas-partidos-asistidos-ciudad-wrapper">
+
+        {% for partido in partidos_asistidos_ciudad %}
+
+            <div class="tarjeta-partido-asistidos-ciudad" onclick="window.location.href='/partido/{{ partido[0] }}/asistido'">
+                <p><strong>{{ partido[2] }} - {{ partido[9] }}</strong></p>
+                <div class="info-partido-asistidos-ciudad">
+
+                    {% if partido[5]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ partido[5] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4>{{ partido[4] }} {{ partido[1] }} {{ partido[7] }}</h4>
+
+                    {% if partido[8]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ partido[8] }}.png" alt="Visitante Icon">
+                    {% endif %}
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+         </div>
+    </div>
+
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
