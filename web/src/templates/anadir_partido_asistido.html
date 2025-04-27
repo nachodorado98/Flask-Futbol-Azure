@@ -91,7 +91,7 @@
                             <div class="contenedor-pais-ciudad-partido">
                                 <p class="texto-origen-destino"><strong>Origen:</strong></p>
                                 <select id="pais-ida" name="pais-ida" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-ida', 'ciudad-ida')" required>
-                                    <option value="{{ pais_usuario }}" selected disabled hidden>{{ pais_usuario }}</option>
+                                    <option value="{{ pais_usuario }}" selected hidden>{{ pais_usuario }}</option>
                                     {% for pais in paises %}
                                         <option value="{{ pais }}">{{ pais }}</option>
                                     {% endfor %}
@@ -150,7 +150,7 @@
                             <div class="contenedor-pais-ciudad-partido">
                                 <p class="texto-origen-destino"><strong>Destino:</strong></p>
                                 <select id="pais-vuelta" name="pais-vuelta" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-vuelta', 'ciudad-vuelta')" required>
-                                    <option value="{{ pais_usuario }}" selected disabled hidden>{{ pais_usuario }}</option>
+                                    <option value="{{ pais_usuario }}" selected hidden>{{ pais_usuario }}</option>
                                     {% for pais in paises %}
                                         <option value="{{ pais }}">{{ pais }}</option>
                                     {% endfor %}

@@ -5,7 +5,7 @@ import time
 
 from src.database.conexion import Conexion
 
-from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, datos_trayectos_correctos
+from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, trayecto_correcto, ciudad_estadio_correcta
 from src.utilidades.configutils import TRANSPORTES
 
 from src.datalake.conexion_data_lake import ConexionDataLake
@@ -133,14 +133,19 @@ def pagina_insertar_partido_asistido():
 	comentario=request.form.get("comentario")
 	partido_asistido_favorito=request.form.get("partido-favorito")
 	archivos=request.files
+
 	ciudad_ida=request.form.get("ciudad-ida")
+	pais_ida=request.form.get("pais-ida")
 	ciudad_ida_estadio=request.form.get("ciudad-ida-estadio")
 	fecha_ida=request.form.get("fecha-ida")
 	transporte_ida=request.form.get("transporte-ida")
+
 	ciudad_vuelta=request.form.get("ciudad-vuelta")
+	pais_vuelta=request.form.get("pais-vuelta")
 	ciudad_vuelta_estadio=request.form.get("ciudad-vuelta-estadio")
 	fecha_vuelta=request.form.get("fecha-vuelta")
 	transporte_vuelta=request.form.get("transporte-vuelta")
+	
 	teletrabajo=request.form.get("teletrabajo", default=False, type=bool)
 
 	con=Conexion()
@@ -221,10 +226,6 @@ def pagina_insertar_partido_asistido():
 
 		con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
 
-		codigo_ciudad_ida=con.obtenerCodigoCiudad(ciudad_ida)
-
-		codigo_ciudad_vuelta=con.obtenerCodigoCiudad(ciudad_vuelta)
-
 		estadio_partido=con.obtenerEstadioPartido(partido_id)
 
 		if not estadio_partido:
@@ -233,21 +234,27 @@ def pagina_insertar_partido_asistido():
 
 			return redirect("/partidos/asistidos")
 
-		ciudad_estadio=estadio_partido[0]
+		ciudad_estadio, pais_estadio=estadio_partido[0], estadio_partido[2]
 
-		if datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio, transporte_ida, transporte_vuelta):
+		if ciudad_estadio_correcta(ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio):
 
-			codigo_ciudad_ida_estadio=con.obtenerCodigoCiudad(ciudad_ida_estadio)
+			codigo_ciudad_estadio=con.obtenerCodigoCiudadPais(ciudad_estadio, pais_estadio)
 
-			codigo_ciudad_vuelta_estadio=con.obtenerCodigoCiudad(ciudad_vuelta_estadio)
+			codigo_ciudad_ida=con.obtenerCodigoCiudadPais(ciudad_ida, pais_ida)
 
-			if codigo_ciudad_ida_estadio and codigo_ciudad_vuelta_estadio:
+			codigo_ciudad_vuelta=con.obtenerCodigoCiudadPais(ciudad_vuelta, pais_vuelta)
+
+			ida_correcta=trayecto_correcto(codigo_ciudad_ida, codigo_ciudad_estadio, transporte_ida)
+
+			vuelta_correcta=trayecto_correcto(codigo_ciudad_vuelta, codigo_ciudad_estadio, transporte_vuelta)
+
+			if ida_correcta and vuelta_correcta:
 
 				trayecto_id=f"id_{partido_id}_{current_user.id}"
 
-				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_ida_estadio)
+				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_estadio)
 
-				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_vuelta_estadio, transporte_vuelta, codigo_ciudad_vuelta)
+				con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_estadio, transporte_vuelta, codigo_ciudad_vuelta)
 
 	con.cerrarConexion()
 

@@ -2599,6 +2599,19 @@ class Conexion:
 
 		return None if ciudad is None else ciudad["codciudad"]
 
+	# Metodo para obtener el codigo de una ciudad de un pais concreto
+	def obtenerCodigoCiudadPais(self, ciudad:str, pais:str)->Optional[int]:
+
+		self.c.execute("""SELECT codciudad
+							FROM ciudades
+							WHERE ciudad=%s
+							AND pais=%s""",
+							(ciudad, pais))
+
+		ciudad=self.c.fetchone()
+
+		return None if ciudad is None else ciudad["codciudad"]
+
 	# Metodo para comprobar si existe un codigo ciudad
 	def existe_codigo_ciudad(self, codigo_ciudad:str)->bool:
 
@@ -2636,19 +2649,21 @@ class Conexion:
 	# Metodo para obtener el estadio de un partido
 	def obtenerEstadioPartido(self, partido_id:str)->Optional[tuple]:
 
-		self.c.execute("""SELECT e.ciudad, e.nombre
+		self.c.execute("""SELECT e.ciudad, e.nombre, c.pais
 						FROM partidos p
 						JOIN partido_estadio pe
 						ON p.partido_id=pe.partido_id
 						JOIN estadios e
 						ON pe.estadio_id=e.estadio_id
+						JOIN ciudades c
+						ON e.ciudad=c.ciudad
 						WHERE p.partido_id=%s
 						AND e.ciudad IS NOT NULL""",
 						(partido_id,))
 
 		estadio=self.c.fetchone()
 
-		return None if not estadio else (estadio["ciudad"], estadio["nombre"])
+		return None if not estadio else (estadio["ciudad"], estadio["nombre"], estadio["pais"])
 
 	# Metodo para eliminar los trayectos de un partido asistido
 	def eliminarTrayectosPartidoAsistido(self, partido_id:str, usuario:str)->None:
@@ -2958,3 +2973,16 @@ class Conexion:
 		return None if not ciudad else (ciudad["ciudad"],
 										ciudad["pais"],
 										ciudad["codigo_pais"])
+
+	# Metodo para obtener las coordenadas de una ciudad
+	def obtenerCoordenadasCiudad(self, codigo_ciudad:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT latitud, longitud
+						FROM ciudades
+    					WHERE codciudad=%s""",
+						(codigo_ciudad,))
+
+		coordenadas=self.c.fetchone()
+
+		return None if not coordenadas else (coordenadas["latitud"],
+											coordenadas["longitud"])

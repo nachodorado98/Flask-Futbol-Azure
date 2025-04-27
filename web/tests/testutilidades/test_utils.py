@@ -12,7 +12,7 @@ from src.utilidades.utils import leerGeoJSON, obtenerGeometriaPais, obtenerGeome
 from src.utilidades.utils import crearMapaEstadio, obtenerCompeticionesPartidosUnicas, extraerExtension, comprobarFechas
 from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obtenerAnoMesFechas, generarCalendario
 from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
-from src.utilidades.utils import datos_trayectos_correctos, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
+from src.utilidades.utils import ciudad_estadio_correcta, trayecto_correcto, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
 from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
 from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados
 
@@ -1271,32 +1271,33 @@ def test_limpiar_resultados_partidos_calendario(partidos, ganados, perdidos, emp
 	assert resultados["perdidos"]==perdidos
 	assert resultados["empatados"]==empatados
 
-@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "ciudad_estadio_partido", "transporte_ida", "transporte_vuelta"],
-	[
-		(None, 2, "Madrid", "Madrid", "Madrid", "Avion", "Avion"),
-		(1, None, "Madrid", "Madrid", "Madrid",  "Avion", "Avion"),
-		(1, 2, "Otra", "Madrid", "Madrid",  "Avion", "Avion"),
-		(1, 2, "Madrid", "Otra", "Madrid",  "Avion", "Avion"),
-		(1, 2, "Madrid", "Madrid", "Otra",  "Avion", "Avion"),
-		(1, 2, "Madrid", "Madrid", "Madrid",  "transporte", "Avion"),
-		(1, 2, "Madrid", "Madrid", "Madrid", "Avion", "transporte")
-	]
+@pytest.mark.parametrize(["ciudad_ida_estadio", "ciudad_vuelta_estadio", "ciudad_estadio_partido"],
+	[("Otra", "Madrid", "Madrid"), ("Madrid", "Otra", "Madrid"), ("Madrid", "Madrid", "Otra")]
 )
-def test_datos_trayectos_correctos_no_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta):
+def test_ciudad_estadio_correcta_no_correcta(ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido):
 
-	assert not datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta)
+	assert not ciudad_estadio_correcta(ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido)
 
-@pytest.mark.parametrize(["codigo_ciudad_ida", "codigo_ciudad_vuelta", "ciudad_ida_estadio", "ciudad_vuelta_estadio", "ciudad_estadio_partido", "transporte_ida", "transporte_vuelta"],
-	[
-		(1, 2, "Madrid", "Madrid", "Madrid",  "Autobus", "Avion"),
-		(2, 2, "Madrid", "Madrid", "Madrid",  "Avion", "Avion"),
-		(1, 2, "Otra", "Otra", "Otra",  "Avion", "Tren"),
-		(1, 2, "Otra", "Otra", "Otra",  "Coche", "Coche")
-	]
+@pytest.mark.parametrize(["ciudad_ida_estadio", "ciudad_vuelta_estadio", "ciudad_estadio_partido"],
+	[("Madrid", "Madrid", "Madrid"), ("Otra", "Otra", "Otra"), ("Barcelona", "Barcelona", "Barcelona")]
 )
-def test_datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta):
+def test_ciudad_estadio_correcta(ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido):
 
-	assert datos_trayectos_correctos(codigo_ciudad_ida, codigo_ciudad_vuelta, ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido, transporte_ida, transporte_vuelta)
+	assert ciudad_estadio_correcta(ciudad_ida_estadio, ciudad_vuelta_estadio, ciudad_estadio_partido)
+
+@pytest.mark.parametrize(["codigo_ciudad_origen", "codigo_ciudad_destino", "transporte"],
+	[(None, 2, "Avion"), (1, None, "Avion"), (1, 2, "transporte"), (1, 15, "Coche"), (35, 103, "Metro"), (103, 160, "Pie"), (103, 987, "Cercanias")]
+)
+def test_trayecto_correcto_no_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte):
+
+	assert not trayecto_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte)
+
+@pytest.mark.parametrize(["codigo_ciudad_origen", "codigo_ciudad_destino", "transporte"],
+	[(1, 15, "Avion"), (35, 103, "Autobus"), (103, 160, "Coche"), (103, 987, "Tren")]
+)
+def test_trayecto_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte):
+
+	assert trayecto_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte)
 
 def test_obtener_centroide_coordenadas_sin_puntos():
 

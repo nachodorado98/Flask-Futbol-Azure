@@ -103,9 +103,9 @@ def test_pagina_eliminar_partido_asistido_trayectos_partido(cliente, conexion_en
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"Madrid", "ciudad-vuelta-estadio":"Madrid",
-			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"Madrid", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Pie", "ciudad-vuelta":"Madrid", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Metro", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 

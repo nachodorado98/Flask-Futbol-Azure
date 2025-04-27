@@ -401,8 +401,8 @@ def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuar
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -530,8 +530,8 @@ def test_pagina_partido_asistido_mapas_trayectos_ida_vuelta_diferente(cliente, c
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"Barcelona", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"Barcelona", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -601,8 +601,8 @@ def test_pagina_partido_asistido_mapas_trayectos_usuarios(cliente, conexion_ento
 
 		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -663,8 +663,8 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_existe(cliente, conexion
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -704,8 +704,8 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_vuelta_existe(cliente, conex
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -745,8 +745,8 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_vuelta_existe(cliente, c
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)

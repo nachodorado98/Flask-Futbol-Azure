@@ -112,7 +112,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
-		assert '<option value="España" selected disabled hidden>España</option>' in contenido
+		assert '<option value="España" selected hidden>España</option>' in contenido
 		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="Madrid">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
@@ -154,7 +154,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes_
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
-		assert f'<option value="{pais}" selected disabled hidden>{pais}</option>' in contenido
+		assert f'<option value="{pais}" selected hidden>{pais}</option>' in contenido
 		assert f'<option value="{ciudad}" selected>{ciudad}</option>' in contenido
 		assert '<option value="Madrid">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
@@ -198,7 +198,7 @@ def test_pagina_anadir_partido_asistido_partido_no_asistidos_no_existen_reciente
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' not in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' not in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' not in contenido
-		assert '<option value="España" selected disabled hidden>España</option>' not in contenido
+		assert '<option value="España" selected hidden>España</option>' not in contenido
 		assert '<option value="Madrid" selected>Madrid</option>' not in contenido
 		assert '<option value="Madrid">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' not in contenido
@@ -364,7 +364,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_todos(clie
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
-		assert '<option value="España" selected disabled hidden>España</option>' in contenido
+		assert '<option value="España" selected hidden>España</option>' in contenido
 		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="Madrid">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
@@ -418,7 +418,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto(cl
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
-		assert '<option value="España" selected disabled hidden>España</option>' in contenido
+		assert '<option value="España" selected hidden>España</option>' in contenido
 		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="Madrid">Metropolitano</option>' in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
@@ -457,7 +457,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto_si
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
-		assert '<option value="España" selected disabled hidden>España</option>' in contenido
+		assert '<option value="España" selected hidden>España</option>' in contenido
 		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="Madrid">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido
@@ -496,7 +496,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_partido_defecto_si
 		assert '<select id="ciudad-vuelta" name="ciudad-vuelta"' in contenido
 		assert '<select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio"' in contenido
 		assert '<select id="transporte-vuelta" name="transporte-vuelta"' in contenido
-		assert '<option value="España" selected disabled hidden>España</option>' in contenido
+		assert '<option value="España" selected hidden>España</option>' in contenido
 		assert '<option value="Madrid" selected>Madrid</option>' in contenido
 		assert '<option value="Madrid">Metropolitano</option>' not in contenido
 		assert '<div class="contenedor-checkbox-teletrabajo">' in contenido

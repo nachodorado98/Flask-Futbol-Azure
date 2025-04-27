@@ -11,6 +11,8 @@ import pandas as pd
 from geopy.distance import geodesic
 import math
 
+from src.database.conexion import Conexion
+
 from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESTADIOS
 
 from .configutils import TRANSPORTES
@@ -509,14 +511,46 @@ def limpiarResultadosPartidosCalendario(partidos_calendario:List[tuple])->Dict:
 			"perdidos": partidos_perdidos,
 			"empatados": partidos_empatados}
 
-def datos_trayectos_correctos(codigo_ciudad_ida:bool, codigo_ciudad_vuelta:bool, ciudad_ida_estadio:str,
-								ciudad_vuelta_estadio:str, ciudad_estadio_partido:str, transporte_ida:str, transporte_vuelta:str)->bool:
+def ciudad_estadio_correcta(ciudad_ida_estadio:str, ciudad_vuelta_estadio:str, ciudad_estadio:str):
 
-	ciudad_correcta=ciudad_ida_estadio==ciudad_vuelta_estadio==ciudad_estadio_partido
+	return ciudad_ida_estadio==ciudad_vuelta_estadio==ciudad_estadio
 
-	transportes_correctos=transporte_ida in TRANSPORTES and transporte_vuelta in TRANSPORTES
+def trayecto_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte):
 
-	return True if codigo_ciudad_ida and codigo_ciudad_vuelta and ciudad_correcta and transportes_correctos else False
+	if not codigo_ciudad_origen or not codigo_ciudad_destino or transporte not in TRANSPORTES:
+
+		return False
+
+	con=Conexion()
+
+	coordenadas_origen=con.obtenerCoordenadasCiudad(codigo_ciudad_origen)
+
+	coordenadas_destino=con.obtenerCoordenadasCiudad(codigo_ciudad_destino)
+
+	con.cerrarConexion()
+
+	distancia_coordenadas=distancia_maxima_coordenadas([coordenadas_origen, coordenadas_destino])
+
+	if distancia_coordenadas<20:
+
+		transportes_validos=["Autobus Urbano", "Autobus Interurbano", "Coche", "Metro", "Cercanias", "Pie"]
+
+	elif distancia_coordenadas<300:
+
+		transportes_validos=["Tren", "Autobus", "Autobus Interurbano", "Coche", "Cercanias"]
+
+	elif distancia_coordenadas<1000:
+
+		transportes_validos=["Avion", "Tren", "Autobus", "Coche"]
+
+	elif distancia_coordenadas<1500:
+
+		transportes_validos=["Avion", "Autobus"]
+
+	else:
+		transportes_validos=["Avion"]
+
+	return transporte in transportes_validos
 
 def obtenerCentroideCoordenadas(coordenadas:List[tuple])->tuple:
 
@@ -749,16 +783,16 @@ def calcularZoomMapa(coordenadas:List[tuple], C:int=15)->int:
 
 def obtenerNombreDivisionSeleccionado(divisiones:List[tuple], codigo_division:str)->Optional[str]:
  
-    try:
+	try:
  
-        return list(filter(lambda division: division[1]==codigo_division, divisiones))[0][0]
+		return list(filter(lambda division: division[1]==codigo_division, divisiones))[0][0]
  
-    except Exception:
+	except Exception:
  
-        return None
+		return None
 
 def obtenerDivisionesNoSeleccionados(divisiones:List[tuple], codigo_division:str)->List[tuple]:
  
-    divisiones_no_seleccionados=list(filter(lambda division: division[1]!=codigo_division, divisiones))
+	divisiones_no_seleccionados=list(filter(lambda division: division[1]!=codigo_division, divisiones))
  
-    return [(division[0], division[1], division[3]) for division in divisiones_no_seleccionados]
+	return [(division[0], division[1], division[3]) for division in divisiones_no_seleccionados]
