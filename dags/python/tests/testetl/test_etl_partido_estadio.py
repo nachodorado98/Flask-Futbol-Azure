@@ -167,7 +167,8 @@ def test_cargar_data_partido_estadio_existente(conexion, local, visitante, parti
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id_ida", "partido_id_vuelta"],
 	[
-		("milan", "internazionale", "2024103419", "202524914"),
+		# ("milan", "internazionale", "2024103419", "202524914"), # Han cambiado el nombre (San Siro y Giussepe Meazza pero realmente es el mismo)
+		("flamengo-rio-janeiro", "fluminense-rio-janeiro", "2024706960", "2024706771"),
 		("roma", "lazio", "2024103401", "2024662727")
 	]
 )

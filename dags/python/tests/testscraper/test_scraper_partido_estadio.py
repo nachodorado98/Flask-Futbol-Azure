@@ -25,7 +25,7 @@ def test_scraper_partido_estadio_realizar_peticion(scraper_partido_estadio):
 
 def test_scraper_partido_estadio_obtener_tabla_estadio_no_existe():
 
-	scraper_partido_estadio=ScraperPartidoEstadio("numancia", "atletico-madrid", "2024489479")
+	scraper_partido_estadio=ScraperPartidoEstadio("ue-vic", "atletico-madrid", "2025208658")
 
 	contenido=scraper_partido_estadio._Scraper__realizarPeticion()
 
@@ -97,7 +97,7 @@ def test_scraper_partido_estadio_obtener_tabla_datos_tecnicos_datos_correctos(sc
 	estadio=scraper_partido_estadio._ScraperPartidoEstadio__tabla_datos_tecnicos(tabla_info_datos)
 
 	assert len(estadio)==6
-	#assert "" not in estadio # Antes no tenian datos faltantes pero ahora parece que los han eliminado en la web (ciudad, cesped, telfono)
+	#assert "" not in estadio # Antes no tenian datos faltantes pero ahora parece que los han eliminado en la web (ciudad, cesped, telefono)
 
 def test_scraper_partido_estadio_obtener_informacion_datos_tecnicos_datos_correctos(scraper_partido_estadio):
 
@@ -108,7 +108,7 @@ def test_scraper_partido_estadio_obtener_informacion_datos_tecnicos_datos_correc
 	estadio=scraper_partido_estadio._ScraperPartidoEstadio__informacion_datos_tecnicos(tabla_estadio)
 
 	assert len(estadio)==6
-	#assert "" not in estadio # Antes no tenian datos faltantes pero ahora parece que los han eliminado en la web (ciudad, cesped, telfono)
+	#assert "" not in estadio # Antes no tenian datos faltantes pero ahora parece que los han eliminado en la web (ciudad, cesped, telefono)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[

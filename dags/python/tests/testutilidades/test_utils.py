@@ -759,7 +759,7 @@ def test_obtener_ciudad_mas_cercana_muy_lejana():
 		(40.4523667, -3.6907254, "Madrid", "España"),
 		(39.4745279, -0.35815663617491666, "Valencia", "España"),
 		(37.383878, -5.970467, "Sevilla", "España"),
-		(40.34037465, -3.760651172703595, "Leganes", "España")
+		(40.34037465, -3.760651172703595, "Leganés", "España")
 	]
 )
 def test_obtener_ciudad_mas_cercana_una_ciudad(latitud, longitud, ciudad, pais):

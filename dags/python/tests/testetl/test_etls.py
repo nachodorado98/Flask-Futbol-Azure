@@ -385,7 +385,7 @@ def test_etl_estadio_equipo_estadio_nuevo(conexion):
 @pytest.mark.parametrize(["equipo1", "equipo2"],
 	[
 		("flamengo-rio-janeiro", "fluminense-rio-janeiro"),
-		("milan", "internazionale"),
+		# ("milan", "internazionale"), # Han cambiado el nombre (San Siro y Giussepe Meazza pero realmente es el mismo)
 		("roma", "lazio")
 	]
 )
@@ -583,7 +583,8 @@ def test_etl_partido_estadio_estadio_existente(conexion, local, visitante, parti
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id_ida", "partido_id_vuelta"],
 	[
-		("milan", "internazionale", "2024103419", "202524914"),
+		# ("milan", "internazionale", "2024103419", "202524914"), # Han cambiado el nombre (San Siro y Giussepe Meazza pero realmente es el mismo)
+		("flamengo-rio-janeiro", "fluminense-rio-janeiro", "2024706960", "2024706771"),
 		("roma", "lazio", "2024103401", "2024662727")
 	]
 )
@@ -1177,7 +1178,7 @@ def test_etl_entrenador_no_existe_error():
 		ETL_Entrenador("diego-simeone-13")
 
 @pytest.mark.parametrize(["entrenador"],
-	[("diego-simeone-13",),("hansi-flick-8143",),("thiago-motta-21853",),("fernando-torres-47437",)]
+	[("diego-simeone-13",),("hansi-flick-8143",),("pep-guardiola-114",),("fernando-torres-47437",)]
 )
 def test_etl_entrenador_datos_correctos_con_equipo(conexion, entrenador):
 

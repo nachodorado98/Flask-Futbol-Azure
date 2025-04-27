@@ -65,7 +65,7 @@ def test_cargar_data_entrenador_datos_error(conexion):
 		cargarDataEntrenador(data_limpia, "diego-simeone-13")
 
 @pytest.mark.parametrize(["entrenador"],
-	[("diego-simeone-13",),("hansi-flick-8143",),("thiago-motta-21853",),("fernando-torres-47437",)]
+	[("diego-simeone-13",),("hansi-flick-8143",),("pep-guardiola-114",),("fernando-torres-47437",)]
 )
 def test_cargar_data_entrenador_datos_correctos_con_equipo(conexion, entrenador):
 

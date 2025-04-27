@@ -22,7 +22,7 @@ class ScraperPartidoEstadio(Scraper):
 
         try:
 
-            return contenido.find("div", id="mod_stadium").find("div", class_="panel stadiums")
+            return contenido.find("div", id="mod_popup_stadium").find("div", id="stadium").find("div", class_="panel")
 
         except Exception:
 
@@ -30,27 +30,31 @@ class ScraperPartidoEstadio(Scraper):
 
     def __imagen_estadio(self, tabla_estadio:bs4)->str:
 
-        imagen_estadio=tabla_estadio.find("div", class_="panel-body").find("div", class_="image-box")
+        imagen_estadio=tabla_estadio.find("div", class_="panel-body")
 
         return imagen_estadio.find("img", src=True)["src"].split("?")[0].strip()
 
     def __informacion_datos_estadio(self, tabla_estadio:bs4)->bs4:
 
-        return tabla_estadio.find("div", class_="panel-body table-list").find("div", class_="table-body")
+        return tabla_estadio.find("div", class_="stadiums table-list").find("div", class_="table-body")
 
     def __tabla_nombre_ubicacion(self, tabla_datos:bs4)->tuple:
 
-        tabla_nombre_ubicacion=tabla_datos.find("div", class_="head-wrapper ta-c pt5 ph0")
+        tabla_nombre_ubicacion=tabla_datos.find("div", class_="head-wrapper ta-c")
 
-        nombre_posible_none=tabla_nombre_ubicacion.find("div", class_="name")
+        nombre_posible_none=tabla_nombre_ubicacion.find("div", class_="name mb5")
 
         nombre="" if nombre_posible_none is None else nombre_posible_none.text.strip()
 
-        ciudad_posible_none=tabla_nombre_ubicacion.find("div", class_="city mv5")
+        # Han eliminado la ciudad del estadio dentro del partido
 
-        ciudad="" if ciudad_posible_none is None else ciudad_posible_none.text.strip()
+        # ciudad_posible_none=tabla_nombre_ubicacion.find("div", class_="city mv5")
 
-        direccion_posible_none=tabla_nombre_ubicacion.find("div", class_="address color-grey2 mt10")
+        # ciudad="" if ciudad_posible_none is None else ciudad_posible_none.text.strip()
+
+        ciudad=""
+
+        direccion_posible_none=tabla_nombre_ubicacion.find("div", class_="address color-grey2")
 
         direccion="" if direccion_posible_none is None else direccion_posible_none.text.strip()
 
@@ -84,7 +88,7 @@ class ScraperPartidoEstadio(Scraper):
 
             return False if not list(filter(lambda fila: fila[0]==campo, filas)) else True
 
-        for campo in ["Fecha construcción", "Capacidad", "Tamaño", "Tipo de césped", "Teléfono", "Fax"]:
+        for campo in ["Fecha de construcción", "Capacidad", "Tamaño", "Tipo de césped", "Teléfono", "Fax"]:
 
             condicion_campo=comprobarCampo(filas_limpias, campo)
 

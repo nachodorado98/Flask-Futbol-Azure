@@ -70,7 +70,7 @@ def test_scraper_entrenador_obtener_informacion_general_sin_equipo(entrenador):
 	assert datos[2].startswith("https://cdn.resfu.com/img_data/people/original")
 
 @pytest.mark.parametrize(["entrenador"],
-	[("diego-simeone-13",),("hansi-flick-8143",),("thiago-motta-21853",),("fernando-torres-47437",)]
+	[("diego-simeone-13",),("hansi-flick-8143",),("pep-guardiola-114",),("fernando-torres-47437",)]
 )
 def test_scraper_entrenador_obtener_informacion_general_con_equipo(entrenador):
 
