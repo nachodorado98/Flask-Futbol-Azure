@@ -33,7 +33,7 @@ function manejarCambioPartido() {
         fetch("/estadio_partido?partido_id=" + encodeURIComponent(partidoSeleccionado))
             .then(response => response.json())
             .then(data => {
-                if (data && data.estadio && Array.isArray(data.estadio) && data.estadio.length === 2) {
+                if (data && data.estadio && Array.isArray(data.estadio) && data.estadio.length >= 2) {
 
                     var estadioIdaValue = data.estadio[0];
                     var estadioIdaTexto = data.estadio[1];

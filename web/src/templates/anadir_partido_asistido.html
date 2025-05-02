@@ -79,16 +79,21 @@
 
                 <div class="seccion-on-tour-partido-asistido" id="contenedorOnTourPartidoAsistido" style="display: none;">
 
-                    <hr style="width: 700px">
+                    <hr style="width: 800px">
                     <p class="titulo-seccion-on-tour"><strong>Seccion On Tour</strong></p>
 
                     <div class="contenedor-datos-ida">
 
-                        <p class="titulo-datos-ida-on-tour"><strong>- On Tour Ida -</strong></p>
+                        <p class="titulo-datos-ida-on-tour"><strong>On Tour Ida</strong></p>
 
-                        <div class="contenedor-origen-destino">
+                        <div class="contenedor-fecha">
+                            <label for="fecha-ida"><strong>Fecha de Ida:</strong></label>
+                            <input type="date" id="fecha-ida" name="fecha-ida" {% if fecha_partido %}max='{{ fecha_partido }}'{% endif %} required>
+                        </div>
 
+                        <div class="contenedor-bloque-origen">
                             <div class="contenedor-pais-ciudad-partido">
+                                <img src="{{ url_for('static', filename='imagenes/iconos/origen.png') }}" alt="Origen Icon" class="icono-origen">
                                 <p class="texto-origen-destino"><strong>Origen:</strong></p>
                                 <select id="pais-ida" name="pais-ida" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-ida', 'ciudad-ida')" required>
                                     <option value="{{ pais_usuario }}" selected hidden>{{ pais_usuario }}</option>
@@ -100,54 +105,72 @@
                                     <option value="{{ ciudad_usuario }}" selected>{{ ciudad_usuario }}</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+                        <div class="contenedor-bloque-flecha-transporte">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vertical_abajo.png') }}" alt="Flecha Abajo Icon" class="icono-flecha-abajo">
+                            <div class="contenedor-transporte">
+                                <select id="transporte-ida" name="transporte-ida" class="select-transporte" required>
+                                    <option value="" selected disabled hidden>Seleccione un transporte</option>
+                                    {% for transporte in transportes %}
+                                        <option value="{{ transporte }}">{{ transporte }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
 
+                        <div class="contenedor-bloque-destino">
                             <div class="contenedor-pais-ciudad-partido">
-                                <p class="texto-origen-destino"><strong>Destino:</strong></p>
+                                <img src="{{ url_for('static', filename='imagenes/iconos/estadio_mapa.png') }}" alt="Estadio Icon" class="icono-estadio">
+                                <p class="texto-origen-destino"><strong>Estadio de Destino:</strong></p>
                                 <select id="ciudad-ida-estadio" name="ciudad-ida-estadio" class="select-estadio" required>
                                     {% if estadio_partido %}
                                         <option value="{{ estadio_partido[0] }}">{{ estadio_partido[1] }}</option>
                                     {% endif %}
                                 </select>
                             </div>
-
-                        </div>
-
-                        <div class="contenedor-fecha-transporte">
-                            <label for="fecha-ida"><strong>Fecha:</strong></label>
-                            <input type="date" id="fecha-ida" name="fecha-ida" {% if fecha_partido %}max='{{ fecha_partido }}'{% endif %} required>
-
-                            <label for="transporte-ida"><strong>Transporte:</strong></label>
-                            <select id="transporte-ida" name="transporte-ida" class="select-transporte" required>
-                                <option value="" selected disabled hidden>Seleccione un transporte</option>
-                                {% for transporte in transportes %}
-                                    <option value="{{ transporte }}">{{ transporte }}</option>
-                                {% endfor %}
-                            </select>
-
                         </div>
 
                     </div>
 
+                    <hr style="width: 400px">
+
                     <div class="contenedor-datos-vuelta">
 
-                        <p class="titulo-datos-vuelta-on-tour"><strong>- On Tour Vuelta -</strong></p>
+                        <p class="titulo-datos-vuelta-on-tour"><strong>On Tour Vuelta</strong></p>
 
-                        <div class="contenedor-origen-destino">
+                        <div class="contenedor-fecha">
+                            <label for="fecha-vuelta"><strong>Fecha de Vuelta:</strong></label>
+                            <input type="date" id="fecha-vuelta" name="fecha-vuelta" {% if fecha_partido %}min='{{ fecha_partido }}'{% endif %} required>
+                        </div>
 
+                        <div class="contenedor-bloque-origen">
                             <div class="contenedor-pais-ciudad-partido">
-                                <p class="texto-origen-destino"><strong>Origen:</strong></p>
+                                <img src="{{ url_for('static', filename='imagenes/iconos/estadio_mapa.png') }}" alt="Estadio Icon" class="icono-estadio">
+                                <p class="texto-origen-destino"><strong>Estadio de Origen:</strong></p>
                                 <select id="ciudad-vuelta-estadio" name="ciudad-vuelta-estadio" class="select-estadio" required>
                                     {% if estadio_partido %}
                                         <option value="{{ estadio_partido[0] }}">{{ estadio_partido[1] }}</option>
                                     {% endif %}
                                 </select>
                             </div>
+                        </div>
                             
-                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+                       <div class="contenedor-bloque-flecha-transporte">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vertical_abajo.png') }}" alt="Flecha Abajo Icon" class="icono-flecha-abajo">
+                            <div class="contenedor-transporte">
+                                <select id="transporte-vuelta" name="transporte-vuelta" class="select-transporte" required>
+                                    <option value="" selected disabled hidden>Seleccione un transporte</option>
+                                    {% for transporte in transportes %}
+                                        <option value="{{ transporte }}">{{ transporte }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
 
+                        <div class="contenedor-bloque-destino">
                             <div class="contenedor-pais-ciudad-partido">
+                                <img src="{{ url_for('static', filename='imagenes/iconos/origen.png') }}" alt="Origen Icon" class="icono-origen">
                                 <p class="texto-origen-destino"><strong>Destino:</strong></p>
                                 <select id="pais-vuelta" name="pais-vuelta" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-vuelta', 'ciudad-vuelta')" required>
                                     <option value="{{ pais_usuario }}" selected hidden>{{ pais_usuario }}</option>
@@ -159,21 +182,6 @@
                                     <option value="{{ ciudad_usuario }}" selected>{{ ciudad_usuario }}</option>
                                 </select>
                             </div>
-
-                        </div>
-
-                        <div class="contenedor-fecha-transporte">
-                            <label for="fecha-vuelta"><strong>Fecha:</strong></label>
-                            <input type="date" id="fecha-vuelta" name="fecha-vuelta" {% if fecha_partido %}min='{{ fecha_partido }}'{% endif %} required>
-
-                            <label for="transporte-vuelta"><strong>Transporte:</strong></label>
-                            <select id="transporte-vuelta" name="transporte-vuelta" class="select-transporte" required>
-                                <option value="" selected disabled hidden>Seleccione un transporte</option>
-                                {% for transporte in transportes %}
-                                    <option value="{{ transporte }}">{{ transporte }}</option>
-                                {% endfor %}
-                            </select>
-
                         </div>
 
                     </div>
