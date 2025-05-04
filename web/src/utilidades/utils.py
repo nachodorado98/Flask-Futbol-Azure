@@ -796,3 +796,20 @@ def obtenerDivisionesNoSeleccionados(divisiones:List[tuple], codigo_division:str
 	divisiones_no_seleccionados=list(filter(lambda division: division[1]!=codigo_division, divisiones))
  
 	return [(division[0], division[1], division[3]) for division in divisiones_no_seleccionados]
+
+def existen_paradas(transportes:List[Optional[str]], paises:List[Optional[str]], ciudades:List[Optional[str]])->bool:
+
+    return True if transportes or paises or ciudades else False
+
+def existen_paradas_completas(transportes:List[Optional[str]], paises:List[Optional[str]], ciudades:List[Optional[str]])->bool:
+
+    if not (len(transportes)==len(paises)==len(ciudades)):
+        return False
+
+    for t, p, c in zip(transportes, paises, ciudades):
+
+        if t and p and c and t.strip() and p.strip() and c.strip():
+
+            return True
+
+    return False

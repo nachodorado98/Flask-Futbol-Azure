@@ -197,7 +197,9 @@ def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno_usuario, 
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"Comentario", "fecha-ida":fecha_ida, "fecha-vuelta":fecha_vuelta}
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":fecha_ida, "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":fecha_vuelta, "transporte-vuelta":"Avion"}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -213,9 +215,6 @@ def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno_usuario, 
 		assert f"Fecha Ida: {fecha_ida_on_tour}" in contenido
 		assert f"Fecha Vuelta: {fecha_vuelta_on_tour}" in contenido
 		assert '<p class="teletrabajo-on-tour">' in contenido
-		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' not in contenido
-		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' not in contenido
-		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_entorno_usuario):
 
@@ -223,7 +222,9 @@ def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_e
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"Comentario", "fecha-ida":"2019-06-21", "fecha-vuelta":"2019-06-23"}
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-21", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-23", "transporte-vuelta":"Avion"}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -239,9 +240,6 @@ def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_e
 		assert '<p class="teletrabajo-on-tour">' in contenido
 		assert "Teletrabajo No" in contenido
 		assert "Teletrabajo Si" not in contenido
-		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' not in contenido
-		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' not in contenido
-		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_entorno_usuario):
 
@@ -249,7 +247,9 @@ def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_e
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"Comentario", "fecha-ida":"2019-06-21", "fecha-vuelta":"2019-06-23", "teletrabajo":True}
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-21", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-23", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -265,9 +265,6 @@ def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_e
 		assert '<p class="teletrabajo-on-tour">' in contenido
 		assert "Teletrabajo No" not in contenido
 		assert "Teletrabajo Si" in contenido
-		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' not in contenido
-		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' not in contenido
-		assert '<img class="no-mapa"' in contenido
 
 def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno_usuario):
 

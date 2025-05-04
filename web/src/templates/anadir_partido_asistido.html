@@ -119,7 +119,7 @@
                                 </select>
                             </div>
                             <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vertical_abajo.png') }}" alt="Flecha Abajo Icon" class="icono-flecha-abajo">
-                            <button type="button" onclick="añadirParada('ida')">➕ Añadir parada</button>
+                            <button type="button" onclick="añadirParada('ida')" class="anadir-parada">➕ Añadir parada</button>
                         </div>
 
                         <div class="contenedor-bloque-destino">
@@ -171,7 +171,7 @@
                                 </select>
                             </div>
                             <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vertical_abajo.png') }}" alt="Flecha Abajo Icon" class="icono-flecha-abajo">
-                            <button type="button" onclick="añadirParada('vuelta')">➕ Añadir parada</button>
+                            <button type="button" onclick="añadirParada('vuelta')" class="anadir-parada">➕ Añadir parada</button>
                         </div>
 
                         <div class="contenedor-bloque-destino">
@@ -235,6 +235,7 @@
 <script src="{{ url_for('static', filename='js/actualizar_ciudades_pais.js') }}"></script>
 
 <script>
+
 function añadirParada(tipo) {
   const contenedor = document.getElementById(`contenedor-bloque-paradas-${tipo}`);
   const numParadasActuales = contenedor.querySelectorAll(`.contenedor-bloque-paradas-${tipo}`).length;
@@ -253,7 +254,7 @@ function añadirParada(tipo) {
   paradaDiv.innerHTML = `
     <div class="contenedor-bloque-flecha-transporte">
       <div class="contenedor-transporte">
-        <select name="transporte-parada-${tipo}-${paradaIndex}" class="select-transporte" required>
+        <select name="transporte-parada-${tipo}[]" class="select-transporte" required>
           <option value="" selected disabled hidden>Seleccione un transporte</option>
           {% for transporte in transportes %}
             <option value="{{ transporte }}">{{ transporte }}</option>
@@ -270,13 +271,13 @@ function añadirParada(tipo) {
       <div class="contenedor-pais-ciudad-partido">
         <img src="{{ url_for('static', filename='imagenes/iconos/destino.png') }}" alt="Destino Icon" class="icono-origen">
         <p class="texto-origen-destino"><strong>Parada ${paradaIndex}:</strong></p>
-        <select name="pais-parada-${tipo}-${paradaIndex}" id="pais-parada-${tipo}-${paradaIndex}" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-parada-${tipo}-${paradaIndex}', 'ciudad-parada-${tipo}-${paradaIndex}')" required>
+        <select name="pais-parada-${tipo}[]" id="pais-parada-${tipo}-${paradaIndex}" class="select-pais-ciudad" onchange="actualizarCiudadesEspecificas('pais-parada-${tipo}-${paradaIndex}', 'ciudad-parada-${tipo}-${paradaIndex}')" required>
           <option value="" disabled selected hidden>Seleccione país</option>
           {% for pais in paises %}
             <option value="{{ pais }}">{{ pais }}</option>
           {% endfor %}
         </select>
-        <select name="ciudad-parada-${tipo}-${paradaIndex}" id="ciudad-parada-${tipo}-${paradaIndex}" class="select-pais-ciudad" required>
+        <select name="ciudad-parada-${tipo}[]" id="ciudad-parada-${tipo}-${paradaIndex}" class="select-pais-ciudad" required>
           <option value="" disabled selected hidden>Seleccione ciudad</option>
         </select>
       </div>
@@ -296,6 +297,7 @@ function actualizarBotonesEliminar(tipo) {
     boton.disabled = index !== bloques.length - 1;
   });
 }
+
 </script>
 
 {% endblock principal %}

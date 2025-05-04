@@ -91,7 +91,7 @@ def test_pagina_insertar_partido_asistido_comentario_demasiado_extenso(cliente, 
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/anadir_partido_asistido"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
@@ -537,21 +537,12 @@ def test_pagina_insertar_partido_asistido_on_tour_sin_teletrabajo(cliente, conex
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		registro=conexion_entorno_usuario.c.fetchone()
-
-		assert registro["on_tour"]
-		assert registro["fecha_ida"].strftime("%Y-%m-%d")==fecha_ida
-		assert registro["fecha_vuelta"].strftime("%Y-%m-%d")==fecha_vuelta
-		assert not registro["teletrabajo"]
+		assert not conexion_entorno_usuario.c.fetchall()
 
 @pytest.mark.parametrize(["fecha_ida", "fecha_vuelta"],
 	[
@@ -573,21 +564,12 @@ def test_pagina_insertar_partido_asistido_on_tour_con_teletrabajo(cliente, conex
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		registro=conexion_entorno_usuario.c.fetchone()
-
-		assert registro["on_tour"]
-		assert registro["fecha_ida"].strftime("%Y-%m-%d")==fecha_ida
-		assert registro["fecha_vuelta"].strftime("%Y-%m-%d")==fecha_vuelta
-		assert registro["teletrabajo"]
+		assert not conexion_entorno_usuario.c.fetchall()
 
 @pytest.mark.parametrize(["ciudad_ida", "ciudad_ida_estadio", "transporte_ida", "ciudad_vuelta", "ciudad_vuelta_estadio", "transporte_vuelta"],
 	[
@@ -615,18 +597,10 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_datos_error(cliente,
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
@@ -648,18 +622,10 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_estadio_no_existente
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
@@ -681,18 +647,10 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_no_ex
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
@@ -714,18 +672,10 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_difer
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
@@ -747,18 +697,10 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_erron
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE on_tour=True")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
@@ -819,18 +761,10 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_transporte_inadecuad
 		contenido=respuesta.data.decode()
 
 		assert respuesta.status_code==302
-		assert respuesta.location=="/partidos/asistidos"
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos  WHERE on_tour=True")
-
-		assert len(conexion_entorno_usuario.c.fetchall())==1
-
-		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
@@ -889,3 +823,109 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos(cliente, conexion_en
 		assert vuelta["codciudad_origen"]==103
 		assert ida["codciudad_destino"]==103
 		assert vuelta["codciudad_destino"]==codigo_ciudad_vuelta
+
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_no_existen(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":"Madrid", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Pie", "ciudad-vuelta":"Madrid", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Metro", "teletrabajo":True, "transporte-parada-ida[]":[], "pais-parada-ida[]":[], 
+			"ciudad-parada-ida[]":[], "transporte-parada-vuelta[]":[], "pais-parada-vuelta[]":[], "ciudad-parada-vuelta[]":[]}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE  on_tour=True")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+		registros=conexion_entorno_usuario.c.fetchall()
+
+		assert len(registros)==2
+
+@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
+	[
+		(["", ""], ["", ""], ["", ""], [], [], []),
+		(["", ""], [], ["", ""], [], [], []),
+		(["Bus"], ["", ""], ["Madrid"], [], [], []),
+		(["Bus"], ["España", "Francia"], ["Madrid"], [], [], []),
+		([], [], [], ["", ""], ["", ""], ["", ""]),
+		([], [], [], ["", ""], [], ["", ""]),
+		([], [], [], ["Bus"], ["", ""], ["Madrid"]),
+		([], [], [], ["Bus"], ["España", "Francia"], ["Madrid"]),
+		(["", ""], [], ["", ""], ["", ""], ["", ""], ["", ""]),
+		(["Bus"], ["", ""], ["Madrid"], ["", ""], [], ["", ""]),
+		(["Bus"], ["España", "Francia"], ["Madrid"], ["Bus"], ["", ""], ["Madrid"]),
+		(["", ""], ["", ""], ["", ""], ["Bus"], ["España", "Francia"], ["Madrid"])
+	]
+)
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_incompletas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
+																					transportes_vuelta, paises_vuelta, ciudades_vuelta):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":"Madrid", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Pie", "ciudad-vuelta":"Madrid", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Metro", "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert not conexion_entorno_usuario.c.fetchall()
+
+@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
+	[
+		(["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"], [], [], []),
+		(["Tren", "", ""], ["Alemania", "", ""], ["Berlín", "", ""], [], [], []),
+		(["", "Tren", ""], ["", "Alemania", ""], ["", "Berlín", ""], [], [], []),
+		(["", "", "Tren"], ["", "", "Alemania"], ["", "", "Berlín"], [], [], []),
+		([], [], [], ["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"]),
+		([], [], [], ["Tren", "", ""], ["Alemania", "", ""], ["Berlín", "", ""]),
+		([], [], [], ["", "Tren", ""], ["", "Alemania", ""], ["", "Berlín", ""]),
+		([], [], [], ["", "", "Tren"], ["", "", "Alemania"], ["", "", "Berlín"]),
+		(["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"], ["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"])
+	]
+)
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_completas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
+																					transportes_vuelta, paises_vuelta, ciudades_vuelta):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":"Madrid", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Pie", "ciudad-vuelta":"Madrid", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Metro", "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
+
+		with pytest.raises(Exception):
+
+			cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert not conexion_entorno_usuario.c.fetchall()
