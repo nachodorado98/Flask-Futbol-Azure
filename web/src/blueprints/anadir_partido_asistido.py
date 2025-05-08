@@ -6,7 +6,8 @@ import time
 from src.database.conexion import Conexion
 
 from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, trayecto_correcto, ciudad_estadio_correcta
-from src.utilidades.utils import existen_paradas, existen_paradas_completas
+from src.utilidades.utils import existen_paradas, obtenerParadas, ciudades_origen_destino_paradas_unicas, obtenerCombinacionesParadas
+from src.utilidades.utils import trayectos_paradas_correctos
 from src.utilidades.configutils import TRANSPORTES
 
 from src.datalake.conexion_data_lake import ConexionDataLake
@@ -211,23 +212,99 @@ def pagina_insertar_partido_asistido():
 
 			if existen_paradas_ida or existen_paradas_vuelta:
 
-				existen_paradas_ida_completas=existen_paradas_completas(transportes_paradas_ida, paises_paradas_ida, ciudades_paradas_ida)
+				paradas_ida=obtenerParadas(transportes_paradas_ida, paises_paradas_ida, ciudades_paradas_ida)
 
-				existen_paradas_vuelta_completas=existen_paradas_completas(transportes_paradas_vuelta, paises_paradas_vuelta, ciudades_paradas_vuelta)
+				paradas_vuelta=obtenerParadas(transportes_paradas_vuelta, paises_paradas_vuelta, ciudades_paradas_vuelta)
 
-				if existen_paradas_ida_completas or existen_paradas_vuelta_completas:
-
-					# LOGICA PARA LAS PARADAS
-
-					con.cerrarConexion()
-
-					raise Exception("Logica de paradas no implementada")
-
-				else:
+				if not paradas_ida and not paradas_vuelta:
 
 					con.cerrarConexion()
 
 					return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+				if paradas_ida and not paradas_vuelta:
+
+					if not ciudades_origen_destino_paradas_unicas(paradas_ida, codigo_ciudad_ida, codigo_ciudad_estadio):
+
+						con.cerrarConexion()
+
+						return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+					else:
+
+						codigo_ciudad_primera_parada=con.obtenerCodigoCiudadPais(paradas_ida[0][2], paradas_ida[0][1])
+
+						codigo_ciudad_ultima_parada=con.obtenerCodigoCiudadPais(paradas_ida[-1][2], paradas_ida[-1][1])
+
+						origen_correcto=trayecto_correcto(codigo_ciudad_ida, codigo_ciudad_primera_parada, paradas_ida[0][0])
+
+						destino_correcto=trayecto_correcto(codigo_ciudad_ultima_parada, codigo_ciudad_estadio, transporte_ida)
+
+						paradas_correctas=trayectos_paradas_correctos(paradas_ida) if len(paradas_ida)>1 else True
+
+						vuelta_correcta=trayecto_correcto(codigo_ciudad_vuelta, codigo_ciudad_estadio, transporte_vuelta)
+
+						if not origen_correcto or not destino_correcto or not paradas_correctas or not vuelta_correcta:
+
+							con.cerrarConexion()
+
+							return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+						else:
+
+							con.cerrarConexion()
+
+							return "Correcto"
+
+				elif not paradas_ida and paradas_vuelta:
+
+					if not ciudades_origen_destino_paradas_unicas(paradas_vuelta, codigo_ciudad_estadio, codigo_ciudad_vuelta):
+
+						con.cerrarConexion()
+
+						return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+					else:
+
+						codigo_ciudad_primera_parada=con.obtenerCodigoCiudadPais(paradas_vuelta[0][2], paradas_vuelta[0][1])
+
+						codigo_ciudad_ultima_parada=con.obtenerCodigoCiudadPais(paradas_vuelta[-1][2], paradas_vuelta[-1][1])
+
+						origen_correcto=trayecto_correcto(codigo_ciudad_estadio, codigo_ciudad_primera_parada, paradas_vuelta[0][0])
+
+						destino_correcto=trayecto_correcto(codigo_ciudad_ultima_parada, codigo_ciudad_vuelta, transporte_vuelta)
+
+						paradas_correctas=trayectos_paradas_correctos(paradas_vuelta) if len(paradas_vuelta)>1 else True
+
+						ida_correcta=trayecto_correcto(codigo_ciudad_ida, codigo_ciudad_estadio, transporte_ida)
+
+						if not origen_correcto or not destino_correcto or not paradas_correctas or not ida_correcta:
+
+							con.cerrarConexion()
+
+							return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+						else:
+
+							con.cerrarConexion()
+
+							return "Correcto"
+
+				else:
+
+					unicas_ida=ciudades_origen_destino_paradas_unicas(paradas_ida, codigo_ciudad_ida, codigo_ciudad_estadio)
+
+					unicas_vuelta=ciudades_origen_destino_paradas_unicas(paradas_vuelta, codigo_ciudad_estadio, codigo_ciudad_vuelta)
+
+					if not unicas_ida or not unicas_vuelta:
+
+						con.cerrarConexion()
+
+						return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+					else:
+
+						raise Exception("Aun no implementado")
 
 			else:
 

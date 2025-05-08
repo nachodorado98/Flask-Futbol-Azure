@@ -535,9 +535,13 @@ def trayecto_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte):
 
 		transportes_validos=["Autobus Urbano", "Autobus Interurbano", "Coche", "Metro", "Cercanias", "Pie"]
 
-	elif distancia_coordenadas<300:
+	elif distancia_coordenadas<150:
 
 		transportes_validos=["Tren", "Autobus", "Autobus Interurbano", "Coche", "Cercanias"]
+
+	elif distancia_coordenadas<300:
+
+		transportes_validos=["Avion", "Tren", "Autobus", "Coche", "Cercanias"]
 
 	elif distancia_coordenadas<1000:
 
@@ -801,15 +805,54 @@ def existen_paradas(transportes:List[Optional[str]], paises:List[Optional[str]],
 
     return True if transportes or paises or ciudades else False
 
-def existen_paradas_completas(transportes:List[Optional[str]], paises:List[Optional[str]], ciudades:List[Optional[str]])->bool:
+def obtenerParadas(transportes:List[Optional[str]], paises:List[Optional[str]], ciudades:List[Optional[str]])->List[Optional[tuple]]:
 
     if not (len(transportes)==len(paises)==len(ciudades)):
-        return False
+        return []
 
-    for t, p, c in zip(transportes, paises, ciudades):
+    return [(t.strip(), p.strip(), c.strip()) for t, p, c in zip(transportes, paises, ciudades) if t and p and c and t.strip() and p.strip() and c.strip()]
 
-        if t and p and c and t.strip() and p.strip() and c.strip():
+def ciudades_origen_destino_paradas_unicas(paradas:List[tuple], codigo_origen:int, codigo_destino:int)->bool:
 
-            return True
+	if not paradas:
+		return False
 
-    return False
+	if not codigo_origen or not codigo_destino:
+		return False
+
+	con=Conexion()
+
+	codigos_paradas=[con.obtenerCodigoCiudadPais(parada[2], parada[1]) for parada in paradas]
+
+	con.cerrarConexion()
+
+	return True if codigo_origen not in codigos_paradas and codigo_destino not in codigos_paradas else False
+
+def obtenerCombinacionesParadas(paradas:List[tuple])->List[tuple]:
+
+    return [(ciudad1, pais1, ciudad2, pais2, transporte2) for (transporte1, pais1, ciudad1), (transporte2, pais2, ciudad2) in zip(paradas, paradas[1:])]
+
+def trayectos_paradas_correctos(paradas:List[tuple])->bool:
+
+	combinaciones_paradas=obtenerCombinacionesParadas(paradas)
+
+	if not combinaciones_paradas:
+		return False
+
+	con=Conexion()
+
+	for combinacion_parada in combinaciones_paradas:
+
+		codigo_primera_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[0], combinacion_parada[1])
+
+		codigo_segunda_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[2], combinacion_parada[3])
+
+		if not trayecto_correcto(codigo_primera_ciudad, codigo_segunda_ciudad, combinacion_parada[4]):
+
+			con.cerrarConexion()
+
+			return False
+
+	con.cerrarConexion()
+
+	return True

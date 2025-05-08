@@ -656,10 +656,6 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_no_ex
 
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_ciudad_estadio_diferente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno_usuario.c.execute("UPDATE estadios SET Ciudad=NULL")
-
-	conexion_entorno_usuario.confirmar()
-
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
@@ -742,7 +738,7 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_sin_fecha(cliente, c
 		("Verona", "Italia", 2329, "Cercanias", "Verona", "Italia", 2329, "Avion"),
 		("Merida", "España", 5809, "Metro", "Madrid", "España", 103, "Metro"),
 		("Merida", "México", 917, "Autobus", "Madrid", "España", 103, "Autobus Urbano"),
-		("Merida", "México", 917, "Avion", "Merida", "España", 5809, "Avion")
+		("Merida", "México", 917, "Avion", "Leganés", "España", 2947, "Avion")
 	]
 )
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_transporte_inadecuado(cliente, conexion_entorno_usuario, ciudad_ida, pais_ida, codigo_ciudad_ida,
@@ -899,27 +895,93 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_incompletas(
 
 @pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
 	[
-		(["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"], [], [], []),
-		(["Tren", "", ""], ["Alemania", "", ""], ["Berlín", "", ""], [], [], []),
-		(["", "Tren", ""], ["", "Alemania", ""], ["", "Berlín", ""], [], [], []),
-		(["", "", "Tren"], ["", "", "Alemania"], ["", "", "Berlín"], [], [], []),
-		([], [], [], ["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"]),
-		([], [], [], ["Tren", "", ""], ["Alemania", "", ""], ["Berlín", "", ""]),
-		([], [], [], ["", "Tren", ""], ["", "Alemania", ""], ["", "Berlín", ""]),
-		([], [], [], ["", "", "Tren"], ["", "", "Alemania"], ["", "", "Berlín"]),
-		(["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"], ["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"])
+		(["Bus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"], [], [], []),
+		([], [], [], ["Bus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"]),
+		(["Bus"], ["España"], ["Madrid"], ["Tren"], ["España"], ["Getafe"]),
+		(["Bus"], ["España"], ["Getafe"], ["Tren"], ["España"], ["Madrid"]),
+		(["Bus"], ["España"], ["Madrid"], ["Tren"], ["España"], ["Madrid"])
 	]
 )
-def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_completas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_no_unicas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
 																					transportes_vuelta, paises_vuelta, ciudades_vuelta):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":"Madrid", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Pie", "ciudad-vuelta":"Madrid", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
-			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Metro", "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":"Barcelona", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"Barcelona", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/anadir_partido_asistido?partido_id=20190622&todos=True"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert not conexion_entorno_usuario.c.fetchall()
+
+@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta"],
+	[
+		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion"),
+		([], [], [], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Autobus", "Barcelona", "Avion"),
+		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], [], [], [], "Valencia", "Autobus Urbano", "Zaragoza", "Tren"),
+		([], [], [], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus", "Zaragoza", "Avion"),
+		(["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], [], [], [], "Sevilla", "Tren", "Vigo", "Avion"),
+		([], [], [], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"], "Vigo", "Autobus", "Oviedo", "Autobus"),
+		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], [], [], [], "Malaga", "Metro", "A Coruna", "Avion"),
+		([], [], [], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus",),
+		(["Avion"], ["España"], ["Getafe"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion"),
+		([], [], [], ["Metro"], ["España"], ["Getafe"], "Barcelona", "Autobus", "Barcelona", "Avion")
+	]
+)
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ida_o_vuelta(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
+																					transportes_vuelta, paises_vuelta, ciudades_vuelta, ciudad_ida, transporte_ida,
+																					ciudad_vuelta, transporte_vuelta):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":ciudad_ida, "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":transporte_vuelta, "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
+
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert "Correcto" in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
+
+		assert not conexion_entorno_usuario.c.fetchall()
+
+
+@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta"],
+	[
+		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Cercanias", "Barcelona", "Avion"),
+		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus Urbano", "Zaragoza", "Avion")
+	]
+)
+def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ambas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
+																					transportes_vuelta, paises_vuelta, ciudades_vuelta, ciudad_ida, transporte_ida,
+																					ciudad_vuelta, transporte_vuelta):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":ciudad_ida, "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":transporte_vuelta, "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
 			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
 
 		with pytest.raises(Exception):

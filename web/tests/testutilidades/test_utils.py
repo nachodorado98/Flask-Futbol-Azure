@@ -14,7 +14,8 @@ from src.utilidades.utils import obtenerPrimerUltimoDiaAnoMes, mapearAnoMes, obt
 from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
 from src.utilidades.utils import ciudad_estadio_correcta, trayecto_correcto, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
 from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
-from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, existen_paradas_completas
+from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, obtenerParadas
+from src.utilidades.utils import ciudades_origen_destino_paradas_unicas, obtenerCombinacionesParadas, trayectos_paradas_correctos
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2049,9 +2050,9 @@ def test_existen_paradas(transportes, paises, ciudades):
 		(["", ""], [], ["", ""])
 	]
 )
-def test_existen_paradas_completas_no_hay(transportes, paises, ciudades):
+def test_obtener_paradas_no_hay(transportes, paises, ciudades):
 
-    assert not existen_paradas_completas(transportes, paises, ciudades)
+    assert not obtenerParadas(transportes, paises, ciudades)
 
 @pytest.mark.parametrize(["transportes", "paises", "ciudades"],
 	[
@@ -2062,20 +2063,116 @@ def test_existen_paradas_completas_no_hay(transportes, paises, ciudades):
 		([None, None], [None, None], [None, None])
 	]
 )
-def test_existen_paradas_completas_no_validas(transportes, paises, ciudades):
+def test_obtener_paradas_no_validas(transportes, paises, ciudades):
 
-    assert not existen_paradas_completas(transportes, paises, ciudades)
+    assert not obtenerParadas(transportes, paises, ciudades)
 
-@pytest.mark.parametrize(["transportes", "paises", "ciudades"],
+@pytest.mark.parametrize(["transportes", "paises", "ciudades", "numero"],
 	[
-		(["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"]),
-		(["", "Tren", ""], ["", "Alemania", ""], ["", "Berlín", ""]),
-		(["  ", "Tren"], ["", "Alemania"], ["  ", "Berlín"]),
-		(["Bus", ""], ["España", "  "], ["Madrid", ""]),
-		(["Bus", "Avión"], ["España", None], ["Madrid", "París"]),
-		(["  Bus  "], ["  España"], ["Madrid  "])
+		(["Bus", "Avión"], ["España", "Francia"], ["Madrid", "París"], 2),
+		(["", "Tren", ""], ["", "Alemania", ""], ["", "Berlín", ""], 1),
+		(["  ", "Tren"], ["", "Alemania"], ["  ", "Berlín"], 1),
+		(["Bus", ""], ["España", "  "], ["Madrid", ""], 1),
+		(["Bus", "Avión"], ["España", None], ["Madrid", "París"], 1),
+		(["  Bus  "], ["  España"], ["Madrid  "], 1),
+		(["Bus", "Avión", "Pie"], ["España", "Francia", "Italia"], ["Madrid", "París", "Roma"], 3)
 	]
 )
-def test_existen_paradas_completas(transportes, paises, ciudades):
+def test_obtener_paradas(transportes, paises, ciudades, numero):
 
-    assert existen_paradas_completas(transportes, paises, ciudades)
+    paradas=obtenerParadas(transportes, paises, ciudades)
+
+    assert len(paradas)==numero
+
+def test_ciudades_origen_destino_paradas_unicas_no_hay_paradas():
+
+	assert not ciudades_origen_destino_paradas_unicas([], 103, 35)
+
+@pytest.mark.parametrize(["codigo_origen", "codigo_destino"],
+	[(None, 103), (103, None), (None, None)]
+)
+def test_ciudades_origen_destino_paradas_unicas_no_hay_codigos(codigo_origen, codigo_destino):
+
+	assert not ciudades_origen_destino_paradas_unicas([("Bus", "España", "Madrid")], codigo_origen, codigo_destino)
+
+@pytest.mark.parametrize(["paradas"],
+	[
+		([("Bus", "España", "Madrid")],),
+		([("Bus", "España", "Getafe"), ("Avion", "Francia", "Paris")],),
+		([("Bus", "España", "Getafe"), ("Avion", "España", "Madrid")],),
+		([("Bus", "España", "Getafe"), ("Avion", "España", "Madrid"), ("Avion", "España", "Leganés")],),
+		([("Bus", "España", "Getafe"), ("Avion", "Francia", "Paris"), ("Avion", "España", "Leganés")],),
+	]
+)
+def test_ciudades_origen_destino_paradas_unicas_no_hay_unicas(paradas):
+
+	assert not ciudades_origen_destino_paradas_unicas(paradas, 103, 35)
+
+@pytest.mark.parametrize(["paradas"],
+	[
+		([("Bus", "España", "Getafe")],),
+		([("Bus", "España", "Getafe"), ("Avion", "España", "Leganés")],),
+		([("Bus", "España", "Getafe"), ("Avion", "Rusia", "Moscow"), ("Avion", "España", "Leganés")],)
+	]
+)
+def test_ciudades_origen_destino_paradas_unicas(paradas):
+
+	assert ciudades_origen_destino_paradas_unicas(paradas, 103, 35)
+
+def test_obtener_combinaciones_paradas_no_hay():
+
+	assert not obtenerCombinacionesParadas([])
+
+def test_obtener_combinaciones_paradas_una():
+
+	assert not obtenerCombinacionesParadas([("Bus", "España", "Madrid")])
+
+@pytest.mark.parametrize(["paradas", "numero"],
+	[
+		([("Bus", "España", "Madrid"), ("Avion", "Francia", "Paris")], 1),
+		([("Bus", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Tren", "Alemania", "Berlín")], 2)
+	]
+)
+def test_obtener_combinaciones_paradas(paradas, numero):
+
+	combinaciones=obtenerCombinacionesParadas(paradas)
+
+	assert len(combinaciones)==numero
+
+def test_trayectos_paradas_correctos_no_hay():
+
+	assert not trayectos_paradas_correctos([])
+
+def test_trayectos_paradas_correctos_una():
+
+	assert not trayectos_paradas_correctos([("Bus", "España", "Madrid")])
+
+@pytest.mark.parametrize(["paradas"],
+	[
+		([("Avion", "España", "MADRID"), ("Avion", "Francia", "Paris")],),
+		([("Avion", "España", "Madrid"), ("Avion", "China", "Paris")],),
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "no-existo")],),
+		([("Avion", "España", "Madrid"), ("transporte", "Francia", "Paris")],),
+		([("Avion", "España", "Madrid"), ("Pie", "Francia", "Paris")],),
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "Reino Unido", "Madrid")],),
+		([("Avion", "España", "Madrid"), ("Metro", "Francia", "Paris"), ("Avion", "Reino Unido", "London")],),
+		([("Avion", "España", "Madrid"), ("transporte", "Francia", "Paris"), ("Avion", "Reino Unido", "London")],),
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Pie", "Reino Unido", "London")],)
+	]
+)
+def test_trayectos_paradas_correctos_no_correctos(paradas):
+
+	assert not trayectos_paradas_correctos(paradas)
+
+@pytest.mark.parametrize(["paradas"],
+	[
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris")],),
+		([("Avion", "España", "Madrid"), ("Pie", "España", "Getafe")],),
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "Reino Unido", "London")],),
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "España", "Getafe")],),
+		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "España", "Getafe"), ("Metro", "España", "Leganés")],),
+	]
+)
+def test_trayectos_paradas_correctos_(paradas):
+
+	assert trayectos_paradas_correctos(paradas)
