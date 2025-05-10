@@ -926,23 +926,25 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_no_unicas(cl
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
-@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta"],
+@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "trayectos_ida", "trayectos_vuelta"],
 	[
-		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion"),
-		([], [], [], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Autobus", "Barcelona", "Avion"),
-		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], [], [], [], "Valencia", "Autobus Urbano", "Zaragoza", "Tren"),
-		([], [], [], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus", "Zaragoza", "Avion"),
-		(["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], [], [], [], "Sevilla", "Tren", "Vigo", "Avion"),
-		([], [], [], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"], "Vigo", "Autobus", "Oviedo", "Autobus"),
-		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], [], [], [], "Malaga", "Metro", "A Coruna", "Avion"),
-		([], [], [], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus",),
-		(["Avion"], ["España"], ["Getafe"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion"),
-		([], [], [], ["Metro"], ["España"], ["Getafe"], "Barcelona", "Autobus", "Barcelona", "Avion")
+		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion", 3, 1),
+		([], [], [], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Autobus", "Barcelona", "Avion", 1, 3),
+		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], [], [], [], "Valencia", "Autobus Urbano", "Zaragoza", "Tren", 3, 1),
+		([], [], [], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus", "Zaragoza", "Avion", 1, 3),
+		(["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], [], [], [], "Sevilla", "Tren", "Vigo", "Avion", 3, 1),
+		([], [], [], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"], "Vigo", "Autobus", "Oviedo", "Autobus", 1, 3),
+		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], [], [], [], "Malaga", "Metro", "A Coruna", "Avion", 4, 1),
+		([], [], [], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus", 1, 4),
+		(["Avion"], ["España"], ["Getafe"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion", 2, 1),
+		([], [], [], ["Metro"], ["España"], ["Getafe"], "Barcelona", "Autobus", "Barcelona", "Avion", 1, 2),
+		(["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], [], [], [], "Malaga", "Metro", "A Coruna", "Avion", 5, 1),
+		([], [], [], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["London", "Berlin", "Paris", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus", 1, 5),
 	]
 )
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ida_o_vuelta(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
 																					transportes_vuelta, paises_vuelta, ciudades_vuelta, ciudad_ida, transporte_ida,
-																					ciudad_vuelta, transporte_vuelta):
+																					ciudad_vuelta, transporte_vuelta, trayectos_ida, trayectos_vuelta):
 
 	with cliente as cliente_abierto:
 
@@ -957,13 +959,29 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ida_o_vuelta
 
 		contenido=respuesta.data.decode()
 
-		assert respuesta.status_code==200
-		assert "Correcto" in contenido
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert not conexion_entorno_usuario.c.fetchall()
+		assert len(conexion_entorno_usuario.c.fetchall())==1
 
+		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE  on_tour=True")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido WHERE Tipo_Trayecto='I'")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_ida
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido WHERE Tipo_Trayecto='V'")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_vuelta
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_ida+trayectos_vuelta
 
 @pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta"],
 	[

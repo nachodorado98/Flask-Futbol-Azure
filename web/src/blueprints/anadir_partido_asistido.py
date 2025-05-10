@@ -252,9 +252,31 @@ def pagina_insertar_partido_asistido():
 
 						else:
 
-							con.cerrarConexion()
+							con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
 
-							return "Correcto"
+							con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
+
+							trayecto_id=f"id_{partido_id}_{current_user.id}"
+
+							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I_1", partido_id, current_user.id, "I", codigo_ciudad_ida, paradas_ida[0][0], codigo_ciudad_primera_parada)
+
+							numero_paradas=len(paradas_ida)-1
+
+							combinaciones_paradas=obtenerCombinacionesParadas(paradas_ida)
+
+							for numero, combinacion_parada in enumerate(combinaciones_paradas):
+
+								codigo_primera_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[0], combinacion_parada[1])
+
+								codigo_segunda_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[2], combinacion_parada[3])
+
+								con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I_{numero+2}", partido_id, current_user.id, "I", codigo_primera_ciudad, combinacion_parada[4], codigo_segunda_ciudad)
+
+							numero_ultimo_trayecto=2+numero_paradas
+
+							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I_{numero_ultimo_trayecto}", partido_id, current_user.id, "I", codigo_ciudad_ultima_parada, transporte_ida, codigo_ciudad_estadio)
+
+							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_estadio, transporte_vuelta, codigo_ciudad_vuelta)
 
 				elif not paradas_ida and paradas_vuelta:
 
@@ -286,9 +308,32 @@ def pagina_insertar_partido_asistido():
 
 						else:
 
-							con.cerrarConexion()
+							con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
 
-							return "Correcto"
+							con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
+
+							trayecto_id=f"id_{partido_id}_{current_user.id}"
+
+							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_estadio)
+
+							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V_1", partido_id, current_user.id, "V", codigo_ciudad_estadio, paradas_vuelta[0][0], codigo_ciudad_primera_parada)
+
+							numero_paradas=len(paradas_vuelta)-1
+
+							combinaciones_paradas=obtenerCombinacionesParadas(paradas_vuelta)
+
+							for numero, combinacion_parada in enumerate(combinaciones_paradas):
+
+								codigo_primera_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[0], combinacion_parada[1])
+
+								codigo_segunda_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[2], combinacion_parada[3])
+
+								con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V_{numero+2}", partido_id, current_user.id, "V", codigo_primera_ciudad, combinacion_parada[4], codigo_segunda_ciudad)
+
+							numero_ultimo_trayecto=2+numero_paradas
+
+							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V_{numero_ultimo_trayecto}", partido_id, current_user.id, "V", codigo_ciudad_ultima_parada, transporte_vuelta, codigo_ciudad_vuelta)
+
 
 				else:
 
