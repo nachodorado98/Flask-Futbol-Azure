@@ -803,56 +803,49 @@ def obtenerDivisionesNoSeleccionados(divisiones:List[tuple], codigo_division:str
 
 def existen_paradas(transportes:List[Optional[str]], paises:List[Optional[str]], ciudades:List[Optional[str]])->bool:
 
-    return True if transportes or paises or ciudades else False
+	return True if transportes or paises or ciudades else False
 
 def obtenerParadas(transportes:List[Optional[str]], paises:List[Optional[str]], ciudades:List[Optional[str]])->List[Optional[tuple]]:
 
-    if not (len(transportes)==len(paises)==len(ciudades)):
-        return []
+	if not (len(transportes)==len(paises)==len(ciudades)):
+		return []
 
-    return [(t.strip(), p.strip(), c.strip()) for t, p, c in zip(transportes, paises, ciudades) if t and p and c and t.strip() and p.strip() and c.strip()]
-
-def ciudades_origen_destino_paradas_unicas(paradas:List[tuple], codigo_origen:int, codigo_destino:int)->bool:
-
-	if not paradas:
-		return False
-
-	if not codigo_origen or not codigo_destino:
-		return False
-
-	con=Conexion()
-
-	codigos_paradas=[con.obtenerCodigoCiudadPais(parada[2], parada[1]) for parada in paradas]
-
-	con.cerrarConexion()
-
-	return True if codigo_origen not in codigos_paradas and codigo_destino not in codigos_paradas else False
+	return [(t.strip(), p.strip(), c.strip()) for t, p, c in zip(transportes, paises, ciudades) if t and p and c and t.strip() and p.strip() and c.strip()]
 
 def obtenerCombinacionesParadas(paradas:List[tuple])->List[tuple]:
 
-    return [(ciudad1, pais1, ciudad2, pais2, transporte2) for (transporte1, pais1, ciudad1), (transporte2, pais2, ciudad2) in zip(paradas, paradas[1:])]
+	return [(ciudad1, pais1, ciudad2, pais2, transporte2) for (transporte1, pais1, ciudad1), (transporte2, pais2, ciudad2) in zip(paradas, paradas[1:])]
 
-def trayectos_paradas_correctos(paradas:List[tuple])->bool:
+def obtenerDataframeTrayecto(df:pd.DataFrame, partido_id:str, usuario_id:str, tipo:str, numero:bool=False)->pd.DataFrame:
 
-	combinaciones_paradas=obtenerCombinacionesParadas(paradas)
-
-	if not combinaciones_paradas:
-		return False
+	df_base=df.copy()
 
 	con=Conexion()
 
-	for combinacion_parada in combinaciones_paradas:
+	tupla_columnas=[["Ciudad_Origen", "Pais_Origen", "Codigo_Ciudad_Origen"], ["Ciudad_Destino", "Pais_Destino", "Codigo_Ciudad_Destino"]]
 
-		codigo_primera_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[0], combinacion_parada[1])
+	for columna in tupla_columnas:
 
-		codigo_segunda_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[2], combinacion_parada[3])
-
-		if not trayecto_correcto(codigo_primera_ciudad, codigo_segunda_ciudad, combinacion_parada[4]):
-
-			con.cerrarConexion()
-
-			return False
+		df_base[columna[2]]=df[[columna[0], columna[1]]].apply(lambda fila: con.obtenerCodigoCiudadPais(fila[columna[0]], fila[columna[1]]), axis=1)
 
 	con.cerrarConexion()
 
-	return True
+	df_base=df_base[["Ciudad_Origen", "Pais_Origen", "Codigo_Ciudad_Origen", "Ciudad_Destino", "Pais_Destino", "Codigo_Ciudad_Destino", "Transporte"]]
+
+	df_base["Correcto"]=df_base[["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino", "Transporte"]].apply(lambda fila: trayecto_correcto(fila["Codigo_Ciudad_Origen"], fila["Codigo_Ciudad_Destino"], fila["Transporte"]), axis=1)
+
+	df_base["Partido_Id"]=partido_id
+
+	df_base["Usuario_Id"]=usuario_id
+
+	df_base["Tipo"]=tipo
+
+	if numero:
+
+		df_base["Trayecto_Id"] = "id_" + df_base["Partido_Id"].astype(str) + "_" + df_base["Usuario_Id"].astype(str) + "_" + df_base["Tipo"] + "_" + (df_base.index + 1).astype(str)
+
+	else:
+
+		df_base["Trayecto_Id"] = "id_" + df_base["Partido_Id"].astype(str) + "_" + df_base["Usuario_Id"].astype(str) + "_" + df_base["Tipo"]
+
+	return df_base[["Trayecto_Id", "Partido_Id", "Usuario_Id", "Tipo", "Codigo_Ciudad_Origen", "Transporte", "Codigo_Ciudad_Destino", "Correcto"]]

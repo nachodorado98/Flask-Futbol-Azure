@@ -1,6 +1,7 @@
 import pytest
 import os
 import geopandas as gpd
+import pandas as pd
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
@@ -15,7 +16,7 @@ from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano
 from src.utilidades.utils import ciudad_estadio_correcta, trayecto_correcto, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
 from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
 from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, obtenerParadas
-from src.utilidades.utils import ciudades_origen_destino_paradas_unicas, obtenerCombinacionesParadas, trayectos_paradas_correctos
+from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2084,41 +2085,6 @@ def test_obtener_paradas(transportes, paises, ciudades, numero):
 
     assert len(paradas)==numero
 
-def test_ciudades_origen_destino_paradas_unicas_no_hay_paradas():
-
-	assert not ciudades_origen_destino_paradas_unicas([], 103, 35)
-
-@pytest.mark.parametrize(["codigo_origen", "codigo_destino"],
-	[(None, 103), (103, None), (None, None)]
-)
-def test_ciudades_origen_destino_paradas_unicas_no_hay_codigos(codigo_origen, codigo_destino):
-
-	assert not ciudades_origen_destino_paradas_unicas([("Bus", "España", "Madrid")], codigo_origen, codigo_destino)
-
-@pytest.mark.parametrize(["paradas"],
-	[
-		([("Bus", "España", "Madrid")],),
-		([("Bus", "España", "Getafe"), ("Avion", "Francia", "Paris")],),
-		([("Bus", "España", "Getafe"), ("Avion", "España", "Madrid")],),
-		([("Bus", "España", "Getafe"), ("Avion", "España", "Madrid"), ("Avion", "España", "Leganés")],),
-		([("Bus", "España", "Getafe"), ("Avion", "Francia", "Paris"), ("Avion", "España", "Leganés")],),
-	]
-)
-def test_ciudades_origen_destino_paradas_unicas_no_hay_unicas(paradas):
-
-	assert not ciudades_origen_destino_paradas_unicas(paradas, 103, 35)
-
-@pytest.mark.parametrize(["paradas"],
-	[
-		([("Bus", "España", "Getafe")],),
-		([("Bus", "España", "Getafe"), ("Avion", "España", "Leganés")],),
-		([("Bus", "España", "Getafe"), ("Avion", "Rusia", "Moscow"), ("Avion", "España", "Leganés")],)
-	]
-)
-def test_ciudades_origen_destino_paradas_unicas(paradas):
-
-	assert ciudades_origen_destino_paradas_unicas(paradas, 103, 35)
-
 def test_obtener_combinaciones_paradas_no_hay():
 
 	assert not obtenerCombinacionesParadas([])
@@ -2139,40 +2105,46 @@ def test_obtener_combinaciones_paradas(paradas, numero):
 
 	assert len(combinaciones)==numero
 
-def test_trayectos_paradas_correctos_no_hay():
-
-	assert not trayectos_paradas_correctos([])
-
-def test_trayectos_paradas_correctos_una():
-
-	assert not trayectos_paradas_correctos([("Bus", "España", "Madrid")])
-
-@pytest.mark.parametrize(["paradas"],
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "codigo_ciudad_origen", "transporte", "ciudad_destino", "pais_destino", "codigo_ciudad_destino", "tipo"],
 	[
-		([("Avion", "España", "MADRID"), ("Avion", "Francia", "Paris")],),
-		([("Avion", "España", "Madrid"), ("Avion", "China", "Paris")],),
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "no-existo")],),
-		([("Avion", "España", "Madrid"), ("transporte", "Francia", "Paris")],),
-		([("Avion", "España", "Madrid"), ("Pie", "Francia", "Paris")],),
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "Reino Unido", "Madrid")],),
-		([("Avion", "España", "Madrid"), ("Metro", "Francia", "Paris"), ("Avion", "Reino Unido", "London")],),
-		([("Avion", "España", "Madrid"), ("transporte", "Francia", "Paris"), ("Avion", "Reino Unido", "London")],),
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Pie", "Reino Unido", "London")],)
+		("Madrid", "España", 103, "Autobus", "Madrid", "España", 103, "I"),
+		("Madrid", "España", 103, "Pie", "Tokyo", "Japón", 1, "V"),
+		("London", "Reino Unido", 34, "Metro", "Madrid", "España", 103, "V"),
+		("Verona", "Italia", 2329, "Tren", "Verona", "Italia", 2329, "I"),
+		("Merida", "España", 5809, "Autobus Urbano", "Madrid", "España", 103, "V"),
+		("Merida", "México", 917, "Coche", "Madrid", "España", 103, "I"),
+		("Merida", "México", 917, "Autobus Interurbano", "Merida", "España", 5809, "I")
 	]
 )
-def test_trayectos_paradas_correctos_no_correctos(paradas):
+def test_obtener_dataframe_trayecto_transporte_inadecuado(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
 
-	assert not trayectos_paradas_correctos(paradas)
+	df=pd.DataFrame([(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte)], columns=["Ciudad_Origen", "Pais_Origen", "Ciudad_Destino", "Pais_Destino", "Transporte"])
 
-@pytest.mark.parametrize(["paradas"],
+	df_trayecto=obtenerDataframeTrayecto(df, "partido_id", "usuario_id", tipo)
+
+	assert len(df_trayecto.columns)==8
+	assert df_trayecto["Codigo_Ciudad_Origen"].iloc[0]==codigo_ciudad_origen
+	assert df_trayecto["Codigo_Ciudad_Destino"].iloc[0]==codigo_ciudad_destino
+	assert df_trayecto["Correcto"].iloc[0]==False
+
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "codigo_ciudad_origen", "transporte", "ciudad_destino", "pais_destino", "codigo_ciudad_destino", "tipo"],
 	[
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris")],),
-		([("Avion", "España", "Madrid"), ("Pie", "España", "Getafe")],),
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "Reino Unido", "London")],),
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "España", "Getafe")],),
-		([("Avion", "España", "Madrid"), ("Avion", "Francia", "Paris"), ("Avion", "España", "Getafe"), ("Metro", "España", "Leganés")],),
+		("Madrid", "España", 103, "Pie", "Madrid", "España", 103, "I"),
+		("Madrid", "España", 103, "Avion", "Tokyo", "Japón", 1, "V"),
+		("London", "Reino Unido", 34, "Avion", "Madrid", "España", 103, "V"),
+		("Verona", "Italia", 2329, "Metro", "Verona", "Italia", 2329, "I"),
+		("Merida", "España", 5809, "Autobus", "Madrid", "España", 103, "V"),
+		("Merida", "México", 917, "Avion", "Madrid", "España", 103, "I"),
+		("Merida", "México", 917, "Avion", "Merida", "España", 5809, "I")
 	]
 )
-def test_trayectos_paradas_correctos_(paradas):
+def test_obtener_dataframe_trayecto(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
 
-	assert trayectos_paradas_correctos(paradas)
+	df=pd.DataFrame([(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte)], columns=["Ciudad_Origen", "Pais_Origen", "Ciudad_Destino", "Pais_Destino", "Transporte"])
+
+	df_trayecto=obtenerDataframeTrayecto(df, "partido_id", "usuario_id", tipo)
+
+	assert len(df_trayecto.columns)==8
+	assert df_trayecto["Codigo_Ciudad_Origen"].iloc[0]==codigo_ciudad_origen
+	assert df_trayecto["Codigo_Ciudad_Destino"].iloc[0]==codigo_ciudad_destino
+	assert df_trayecto["Correcto"].iloc[0]==True

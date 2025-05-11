@@ -2,12 +2,13 @@ from flask import Blueprint, render_template, redirect, request, jsonify
 from flask_login import login_required, current_user
 import os
 import time
+import pandas as pd
+pd.set_option('display.max_columns', None)
 
 from src.database.conexion import Conexion
 
 from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, trayecto_correcto, ciudad_estadio_correcta
-from src.utilidades.utils import existen_paradas, obtenerParadas, ciudades_origen_destino_paradas_unicas, obtenerCombinacionesParadas
-from src.utilidades.utils import trayectos_paradas_correctos
+from src.utilidades.utils import existen_paradas, obtenerParadas, obtenerCombinacionesParadas, obtenerDataframeTrayecto
 from src.utilidades.configutils import TRANSPORTES
 
 from src.datalake.conexion_data_lake import ConexionDataLake
@@ -200,11 +201,7 @@ def pagina_insertar_partido_asistido():
 
 		else:
 
-			codigo_ciudad_estadio=con.obtenerCodigoCiudadPais(ciudad_estadio, pais_estadio)
-
-			codigo_ciudad_ida=con.obtenerCodigoCiudadPais(ciudad_ida, pais_ida)
-
-			codigo_ciudad_vuelta=con.obtenerCodigoCiudadPais(ciudad_vuelta, pais_vuelta)
+			df_ida=pd.DataFrame([(ciudad_ida, pais_ida)], columns=["Ciudad_Origen", "Pais_Origen"])
 
 			existen_paradas_ida=existen_paradas(transportes_paradas_ida, paises_paradas_ida, ciudades_paradas_ida)
 
@@ -224,7 +221,25 @@ def pagina_insertar_partido_asistido():
 
 				if paradas_ida and not paradas_vuelta:
 
-					if not ciudades_origen_destino_paradas_unicas(paradas_ida, codigo_ciudad_ida, codigo_ciudad_estadio):
+					df_ida[["Ciudad_Destino", "Pais_Destino", "Transporte"]]=[paradas_ida[0][2], paradas_ida[0][1], paradas_ida[0][0]]
+
+					combinaciones_paradas_ida=obtenerCombinacionesParadas(paradas_ida)
+
+					for parada_ida in combinaciones_paradas_ida:
+
+						df_ida.loc[len(df_ida)]=parada_ida
+
+					df_ida.loc[len(df_ida)]=[paradas_ida[-1][2], paradas_ida[-1][1], ciudad_estadio, pais_estadio, transporte_ida]
+
+					df_ida_final=obtenerDataframeTrayecto(df_ida, partido_id, current_user.id, "I", True)
+
+					df_vuelta=pd.DataFrame([(ciudad_vuelta, pais_vuelta)], columns=["Ciudad_Destino", "Pais_Destino"])
+
+					df_vuelta[["Ciudad_Origen", "Pais_Origen", "Transporte"]]=[ciudad_estadio, pais_estadio, transporte_vuelta]
+
+					df_vuelta_final=obtenerDataframeTrayecto(df_vuelta, partido_id, current_user.id, "V")
+
+					if (df_ida_final["Correcto"]==False).any() or (df_vuelta_final["Correcto"]==False).any() or df_ida_final["Codigo_Ciudad_Origen"].duplicated().any() or df_ida_final["Codigo_Ciudad_Destino"].duplicated().any():
 
 						con.cerrarConexion()
 
@@ -232,55 +247,39 @@ def pagina_insertar_partido_asistido():
 
 					else:
 
-						codigo_ciudad_primera_parada=con.obtenerCodigoCiudadPais(paradas_ida[0][2], paradas_ida[0][1])
+						con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
 
-						codigo_ciudad_ultima_parada=con.obtenerCodigoCiudadPais(paradas_ida[-1][2], paradas_ida[-1][1])
+						con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
 
-						origen_correcto=trayecto_correcto(codigo_ciudad_ida, codigo_ciudad_primera_parada, paradas_ida[0][0])
+						df_trayectos=pd.concat([df_ida_final, df_vuelta_final], ignore_index=True)
 
-						destino_correcto=trayecto_correcto(codigo_ciudad_ultima_parada, codigo_ciudad_estadio, transporte_ida)
+						trayectos=df_trayectos.values.tolist()
 
-						paradas_correctas=trayectos_paradas_correctos(paradas_ida) if len(paradas_ida)>1 else True
+						for trayecto in trayectos:
 
-						vuelta_correcta=trayecto_correcto(codigo_ciudad_vuelta, codigo_ciudad_estadio, transporte_vuelta)
-
-						if not origen_correcto or not destino_correcto or not paradas_correctas or not vuelta_correcta:
-
-							con.cerrarConexion()
-
-							return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
-
-						else:
-
-							con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
-
-							con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
-
-							trayecto_id=f"id_{partido_id}_{current_user.id}"
-
-							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I_1", partido_id, current_user.id, "I", codigo_ciudad_ida, paradas_ida[0][0], codigo_ciudad_primera_parada)
-
-							numero_paradas=len(paradas_ida)-1
-
-							combinaciones_paradas=obtenerCombinacionesParadas(paradas_ida)
-
-							for numero, combinacion_parada in enumerate(combinaciones_paradas):
-
-								codigo_primera_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[0], combinacion_parada[1])
-
-								codigo_segunda_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[2], combinacion_parada[3])
-
-								con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I_{numero+2}", partido_id, current_user.id, "I", codigo_primera_ciudad, combinacion_parada[4], codigo_segunda_ciudad)
-
-							numero_ultimo_trayecto=2+numero_paradas
-
-							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I_{numero_ultimo_trayecto}", partido_id, current_user.id, "I", codigo_ciudad_ultima_parada, transporte_ida, codigo_ciudad_estadio)
-
-							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_estadio, transporte_vuelta, codigo_ciudad_vuelta)
+							con.insertarTrayectoPartidoAsistido(trayecto[0], trayecto[1], trayecto[2], trayecto[3], trayecto[4], trayecto[5], trayecto[6])
 
 				elif not paradas_ida and paradas_vuelta:
 
-					if not ciudades_origen_destino_paradas_unicas(paradas_vuelta, codigo_ciudad_estadio, codigo_ciudad_vuelta):
+					df_ida[["Ciudad_Destino", "Pais_Destino", "Transporte"]]=[ciudad_estadio, pais_estadio, transporte_ida]
+
+					df_ida_final=obtenerDataframeTrayecto(df_ida, partido_id, current_user.id, "I")
+
+					df_vuelta=pd.DataFrame([(ciudad_estadio, pais_estadio)], columns=["Ciudad_Origen", "Pais_Origen"])
+
+					df_vuelta[["Ciudad_Destino", "Pais_Destino", "Transporte"]]=[paradas_vuelta[0][2], paradas_vuelta[0][1], paradas_vuelta[0][0]]
+
+					combinaciones_paradas_vuelta=obtenerCombinacionesParadas(paradas_vuelta)
+
+					for parada_vuelta in combinaciones_paradas_vuelta:
+
+						df_vuelta.loc[len(df_vuelta)]=parada_vuelta
+
+					df_vuelta.loc[len(df_vuelta)]=[paradas_vuelta[-1][2], paradas_vuelta[-1][1], ciudad_vuelta, pais_vuelta, transporte_vuelta]
+
+					df_vuelta_final=obtenerDataframeTrayecto(df_vuelta, partido_id, current_user.id, "V", True)
+					
+					if (df_ida_final["Correcto"]==False).any() or (df_vuelta_final["Correcto"]==False).any() or df_vuelta_final["Codigo_Ciudad_Origen"].duplicated().any() or df_vuelta_final["Codigo_Ciudad_Destino"].duplicated().any():
 
 						con.cerrarConexion()
 
@@ -288,76 +287,35 @@ def pagina_insertar_partido_asistido():
 
 					else:
 
-						codigo_ciudad_primera_parada=con.obtenerCodigoCiudadPais(paradas_vuelta[0][2], paradas_vuelta[0][1])
+						con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
 
-						codigo_ciudad_ultima_parada=con.obtenerCodigoCiudadPais(paradas_vuelta[-1][2], paradas_vuelta[-1][1])
+						con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
 
-						origen_correcto=trayecto_correcto(codigo_ciudad_estadio, codigo_ciudad_primera_parada, paradas_vuelta[0][0])
+						df_trayectos=pd.concat([df_ida_final, df_vuelta_final], ignore_index=True)
 
-						destino_correcto=trayecto_correcto(codigo_ciudad_ultima_parada, codigo_ciudad_vuelta, transporte_vuelta)
+						trayectos=df_trayectos.values.tolist()
 
-						paradas_correctas=trayectos_paradas_correctos(paradas_vuelta) if len(paradas_vuelta)>1 else True
+						for trayecto in trayectos:
 
-						ida_correcta=trayecto_correcto(codigo_ciudad_ida, codigo_ciudad_estadio, transporte_ida)
-
-						if not origen_correcto or not destino_correcto or not paradas_correctas or not ida_correcta:
-
-							con.cerrarConexion()
-
-							return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
-
-						else:
-
-							con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
-
-							con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
-
-							trayecto_id=f"id_{partido_id}_{current_user.id}"
-
-							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_estadio)
-
-							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V_1", partido_id, current_user.id, "V", codigo_ciudad_estadio, paradas_vuelta[0][0], codigo_ciudad_primera_parada)
-
-							numero_paradas=len(paradas_vuelta)-1
-
-							combinaciones_paradas=obtenerCombinacionesParadas(paradas_vuelta)
-
-							for numero, combinacion_parada in enumerate(combinaciones_paradas):
-
-								codigo_primera_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[0], combinacion_parada[1])
-
-								codigo_segunda_ciudad=con.obtenerCodigoCiudadPais(combinacion_parada[2], combinacion_parada[3])
-
-								con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V_{numero+2}", partido_id, current_user.id, "V", codigo_primera_ciudad, combinacion_parada[4], codigo_segunda_ciudad)
-
-							numero_ultimo_trayecto=2+numero_paradas
-
-							con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V_{numero_ultimo_trayecto}", partido_id, current_user.id, "V", codigo_ciudad_ultima_parada, transporte_vuelta, codigo_ciudad_vuelta)
-
+							con.insertarTrayectoPartidoAsistido(trayecto[0], trayecto[1], trayecto[2], trayecto[3], trayecto[4], trayecto[5], trayecto[6])
 
 				else:
 
-					unicas_ida=ciudades_origen_destino_paradas_unicas(paradas_ida, codigo_ciudad_ida, codigo_ciudad_estadio)
-
-					unicas_vuelta=ciudades_origen_destino_paradas_unicas(paradas_vuelta, codigo_ciudad_estadio, codigo_ciudad_vuelta)
-
-					if not unicas_ida or not unicas_vuelta:
-
-						con.cerrarConexion()
-
-						return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
-
-					else:
-
-						raise Exception("Aun no implementado")
+					raise Exception("Aun no implementado")
 
 			else:
 
-				ida_correcta=trayecto_correcto(codigo_ciudad_ida, codigo_ciudad_estadio, transporte_ida)
+				df_ida[["Ciudad_Destino", "Pais_Destino", "Transporte"]]=[ciudad_estadio, pais_estadio, transporte_ida]
 
-				vuelta_correcta=trayecto_correcto(codigo_ciudad_vuelta, codigo_ciudad_estadio, transporte_vuelta)
+				df_vuelta=pd.DataFrame([(ciudad_vuelta, pais_vuelta)], columns=["Ciudad_Destino", "Pais_Destino"])
 
-				if not ida_correcta or not vuelta_correcta:
+				df_vuelta[["Ciudad_Origen", "Pais_Origen", "Transporte"]]=[ciudad_estadio, pais_estadio, transporte_vuelta]
+
+				df_ida_final=obtenerDataframeTrayecto(df_ida, partido_id, current_user.id, "I")
+
+				df_vuelta_final=obtenerDataframeTrayecto(df_vuelta, partido_id, current_user.id, "V")
+
+				if (df_ida_final["Correcto"]==False).any() or (df_vuelta_final["Correcto"]==False).any():
 
 					con.cerrarConexion()
 
@@ -369,11 +327,13 @@ def pagina_insertar_partido_asistido():
 
 					con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
 
-					trayecto_id=f"id_{partido_id}_{current_user.id}"
+					df_trayectos=pd.concat([df_ida_final, df_vuelta_final], ignore_index=True)
 
-					con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_I", partido_id, current_user.id, "I", codigo_ciudad_ida, transporte_ida, codigo_ciudad_estadio)
+					trayectos=df_trayectos.values.tolist()
 
-					con.insertarTrayectoPartidoAsistido(f"{trayecto_id}_V", partido_id, current_user.id, "V", codigo_ciudad_estadio, transporte_vuelta, codigo_ciudad_vuelta)
+					for trayecto in trayectos:
+
+						con.insertarTrayectoPartidoAsistido(trayecto[0], trayecto[1], trayecto[2], trayecto[3], trayecto[4], trayecto[5], trayecto[6])
 
 	else:
 
