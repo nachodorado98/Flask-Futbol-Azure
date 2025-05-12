@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import Optional, List
+import pandas as pd
 
 from .confconexion import *
 
@@ -2986,3 +2987,12 @@ class Conexion:
 
 		return None if not coordenadas else (coordenadas["latitud"],
 											coordenadas["longitud"])
+
+	# Metodo para insertar multiples trayectos de un partido asistido
+	def insertarTrayectosPartidoAsistido(self, df:pd.DataFrame)->None:
+
+		trayectos=df.values.tolist()
+
+		for trayecto in trayectos:
+
+			self.insertarTrayectoPartidoAsistido(trayecto[0], trayecto[1], trayecto[2], trayecto[3], trayecto[4], trayecto[5], trayecto[6])

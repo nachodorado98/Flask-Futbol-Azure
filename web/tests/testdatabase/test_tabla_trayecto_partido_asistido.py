@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 
 def test_tabla_trayecto_partido_asistido_vacia(conexion):
 
@@ -187,3 +188,26 @@ def test_obtener_trayecto_partido_asistido_vuelta(conexion_entorno):
 	assert trayecto[5]=="Madrid"
 	assert trayecto[8]=="23"
 	assert trayecto[9]=="transporte_nacho"
+
+@pytest.mark.parametrize(["numero_trayectos"],
+	[(1,), (5,), (2,), (13,), (22,), (0,)]
+)
+def test_insertar_trayectos_partido_asistido(conexion_entorno, numero_trayectos):
+
+	conexion_entorno.insertarUsuario("golden", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "golden", "comentario")
+
+	columnas=["Trayecto_Id", "Partido_Id", "Usuario_Id", "Tipo", "Codigo_Ciudad_Origen", "Transporte", "Codigo_Ciudad_Destino", "Correcto"]
+
+	trayectos=[[f"trayecto_id_{numero+1}", "20190622", "golden", "I", 103, "Avion", 160, True] for numero in range(numero_trayectos)]
+
+	df=pd.DataFrame(trayectos, columns=columnas)
+
+	conexion_entorno.insertarTrayectosPartidoAsistido(df)
+
+	conexion_entorno.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+	trayectos_partido_asistido=conexion_entorno.c.fetchall()
+
+	assert len(trayectos_partido_asistido)==numero_trayectos

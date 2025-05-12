@@ -842,10 +842,46 @@ def obtenerDataframeTrayecto(df:pd.DataFrame, partido_id:str, usuario_id:str, ti
 
 	if numero:
 
-		df_base["Trayecto_Id"] = "id_" + df_base["Partido_Id"].astype(str) + "_" + df_base["Usuario_Id"].astype(str) + "_" + df_base["Tipo"] + "_" + (df_base.index + 1).astype(str)
+		df_base["Trayecto_Id"]="id_"+df_base["Partido_Id"].astype(str)+"_"+df_base["Usuario_Id"].astype(str)+"_"+df_base["Tipo"]+"_"+(df_base.index+1).astype(str)
 
 	else:
 
-		df_base["Trayecto_Id"] = "id_" + df_base["Partido_Id"].astype(str) + "_" + df_base["Usuario_Id"].astype(str) + "_" + df_base["Tipo"]
+		df_base["Trayecto_Id"]="id_"+df_base["Partido_Id"].astype(str)+"_"+df_base["Usuario_Id"].astype(str)+"_"+df_base["Tipo"]
 
 	return df_base[["Trayecto_Id", "Partido_Id", "Usuario_Id", "Tipo", "Codigo_Ciudad_Origen", "Transporte", "Codigo_Ciudad_Destino", "Correcto"]]
+
+def obtenerDataframeConParadas(df:pd.DataFrame, paradas:List[tuple], ciudad_final:str, pais_final:str, transporte_final:str)->pd.DataFrame:
+
+	try:
+
+		df_sin_paradas=df.copy()
+
+		df_sin_paradas[["Ciudad_Destino", "Pais_Destino", "Transporte"]]=[paradas[0][2], paradas[0][1], paradas[0][0]]
+
+		combinaciones_paradas=obtenerCombinacionesParadas(paradas)
+
+		for parada in combinaciones_paradas:
+
+			df_sin_paradas.loc[len(df_sin_paradas)]=parada
+
+		df_sin_paradas.loc[len(df_sin_paradas)]=[paradas[-1][2], paradas[-1][1], ciudad_final, pais_final, transporte_final]
+
+		return df_sin_paradas
+
+	except IndexError:
+
+		raise Exception("Error, no hay paradas")
+
+def obtenerDataframeDireccion(ciudad_origen:str, pais_origen:str, ciudad_destino:str, pais_destino:str, transporte:str, partido_id:str, usuario_id:str, tipo:str)->pd.DataFrame:
+
+	if tipo not in ["I", "V"]:
+
+		raise Exception("El tipo no es valido")
+
+	columnas=("Ciudad_Origen", "Pais_Origen", "Ciudad_Destino", "Pais_Destino", "Transporte")
+
+	df=pd.DataFrame([(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte)], columns=columnas)
+
+	df_final=obtenerDataframeTrayecto(df, partido_id, usuario_id, tipo)
+
+	return df_final

@@ -16,7 +16,7 @@ from src.utilidades.utils import cruzarPartidosCalendario, ano_mes_anterior, ano
 from src.utilidades.utils import ciudad_estadio_correcta, trayecto_correcto, crearMapaTrayecto, obtenerCentroideCoordenadas, crearMapaTrayectos
 from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
 from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, obtenerParadas
-from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto
+from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2148,3 +2148,82 @@ def test_obtener_dataframe_trayecto(ciudad_origen, pais_origen, codigo_ciudad_or
 	assert df_trayecto["Codigo_Ciudad_Origen"].iloc[0]==codigo_ciudad_origen
 	assert df_trayecto["Codigo_Ciudad_Destino"].iloc[0]==codigo_ciudad_destino
 	assert df_trayecto["Correcto"].iloc[0]==True
+
+def test_obtener_dataframe_con_paradas_sin_paradas():
+
+	df=pd.DataFrame([("Madrid", "España")], columns=["Ciudad_Origen", "Pais_Origen"])
+
+	with pytest.raises(Exception):
+
+		obtenerDataframeConParadas(df, [], "Barcelona", "España", "Tren")
+
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte_destino", "paradas"],
+	[
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Bus", "España", "A Coruña"), ("Avion", "Francia", "Paris")]),
+		("Madrid", "España", "Tokyo", "Japón", "Avion", [("Avion", "Francia", "Paris")]),
+		("London", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")]),
+		("Verona", "Italia", "Naples", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")]),
+		("Merida", "España", "Madrid", "España", "Autobus", [("Tren", "España", "Toledo")])
+	]
+)
+def test_obtener_dataframe_con_paradas(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte_destino, paradas):
+
+	df=pd.DataFrame([(ciudad_origen, pais_origen)], columns=["Ciudad_Origen", "Pais_Origen"])
+
+	df_paradas=obtenerDataframeConParadas(df, paradas, ciudad_destino, pais_destino, transporte_destino)
+
+	assert len(df_paradas.columns)==5
+	assert df_paradas.shape[0]==2+len(paradas)-1
+	assert df_paradas["Ciudad_Origen"].iloc[0]==ciudad_origen
+	assert df_paradas["Ciudad_Destino"].iloc[-1]==ciudad_destino
+
+@pytest.mark.parametrize(["tipo"],
+	[("A",), ("N",), ("IV",), ("VI",)]
+)
+def test_obtener_dataframe_direccion_tipo_error(tipo):
+
+	with pytest.raises(Exception):
+
+		obtenerDataframeDireccion("Madrid", "España", "Madrid", "España", "Pie", "20240622", "golden", tipo)
+
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "codigo_ciudad_origen", "transporte", "ciudad_destino", "pais_destino", "codigo_ciudad_destino", "tipo"],
+	[
+		("Madrid", "España", 103, "Autobus", "Madrid", "España", 103, "I"),
+		("Madrid", "España", 103, "Pie", "Tokyo", "Japón", 1, "V"),
+		("London", "Reino Unido", 34, "Metro", "Madrid", "España", 103, "V"),
+		("Verona", "Italia", 2329, "Tren", "Verona", "Italia", 2329, "I"),
+		("Merida", "España", 5809, "Autobus Urbano", "Madrid", "España", 103, "V"),
+		("Merida", "México", 917, "Coche", "Madrid", "España", 103, "I"),
+		("Merida", "México", 917, "Autobus Interurbano", "Merida", "España", 5809, "I")
+	]
+)
+def test_obtener_dataframe_direccion_transporte_inadecuado(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
+
+	df_final=obtenerDataframeDireccion(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte, "20240622", "golden", tipo)
+
+	assert len(df_final.columns)==8
+	assert df_final.shape[0]==1
+	assert df_final["Codigo_Ciudad_Origen"].iloc[0]==codigo_ciudad_origen
+	assert df_final["Codigo_Ciudad_Destino"].iloc[0]==codigo_ciudad_destino
+	assert df_final["Correcto"].iloc[0]==False
+
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "codigo_ciudad_origen", "transporte", "ciudad_destino", "pais_destino", "codigo_ciudad_destino", "tipo"],
+	[
+		("Madrid", "España", 103, "Pie", "Madrid", "España", 103, "I"),
+		("Madrid", "España", 103, "Avion", "Tokyo", "Japón", 1, "V"),
+		("London", "Reino Unido", 34, "Avion", "Madrid", "España", 103, "V"),
+		("Verona", "Italia", 2329, "Metro", "Verona", "Italia", 2329, "I"),
+		("Merida", "España", 5809, "Autobus", "Madrid", "España", 103, "V"),
+		("Merida", "México", 917, "Avion", "Madrid", "España", 103, "I"),
+		("Merida", "México", 917, "Avion", "Merida", "España", 5809, "I")
+	]
+)
+def test_obtener_dataframe_direccion(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
+
+	df_final=obtenerDataframeDireccion(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte, "20240622", "golden", tipo)
+
+	assert len(df_final.columns)==8
+	assert df_final.shape[0]==1
+	assert df_final["Codigo_Ciudad_Origen"].iloc[0]==codigo_ciudad_origen
+	assert df_final["Codigo_Ciudad_Destino"].iloc[0]==codigo_ciudad_destino
+	assert df_final["Correcto"].iloc[0]==True
