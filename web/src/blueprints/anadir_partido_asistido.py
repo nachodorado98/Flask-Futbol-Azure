@@ -8,7 +8,8 @@ pd.set_option('display.max_columns', None)
 from src.database.conexion import Conexion
 
 from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, trayecto_correcto, ciudad_estadio_correcta
-from src.utilidades.utils import existen_paradas, obtenerParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
+from src.utilidades.utils import existen_paradas, obtenerParadas, obtenerDataframeDireccion, obtenerDataframeDireccionParadas
+from src.utilidades.utils import validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
 from src.utilidades.configutils import TRANSPORTES
 
 from src.datalake.conexion_data_lake import ConexionDataLake
@@ -219,15 +220,11 @@ def pagina_insertar_partido_asistido():
 
 				if paradas_ida and not paradas_vuelta:
 
-					df_ida=pd.DataFrame([(ciudad_ida, pais_ida)], columns=["Ciudad_Origen", "Pais_Origen"])
-
-					df_ida_paradas=obtenerDataframeConParadas(df_ida, paradas_ida, ciudad_estadio, pais_estadio, transporte_ida)
-		
-					df_ida_final=obtenerDataframeTrayecto(df_ida_paradas, partido_id, current_user.id, "I", True)
+					df_ida_final=obtenerDataframeDireccionParadas(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, paradas_ida, partido_id, current_user.id, "I")
 
 					df_vuelta_final=obtenerDataframeDireccion(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, partido_id, current_user.id, "V")
 
-					if (df_ida_final["Correcto"]==False).any() or (df_vuelta_final["Correcto"]==False).any() or df_ida_final["Codigo_Ciudad_Origen"].duplicated().any() or df_ida_final["Codigo_Ciudad_Destino"].duplicated().any():
+					if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final) or not validarDataFrameDuplicados(df_ida_final):
 
 						con.cerrarConexion()
 
@@ -247,13 +244,9 @@ def pagina_insertar_partido_asistido():
 
 					df_ida_final=obtenerDataframeDireccion(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, partido_id, current_user.id, "I")
 
-					df_vuelta=pd.DataFrame([(ciudad_estadio, pais_estadio)], columns=["Ciudad_Origen", "Pais_Origen"])
-
-					df_vuelta_paradas=obtenerDataframeConParadas(df_vuelta, paradas_vuelta, ciudad_vuelta, pais_vuelta, transporte_vuelta)
-
-					df_vuelta_final=obtenerDataframeTrayecto(df_vuelta_paradas, partido_id, current_user.id, "V", True)
+					df_vuelta_final=obtenerDataframeDireccionParadas(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, paradas_vuelta, partido_id, current_user.id, "V")
 					
-					if (df_ida_final["Correcto"]==False).any() or (df_vuelta_final["Correcto"]==False).any() or df_vuelta_final["Codigo_Ciudad_Origen"].duplicated().any() or df_vuelta_final["Codigo_Ciudad_Destino"].duplicated().any():
+					if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final) or not validarDataFrameDuplicados(df_vuelta_final):
 
 						con.cerrarConexion()
 
@@ -279,7 +272,7 @@ def pagina_insertar_partido_asistido():
 
 				df_vuelta_final=obtenerDataframeDireccion(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, partido_id, current_user.id, "V")
 
-				if (df_ida_final["Correcto"]==False).any() or (df_vuelta_final["Correcto"]==False).any():
+				if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final):
 
 					con.cerrarConexion()
 

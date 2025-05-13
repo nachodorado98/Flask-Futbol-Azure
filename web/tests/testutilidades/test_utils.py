@@ -17,6 +17,7 @@ from src.utilidades.utils import ciudad_estadio_correcta, trayecto_correcto, cre
 from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_coordenadas, calcularZoomMapa, obtenerAngulo
 from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, obtenerParadas
 from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
+from src.utilidades.utils import obtenerDataframeDireccionParadas, validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2031,7 +2032,7 @@ def test_obtener_divisiones_no_seleccionados(codigo_division):
 
 def test_existen_paradas_no_hay():
 
-    assert not existen_paradas([], [], [])
+	assert not existen_paradas([], [], [])
 
 @pytest.mark.parametrize(["transportes", "paises", "ciudades"],
 	[
@@ -2042,7 +2043,7 @@ def test_existen_paradas_no_hay():
 )
 def test_existen_paradas(transportes, paises, ciudades):
 
-    assert existen_paradas(transportes, paises, ciudades)
+	assert existen_paradas(transportes, paises, ciudades)
 
 @pytest.mark.parametrize(["transportes", "paises", "ciudades"],
 	[
@@ -2053,7 +2054,7 @@ def test_existen_paradas(transportes, paises, ciudades):
 )
 def test_obtener_paradas_no_hay(transportes, paises, ciudades):
 
-    assert not obtenerParadas(transportes, paises, ciudades)
+	assert not obtenerParadas(transportes, paises, ciudades)
 
 @pytest.mark.parametrize(["transportes", "paises", "ciudades"],
 	[
@@ -2066,7 +2067,7 @@ def test_obtener_paradas_no_hay(transportes, paises, ciudades):
 )
 def test_obtener_paradas_no_validas(transportes, paises, ciudades):
 
-    assert not obtenerParadas(transportes, paises, ciudades)
+	assert not obtenerParadas(transportes, paises, ciudades)
 
 @pytest.mark.parametrize(["transportes", "paises", "ciudades", "numero"],
 	[
@@ -2081,9 +2082,9 @@ def test_obtener_paradas_no_validas(transportes, paises, ciudades):
 )
 def test_obtener_paradas(transportes, paises, ciudades, numero):
 
-    paradas=obtenerParadas(transportes, paises, ciudades)
+	paradas=obtenerParadas(transportes, paises, ciudades)
 
-    assert len(paradas)==numero
+	assert len(paradas)==numero
 
 def test_obtener_combinaciones_paradas_no_hay():
 
@@ -2159,7 +2160,7 @@ def test_obtener_dataframe_con_paradas_sin_paradas():
 
 @pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte_destino", "paradas"],
 	[
-		("Madrid", "España", "Barcelona", "España", "Tren", [("Bus", "España", "A Coruña"), ("Avion", "Francia", "Paris")]),
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Bus", "España", "A Coruna"), ("Avion", "Francia", "Paris")]),
 		("Madrid", "España", "Tokyo", "Japón", "Avion", [("Avion", "Francia", "Paris")]),
 		("London", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")]),
 		("Verona", "Italia", "Naples", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")]),
@@ -2227,3 +2228,94 @@ def test_obtener_dataframe_direccion(ciudad_origen, pais_origen, codigo_ciudad_o
 	assert df_final["Codigo_Ciudad_Origen"].iloc[0]==codigo_ciudad_origen
 	assert df_final["Codigo_Ciudad_Destino"].iloc[0]==codigo_ciudad_destino
 	assert df_final["Correcto"].iloc[0]==True
+
+def test_obtener_dataframe_direccion_paradas_sin_paradas():
+
+	with pytest.raises(Exception):
+
+		obtenerDataframeDireccionParadas("Madrid", "España", "Barcelona", "España", "Tren", [], "20240622", "golden", "I")
+
+@pytest.mark.parametrize(["tipo"],
+	[("A",), ("N",), ("IV",), ("VI",)]
+)
+def test_obtener_dataframe_direccion_paradas_tipo_error(tipo):
+
+	with pytest.raises(Exception):
+
+		obtenerDataframeDireccionParadas("Madrid", "España", "Barcelona", "España", "Tren", [("Bus", "España", "A Coruña"), ("Avion", "Francia", "Paris")], "20240622", "golden", tipo)
+
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte", "paradas", "tipo"],
+	[
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Autobus", "España", "A Coruna"), ("Pie", "Francia", "Paris")], "I"),
+		("Madrid", "España", "Tokyo", "Japón", "Coche", [("Avion", "Francia", "Paris")], "V"),
+		("London", "Reino Unido", "Madrid", "España", "Cercanias", [("Avion", "Alemania", "Munich")], "V"),
+		("Verona", "Italia", "Naples", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")], "I"),
+		("Merida", "España", "Madrid", "España", "Autobus", [("Autobus Urbano", "España", "Toledo")], "I")
+	]
+)
+def test_obtener_dataframe_direccion_paradas_transporte_inadecuado(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte, paradas, tipo):
+
+	df_final=obtenerDataframeDireccionParadas(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte, paradas, "20240622", "golden", tipo)
+
+	assert len(df_final.columns)==8
+	assert df_final.shape[0]==2+len(paradas)-1
+	assert not df_final[df_final["Correcto"]==True].empty
+	assert not df_final[df_final["Correcto"]==False].empty
+
+@pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte", "paradas", "tipo"],
+	[
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Autobus", "España", "A Coruna"), ("Avion", "Francia", "Paris")], "I"),
+		("Madrid", "España", "Tokyo", "Japón", "Avion", [("Avion", "Francia", "Paris")], "V"),
+		("London", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")], "V"),
+		("Verona", "Italia", "Naples", "Italia", "Avion", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")], "I"),
+		("Merida", "España", "Madrid", "España", "Autobus", [("Tren", "España", "Toledo")], "I")
+	]
+)
+def test_obtener_dataframe_direccion_paradas(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte, paradas, tipo):
+
+	df_final=obtenerDataframeDireccionParadas(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte, paradas, "20240622", "golden", tipo)
+
+	assert len(df_final.columns)==8
+	assert df_final.shape[0]==2+len(paradas)-1
+	assert not df_final[df_final["Correcto"]==True].empty
+	assert df_final[df_final["Correcto"]==False].empty
+
+@pytest.mark.parametrize(["registros_ida", "registros_vuelta"],
+	[([], []), ([[True]], []), ([], [[True]])]
+)
+def test_validar_dataframes_trayectos_correctos_dataframe_vacio(registros_ida, registros_vuelta):
+
+	assert not validarDataFramesTrayectosCorrectos(pd.DataFrame(registros_ida, columns=["Correcto"]), pd.DataFrame(registros_vuelta, columns=["Correcto"]))
+
+@pytest.mark.parametrize(["registros_ida", "registros_vuelta"],
+	[([True], [False]), ([[False]], [[False]]), ([[False]], [[True]]), ([[False], [True]], [[True], [True]])]
+)
+def test_validar_dataframes_trayectos_correctos_no_validos(registros_ida, registros_vuelta):
+
+	assert not validarDataFramesTrayectosCorrectos(pd.DataFrame(registros_ida, columns=["Correcto"]), pd.DataFrame(registros_vuelta, columns=["Correcto"]))
+
+def test_validar_dataframes_duplicados_dataframe_vacio():
+
+	assert not validarDataFrameDuplicados(pd.DataFrame([], columns=["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino"]))
+
+@pytest.mark.parametrize(["registros"],
+	[
+		([[1, 2], [3, 2]],),
+		([[1, 2], [3, 4], [5, 6], [7, 6]],),
+		([[1, 2], [3, 4], [5, 6], [3, 6]],)
+	]
+)
+def test_validar_dataframes_duplicados_con_duplicados(registros):
+
+	assert not validarDataFrameDuplicados(pd.DataFrame(registros, columns=["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino"]))	
+
+@pytest.mark.parametrize(["registros"],
+	[
+		([[13, 22]],),
+		([[1, 2], [3, 4], [5, 6], [6, 7]],),
+		([[1, 2], [3, 4], [5, 6], [7, 8]],)
+	]
+)
+def test_validar_dataframes_duplicados(registros):
+
+	assert validarDataFrameDuplicados(pd.DataFrame(registros, columns=["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino"]))

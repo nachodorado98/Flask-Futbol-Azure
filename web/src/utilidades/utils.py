@@ -885,3 +885,42 @@ def obtenerDataframeDireccion(ciudad_origen:str, pais_origen:str, ciudad_destino
 	df_final=obtenerDataframeTrayecto(df, partido_id, usuario_id, tipo)
 
 	return df_final
+
+def obtenerDataframeDireccionParadas(ciudad_origen:str, pais_origen:str, ciudad_destino:str, pais_destino:str, transporte:str, paradas:List[tuple], partido_id:str, usuario_id:str, tipo:str)->pd.DataFrame:
+
+	if tipo not in ["I", "V"]:
+
+		raise Exception("El tipo no es valido")
+
+	df=pd.DataFrame([(ciudad_origen, pais_origen)], columns=["Ciudad_Origen", "Pais_Origen"])
+
+	df_paradas=obtenerDataframeConParadas(df, paradas, ciudad_destino, pais_destino, transporte)
+
+	df_final=obtenerDataframeTrayecto(df_paradas, partido_id, usuario_id, tipo, True)
+
+	return df_final
+
+def validarDataFramesTrayectosCorrectos(df_ida:pd.DataFrame, df_vuelta:pd.DataFrame)->bool:
+
+	df_ida_copia=df_ida.copy()
+	df_vuelta_copia=df_vuelta.copy()
+
+	if df_ida_copia.empty or df_vuelta_copia.empty:
+		return False
+
+	if (~df_ida_copia["Correcto"]).any() or (~df_vuelta_copia["Correcto"]).any():
+		return False
+
+	return True
+
+def validarDataFrameDuplicados(df:pd.DataFrame)->bool:
+
+	df_copia=df.copy()
+
+	if df_copia.empty:
+		return False
+
+	if df["Codigo_Ciudad_Origen"].duplicated().any() or df["Codigo_Ciudad_Destino"].duplicated().any():
+		return False
+
+	return True
