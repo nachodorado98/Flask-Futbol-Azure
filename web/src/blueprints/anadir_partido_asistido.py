@@ -264,7 +264,25 @@ def pagina_insertar_partido_asistido():
 
 				else:
 
-					raise Exception("Aun no implementado")
+					df_ida_final=obtenerDataframeDireccionParadas(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, paradas_ida, partido_id, current_user.id, "I")
+
+					df_vuelta_final=obtenerDataframeDireccionParadas(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, paradas_vuelta, partido_id, current_user.id, "V")
+
+					if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final) or not validarDataFrameDuplicados(df_ida_final) or not validarDataFrameDuplicados(df_vuelta_final):
+
+						con.cerrarConexion()
+
+						return redirect(f"/anadir_partido_asistido?partido_id={partido_id}&todos=True")
+
+					else:
+
+						con.insertarPartidoAsistido(partido_id, current_user.id, comentario)
+
+						con.actualizarDatosOnTourPartidoAsistido(partido_id, current_user.id, fecha_ida, fecha_vuelta, teletrabajo)
+
+						df_trayectos=pd.concat([df_ida_final, df_vuelta_final], ignore_index=True)
+
+						con.insertarTrayectosPartidoAsistido(df_trayectos)
 
 			else:
 

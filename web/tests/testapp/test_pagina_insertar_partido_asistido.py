@@ -817,8 +817,8 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos(cliente, conexion_en
 		ida=registros[0]
 		vuelta=registros[1]
 
-		assert ida["trayecto_id"]=="id_20190622_nacho98_I"
-		assert vuelta["trayecto_id"]=="id_20190622_nacho98_V"
+		assert ida["trayecto_id"]=="id_20190622_nacho98_I_0"
+		assert vuelta["trayecto_id"]=="id_20190622_nacho98_V_0"
 		assert ida["tipo_trayecto"]=="I"
 		assert vuelta["tipo_trayecto"]=="V"
 		assert ida["codciudad_origen"]==codigo_ciudad_ida
@@ -903,9 +903,12 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_incompletas(
 	[
 		(["Autobus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"], [], [], []),
 		([], [], [], ["Autobus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"]),
-		# (["Autobus"], ["España"], ["Madrid"], ["Tren"], ["España"], ["Getafe"]),
-		# (["Autobus"], ["España"], ["Getafe"], ["Tren"], ["España"], ["Madrid"]),
-		# (["Autobus"], ["España"], ["Madrid"], ["Tren"], ["España"], ["Madrid"])
+		(["Autobus"], ["España"], ["Madrid"], ["Tren"], ["España"], ["Getafe"]),
+		(["Autobus"], ["España"], ["Getafe"], ["Tren"], ["España"], ["Madrid"]),
+		(["Autobus"], ["España"], ["Madrid"], ["Tren"], ["España"], ["Madrid"]),
+		(["Autobus", "Avion"], ["España", "Francia"], ["Sevilla", "Paris"], ["Autobus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"]),
+		(["Autobus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"], ["Autobus", "Avion"], ["España", "Francia"], ["Valencia", "Paris"]),
+		(["Autobus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"], ["Autobus", "Avion"], ["España", "Francia"], ["Madrid", "Paris"])
 	]
 )
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_no_unicas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
@@ -982,25 +985,61 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ida_o_vuelta
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido WHERE Tipo_Trayecto='I'")
 
-		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_ida
+		idas=conexion_entorno_usuario.c.fetchall()
+
+		assert len(idas)==trayectos_ida
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido WHERE Tipo_Trayecto='V'")
 
-		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_vuelta
+		vueltas=conexion_entorno_usuario.c.fetchall()
+
+		assert len(vueltas)==trayectos_vuelta
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_ida+trayectos_vuelta
 
-@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta"],
+		for numero_trayecto in range(trayectos_ida):
+
+			if trayectos_ida==1:
+
+				assert idas[numero_trayecto]["trayecto_id"]=="id_20190622_nacho98_I_0"
+
+			else:
+
+				assert idas[numero_trayecto]["trayecto_id"]==f"id_20190622_nacho98_I_{numero_trayecto+1}"
+				assert idas[numero_trayecto]["tipo_trayecto"]=="I"
+
+		assert idas[-1]["codciudad_destino"]==103
+
+		for numero_trayecto in range(trayectos_vuelta):
+
+			if trayectos_vuelta==1:
+
+				assert vueltas[numero_trayecto]["trayecto_id"]=="id_20190622_nacho98_V_0"
+
+			else:
+
+				assert vueltas[numero_trayecto]["trayecto_id"]==f"id_20190622_nacho98_V_{numero_trayecto+1}"
+				assert vueltas[numero_trayecto]["tipo_trayecto"]=="V"
+
+		assert vueltas[0]["codciudad_origen"]==103
+
+@pytest.mark.parametrize(["transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "trayectos_ida", "trayectos_vuelta"],
 	[
-		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Cercanias", "Barcelona", "Avion"),
-		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus Urbano", "Zaragoza", "Avion")
+		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Cercanias", "Barcelona", "Avion", 3, 3),
+		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus Urbano", "Zaragoza", "Tren", 3, 3),
+		(["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"], "Sevilla", "Tren", "Oviedo", "Autobus", 3, 3),
+		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], ["Metro"], ["España"], ["Getafe"], "Malaga", "Metro", "Barcelona", "Autobus", 4, 2),
+		(["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"], "Barcelona", "Cercanias", "Barcelona", "Autobus", 2, 4),
+		(["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Brussels"], "Malaga", "Metro", "Barcelona", "Avion", 5, 5),
+		(["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marseille"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["London", "Berlin", "Paris", "Alicante"], "Barcelona", "Avion", "Barcelona", "Tren", 3, 5),
+		(["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], ["Coche"], ["España"], ["Alicante"], "Barcelona", "Avion", "Valencia", "Tren", 3, 2)
 	]
 )
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ambas(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
-																					transportes_vuelta, paises_vuelta, ciudades_vuelta, ciudad_ida, transporte_ida,
-																					ciudad_vuelta, transporte_vuelta):
+																			transportes_vuelta, paises_vuelta, ciudades_vuelta, ciudad_ida, transporte_ida,
+																			ciudad_vuelta, transporte_vuelta, trayectos_ida, trayectos_vuelta):
 
 	with cliente as cliente_abierto:
 
@@ -1011,10 +1050,48 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ambas(client
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":transporte_vuelta, "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
 			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
 
-		with pytest.raises(Exception):
+		respuesta=cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-			cliente_abierto.post("/insertar_partido_asistido", data=data)
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM partidos_asistidos")
 
-		assert not conexion_entorno_usuario.c.fetchall()
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT On_Tour, Fecha_Ida, Fecha_Vuelta, Teletrabajo FROM partidos_asistidos WHERE  on_tour=True")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido WHERE Tipo_Trayecto='I'")
+
+		idas=conexion_entorno_usuario.c.fetchall()
+
+		assert len(idas)==trayectos_ida
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido WHERE Tipo_Trayecto='V'")
+
+		vueltas=conexion_entorno_usuario.c.fetchall()
+
+		assert len(vueltas)==trayectos_vuelta
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==trayectos_ida+trayectos_vuelta
+
+		for numero_trayecto in range(trayectos_ida):
+
+			assert idas[numero_trayecto]["trayecto_id"]==f"id_20190622_nacho98_I_{numero_trayecto+1}"
+			assert idas[numero_trayecto]["tipo_trayecto"]=="I"
+
+		assert idas[-1]["codciudad_destino"]==103
+
+		for numero_trayecto in range(trayectos_vuelta):
+
+			assert vueltas[numero_trayecto]["trayecto_id"]==f"id_20190622_nacho98_V_{numero_trayecto+1}"
+			assert vueltas[numero_trayecto]["tipo_trayecto"]=="V"
+
+		assert vueltas[0]["codciudad_origen"]==103

@@ -133,6 +133,10 @@ def pagina_partido_asistido(partido_id:str):
 
 	partido_asistido_favorito=True if id_partido_asistido_favorito==partido_id else False
 
+	trayectos_ida=con.obtenerTrayectosPartidoAsistido(partido_id, current_user.id, "I")
+
+	trayectos_vuelta=con.obtenerTrayectosPartidoAsistido(partido_id, current_user.id, "V")
+
 	con.cerrarConexion()
 
 	return render_template("partido_asistido.html",
@@ -148,6 +152,8 @@ def pagina_partido_asistido(partido_id:str):
 							nombre_mapa_ida=nombre_mapa_ida,
 							nombre_mapa_vuelta=nombre_mapa_vuelta,
 							nombre_mapa_ida_vuelta=nombre_mapa_ida_vuelta,
+							trayectos_ida=trayectos_ida,
+							trayectos_vuelta=trayectos_vuelta,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")

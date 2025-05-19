@@ -82,6 +82,14 @@
                 <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
             {% endif %}
 
+            {% if trayectos_ida and trayectos_vuelta %}
+
+            {{ trayectos_ida }}
+
+            {{ trayectos_vuelta }}
+
+            {% endif %}
+
         </div>
 
     {% endif %}

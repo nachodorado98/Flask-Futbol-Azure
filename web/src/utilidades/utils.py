@@ -846,7 +846,7 @@ def obtenerDataframeTrayecto(df:pd.DataFrame, partido_id:str, usuario_id:str, ti
 
 	else:
 
-		df_base["Trayecto_Id"]="id_"+df_base["Partido_Id"].astype(str)+"_"+df_base["Usuario_Id"].astype(str)+"_"+df_base["Tipo"]
+		df_base["Trayecto_Id"]="id_"+df_base["Partido_Id"].astype(str)+"_"+df_base["Usuario_Id"].astype(str)+"_"+df_base["Tipo"]+"_0"
 
 	return df_base[["Trayecto_Id", "Partido_Id", "Usuario_Id", "Tipo", "Codigo_Ciudad_Origen", "Transporte", "Codigo_Ciudad_Destino", "Correcto"]]
 
