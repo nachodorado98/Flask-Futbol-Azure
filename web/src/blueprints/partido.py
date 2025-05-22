@@ -122,7 +122,7 @@ def pagina_partido_asistido(partido_id:str):
 
 	except Exception as e:
 
-		print(e)
+		print(f"Error en los mapas del trayecto: {e}")
 		mapas_correcto=False
 
 	partido_id_asistido_anterior=con.obtenerPartidoAsistidoUsuarioAnterior(current_user.id, partido_id)
@@ -285,3 +285,16 @@ def pagina_eliminar_partido_asistido(partido_id:str):
 	con.cerrarConexion()
 
 	return redirect("/partidos/asistidos")
+
+def es_numero(value):
+
+    try:
+
+        float(value)
+        return True
+
+    except (ValueError, TypeError):
+    	
+        return False
+
+bp_partido.add_app_template_filter(es_numero, name='es_numero')

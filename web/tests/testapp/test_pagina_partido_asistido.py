@@ -182,24 +182,44 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 
 		vaciarCarpeta(ruta_carpeta_imagenes)
 
-@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta", "fecha_ida_on_tour", "fecha_vuelta_on_tour"],
+def test_pagina_partido_asistido_sin_on_tour(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
+		assert '<div class="contenedor-desplegable-on-tour">' not in contenido
+		assert '<div class="seccion-on-tour-partido-asistido">' not in contenido
+
+@pytest.mark.parametrize(["fecha_ida", "fecha_vuelta", "fecha_ida_on_tour", "fecha_vuelta_on_tour", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "teletrabajo", "si_no"],
 	[
-		("2019-06-21", "2019-06-23", "21-06-2019", "23-06-2019"),
-		("2019-06-22", "2019-06-22", "22-06-2019", "22-06-2019"),
-		("2019-04-13", "2019-06-23", "13-04-2019", "23-06-2019"),
-		("2019-06-21", "2019-07-22", "21-06-2019", "22-07-2019"),
-		("2009-06-21", "2029-06-23", "21-06-2009", "23-06-2029")
+		("2019-06-21", "2019-06-23", "21-06-2019", "23-06-2019", "A Coruna", "Avion", "A Coruna", "Autobus", True, "Si"),
+		("2019-06-22", "2019-06-22", "22-06-2019", "22-06-2019", "Madrid", "Pie", "Barcelona", "Tren", False, "No"),
+		("2019-04-13", "2019-06-23", "13-04-2019", "23-06-2019", "Leganés", "Cercanias", "Elche", "Coche", False, "No"),
+		("2019-06-21", "2019-07-22", "21-06-2019", "22-07-2019", "Valencia", "Autobus", "Madrid", "Pie", True, "Si"),
+		("2009-06-21", "2029-06-23", "21-06-2009", "23-06-2029", "Madrid", "Metro", "Sevilla", "Tren", True, "Si")
 	]
 )
-def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno_usuario, fecha_ida, fecha_vuelta, fecha_ida_on_tour, fecha_vuelta_on_tour):
+def test_pagina_partido_asistido_con_on_tour_trayecto_simple(cliente, conexion_entorno_usuario, fecha_ida, fecha_vuelta, fecha_ida_on_tour, fecha_vuelta_on_tour, 
+																ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta, teletrabajo, si_no):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":fecha_ida, "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
-			"fecha-vuelta":fecha_vuelta, "transporte-vuelta":"Avion"}
+		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":ciudad_ida, "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":fecha_ida, "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":fecha_vuelta, "transporte-vuelta":transporte_vuelta, "teletrabajo":teletrabajo}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -209,22 +229,52 @@ def test_pagina_partido_asistido_con_on_tour(cliente, conexion_entorno_usuario, 
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="seccion-on-tour-partido-asistido">' in contenido
-		assert '<div class="contenedor-titulo-on-tour-partido-asistido">' in contenido
-		assert '<div class="contenedor-fechas-on-tour-partido-asistido">' in contenido
-		assert f"Fecha Ida: {fecha_ida_on_tour}" in contenido
-		assert f"Fecha Vuelta: {fecha_vuelta_on_tour}" in contenido
+		assert '<div class="contenedor-desplegable-on-tour">' in contenido
+		assert '<div class="seccion-on-tour-partido-asistido"' in contenido
+		assert '<div class="contenedor-datos-ida">' in contenido
+		assert '<div class="contenedor-datos-vuelta">' in contenido
+		assert '<p class="titulo-datos-ida-on-tour">' in contenido
+		assert '<p class="titulo-datos-vuelta-on-tour">' in contenido
+		assert '<div class="contenedor-fecha-on-tour">' in contenido
+		assert '<img class="icono-fecha-on-tour" src="/static/imagenes/iconos/fecha.png" alt="Fecha Icon">' in contenido
+		assert f'<p class="fecha-on-tour-ida"><strong>Fecha: {fecha_ida_on_tour}</strong></p>' in contenido
+		assert f'<p class="fecha-on-tour-vuelta"><strong>Fecha: {fecha_vuelta_on_tour}</strong></p>' in contenido
+		assert '<div class="contenedor-origen-destino">' in contenido
+		assert '<img src="/static/imagenes/iconos/origen.png" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida">' in contenido
+		assert f'<p class="texto-origen-destino-ida"><strong>{ciudad_ida}</strong></p>' in contenido
+		assert f'<img src="/static/imagenes/iconos/{transporte_ida.lower()}.png" alt="Transporte Icon Ida" class="icono-transporte-ida">' in contenido
+		assert '<p class="texto-origen-destino-ida"><strong>Metropolitano</strong></p>' in contenido
+		assert '<img src="/static/imagenes/iconos/estadio_mapa.png" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">' in contenido
+		assert '<p class="texto-origen-destino-vuelta"><strong>Metropolitano</strong></p>' in contenido
+		assert f'<img src="/static/imagenes/iconos/{transporte_vuelta.lower()}.png" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">' in contenido
+		assert f'<p class="texto-origen-destino-vuelta"><strong>{ciudad_vuelta}</strong></p>' in contenido
 		assert '<p class="teletrabajo-on-tour">' in contenido
+		assert f"Teletrabajo {si_no}" in contenido
 
-def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_entorno_usuario):
+
+@pytest.mark.parametrize(["ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
+	[
+		("Barcelona", "Cercanias", "Barcelona", "Avion", ["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"]),
+		("Valencia", "Metro", "Zaragoza", "Tren", ["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"]),
+		("Sevilla", "Tren", "Oviedo", "Autobus", ["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"]),
+		("Malaga", "Metro", "Barcelona", "Autobus", ["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], ["Metro"], ["España"], ["Getafe"]),
+		("Barcelona", "Cercanias", "Barcelona", "Autobus", ["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"]),
+		("Malaga", "Metro", "Barcelona", "Avion", ["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Brussels"]),
+		("Barcelona", "Avion", "Barcelona", "Tren", ["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marseille"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["London", "Berlin", "Paris", "Alicante"]),
+		("Barcelona", "Avion", "Valencia", "Tren", ["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], ["Coche"], ["España"], ["Alicante"])
+	]
+)
+def test_pagina_partido_asistido_con_on_tour_trayectos_complejos(cliente, conexion_entorno_usuario, ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta, transportes_ida, 
+																	paises_ida, ciudades_ida, transportes_vuelta, paises_vuelta, ciudades_vuelta):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-21", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
-			"fecha-vuelta":"2019-06-23", "transporte-vuelta":"Avion"}
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":ciudad_ida, "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":transporte_vuelta, "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
@@ -233,38 +283,34 @@ def test_pagina_partido_asistido_con_on_tour_sin_teletrabajo(cliente, conexion_e
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="seccion-on-tour-partido-asistido">' in contenido
-		assert '<div class="contenedor-titulo-on-tour-partido-asistido">' in contenido
-		assert '<div class="contenedor-fechas-on-tour-partido-asistido">' in contenido
-		assert '<p class="teletrabajo-on-tour">' in contenido
-		assert "Teletrabajo No" in contenido
-		assert "Teletrabajo Si" not in contenido
+		assert '<div class="seccion-on-tour-partido-asistido"' in contenido
+		assert '<div class="contenedor-datos-ida">' in contenido
+		assert '<div class="contenedor-datos-vuelta">' in contenido
+		assert '<div class="contenedor-fecha-on-tour">' in contenido
+		assert '<img class="icono-fecha-on-tour" src="/static/imagenes/iconos/fecha.png" alt="Fecha Icon">' in contenido
+		assert '<div class="contenedor-origen-destino">' in contenido
 
-def test_pagina_partido_asistido_con_on_tour_con_teletrabajo(cliente, conexion_entorno_usuario):
+		ciudades_ida_combinadas=[ciudad_ida]+ciudades_ida
+		transporte_ida_combinadas=transportes_ida+[transporte_ida]
 
-	with cliente as cliente_abierto:
+		for ciudad, transporte in zip(ciudades_ida_combinadas, transporte_ida_combinadas):
 
-		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+			assert f'<p class="texto-origen-destino-ida"><strong>{ciudad}</strong></p>' in contenido
+			assert f'<img src="/static/imagenes/iconos/{transporte.lower()}.png" alt="Transporte Icon Ida" class="icono-transporte-ida">' in contenido
 
-		data={"partido_anadir":"20190622", "comentario":"Comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-21", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
-			"fecha-vuelta":"2019-06-23", "transporte-vuelta":"Avion", "teletrabajo":True}
+		assert '<p class="texto-origen-destino-ida"><strong>Metropolitano</strong></p>' in contenido
 
-		cliente_abierto.post("/insertar_partido_asistido", data=data)
+		ciudades_vuelta_combinadas=ciudades_vuelta+[ciudad_vuelta]
+		transporte_vuelta_combinadas=transportes_vuelta+[transporte_vuelta]
 
-		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+		assert '<p class="texto-origen-destino-vuelta"><strong>Metropolitano</strong></p>' in contenido
 
-		contenido=respuesta.data.decode()
+		for ciudad, transporte in zip(ciudades_vuelta_combinadas, transporte_vuelta_combinadas):
 
-		respuesta.status_code==200
-		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="seccion-on-tour-partido-asistido">' in contenido
-		assert '<div class="contenedor-titulo-on-tour-partido-asistido">' in contenido
-		assert '<div class="contenedor-fechas-on-tour-partido-asistido">' in contenido
-		assert '<p class="teletrabajo-on-tour">' in contenido
-		assert "Teletrabajo No" not in contenido
-		assert "Teletrabajo Si" in contenido
+			assert f'<p class="texto-origen-destino-vuelta"><strong>{ciudad}</strong></p>' in contenido
+			assert f'<img src="/static/imagenes/iconos/{transporte.lower()}.png" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">' in contenido
+
+		assert '<p class="texto-origen-destino-ida"><strong>Metropolitano</strong></p>' in contenido
 
 def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno_usuario):
 

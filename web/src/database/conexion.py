@@ -3002,7 +3002,8 @@ class Conexion:
 
 		self.c.execute(r"""WITH trayectos_numerados AS (
 							SELECT t.*, c1.Ciudad AS Ciudad_Origen_Ciudad, c2.Ciudad AS Ciudad_Destino_Ciudad,
-									e.Nombre AS Estadio_Nombre, c1.Latitud AS Ciudad_Origen_Lat, c1.Longitud AS Ciudad_Origen_Lon,
+									c1.Pais AS Pais_Origen_Ciudad, c2.Pais AS Pais_Destino_Ciudad,
+									e.Nombre AS Estadio_Nombre, e.Pais AS Pais_Estadio, c1.Latitud AS Ciudad_Origen_Lat, c1.Longitud AS Ciudad_Origen_Lon,
 									c2.Latitud AS Ciudad_Destino_Lat, c2.Longitud AS Ciudad_Destino_Lon, e.Latitud AS Estadio_Lat,
 									e.Longitud AS Estadio_Lon, e.Codigo_Estadio,
 									REPLACE(LOWER(t.Transporte), ' ', '_') AS Transporte_Normalizado,
@@ -3038,6 +3039,10 @@ class Conexion:
 					ELSE t.Ciudad_Origen_Ciudad
 			    END AS Ciudad_Origen,
 			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN t.Pais_Estadio
+					ELSE t.Pais_Origen_Ciudad
+			    END AS Pais_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
 					THEN CAST(t.Estadio_Lat AS FLOAT)
 					ELSE CAST(t.Ciudad_Origen_Lat AS FLOAT)
 			    END AS Latitud_Origen,
@@ -3049,6 +3054,10 @@ class Conexion:
 					THEN t.Estadio_Nombre
 			        ELSE t.Ciudad_Destino_Ciudad
 			    END AS Ciudad_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+					THEN t.Pais_Estadio
+			        ELSE t.Pais_Destino_Ciudad
+			    END AS Pais_Destino,
 			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
 					THEN CAST(t.Estadio_Lat AS FLOAT)
 			        ELSE CAST(t.Ciudad_Destino_Lat AS FLOAT)
@@ -3064,7 +3073,17 @@ class Conexion:
 			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
 					THEN CAST(t.Codigo_Estadio AS VARCHAR)
 			        ELSE t.Transporte_Normalizado
-			    END AS Imagen_Destino
+			    END AS Imagen_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_minimo=True
+			    	THEN 'origen'
+			    WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+			    	THEN 'estadio_mapa'
+			    WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+			    	THEN 'estadio_mapa'
+			    WHEN t.Tipo_Trayecto = 'V' AND t.es_maximo=True
+			    	THEN 'origen'
+			    	ELSE 'destino'
+			    END AS Imagen_Tramo
 		FROM trayectos_numerados t
 		ORDER BY t.Trayecto_Id""",
 		(partido_id, usuario, tipo_trayecto))
@@ -3075,10 +3094,13 @@ class Conexion:
 											trayecto["tipo_trayecto"],
 											trayecto["transporte"],
 											trayecto["ciudad_origen"],
+											trayecto["pais_origen"],
 											trayecto["latitud_origen"],
 											trayecto["longitud_origen"],
 											trayecto["ciudad_destino"],
+											trayecto["pais_destino"],
 											trayecto["latitud_destino"],
 											trayecto["longitud_destino"],
 											trayecto["imagen_origen"],
-											trayecto["imagen_destino"]), trayectos))
+											trayecto["imagen_destino"],
+											trayecto["imagen_tramo"]), trayectos))

@@ -273,11 +273,14 @@ def test_obtener_trayectos_partido_asistido_un_trayecto_ida(conexion_entorno):
 	assert trayecto[1]=="I"
 	assert trayecto[2]=="Transporte"
 	assert trayecto[3]=="Madrid"
-	assert trayecto[4]!=trayecto[7]
-	assert trayecto[5]!=trayecto[8]
-	assert trayecto[6]=="Metropolitano"
-	assert trayecto[9]=="transporte"
-	assert trayecto[10]=="23"
+	assert trayecto[4]=="España"
+	assert trayecto[5]!=trayecto[9]
+	assert trayecto[6]!=trayecto[10]
+	assert trayecto[7]=="Metropolitano"
+	assert trayecto[8]=="España"
+	assert trayecto[11]=="transporte"
+	assert trayecto[12]=="23"
+	assert trayecto[13]=="origen"
 
 def test_obtener_trayectos_partido_asistido_un_trayecto_vuelta(conexion_entorno):
 
@@ -285,7 +288,7 @@ def test_obtener_trayectos_partido_asistido_un_trayecto_vuelta(conexion_entorno)
 
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
-	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_V_0", "20190622", "nacho", "V", 103, "Transporte Nacho", 103)
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_V_0", "20190622", "nacho", "V", 103, "Transporte", 103)
 
 	trayectos=conexion_entorno.obtenerTrayectosPartidoAsistido("20190622", "nacho", "V")
 
@@ -295,13 +298,16 @@ def test_obtener_trayectos_partido_asistido_un_trayecto_vuelta(conexion_entorno)
 
 	assert trayecto[0]=="trayecto_id_V_0"
 	assert trayecto[1]=="V"
-	assert trayecto[2]=="Transporte Nacho"
+	assert trayecto[2]=="Transporte"
 	assert trayecto[3]=="Metropolitano"
-	assert trayecto[4]!=trayecto[7]
-	assert trayecto[5]!=trayecto[8]
-	assert trayecto[6]=="Madrid"
-	assert trayecto[9]=="23"
-	assert trayecto[10]=="transporte_nacho"
+	assert trayecto[4]=="España"
+	assert trayecto[5]!=trayecto[9]
+	assert trayecto[6]!=trayecto[10]
+	assert trayecto[7]=="Madrid"
+	assert trayecto[8]=="España"
+	assert trayecto[11]=="23"
+	assert trayecto[12]=="transporte"
+	assert trayecto[13]=="estadio_mapa"
 
 def test_obtener_trayectos_partido_asistido_idas(conexion_entorno):
 
@@ -327,13 +333,19 @@ def test_obtener_trayectos_partido_asistido_idas(conexion_entorno):
 
 		assert trayecto[0]==f"id_20190622_nacho_I_{numero+1}"
 		assert trayecto[1]=="I"
-		assert trayecto[4]!=trayecto[6]
-		assert trayecto[5]!=trayecto[7]
+		assert trayecto[5]!=trayecto[9]
+		assert trayecto[6]!=trayecto[10]
 
-	assert trayectos[0][9]=="avion"
-	assert trayectos[0][10]=="avion"
-	assert trayectos[-1][9]=="metro"
-	assert trayectos[-1][10]=="23"
+	assert trayectos[0][11]=="avion"
+	assert trayectos[0][12]=="avion"
+	assert trayectos[0][13]=="origen"
+	assert trayectos[-1][11]=="metro"
+	assert trayectos[-1][12]=="23"
+	assert trayectos[-1][13]=="estadio_mapa"
+
+	for trayecto in trayectos[1:-1]:
+
+		assert trayecto[13]=="destino"
 
 def test_obtener_trayectos_partido_asistido_vueltas(conexion_entorno):
 
@@ -359,10 +371,16 @@ def test_obtener_trayectos_partido_asistido_vueltas(conexion_entorno):
 
 		assert trayecto[0]==f"id_20190622_nacho_V_{numero+1}"
 		assert trayecto[1]=="V"
-		assert trayecto[4]!=trayecto[6]
-		assert trayecto[5]!=trayecto[7]
+		assert trayecto[5]!=trayecto[9]
+		assert trayecto[6]!=trayecto[10]
 
-	assert trayectos[0][9]=="23"
-	assert trayectos[0][10]=="avion"
-	assert trayectos[-1][9]=="pie"
-	assert trayectos[-1][10]=="pie"
+	assert trayectos[0][11]=="23"
+	assert trayectos[0][12]=="avion"
+	assert trayectos[0][13]=="estadio_mapa"
+	assert trayectos[-1][11]=="pie"
+	assert trayectos[-1][12]=="pie"
+	assert trayectos[-1][13]=="origen"
+
+	for trayecto in trayectos[1:-1]:
+
+		assert trayecto[13]=="destino"

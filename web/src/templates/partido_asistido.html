@@ -43,34 +43,97 @@
 
     {% if partido_asistido[11] %}
 
-        <div class="seccion-on-tour-partido-asistido">
+        <div class="contenedor-desplegable-on-tour">
+            <div id="contenedorOnTour"  class="contenedor-boton-on-tour">
+                <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
+                <p  class="button-on-tour-partido-asistido"><strong>DATOS ON TOUR</strong></p>
+                <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha" id="botonOnTourPartidoAsistido">
+            </div>
+        </div>
 
-            <hr style="width: 700px">
+        <div class="seccion-on-tour-partido-asistido" id="contenedorOnTourPartidoAsistido" style="display: none;">
 
-            <div class="contenedor-titulo-on-tour-partido-asistido">
-                <p class="titulo-seccion-on-tour">
-                    <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
-                    <strong>DATOS ON TOUR</strong>
-                    <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
-                </p>
+            {% if trayectos_ida and trayectos_vuelta %}
+
+            <div class="contenedor-datos-ida">
+
+                <p class="titulo-datos-ida-on-tour"><strong>Trayectos de Ida</strong></p>
+
+                <div class="contenedor-fecha-on-tour">
+                    <img class="icono-fecha-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
+                    <p class="fecha-on-tour-ida"><strong>Fecha: {{ partido_asistido[12] }}</strong></p>
+                </div>
+
+                {% for trayecto in trayectos_ida %}
+
+                    <div class="contenedor-origen-destino">
+
+                        <div class="contenedor-pais-ciudad-partido">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-1]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida">
+                            <p class="texto-origen-destino-ida"><strong>{{ trayecto[3] }}</strong></p>
+                        </div>
+
+                        <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+
+                        {% if (trayecto[-2] | es_numero) %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-3]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-2]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
+                        {% endif %}
+
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                        <div class="contenedor-pais-ciudad-partido">
+                            <p class="texto-origen-destino-ida"><strong>{{ trayecto[7] }}</strong></p>
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
             </div>
 
-            <div class="contenedor-fechas-on-tour-partido-asistido">
+            <hr style="width: 600px">
+
+            <div class="contenedor-datos-vuelta">
+
+                <p class="titulo-datos-vuelta-on-tour"><strong>Trayectos de Vuelta</strong></p>
+
                 <div class="contenedor-fecha-on-tour">
-                    <p class="fecha-on-tour"><strong>Fecha Ida: {{ partido_asistido[12] }}</strong></p>
+                    <img class="icono-fecha-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
+                    <p class="fecha-on-tour-vuelta"><strong>Fecha: {{ partido_asistido[13] }}</strong></p>
                 </div>
-                <div class="contenedor-fecha-on-tour">
-                    <p class="fecha-on-tour"><strong>Fecha Vuelta: {{ partido_asistido[13] }}</strong></p>
-                </div>
+
+                {% for trayecto in trayectos_vuelta %}
+
+                    <div class="contenedor-origen-destino">
+
+                        <div class="contenedor-pais-ciudad-partido">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-1]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+                            <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[3] }}</strong></p>
+                        </div>
+
+                        <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+
+                        {% if (trayecto[-2] | es_numero) %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-3]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-2]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
+                        {% endif %}
+
+                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                        <div class="contenedor-pais-ciudad-partido">
+                            <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[7] }}</strong></p>
+                        </div>
+
+                    </div>
+                    
+                {% endfor %}
+
             </div>
 
-            <p class="teletrabajo-on-tour">
-                {% if partido_asistido[14] %}
-                    <strong>Teletrabajo Si</strong>
-                {% else %}
-                    <strong>Teletrabajo No</strong>
-                {% endif %}
-            </p>
+            {% endif %}
 
              {% if mapas_correcto %}
                 <div class="tarjeta-mapa-trayecto-ida-vuelta-total" onclick="abrirVentanaEmergenteMapa()">
@@ -82,13 +145,19 @@
                 <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
             {% endif %}
 
-            {% if trayectos_ida and trayectos_vuelta %}
+            <p class="teletrabajo-on-tour">
+                {% if partido_asistido[14] %}
+                    <strong>Teletrabajo Si</strong>
+                {% else %}
+                    <strong>Teletrabajo No</strong>
+                {% endif %}
+            </p>
 
-            {{ trayectos_ida }}
-
-            {{ trayectos_vuelta }}
-
-            {% endif %}
+            <div class="botones-on-tour-partido-asistido">
+                <button id="botonNoOnTourPartidoAsistido" class="boton-no-on-tour-partido-asistido" type="button">
+                    Cerrar
+                </button>
+            </div>
 
         </div>
 
@@ -233,6 +302,8 @@
 <script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ventana_emergente_mapa.js') }}"></script>
 <script src="{{ url_for('static', filename='js/cambio_mapa_trayectos_ida_vuelta.js') }}"></script>
+<script src="{{ url_for('static', filename='js/abrir_on_tour_partido_asistido.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cerrar_on_tour_partido_asistido.js') }}"></script>
 
 {% endblock principal %}
 

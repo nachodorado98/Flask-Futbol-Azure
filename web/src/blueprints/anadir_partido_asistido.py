@@ -158,7 +158,8 @@ def pagina_insertar_partido_asistido():
 	paises_paradas_vuelta=request.form.getlist("pais-parada-vuelta[]")
 	ciudades_paradas_vuelta=request.form.getlist("ciudad-parada-vuelta[]")
 	
-	teletrabajo=request.form.get("teletrabajo", default=False, type=bool)
+	teletrabajo_str=request.form.get("teletrabajo", default="False")
+	teletrabajo=teletrabajo_str=="True"
 
 	con=Conexion()
 
