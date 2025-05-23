@@ -278,6 +278,7 @@
     flex-direction: column;
     margin-top: 10px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .titulo-datos-ida-on-tour,
@@ -308,26 +309,30 @@
 }
 
 .contenedor-origen-destino {
-    display: grid;
-    grid-template-columns: 250px 80px 80px 80px 250px;
-    align-items: center;
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
     margin-bottom: 30px;
-    column-gap: 20px;
     padding-bottom: 15px;
+    width: 100%;
+}
+
+.contenedor-pais-ciudad-partido {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    width: 800px;
+    text-align: left;
+    padding-left: 30px;
+    box-sizing: border-box;
 }
 
 .icono-tramo-trayecto-ida,
 .icono-tramo-trayecto-vuelta {
     height: 35px;
-    margin-right: 7px;
+    margin-right: 5px;
     cursor: default;
-}
-
-.contenedor-pais-ciudad-partido {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .texto-origen-destino-ida,
@@ -335,7 +340,7 @@
     color: var(--color-secundario);
     font-size: 22px;
     margin: 0;
-    text-align: center;
+    text-align: left;
     word-wrap: break-word;
     white-space: normal;
 }
@@ -346,13 +351,19 @@
     height: 80px;
     width: 80px;
     cursor: default;
-    margin-right: 10px;
-    margin-left: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
 }
 
 .teletrabajo-on-tour {
     color: var(--color-secundario);
     font-size: 22px;
+}
+
+.titulo-mapa-on-tour {
+    color: var(--color-secundario);
+    font-size: 38px;
+    margin-bottom: 20px;
 }
 
 .tarjeta-mapa-trayecto-ida-vuelta-total {

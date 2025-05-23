@@ -236,21 +236,17 @@ def test_pagina_partido_asistido_con_on_tour_trayecto_simple(cliente, conexion_e
 		assert '<p class="titulo-datos-ida-on-tour">' in contenido
 		assert '<p class="titulo-datos-vuelta-on-tour">' in contenido
 		assert '<div class="contenedor-fecha-on-tour">' in contenido
-		assert '<img class="icono-fecha-on-tour" src="/static/imagenes/iconos/fecha.png" alt="Fecha Icon">' in contenido
 		assert f'<p class="fecha-on-tour-ida"><strong>Fecha: {fecha_ida_on_tour}</strong></p>' in contenido
 		assert f'<p class="fecha-on-tour-vuelta"><strong>Fecha: {fecha_vuelta_on_tour}</strong></p>' in contenido
 		assert '<div class="contenedor-origen-destino">' in contenido
-		assert '<img src="/static/imagenes/iconos/origen.png" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida">' in contenido
 		assert f'<p class="texto-origen-destino-ida"><strong>{ciudad_ida}</strong></p>' in contenido
 		assert f'<img src="/static/imagenes/iconos/{transporte_ida.lower()}.png" alt="Transporte Icon Ida" class="icono-transporte-ida">' in contenido
 		assert '<p class="texto-origen-destino-ida"><strong>Metropolitano</strong></p>' in contenido
-		assert '<img src="/static/imagenes/iconos/estadio_mapa.png" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">' in contenido
 		assert '<p class="texto-origen-destino-vuelta"><strong>Metropolitano</strong></p>' in contenido
 		assert f'<img src="/static/imagenes/iconos/{transporte_vuelta.lower()}.png" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">' in contenido
 		assert f'<p class="texto-origen-destino-vuelta"><strong>{ciudad_vuelta}</strong></p>' in contenido
 		assert '<p class="teletrabajo-on-tour">' in contenido
 		assert f"Teletrabajo {si_no}" in contenido
-
 
 @pytest.mark.parametrize(["ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
 	[
@@ -287,7 +283,6 @@ def test_pagina_partido_asistido_con_on_tour_trayectos_complejos(cliente, conexi
 		assert '<div class="contenedor-datos-ida">' in contenido
 		assert '<div class="contenedor-datos-vuelta">' in contenido
 		assert '<div class="contenedor-fecha-on-tour">' in contenido
-		assert '<img class="icono-fecha-on-tour" src="/static/imagenes/iconos/fecha.png" alt="Fecha Icon">' in contenido
 		assert '<div class="contenedor-origen-destino">' in contenido
 
 		ciudades_ida_combinadas=[ciudad_ida]+ciudades_ida

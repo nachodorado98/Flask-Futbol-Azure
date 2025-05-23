@@ -55,6 +55,8 @@
 
             {% if trayectos_ida and trayectos_vuelta %}
 
+            <hr style="width: 800px">
+
             <div class="contenedor-datos-ida">
 
                 <p class="titulo-datos-ida-on-tour"><strong>Trayectos de Ida</strong></p>
@@ -69,22 +71,26 @@
                     <div class="contenedor-origen-destino">
 
                         <div class="contenedor-pais-ciudad-partido">
-                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-1]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida">
+
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-2]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida"
+                            >
+
                             <p class="texto-origen-destino-ida"><strong>{{ trayecto[3] }}</strong></p>
-                        </div>
 
-                        <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
 
-                        {% if (trayecto[-2] | es_numero) %}
-                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-3]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-2]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
-                        {% endif %}
+                            {% if (trayecto[-3] | es_numero) %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-4]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-3]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
+                            {% endif %}
 
-                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
 
-                        <div class="contenedor-pais-ciudad-partido">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-1]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida"
+                            >
                             <p class="texto-origen-destino-ida"><strong>{{ trayecto[7] }}</strong></p>
+
                         </div>
 
                     </div>
@@ -93,7 +99,7 @@
 
             </div>
 
-            <hr style="width: 600px">
+            <hr style="width: 800px">
 
             <div class="contenedor-datos-vuelta">
 
@@ -109,22 +115,25 @@
                     <div class="contenedor-origen-destino">
 
                         <div class="contenedor-pais-ciudad-partido">
-                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-1]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-2]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+
                             <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[3] }}</strong></p>
-                        </div>
+                        
+                            <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
 
-                        <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+                            {% if (trayecto[-3] | es_numero) %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-4]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-3]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
+                            {% endif %}
 
-                        {% if (trayecto[-2] | es_numero) %}
-                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-3]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-2]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
-                        {% endif %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
 
-                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+                            <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[-1]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
 
-                        <div class="contenedor-pais-ciudad-partido">
                             <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[7] }}</strong></p>
+
                         </div>
 
                     </div>
@@ -135,7 +144,11 @@
 
             {% endif %}
 
-             {% if mapas_correcto %}
+            <hr style="width: 800px">
+
+            <p class="titulo-mapa-on-tour"><strong>Mapa de los Trayectos</strong></p>
+
+            {% if mapas_correcto %}
                 <div class="tarjeta-mapa-trayecto-ida-vuelta-total" onclick="abrirVentanaEmergenteMapa()">
                     <div class="contenedor-mapa-trayecto-ida-vuelta-total">
                         <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida_vuelta }}"></iframe>
@@ -158,6 +171,8 @@
                     Cerrar
                 </button>
             </div>
+
+            <hr style="width: 800px">
 
         </div>
 

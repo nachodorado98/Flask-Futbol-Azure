@@ -3075,15 +3075,17 @@ class Conexion:
 			        ELSE t.Transporte_Normalizado
 			    END AS Imagen_Destino,
 			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_minimo=True
-			    	THEN 'origen'
-			    WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
-			    	THEN 'estadio_mapa'
-			    WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN 'origen'
+				WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN 'estadio_mapa'
+					ELSE 'destino'
+			    END AS Imagen_Tramo_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
 			    	THEN 'estadio_mapa'
 			    WHEN t.Tipo_Trayecto = 'V' AND t.es_maximo=True
-			    	THEN 'origen'
-			    	ELSE 'destino'
-			    END AS Imagen_Tramo
+					THEN 'origen'
+					else 'destino'
+			    END AS Imagen_Tramo_Destino
 		FROM trayectos_numerados t
 		ORDER BY t.Trayecto_Id""",
 		(partido_id, usuario, tipo_trayecto))
@@ -3103,4 +3105,5 @@ class Conexion:
 											trayecto["longitud_destino"],
 											trayecto["imagen_origen"],
 											trayecto["imagen_destino"],
-											trayecto["imagen_tramo"]), trayectos))
+											trayecto["imagen_tramo_origen"],
+											trayecto["imagen_tramo_destino"]), trayectos))
