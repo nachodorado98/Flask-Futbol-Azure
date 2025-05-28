@@ -24,7 +24,7 @@ def test_obtener_ciudades_pais_poblacion_limite(conexion, poblacion, cantidad):
 	assert len(ciudades)==cantidad
 
 @pytest.mark.parametrize(["ciudad"],
-	[("jkjkjkjjk",), ("MADRID",), ("barna",), ("london",), ("Andorra La Vella",), ("Tokio",)]
+	[("jkjkjkjjk",), ("MADRID",), ("barna",), ("londres",), ("Andorra La Vella",), ("Tokio",)]
 )
 def test_obtener_codigo_ciudad_no_existe(conexion, ciudad):
 
@@ -34,12 +34,12 @@ def test_obtener_codigo_ciudad_no_existe(conexion, ciudad):
 	[
 		("Tokyo", 1),
 		("Delhi", 3),
-		("London", 34),
+		("Londres", 34),
 		("Porto", 2438),
 		("Barcelona", 160),
 		("Andorra la Vella", 809),
 		("Madrid", 103),
-		("Merida", 917)
+		("Merida Mex", 917)
 	]
 )
 def test_obtener_codigo_ciudad(conexion, ciudad, codigo_ciudad):
@@ -96,12 +96,12 @@ def test_obtener_codigo_ciudad_pais_no_existe(conexion, ciudad, pais):
 	[
 		("Tokyo", "Japón", 1),
 		("Delhi", "India", 3),
-		("London", "Reino Unido", 34),
+		("Londres", "Reino Unido", 34),
 		("Porto", "Portugal", 2438),
 		("Barcelona", "España", 160),
 		("Andorra la Vella", "Andorra", 809),
 		("Madrid", "España", 103),
-		("Merida", "México", 917),
+		("Merida Mex", "México", 917),
 		("Merida", "España", 5809)
 	]
 )

@@ -4,6 +4,8 @@ import os
 from src.utilidades.utils import vaciarCarpeta
 from src.config import CONTENEDOR
 
+from src.utilidades.utils import obtenerNumeroDias
+
 def test_pagina_partido_asistido_sin_login(cliente):
 
 	respuesta=cliente.get("/partido/1/asistido", follow_redirects=True)
@@ -203,7 +205,7 @@ def test_pagina_partido_asistido_sin_on_tour(cliente, conexion_entorno_usuario):
 
 @pytest.mark.parametrize(["fecha_ida", "fecha_vuelta", "fecha_ida_on_tour", "fecha_vuelta_on_tour", "ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "teletrabajo", "si_no"],
 	[
-		("2019-06-21", "2019-06-23", "21-06-2019", "23-06-2019", "A Coruna", "Avion", "A Coruna", "Autobus", True, "Si"),
+		("2019-06-21", "2019-06-23", "21-06-2019", "23-06-2019", "A Coruña", "Avion", "A Coruña", "Autobus", True, "Si"),
 		("2019-06-22", "2019-06-22", "22-06-2019", "22-06-2019", "Madrid", "Pie", "Barcelona", "Tren", False, "No"),
 		("2019-04-13", "2019-06-23", "13-04-2019", "23-06-2019", "Leganés", "Cercanias", "Elche", "Coche", False, "No"),
 		("2019-06-21", "2019-07-22", "21-06-2019", "22-07-2019", "Valencia", "Autobus", "Madrid", "Pie", True, "Si"),
@@ -231,22 +233,25 @@ def test_pagina_partido_asistido_con_on_tour_trayecto_simple(cliente, conexion_e
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
 		assert '<div class="contenedor-desplegable-on-tour">' in contenido
 		assert '<div class="seccion-on-tour-partido-asistido"' in contenido
-		assert '<div class="contenedor-datos-ida">' in contenido
-		assert '<div class="contenedor-datos-vuelta">' in contenido
-		assert '<p class="titulo-datos-ida-on-tour">' in contenido
-		assert '<p class="titulo-datos-vuelta-on-tour">' in contenido
-		assert '<div class="contenedor-fecha-on-tour">' in contenido
+		assert '<div class="contenedor-datos-detalle">' in contenido
+		assert f'<p class="dias-on-tour-total"><strong>Duracion: {obtenerNumeroDias(fecha_ida_on_tour, fecha_vuelta_on_tour)} dias</strong></p>' in contenido
+		assert '<p class="distancia-on-tour-total"><strong>Distancia:' in contenido
+		assert '<p class="teletrabajo-on-tour">' in contenido
+		assert f"Teletrabajo: {si_no}" in contenido
+		assert '<div class="contenedor-datos-on-tour-ida">' in contenido
 		assert f'<p class="fecha-on-tour-ida"><strong>Fecha: {fecha_ida_on_tour}</strong></p>' in contenido
-		assert f'<p class="fecha-on-tour-vuelta"><strong>Fecha: {fecha_vuelta_on_tour}</strong></p>' in contenido
-		assert '<div class="contenedor-origen-destino">' in contenido
+		assert '<p class="distancia-on-tour-ida"><strong>Distancia:' in contenido
+		assert '<p class="escala-on-tour-ida"><strong>Escalas: 0</strong></p>' in contenido
 		assert f'<p class="texto-origen-destino-ida"><strong>{ciudad_ida}</strong></p>' in contenido
 		assert f'<img src="/static/imagenes/iconos/{transporte_ida.lower()}.png" alt="Transporte Icon Ida" class="icono-transporte-ida">' in contenido
 		assert '<p class="texto-origen-destino-ida"><strong>Metropolitano</strong></p>' in contenido
+		assert '<div class="contenedor-datos-on-tour-vuelta">' in contenido
+		assert f'<p class="fecha-on-tour-vuelta"><strong>Fecha: {fecha_vuelta_on_tour}</strong></p>' in contenido
+		assert '<p class="distancia-on-tour-vuelta"><strong>Distancia:' in contenido
+		assert '<p class="escala-on-tour-vuelta"><strong>Escalas: 0</strong></p>' in contenido
 		assert '<p class="texto-origen-destino-vuelta"><strong>Metropolitano</strong></p>' in contenido
 		assert f'<img src="/static/imagenes/iconos/{transporte_vuelta.lower()}.png" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">' in contenido
 		assert f'<p class="texto-origen-destino-vuelta"><strong>{ciudad_vuelta}</strong></p>' in contenido
-		assert '<p class="teletrabajo-on-tour">' in contenido
-		assert f"Teletrabajo {si_no}" in contenido
 
 @pytest.mark.parametrize(["ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
 	[
@@ -254,9 +259,9 @@ def test_pagina_partido_asistido_con_on_tour_trayecto_simple(cliente, conexion_e
 		("Valencia", "Metro", "Zaragoza", "Tren", ["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"]),
 		("Sevilla", "Tren", "Oviedo", "Autobus", ["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"]),
 		("Malaga", "Metro", "Barcelona", "Autobus", ["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], ["Metro"], ["España"], ["Getafe"]),
-		("Barcelona", "Cercanias", "Barcelona", "Autobus", ["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"]),
-		("Malaga", "Metro", "Barcelona", "Avion", ["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Brussels"]),
-		("Barcelona", "Avion", "Barcelona", "Tren", ["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marseille"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["London", "Berlin", "Paris", "Alicante"]),
+		("Barcelona", "Cercanias", "Barcelona", "Autobus", ["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["Londres", "Berlin", "Palma"]),
+		("Malaga", "Metro", "Barcelona", "Avion", ["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Bruselas"]),
+		("Barcelona", "Avion", "Barcelona", "Tren", ["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marsella"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["Londres", "Berlin", "Paris", "Alicante"]),
 		("Barcelona", "Avion", "Valencia", "Tren", ["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], ["Coche"], ["España"], ["Alicante"])
 	]
 )
@@ -279,14 +284,21 @@ def test_pagina_partido_asistido_con_on_tour_trayectos_complejos(cliente, conexi
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
+
+		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
+		assert '<div class="contenedor-desplegable-on-tour">' in contenido
 		assert '<div class="seccion-on-tour-partido-asistido"' in contenido
-		assert '<div class="contenedor-datos-ida">' in contenido
-		assert '<div class="contenedor-datos-vuelta">' in contenido
-		assert '<div class="contenedor-fecha-on-tour">' in contenido
-		assert '<div class="contenedor-origen-destino">' in contenido
+		assert '<div class="contenedor-datos-detalle">' in contenido
+		assert f'<p class="dias-on-tour-total"><strong>Duracion: 1 dias</strong></p>' in contenido
+		assert '<p class="distancia-on-tour-total"><strong>Distancia:' in contenido
 
 		ciudades_ida_combinadas=[ciudad_ida]+ciudades_ida
 		transporte_ida_combinadas=transportes_ida+[transporte_ida]
+
+		assert '<div class="contenedor-datos-on-tour-ida">' in contenido
+		assert f'<p class="fecha-on-tour-ida"><strong>Fecha: 22-06-2019</strong></p>' in contenido
+		assert '<p class="distancia-on-tour-ida"><strong>Distancia:' in contenido
+		assert f'<p class="escala-on-tour-ida"><strong>Escalas: {len(ciudades_ida)}</strong></p>' in contenido
 
 		for ciudad, transporte in zip(ciudades_ida_combinadas, transporte_ida_combinadas):
 
@@ -297,6 +309,11 @@ def test_pagina_partido_asistido_con_on_tour_trayectos_complejos(cliente, conexi
 
 		ciudades_vuelta_combinadas=ciudades_vuelta+[ciudad_vuelta]
 		transporte_vuelta_combinadas=transportes_vuelta+[transporte_vuelta]
+
+		assert '<div class="contenedor-datos-on-tour-vuelta">' in contenido
+		assert f'<p class="fecha-on-tour-vuelta"><strong>Fecha: 22-06-2019</strong></p>' in contenido
+		assert '<p class="distancia-on-tour-vuelta"><strong>Distancia:' in contenido
+		assert f'<p class="escala-on-tour-vuelta"><strong>Escalas: {len(ciudades_vuelta)}</strong></p>' in contenido
 
 		assert '<p class="texto-origen-destino-vuelta"><strong>Metropolitano</strong></p>' in contenido
 
@@ -439,8 +456,8 @@ def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuar
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruña", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruña", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -479,7 +496,7 @@ def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuar
 			assert "L.marker" in contenido
 			assert "[43.3667, -8.3833]" in contenido
 			assert "/static/imagenes/iconos/inicio.png" in contenido
-			assert "A Coruna" in contenido
+			assert "A Coruña" in contenido
 			assert "[40.436, -3.599]" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 			assert "Metropolitano" in contenido
@@ -513,7 +530,7 @@ def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuar
 			assert "L.marker" in contenido
 			assert "[43.3667, -8.3833]" in contenido
 			assert "/static/imagenes/iconos/inicio.png" in contenido
-			assert "A Coruna" in contenido
+			assert "A Coruña" in contenido
 			assert "[40.436, -3.599]" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 			assert "Metropolitano" in contenido
@@ -545,7 +562,7 @@ def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuar
 			assert "L.marker" in contenido
 			assert "[43.3667, -8.3833]" in contenido
 			assert "/static/imagenes/iconos/inicio.png" in contenido
-			assert "A Coruna" in contenido
+			assert "A Coruña" in contenido
 			assert "[40.436, -3.599]" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 			assert "Metropolitano" in contenido
@@ -568,7 +585,7 @@ def test_pagina_partido_asistido_mapas_trayectos_ida_vuelta_diferente(cliente, c
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruña", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
 			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"Barcelona", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
@@ -608,7 +625,7 @@ def test_pagina_partido_asistido_mapas_trayectos_ida_vuelta_diferente(cliente, c
 			assert "L.marker" in contenido
 			assert "[43.3667, -8.3833]" in contenido
 			assert "/static/imagenes/iconos/inicio.png" in contenido
-			assert "A Coruna" in contenido
+			assert "A Coruña" in contenido
 			assert "[40.436, -3.599]" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 			assert "Metropolitano" in contenido
@@ -639,8 +656,8 @@ def test_pagina_partido_asistido_mapas_trayectos_usuarios(cliente, conexion_ento
 
 		cliente_abierto.post("/login", data={"usuario": usuario, "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruña", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruña", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -701,8 +718,8 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_existe(cliente, conexion
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruña", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruña", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -720,7 +737,7 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_existe(cliente, conexion
 		assert "L.marker" in contenido
 		assert "[43.3667, -8.3833]" in contenido
 		assert "/static/imagenes/iconos/inicio.png" in contenido
-		assert "A Coruna" in contenido
+		assert "A Coruña" in contenido
 		assert "[40.436, -3.599]" in contenido
 		assert "Metropolitano" in contenido
 		assert "var poly_line_" in contenido
@@ -742,8 +759,8 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_vuelta_existe(cliente, conex
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruña", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruña", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -761,7 +778,7 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_vuelta_existe(cliente, conex
 		assert "L.marker" in contenido
 		assert "[43.3667, -8.3833]" in contenido
 		assert "/static/imagenes/iconos/inicio.png" in contenido
-		assert "A Coruna" in contenido
+		assert "A Coruña" in contenido
 		assert "[40.436, -3.599]" in contenido
 		assert "Metropolitano" in contenido
 		assert "var poly_line_" in contenido
@@ -783,8 +800,8 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_vuelta_existe(cliente, c
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruna", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
-			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruna", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+		data={"partido_anadir":"20190622", "comentario":"comentario", "ciudad-ida":"A Coruña", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Avion", "ciudad-vuelta":"A Coruña", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
 			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Avion", "teletrabajo":True}
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
@@ -802,7 +819,7 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_vuelta_existe(cliente, c
 		assert "L.marker" in contenido
 		assert "[43.3667, -8.3833]" in contenido
 		assert "/static/imagenes/iconos/inicio.png" in contenido
-		assert "A Coruna" in contenido
+		assert "A Coruña" in contenido
 		assert "[40.436, -3.599]" in contenido
 		assert "Metropolitano" in contenido
 		assert "var poly_line_" in contenido

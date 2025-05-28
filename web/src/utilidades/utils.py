@@ -924,3 +924,38 @@ def validarDataFrameDuplicados(df:pd.DataFrame)->bool:
 		return False
 
 	return True
+
+def obtenerTrayectosConDistancia(trayectos:List)->List:
+
+	trayectos_distancias=list(map(lambda trayecto: round(distancia_maxima_coordenadas([trayecto[5:7], trayecto[9:11]]), 2), trayectos))
+
+	return [list(trayecto)+[distancia] for trayecto, distancia in zip(trayectos, trayectos_distancias)]
+
+def obtenerDistanciaTotalTrayecto(trayectos:List)->int:
+
+	return int(sum([trayecto[-1] for trayecto in trayectos]))
+
+def es_numero(valor):
+
+    try:
+
+        float(valor)
+        return True
+
+    except (ValueError, TypeError):
+    	
+        return False
+
+def obtenerNumeroDias(fecha_inicio:str, fecha_fin:str)->int:
+
+	try:
+
+		fecha_inicio_datetime=datetime.strptime(fecha_inicio, "%d-%m-%Y")
+
+		fecha_fin_datetime=datetime.strptime(fecha_fin, "%d-%m-%Y")
+
+		return 0 if fecha_inicio_datetime>fecha_fin_datetime else (fecha_fin_datetime-fecha_inicio_datetime).days+1
+
+	except:
+
+		raise Exception("Error en la obtencion de los dias")

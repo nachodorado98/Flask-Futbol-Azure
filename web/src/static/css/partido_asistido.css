@@ -156,6 +156,12 @@
     background-color: var(--color-fondo);
 }
 
+.titulo-imagen {
+    color: var(--color-secundario);
+    font-size: 38px;
+    margin-bottom: 20px;
+}
+
 .contenedor-imagen {
     display: flex;
     justify-content: center;
@@ -288,7 +294,8 @@
     margin-bottom: 5px;
 }
 
-.contenedor-fecha-on-tour {
+.contenedor-datos-on-tour-ida,
+.contenedor-datos-on-tour-vuelta {
     display: flex;
     align-items: center;
     margin-top: 20px;
@@ -296,14 +303,23 @@
 }
 
 .icono-fecha-on-tour-ida,
-.icono-fecha-on-tour-vuelta {
+.icono-distancia-on-tour-ida,
+.icono-fecha-on-tour-vuelta,
+.icono-distancia-on-tour-vuelta,
+.icono-escala-on-tour-ida,
+.icono-escala-on-tour-vuelta {
     height: 35px;
-    margin-right: 10px;
+    margin-right: 5px;
+    margin-left: 20px;
     cursor: default;
 }
 
 .fecha-on-tour-ida,
-.fecha-on-tour-vuelta {
+.fecha-on-tour-vuelta,
+.distancia-on-tour-ida,
+.distancia-on-tour-vuelta,
+.escala-on-tour-ida,
+.escala-on-tour-vuelta {
     color: var(--color-secundario);
     font-size: 22px;
 }
@@ -353,11 +369,6 @@
     cursor: default;
     margin-right: 5px;
     margin-left: 5px;
-}
-
-.teletrabajo-on-tour {
-    color: var(--color-secundario);
-    font-size: 22px;
 }
 
 .titulo-mapa-on-tour {
@@ -547,6 +558,44 @@
     height: 450px;
     border: none;
     pointer-events: none;
+}
+
+.contenedor-datos-detalle {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.titulo-datos-on-tour {
+    color: var(--color-secundario);
+    font-size: 38px;
+    margin-bottom: 20px;
+}
+
+.contenedor-datos-on-tour {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.icono-teletrabajo-on-tour,
+.icono-distancia-on-tour-total,
+.icono-dias-on-tour {
+    height: 35px;
+    margin-right: 5px;
+    margin-left: 20px;
+    cursor: default;
+}
+
+.teletrabajo-on-tour,
+.distancia-on-tour-total,
+.dias-on-tour-total {
+    color: var(--color-secundario);
+    font-size: 22px;
 }
 
 .botones-on-tour-partido-asistido .boton-no-on-tour-partido-asistido{

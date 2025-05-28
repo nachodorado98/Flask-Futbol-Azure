@@ -734,11 +734,11 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_sin_fecha(cliente, c
 		("Madrid", "España", 103, "Avion", "Madrid", "España", 103, "Pie"),
 		("Madrid", "España", 103, "Pie", "Madrid", "España", 103, "Tren"),
 		("Madrid", "España", 103, "Pie", "Tokyo", "Japón", 1, "Pie"),
-		("London", "Reino Unido", 34, "Coche", "Madrid", "España", 103, "Pie"),
+		("Londres", "Reino Unido", 34, "Coche", "Madrid", "España", 103, "Pie"),
 		("Verona", "Italia", 2329, "Cercanias", "Verona", "Italia", 2329, "Avion"),
 		("Merida", "España", 5809, "Metro", "Madrid", "España", 103, "Metro"),
-		("Merida", "México", 917, "Autobus", "Madrid", "España", 103, "Autobus Urbano"),
-		("Merida", "México", 917, "Avion", "Leganés", "España", 2947, "Avion"),
+		("Merida Mex", "México", 917, "Autobus", "Madrid", "España", 103, "Autobus Urbano"),
+		("Merida Mex", "México", 917, "Avion", "Leganés", "España", 2947, "Avion"),
 		("Getafe", "España", 3025, "Avion", "Leganés", "España", 2947, "Metro"),
 		("Getafe", "España", 3025, "Cercanias", "Leganés", "España", 2947, "Tren")
 	]
@@ -770,15 +770,15 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_transporte_inadecuad
 	[
 		("Madrid", "España", 103, "Pie", "Madrid", "España", 103, "Metro"),
 		("Madrid", "España", 103, "Coche", "Tokyo", "Japón", 1, "Avion"),
-		("London", "Reino Unido", 34, "Autobus", "Madrid", "España", 103, "Cercanias"),
+		("Londres", "Reino Unido", 34, "Autobus", "Madrid", "España", 103, "Cercanias"),
 		("Verona", "Italia", 2329, "Avion", "Verona", "Italia", 2329, "Avion"),
 		("Merida", "España", 5809, "Autobus", "Madrid", "España", 103, "Autobus Interurbano"),
-		("Merida", "México", 917, "Avion", "Madrid", "España", 103, "Autobus Urbano"),
-		("Merida", "México", 917, "Avion", "Merida", "España", 5809, "Tren"),
+		("Merida Mex", "México", 917, "Avion", "Madrid", "España", 103, "Autobus Urbano"),
+		("Merida Mex", "México", 917, "Avion", "Merida", "España", 5809, "Tren"),
 		("Pamplona", "España", 2720, "Autobus", "Sevilla", "España", 1095, "Tren"),
 		("Vitoria-Gasteiz", "España", 2362, "Coche", "Valencia", "España", 987, "Tren"),
 		("Valladolid", "España", 2081, "Autobus", "Valladolid", "España", 2081, "Tren"),
-		("Paris", "Francia", 35, "Avion", "Lisbon", "Portugal", 735, "Autobus")
+		("Paris", "Francia", 35, "Avion", "Lisboa", "Portugal", 735, "Autobus")
 	]
 )
 def test_pagina_insertar_partido_asistido_on_tour_trayectos(cliente, conexion_entorno_usuario, ciudad_ida, pais_ida, codigo_ciudad_ida,
@@ -940,18 +940,18 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_no_unicas(cl
 		(["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion", 3, 1),
 		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], [], [], [], "Valencia", "Autobus Urbano", "Zaragoza", "Tren", 3, 1),
 		(["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], [], [], [], "Sevilla", "Tren", "Vigo", "Avion", 3, 1),
-		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], [], [], [], "Malaga", "Metro", "A Coruna", "Avion", 4, 1),
+		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], [], [], [], "Malaga", "Metro", "A Coruña", "Avion", 4, 1),
 		(["Avion"], ["España"], ["Getafe"], [], [], [], "Barcelona", "Cercanias", "Barcelona", "Avion", 2, 1),
-		(["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], [], [], [], "Malaga", "Metro", "A Coruna", "Avion", 5, 1),
-		(["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marseille"], [], [], [], "Barcelona", "Avion", "Sevilla", "Tren", 3, 1),
+		(["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], [], [], [], "Malaga", "Metro", "A Coruña", "Avion", 5, 1),
+		(["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marsella"], [], [], [], "Barcelona", "Avion", "Sevilla", "Tren", 3, 1),
 		(["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], [], [], [], "Barcelona", "Avion", "Valencia", "Tren", 3, 1),
 		([], [], [], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Barcelona", "Autobus", "Barcelona", "Avion", 1, 3),
 		([], [], [], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus", "Zaragoza", "Avion", 1, 3),
 		([], [], [], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"], "Vigo", "Autobus", "Oviedo", "Autobus", 1, 3),
-		([], [], [], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus", 1, 4),
+		([], [], [], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["Londres", "Berlin", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus", 1, 4),
 		([], [], [], ["Metro"], ["España"], ["Getafe"], "Barcelona", "Autobus", "Barcelona", "Avion", 1, 2),
-		([], [], [], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["London", "Berlin", "Paris", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus", 1, 5),
-		([], [], [], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Brussels"], "Guadalajara", "Cercanias", "Barcelona", "Avion", 1, 5)
+		([], [], [], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["Londres", "Berlin", "Paris", "Palma"], "Malaga", "Autobus", "Barcelona", "Autobus", 1, 5),
+		([], [], [], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Bruselas"], "Guadalajara", "Cercanias", "Barcelona", "Avion", 1, 5)
 	]
 )
 def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ida_o_vuelta(cliente, conexion_entorno_usuario, transportes_ida, paises_ida, ciudades_ida,
@@ -1031,9 +1031,9 @@ def test_pagina_insertar_partido_asistido_on_tour_trayectos_paradas_ida_o_vuelta
 		(["Avion", "Tren"], ["España", "España"], ["Sevilla", "Leganés"], ["Coche", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], "Valencia", "Autobus Urbano", "Zaragoza", "Tren", 3, 3),
 		(["Autobus", "Coche"], ["España", "España"], ["Granada", "Elche"], ["Coche", "Tren"], ["España", "España"], ["Gijon", "Valladolid"], "Sevilla", "Tren", "Oviedo", "Autobus", 3, 3),
 		(["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], ["Metro"], ["España"], ["Getafe"], "Malaga", "Metro", "Barcelona", "Autobus", 4, 2),
-		(["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["London", "Berlin", "Palma"], "Barcelona", "Cercanias", "Barcelona", "Autobus", 2, 4),
-		(["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Brussels"], "Malaga", "Metro", "Barcelona", "Avion", 5, 5),
-		(["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marseille"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["London", "Berlin", "Paris", "Alicante"], "Barcelona", "Avion", "Barcelona", "Tren", 3, 5),
+		(["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["Londres", "Berlin", "Palma"], "Barcelona", "Cercanias", "Barcelona", "Autobus", 2, 4),
+		(["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Bruselas"], "Malaga", "Metro", "Barcelona", "Avion", 5, 5),
+		(["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marsella"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["Londres", "Berlin", "Paris", "Alicante"], "Barcelona", "Avion", "Barcelona", "Tren", 3, 5),
 		(["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], ["Coche"], ["España"], ["Alicante"], "Barcelona", "Avion", "Valencia", "Tren", 3, 2)
 	]
 )

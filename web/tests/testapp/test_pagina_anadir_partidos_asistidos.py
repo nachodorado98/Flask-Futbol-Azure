@@ -123,7 +123,7 @@ def test_pagina_anadir_partido_asistido_partidos_no_asistidos_existen_recientes(
 	[
 		(103, "Madrid", "España"),
 		(1, "Tokyo", "Japón"),
-		(13, "New York", "Estados Unidos"),
+		(13, "Nueva York", "Estados Unidos"),
 		(160, "Barcelona", "España"),
 		(2081, "Valladolid", "España")
 	]

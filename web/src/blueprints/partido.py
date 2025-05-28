@@ -6,7 +6,8 @@ from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_USUARIOS
 
-from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto, crearMapaTrayectosIdaVuelta
+from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto, crearMapaTrayectosIdaVuelta, obtenerTrayectosConDistancia
+from src.utilidades.utils import obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias
 
 
 bp_partido=Blueprint("partido", __name__)
@@ -133,9 +134,17 @@ def pagina_partido_asistido(partido_id:str):
 
 	partido_asistido_favorito=True if id_partido_asistido_favorito==partido_id else False
 
-	trayectos_ida=con.obtenerTrayectosPartidoAsistido(partido_id, current_user.id, "I")
+	trayectos_ida_base=con.obtenerTrayectosPartidoAsistido(partido_id, current_user.id, "I")
 
-	trayectos_vuelta=con.obtenerTrayectosPartidoAsistido(partido_id, current_user.id, "V")
+	trayectos_vuelta_base=con.obtenerTrayectosPartidoAsistido(partido_id, current_user.id, "V")
+
+	trayectos_ida=obtenerTrayectosConDistancia(trayectos_ida_base)
+
+	trayectos_vuelta=obtenerTrayectosConDistancia(trayectos_vuelta_base)
+
+	distancia_total_ida=obtenerDistanciaTotalTrayecto(trayectos_ida)
+
+	distancia_total_vuelta=obtenerDistanciaTotalTrayecto(trayectos_vuelta)
 
 	con.cerrarConexion()
 
@@ -153,7 +162,9 @@ def pagina_partido_asistido(partido_id:str):
 							nombre_mapa_vuelta=nombre_mapa_vuelta,
 							nombre_mapa_ida_vuelta=nombre_mapa_ida_vuelta,
 							trayectos_ida=trayectos_ida,
+							distancia_total_ida=distancia_total_ida,
 							trayectos_vuelta=trayectos_vuelta,
+							distancia_total_vuelta=distancia_total_vuelta,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")
@@ -286,15 +297,6 @@ def pagina_eliminar_partido_asistido(partido_id:str):
 
 	return redirect("/partidos/asistidos")
 
-def es_numero(value):
 
-    try:
-
-        float(value)
-        return True
-
-    except (ValueError, TypeError):
-    	
-        return False
-
-bp_partido.add_app_template_filter(es_numero, name='es_numero')
+bp_partido.add_app_template_filter(es_numero, name="es_numero")
+bp_partido.add_app_template_filter(obtenerNumeroDias, name="obtenerNumeroDias")

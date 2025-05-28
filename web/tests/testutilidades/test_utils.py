@@ -2,6 +2,7 @@ import pytest
 import os
 import geopandas as gpd
 import pandas as pd
+from datetime import datetime, timedelta
 
 from src.utilidades.utils import usuario_correcto, nombre_correcto, apellido_correcto, contrasena_correcta
 from src.utilidades.utils import fecha_correcta, equipo_correcto, correo_correcto, datos_correctos
@@ -18,6 +19,7 @@ from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_c
 from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, obtenerParadas
 from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
 from src.utilidades.utils import obtenerDataframeDireccionParadas, validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
+from src.utilidades.utils import obtenerTrayectosConDistancia, obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2110,11 +2112,11 @@ def test_obtener_combinaciones_paradas(paradas, numero):
 	[
 		("Madrid", "España", 103, "Autobus", "Madrid", "España", 103, "I"),
 		("Madrid", "España", 103, "Pie", "Tokyo", "Japón", 1, "V"),
-		("London", "Reino Unido", 34, "Metro", "Madrid", "España", 103, "V"),
+		("Londres", "Reino Unido", 34, "Metro", "Madrid", "España", 103, "V"),
 		("Verona", "Italia", 2329, "Tren", "Verona", "Italia", 2329, "I"),
 		("Merida", "España", 5809, "Autobus Urbano", "Madrid", "España", 103, "V"),
-		("Merida", "México", 917, "Coche", "Madrid", "España", 103, "I"),
-		("Merida", "México", 917, "Autobus Interurbano", "Merida", "España", 5809, "I")
+		("Merida Mex", "México", 917, "Coche", "Madrid", "España", 103, "I"),
+		("Merida Mex", "México", 917, "Autobus Interurbano", "Merida", "España", 5809, "I")
 	]
 )
 def test_obtener_dataframe_trayecto_transporte_inadecuado(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
@@ -2132,11 +2134,11 @@ def test_obtener_dataframe_trayecto_transporte_inadecuado(ciudad_origen, pais_or
 	[
 		("Madrid", "España", 103, "Pie", "Madrid", "España", 103, "I"),
 		("Madrid", "España", 103, "Avion", "Tokyo", "Japón", 1, "V"),
-		("London", "Reino Unido", 34, "Avion", "Madrid", "España", 103, "V"),
+		("Londres", "Reino Unido", 34, "Avion", "Madrid", "España", 103, "V"),
 		("Verona", "Italia", 2329, "Metro", "Verona", "Italia", 2329, "I"),
 		("Merida", "España", 5809, "Autobus", "Madrid", "España", 103, "V"),
-		("Merida", "México", 917, "Avion", "Madrid", "España", 103, "I"),
-		("Merida", "México", 917, "Avion", "Merida", "España", 5809, "I")
+		("Merida Mex", "México", 917, "Avion", "Madrid", "España", 103, "I"),
+		("Merida Mex", "México", 917, "Avion", "Merida", "España", 5809, "I")
 	]
 )
 def test_obtener_dataframe_trayecto(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
@@ -2160,10 +2162,10 @@ def test_obtener_dataframe_con_paradas_sin_paradas():
 
 @pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte_destino", "paradas"],
 	[
-		("Madrid", "España", "Barcelona", "España", "Tren", [("Bus", "España", "A Coruna"), ("Avion", "Francia", "Paris")]),
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Bus", "España", "A Coruña"), ("Avion", "Francia", "Paris")]),
 		("Madrid", "España", "Tokyo", "Japón", "Avion", [("Avion", "Francia", "Paris")]),
-		("London", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")]),
-		("Verona", "Italia", "Naples", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")]),
+		("Londres", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")]),
+		("Verona", "Italia", "Napoles", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Roma")]),
 		("Merida", "España", "Madrid", "España", "Autobus", [("Tren", "España", "Toledo")])
 	]
 )
@@ -2191,11 +2193,11 @@ def test_obtener_dataframe_direccion_tipo_error(tipo):
 	[
 		("Madrid", "España", 103, "Autobus", "Madrid", "España", 103, "I"),
 		("Madrid", "España", 103, "Pie", "Tokyo", "Japón", 1, "V"),
-		("London", "Reino Unido", 34, "Metro", "Madrid", "España", 103, "V"),
+		("Londres", "Reino Unido", 34, "Metro", "Madrid", "España", 103, "V"),
 		("Verona", "Italia", 2329, "Tren", "Verona", "Italia", 2329, "I"),
 		("Merida", "España", 5809, "Autobus Urbano", "Madrid", "España", 103, "V"),
-		("Merida", "México", 917, "Coche", "Madrid", "España", 103, "I"),
-		("Merida", "México", 917, "Autobus Interurbano", "Merida", "España", 5809, "I")
+		("Merida Mex", "México", 917, "Coche", "Madrid", "España", 103, "I"),
+		("Merida Mex", "México", 917, "Autobus Interurbano", "Merida", "España", 5809, "I")
 	]
 )
 def test_obtener_dataframe_direccion_transporte_inadecuado(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
@@ -2212,11 +2214,11 @@ def test_obtener_dataframe_direccion_transporte_inadecuado(ciudad_origen, pais_o
 	[
 		("Madrid", "España", 103, "Pie", "Madrid", "España", 103, "I"),
 		("Madrid", "España", 103, "Avion", "Tokyo", "Japón", 1, "V"),
-		("London", "Reino Unido", 34, "Avion", "Madrid", "España", 103, "V"),
+		("Londres", "Reino Unido", 34, "Avion", "Madrid", "España", 103, "V"),
 		("Verona", "Italia", 2329, "Metro", "Verona", "Italia", 2329, "I"),
 		("Merida", "España", 5809, "Autobus", "Madrid", "España", 103, "V"),
-		("Merida", "México", 917, "Avion", "Madrid", "España", 103, "I"),
-		("Merida", "México", 917, "Avion", "Merida", "España", 5809, "I")
+		("Merida Mex", "México", 917, "Avion", "Madrid", "España", 103, "I"),
+		("Merida Mex", "México", 917, "Avion", "Merida", "España", 5809, "I")
 	]
 )
 def test_obtener_dataframe_direccion(ciudad_origen, pais_origen, codigo_ciudad_origen, transporte, ciudad_destino, pais_destino, codigo_ciudad_destino, tipo):
@@ -2246,10 +2248,10 @@ def test_obtener_dataframe_direccion_paradas_tipo_error(tipo):
 
 @pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte", "paradas", "tipo"],
 	[
-		("Madrid", "España", "Barcelona", "España", "Tren", [("Autobus", "España", "A Coruna"), ("Pie", "Francia", "Paris")], "I"),
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Autobus", "España", "A Coruña"), ("Pie", "Francia", "Paris")], "I"),
 		("Madrid", "España", "Tokyo", "Japón", "Coche", [("Avion", "Francia", "Paris")], "V"),
-		("London", "Reino Unido", "Madrid", "España", "Cercanias", [("Avion", "Alemania", "Munich")], "V"),
-		("Verona", "Italia", "Naples", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")], "I"),
+		("Londres", "Reino Unido", "Madrid", "España", "Cercanias", [("Avion", "Alemania", "Munich")], "V"),
+		("Verona", "Italia", "Naples", "Italia", "Metro", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Roma")], "I"),
 		("Merida", "España", "Madrid", "España", "Autobus", [("Autobus Urbano", "España", "Toledo")], "I")
 	]
 )
@@ -2264,10 +2266,10 @@ def test_obtener_dataframe_direccion_paradas_transporte_inadecuado(ciudad_origen
 
 @pytest.mark.parametrize(["ciudad_origen", "pais_origen", "ciudad_destino", "pais_destino", "transporte", "paradas", "tipo"],
 	[
-		("Madrid", "España", "Barcelona", "España", "Tren", [("Autobus", "España", "A Coruna"), ("Avion", "Francia", "Paris")], "I"),
+		("Madrid", "España", "Barcelona", "España", "Tren", [("Autobus", "España", "A Coruña"), ("Avion", "Francia", "Paris")], "I"),
 		("Madrid", "España", "Tokyo", "Japón", "Avion", [("Avion", "Francia", "Paris")], "V"),
-		("London", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")], "V"),
-		("Verona", "Italia", "Naples", "Italia", "Avion", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Rome")], "I"),
+		("Londres", "Reino Unido", "Madrid", "España", "Avion", [("Avion", "Alemania", "Munich")], "V"),
+		("Verona", "Italia", "Naples", "Italia", "Avion", [("Tren", "Italia", "Milan"), ("Autobus", "Italia", "Turin"), ("Coche", "Italia", "Roma")], "I"),
 		("Merida", "España", "Madrid", "España", "Autobus", [("Tren", "España", "Toledo")], "I")
 	]
 )
@@ -2319,3 +2321,111 @@ def test_validar_dataframes_duplicados_con_duplicados(registros):
 def test_validar_dataframes_duplicados(registros):
 
 	assert validarDataFrameDuplicados(pd.DataFrame(registros, columns=["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino"]))
+
+def test_obtener_trayectos_con_distancia_sin_trayectos():
+
+	assert not obtenerTrayectosConDistancia([])
+
+@pytest.mark.parametrize(["coordenadas_inicio", "coordenadas_fin", "distancia"],
+	[
+		((40.4168, -3.7038), (48.8566, 2.3522), 1052.97),
+		((43.3623, -8.4115), (40.4168, -3.7038), 509.45),
+		((0, 0), (0, 180), 20003.93),
+		((41.3874, 2.1686), (37.3891, -5.9845), 830.34),
+		((52.5200, 13.4050), (40.7128, -74.0060), 6402.43)
+	]
+)
+def test_obtener_trayectos_con_distancia(coordenadas_inicio, coordenadas_fin, distancia):
+
+	trayectos=[('id_20190622_nacho_V_1', 'V', 'Avion', 'Metropolitano', 'España', coordenadas_inicio[0], coordenadas_inicio[1],
+				'London', 'Reino Unido', coordenadas_fin[0], coordenadas_fin[1], '23', 'avion', 'estadio_mapa', 'destino')]
+
+	trayecto_distancia=obtenerTrayectosConDistancia(trayectos)
+
+	assert trayecto_distancia[0][-1]==distancia
+
+def test_obtener_distancia_total_trayecto_sin_trayectos():
+
+	assert not obtenerDistanciaTotalTrayecto([])
+
+def test_obtener_distancia_total_trayecto():
+
+	coordenadas = (((40.4168, -3.7038), (48.8566, 2.3522)), ((43.3623, -8.4115), (40.4168, -3.7038)), ((0, 0), (0, 180)),
+					((41.3874, 2.1686), (37.3891, -5.9845)), ((52.5200, 13.4050), (40.7128, -74.0060)))
+
+	trayectos = [('id_20190622_nacho_V_1', 'V', 'Avion', 'Metropolitano', 'España', inicio[0], inicio[1], 'Londres', 'Reino Unido',
+					fin[0], fin[1], '23', 'avion', 'estadio_mapa', 'destino') for inicio, fin in coordenadas]
+
+	trayectos_distancia=obtenerTrayectosConDistancia(trayectos)
+
+	distancia_total_trayectos=sum([trayecto[-1] for trayecto in trayectos_distancia])
+
+	distancia_total=obtenerDistanciaTotalTrayecto(trayectos_distancia)
+
+	assert distancia_total==int(distancia_total_trayectos)
+
+@pytest.mark.parametrize(["numero"],
+	[("hola",),("numero",),("uno",),("doce",),(None,),("3,14",)]
+)
+def test_es_numero_no_es(numero):
+
+	assert not es_numero(numero)
+
+@pytest.mark.parametrize(["numero"],
+	[("22",),("3.14",),(13.22,),("-2.5e-4",),("1e3",)]
+)
+def test_es_numero_(numero):
+
+	assert es_numero(numero)
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin"],
+	[
+		("1800-01-01", "01-01-1900"),
+		("01-01-2000", "2100-01-01"),
+		("01-01-2000", "2000/01/01"),
+		("01/01/2000", "01-01-2001"),
+		("2000-13-01", "01-01-2001"),
+		("01-01-2000", "32-01-2000"),
+		("31-02-2000", "01-03-2000"),
+		("abcd", "efgh"),
+		("", ""),
+		(None, None),
+		("01-01-2000", None),
+		("01-01-2000", ""),
+		(12345, 67890),
+		(True, False)
+	]
+)
+def test_obtener_numero_dias_error(fecha_inicio, fecha_fin):
+
+	with pytest.raises(Exception):
+
+		obtenerNumeroDias(fecha_inicio, fecha_fin)
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin"],
+	[
+		("02-01-2000", "01-01-2000"),
+		("01-01-2000", "31-12-1999"),
+		("06-08-1999", "16-02-1998"),
+		(datetime.today().strftime("%d-%m-%Y"), (datetime.today()-timedelta(days=1)).strftime("%d-%m-%Y"))
+	]
+)
+def test_obtener_numero_dias_inicio_superior(fecha_inicio, fecha_fin):
+
+	assert obtenerNumeroDias(fecha_inicio, fecha_fin)==0
+
+@pytest.mark.parametrize(["fecha_inicio", "fecha_fin", "dias"],
+    [
+        ("01-01-2020", "01-01-2020", 1),
+        ("01-01-2020", "02-01-2020", 2),
+        ("31-12-2019", "01-01-2020", 2),
+        ("01-01-2020", "31-12-2020", 366),
+        ("28-02-2021", "01-03-2021", 2),
+        ("01-01-2022", "31-12-2022", 365),
+        ("01-01-2000", "01-01-2100", 36526),
+        ((datetime.today()-timedelta(days=1)).strftime("%d-%m-%Y"), datetime.today().strftime("%d-%m-%Y"), 2)
+    ]
+)
+def test_obtener_numero_dias(fecha_inicio, fecha_fin, dias):
+
+	assert obtenerNumeroDias(fecha_inicio, fecha_fin)==dias
