@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, current_app
 from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
@@ -12,7 +12,9 @@ bp_jugador=Blueprint("jugador", __name__)
 @login_required
 def pagina_jugador(jugador_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_jugador(jugador_id):
 
@@ -48,7 +50,9 @@ def pagina_jugador(jugador_id:str):
 @login_required
 def pagina_jugadores():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 

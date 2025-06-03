@@ -47,7 +47,7 @@ def test_limpiar_data_equipo_entrenador(equipo):
 	assert len(data_limpia.columns)==4
 	assert len(data_limpia)==1
 
-def test_cargar_data_equipo_entrenador_error_no_existe(conexion):
+def test_cargar_data_equipo_entrenador_error_no_existe(conexion, entorno):
 
 	data=extraerDataEquipoEntrenador("atletico-madrid")
 
@@ -55,9 +55,9 @@ def test_cargar_data_equipo_entrenador_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEquipoEntrenador(data_limpia, "atletico-madrid")
+		cargarDataEquipoEntrenador(data_limpia, "atletico-madrid", entorno)
 
-def test_cargar_data_equipo_entrenador_datos_error(conexion):
+def test_cargar_data_equipo_entrenador_datos_error(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -69,13 +69,13 @@ def test_cargar_data_equipo_entrenador_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEquipoEntrenador(data_limpia, "atletico-madrid")
+		cargarDataEquipoEntrenador(data_limpia, "atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_cargar_data_equipo_entrenador_datos_correctos(conexion, nombre_equipo):
+def test_cargar_data_equipo_entrenador_datos_correctos(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
@@ -83,7 +83,7 @@ def test_cargar_data_equipo_entrenador_datos_correctos(conexion, nombre_equipo):
 
 	data_limpia=limpiarDataEquipoEntrenador(data)
 
-	cargarDataEquipoEntrenador(data_limpia, nombre_equipo)
+	cargarDataEquipoEntrenador(data_limpia, nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 

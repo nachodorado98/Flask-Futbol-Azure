@@ -231,9 +231,9 @@ def obtenerBoolCadena(cadena_bool:str)->bool:
 
 		raise Exception("No es bool")
 
-def subirTablaDataLake(tabla:str, contenedor:str, carpeta:str)->None:
+def subirTablaDataLake(tabla:str, contenedor:str, carpeta:str, entorno:str)->None:
 
-	conexion=Conexion()
+	conexion=Conexion(entorno)
 
 	datalake=ConexionDataLake()
 
@@ -283,9 +283,9 @@ def obtenerArchivosNoExistenDataLake(nombre_contenedor:str, nombre_carpeta:str, 
 
 	return list(filter(lambda archivo: f"{archivo}.{extension}" not in archivos_carpeta_contenedor_limpios, archivos_comprobar))
 
-def obtenerCiudadMasCercana(latitud:float, longitud:str, distancia_minima:int=2, umbral_maximo:int=5, umbral_minimo:int=2)->tuple:
+def obtenerCiudadMasCercana(latitud:float, longitud:str, entorno:str, distancia_minima:int=2, umbral_maximo:int=5, umbral_minimo:int=2)->tuple:
 
-	conexion=Conexion()
+	conexion=Conexion(entorno)
 
 	ciudades=conexion.obtenerCiudadesMasCercanas(latitud, longitud)
 
@@ -391,13 +391,13 @@ def filtrarCiudadesPalabrasIrrelevantes(ciudades:List[str])->List[Optional[str]]
 
 		return []
 
-def filtrarCiudadDireccion(direccion:str)->List[Optional[str]]:
+def filtrarCiudadDireccion(direccion:str, entorno:str)->List[Optional[str]]:
 
 	posibles_ciudades=obtenerPosiblesCiudadesCaracteres(direccion)
 
 	posibles_ciudades_filtradas=filtrarCiudadesPalabrasIrrelevantes(posibles_ciudades)
 
-	conexion=Conexion()
+	conexion=Conexion(entorno)
 
 	ciudades_existen=list(filter(lambda ciudad: conexion.existe_ciudad(ciudad), posibles_ciudades_filtradas))
 
@@ -405,11 +405,11 @@ def filtrarCiudadDireccion(direccion:str)->List[Optional[str]]:
 
 	return ciudades_existen
 
-def obtenerCiudadMasAcertada(latitud:float, longitud:str, direccion:str)->str:
+def obtenerCiudadMasAcertada(latitud:float, longitud:str, direccion:str, entorno:str)->str:
 
-	ciudad_coordenadas, pais_corrdenadas=obtenerCiudadMasCercana(latitud, longitud)
+	ciudad_coordenadas, pais_corrdenadas=obtenerCiudadMasCercana(latitud, longitud, entorno)
 
-	ciudades_existen=filtrarCiudadDireccion(direccion)
+	ciudades_existen=filtrarCiudadDireccion(direccion, entorno)
 
 	if not ciudades_existen:
 

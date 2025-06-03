@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, render_template
+from flask import Blueprint, request, redirect, render_template, current_app
 from flask_login import login_user, login_required, current_user, logout_user
 from typing import Optional
 
@@ -18,7 +18,9 @@ bp_login=Blueprint("login", __name__)
 @login_manager.user_loader
 def cargarUsuario(usuario:str)->Optional[Usuario]:
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]	
+
+	con=Conexion(entorno)
 
 	if not con.existe_usuario(usuario):
 
@@ -36,10 +38,12 @@ def cargarUsuario(usuario:str)->Optional[Usuario]:
 @bp_login.route("/login", methods=["GET", "POST"])
 def login():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	usuario=request.form.get("usuario")
 	contrasena=request.form.get("contrasena")
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_usuario(usuario):
 

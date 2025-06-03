@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, current_app
 from flask_login import login_required, current_user
 
 from src.utilidades.utils import limpiarResultadosPartidos
@@ -15,7 +15,9 @@ bp_equipo=Blueprint("equipo", __name__)
 @login_required
 def pagina_equipo(equipo_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_equipo(equipo_id):
 
@@ -60,7 +62,9 @@ def pagina_equipo(equipo_id:str):
 @login_required
 def pagina_equipos():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -89,7 +93,9 @@ def pagina_equipos():
 @login_required
 def pagina_mis_equipos():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -120,7 +126,9 @@ def pagina_mis_equipos():
 @login_required
 def pagina_mis_equipos_equipo_partidos_equipo(equipo_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 

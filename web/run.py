@@ -1,7 +1,7 @@
 from src import crear_app
 from confmain import config
 
-configuracion=config["development"]
+configuracion=config["production"]
 
 app=crear_app(configuracion)
 

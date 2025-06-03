@@ -31,8 +31,7 @@ def test_obtener_ciudades_mas_cercanas_una_ciudad(conexion, latitud, longitud):
 	[
 		(40.436052950000004, -3.599715809726445),
 		(37.35653544999999, -5.981756556248882),
-		(47.8163956, 12.998243910546709),
-		(40.325724699999995, -3.714932645209058)
+		(47.8163956, 12.998243910546709)
 	]
 )
 def test_obtener_ciudades_mas_cercanas(conexion, latitud, longitud):

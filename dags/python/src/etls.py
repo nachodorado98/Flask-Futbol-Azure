@@ -17,7 +17,7 @@ from .etl_entrenador import extraerDataEntrenador, limpiarDataEntrenador, cargar
 from .etl_jugador_equipos import extraerDataJugadorEquipos, limpiarDataJugadorEquipos, cargarDataJugadorEquipos
 from .etl_jugador_seleccion import extraerDataJugadorSeleccion, limpiarDataJugadorSeleccion, cargarDataJugadorSeleccion
 
-def ETL_Equipos_Liga(liga:str)->None:
+def ETL_Equipos_Liga(liga:str, entorno:str)->None:
 
 	print(f"ETL Equipos Liga {liga}")
 
@@ -25,9 +25,9 @@ def ETL_Equipos_Liga(liga:str)->None:
 
 	data_limpia=limpiarDataEquiposLiga(data)
 
-	cargarDataEquiposLiga(data_limpia)
+	cargarDataEquiposLiga(data_limpia, entorno)
 
-def ETL_Detalle_Equipo(equipo_id:str)->None:
+def ETL_Detalle_Equipo(equipo_id:str, entorno:str)->None:
 
 	print(f"ETL Equipo {equipo_id}")
 
@@ -35,9 +35,9 @@ def ETL_Detalle_Equipo(equipo_id:str)->None:
 
 	data_limpia=limpiarDataEquipoDetalle(data)
 
-	cargarDataEquipoDetalle(data_limpia, equipo_id)
+	cargarDataEquipoDetalle(data_limpia, equipo_id, entorno)
 
-def ETL_Escudo_Equipo(equipo_id:str)->None:
+def ETL_Escudo_Equipo(equipo_id:str, entorno:str)->None:
 
 	print(f"ETL Escudo Equipo {equipo_id}")
 
@@ -45,9 +45,9 @@ def ETL_Escudo_Equipo(equipo_id:str)->None:
 
 	data_limpia=limpiarDataEquipoEscudo(data)
 
-	cargarDataEquipoEscudo(data_limpia, equipo_id)
+	cargarDataEquipoEscudo(data_limpia, equipo_id, entorno)
 
-def ETL_Entrenador_Equipo(equipo_id:str)->None:
+def ETL_Entrenador_Equipo(equipo_id:str, entorno:str)->None:
 
 	print(f"ETL Entrenador Equipo {equipo_id}")
 
@@ -55,9 +55,9 @@ def ETL_Entrenador_Equipo(equipo_id:str)->None:
 
 	data_limpia=limpiarDataEquipoEntrenador(data)
 
-	cargarDataEquipoEntrenador(data_limpia, equipo_id)
+	cargarDataEquipoEntrenador(data_limpia, equipo_id, entorno)
 
-def ETL_Estadio_Equipo(equipo_id:str)->None:
+def ETL_Estadio_Equipo(equipo_id:str, entorno:str)->None:
 
 	print(f"ETL Estadio Equipo {equipo_id}")
 
@@ -65,9 +65,9 @@ def ETL_Estadio_Equipo(equipo_id:str)->None:
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, equipo_id)
+	cargarDataEquipoEstadio(data_limpia, equipo_id, entorno)
 
-def ETL_Partidos_Equipo(equipo_id:int, temporada:int)->None:
+def ETL_Partidos_Equipo(equipo_id:int, temporada:int, entorno:str)->None:
 
 	print(f"ETL Partidos Equipo {equipo_id} Temporada {temporada}")
 
@@ -75,9 +75,9 @@ def ETL_Partidos_Equipo(equipo_id:int, temporada:int)->None:
 
 	data_limpia=limpiarDataPartidosEquipo(data)
 
-	cargarDataPartidosEquipo(data_limpia)
+	cargarDataPartidosEquipo(data_limpia, entorno)
 
-def ETL_Partido_Estadio(equipo_local:str, equipo_visitante:str, partido_id:str)->None:
+def ETL_Partido_Estadio(equipo_local:str, equipo_visitante:str, partido_id:str, entorno:str)->None:
 
 	print(f"ETL Partido Estadio {equipo_local} vs {equipo_visitante} - {partido_id}")
 
@@ -85,9 +85,9 @@ def ETL_Partido_Estadio(equipo_local:str, equipo_visitante:str, partido_id:str)-
 
 	data_limpia=limpiarDataPartidoEstadio(data)
 
-	cargarDataPartidoEstadio(data_limpia, partido_id)
+	cargarDataPartidoEstadio(data_limpia, partido_id, entorno)
 
-def ETL_Competicion(competicion_id:str)->None:
+def ETL_Competicion(competicion_id:str, entorno:str)->None:
 
 	print(f"ETL Competicion {competicion_id}")
 
@@ -95,9 +95,9 @@ def ETL_Competicion(competicion_id:str)->None:
 
 	data_limpia=limpiarDataCompeticion(data)
 
-	cargarDataCompeticion(data_limpia, competicion_id)
+	cargarDataCompeticion(data_limpia, competicion_id, entorno)
 
-def ETL_Campeones_Competicion(competicion_id:str)->None:
+def ETL_Campeones_Competicion(competicion_id:str, entorno:str)->None:
 
 	print(f"ETL Campeones Competicion {competicion_id}")
 
@@ -105,9 +105,9 @@ def ETL_Campeones_Competicion(competicion_id:str)->None:
 
 	data_limpia=limpiarDataCampeonesCompeticion(data)
 
-	cargarDataCampeonesCompeticion(data_limpia, competicion_id)
+	cargarDataCampeonesCompeticion(data_limpia, competicion_id, entorno)
 
-def ETL_Partido_Competicion(equipo_local:str, equipo_visitante:str, partido_id:str)->None:
+def ETL_Partido_Competicion(equipo_local:str, equipo_visitante:str, partido_id:str, entorno:str)->None:
 
 	print(f"ETL Partido Competicion {equipo_local} vs {equipo_visitante} - {partido_id}")
 
@@ -115,9 +115,9 @@ def ETL_Partido_Competicion(equipo_local:str, equipo_visitante:str, partido_id:s
 
 	data_limpia=limpiarDataPartidoCompeticion(data)
 
-	cargarDataPartidoCompeticion(data_limpia, partido_id)
+	cargarDataPartidoCompeticion(data_limpia, partido_id, entorno)
 
-def ETL_Partido_Goleadores(equipo_local:str, equipo_visitante:str, partido_id:str)->None:
+def ETL_Partido_Goleadores(equipo_local:str, equipo_visitante:str, partido_id:str, entorno:str)->None:
 
 	print(f"ETL Partido Goleadores {equipo_local} vs {equipo_visitante} - {partido_id}")
 
@@ -125,9 +125,9 @@ def ETL_Partido_Goleadores(equipo_local:str, equipo_visitante:str, partido_id:st
 
 	data_limpia=limpiarDataPartidoGoleadores(data)
 
-	cargarDataPartidoGoleadores(data_limpia, partido_id)
+	cargarDataPartidoGoleadores(data_limpia, partido_id, entorno)
 
-def ETL_Jugadores_Equipo(equipo_id:int, temporada:int)->None:
+def ETL_Jugadores_Equipo(equipo_id:int, temporada:int, entorno:str)->None:
 
 	print(f"ETL Jugadores Equipo {equipo_id} Temporada {temporada}")
 
@@ -135,9 +135,9 @@ def ETL_Jugadores_Equipo(equipo_id:int, temporada:int)->None:
 
 	data_limpia=limpiarDataJugadoresEquipo(data)
 
-	cargarDataJugadoresEquipo(data_limpia)
+	cargarDataJugadoresEquipo(data_limpia, entorno)
 
-def ETL_Jugador(jugador_id:str)->None:
+def ETL_Jugador(jugador_id:str, entorno:str)->None:
 
 	print(f"ETL Jugador {jugador_id}")
 
@@ -145,9 +145,9 @@ def ETL_Jugador(jugador_id:str)->None:
 
 	data_limpia=limpiarDataJugador(data)
 
-	cargarDataJugador(data_limpia, jugador_id)
+	cargarDataJugador(data_limpia, jugador_id, entorno)
 
-def ETL_Jugador_Equipos(jugador_id:str)->None:
+def ETL_Jugador_Equipos(jugador_id:str, entorno:str)->None:
 
 	print(f"ETL Jugador Equipos {jugador_id}")
 
@@ -155,9 +155,9 @@ def ETL_Jugador_Equipos(jugador_id:str)->None:
 
 	data_limpia=limpiarDataJugadorEquipos(data)
 
-	cargarDataJugadorEquipos(data_limpia, jugador_id)
+	cargarDataJugadorEquipos(data_limpia, jugador_id, entorno)
 
-def ETL_Jugador_Seleccion(jugador_id:str)->None:
+def ETL_Jugador_Seleccion(jugador_id:str, entorno:str)->None:
 
 	print(f"ETL Jugador Seleccion {jugador_id}")
 
@@ -165,9 +165,9 @@ def ETL_Jugador_Seleccion(jugador_id:str)->None:
 
 	data_limpia=limpiarDataJugadorSeleccion(data)
 
-	cargarDataJugadorSeleccion(data_limpia, jugador_id)
+	cargarDataJugadorSeleccion(data_limpia, jugador_id, entorno)
 
-def ETL_Estadio(estadio_id:str)->None:
+def ETL_Estadio(estadio_id:str, entorno:str)->None:
 
 	print(f"ETL Estadio {estadio_id}")
 
@@ -175,9 +175,9 @@ def ETL_Estadio(estadio_id:str)->None:
 
 	data_limpia=limpiarDataEstadio(data)
 
-	cargarDataEstadio(data_limpia, estadio_id)
+	cargarDataEstadio(data_limpia, estadio_id, entorno)
 
-def ETL_Proximos_Partidos_Equipo(equipo_id:int, temporada:int)->None:
+def ETL_Proximos_Partidos_Equipo(equipo_id:int, temporada:int, entorno:str)->None:
 
 	print(f"ETL Proximos Partidos Equipo {equipo_id} Temporada {temporada}")
 
@@ -185,9 +185,9 @@ def ETL_Proximos_Partidos_Equipo(equipo_id:int, temporada:int)->None:
 
 	data_limpia=limpiarDataProximosPartidosEquipo(data)
 
-	cargarDataProximosPartidosEquipo(data_limpia)
+	cargarDataProximosPartidosEquipo(data_limpia, entorno)
 
-def ETL_Entrenador(entrenador_id:str)->None:
+def ETL_Entrenador(entrenador_id:str, entorno:str)->None:
 
 	print(f"ETL Entrenador {entrenador_id}")
 
@@ -195,4 +195,4 @@ def ETL_Entrenador(entrenador_id:str)->None:
 
 	data_limpia=limpiarDataEntrenador(data)
 
-	cargarDataEntrenador(data_limpia, entrenador_id)
+	cargarDataEntrenador(data_limpia, entrenador_id, entorno)

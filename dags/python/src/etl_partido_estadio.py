@@ -44,11 +44,11 @@ def limpiarDataPartidoEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataPartidoEstadio(tabla:pd.DataFrame, partido_id:str)->None:
+def cargarDataPartidoEstadio(tabla:pd.DataFrame, partido_id:str, entorno:str)->None:
 
 	datos_estadio=tabla.values.tolist()[0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 

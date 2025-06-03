@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, current_app
 from flask_login import login_required, current_user
 
 from datetime import datetime
@@ -18,12 +18,14 @@ bp_partidos=Blueprint("partidos", __name__)
 @login_required
 def pagina_partidos():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	local=request.args.get("local", default=0, type=int)
 	temporada=request.args.get("temporada", default=None, type=int)
 	competicion=request.args.get("competicion", default=None, type=str)
 	resultados=request.args.get("resultados", default=None, type=str)
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -175,9 +177,11 @@ def pagina_partidos():
 @login_required
 def pagina_partidos_calendario(ano_mes:str):
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	proximos_partidos=True if request.args.get("proximos_partidos", default="false").lower() in ["true", "1", "yes"] else False
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -246,9 +250,11 @@ def pagina_partidos_calendario(ano_mes:str):
 @login_required
 def pagina_partidos_asistidos():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	local=request.args.get("local", default=0, type=int)
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -331,7 +337,9 @@ def pagina_partidos_asistidos():
 @login_required
 def pagina_partidos_proximos():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 

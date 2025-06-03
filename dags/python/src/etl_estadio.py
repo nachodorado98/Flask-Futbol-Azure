@@ -23,11 +23,11 @@ def limpiarDataEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataEstadio(tabla:pd.DataFrame, estadio_id:str)->None:
+def cargarDataEstadio(tabla:pd.DataFrame, estadio_id:str, entorno:str)->None:
 
 	datos_estadio=tabla.values.tolist()[0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_estadio(estadio_id):
 

@@ -30,9 +30,14 @@ def password_hash():
 	return "$2b$12$NZ.GhycT.kofGXpTgwyYuenY/BPbF1dpO7udruM.sKb09/46Gn7aK"
 
 @pytest.fixture()
-def conexion():
+def entorno():
 
-	con=Conexion()
+	return config["development"].ENVIROMENT
+
+@pytest.fixture()
+def conexion(entorno):
+
+	con=Conexion(entorno)
 
 	con.vaciarBBDD()
 
@@ -125,7 +130,7 @@ def pytest_sessionstart(session):
 
 def pytest_sessionfinish(session, exitstatus):
 
-	con=Conexion()
+	con=Conexion(config["development"].ENVIROMENT)
 
 	con.vaciarBBDD()
 

@@ -8,11 +8,17 @@ from .confconexion import *
 # Clase para la conexion a la BBDD
 class Conexion:
 
-	def __init__(self)->None:
+	def __init__(self, entorno:str)->None:
+
+		databases={"PRO":BBDD_PRO, "DEV":BBDD_DEV}
+
+		if entorno not in databases.keys():
+
+			raise Exception(f"Entorno incorrecto: {entorno}")
 
 		try:
 
-			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=BBDD)
+			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=databases[entorno])
 			self.c=self.bbdd.cursor(cursor_factory=RealDictCursor)
 
 		except psycopg2.OperationalError as e:
@@ -2767,10 +2773,11 @@ class Conexion:
 		                    ON e.estadio_id=ee.estadio_id
 		                    LEFT JOIN equipos eq
 		                    ON ee.equipo_id=eq.equipo_id
-		                    LEFT JOIN competiciones c
+		                    JOIN competiciones c
 		                    ON eq.codigo_competicion=c.competicion_id
 							WHERE e.capacidad IS NOT NULL
 							AND eq.competicion IS NOT NULL
+							AND eq.codigo_competicion IS NOT NULL
 							GROUP BY eq.competicion, eq.codigo_competicion, c.competicion_id, c.nombre, c.codigo_logo, c.codigo_pais
 							ORDER BY visitados DESC, total ASC
 							LIMIT %s""",
@@ -3017,7 +3024,11 @@ class Conexion:
 									CASE WHEN COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT),0)=MIN(COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT), 0)) OVER ()
 										THEN TRUE
 										ELSE FALSE
-									END AS es_minimo
+									END AS es_minimo,
+									CASE WHEN t.Tipo_Trayecto='I'
+										THEN 'Ida'
+										ELSE 'Vuelta'
+									END AS Tipo_Trayecto_Str
 							FROM trayecto_partido_asistido t
 							JOIN ciudades c1
 							ON t.CodCiudad_Origen=c1.CodCiudad
@@ -3033,7 +3044,7 @@ class Conexion:
 							AND t.Usuario=%s
 							AND t.Tipo_Trayecto=%s)
 
-		SELECT t.Trayecto_Id, t.Tipo_Trayecto, t.Transporte, t.num_trayecto, t.es_maximo, t.es_minimo,
+		SELECT t.Trayecto_Id, t.Tipo_Trayecto, t.Transporte, t.num_trayecto, t.es_maximo, t.es_minimo, t.Tipo_Trayecto_Str,
 			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
 					THEN t.Estadio_Nombre
 					ELSE t.Ciudad_Origen_Ciudad
@@ -3106,4 +3117,5 @@ class Conexion:
 											trayecto["imagen_origen"],
 											trayecto["imagen_destino"],
 											trayecto["imagen_tramo_origen"],
-											trayecto["imagen_tramo_destino"]), trayectos))
+											trayecto["imagen_tramo_destino"],
+											trayecto["tipo_trayecto_str"]), trayectos))

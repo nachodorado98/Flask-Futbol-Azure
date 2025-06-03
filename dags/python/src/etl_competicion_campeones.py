@@ -29,11 +29,11 @@ def limpiarDataCampeonesCompeticion(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla_filtrada[columnas]
 
-def cargarDataCampeonesCompeticion(tabla:pd.DataFrame, competicion_id:str)->None:
+def cargarDataCampeonesCompeticion(tabla:pd.DataFrame, competicion_id:str, entorno:str)->None:
 
 	datos_campeones=tabla.values.tolist()
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_competicion(competicion_id):
 

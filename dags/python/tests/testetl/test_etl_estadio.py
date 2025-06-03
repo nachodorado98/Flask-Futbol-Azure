@@ -58,7 +58,7 @@ def test_limpiar_data_estadio(estadio):
 	assert len(data_limpia.columns)==2
 	assert len(data_limpia)==1
 
-def test_cargar_data_estadio_error_no_existe(conexion):
+def test_cargar_data_estadio_error_no_existe(conexion, entorno):
 
 	data=extraerDataEstadio("riyadh-air-metropolitano-23")
 
@@ -66,9 +66,9 @@ def test_cargar_data_estadio_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEstadio(data_limpia, "riyadh-air-metropolitano-23")
+		cargarDataEstadio(data_limpia, "riyadh-air-metropolitano-23", entorno)
 
-def test_cargar_data_estadio_datos_error(conexion):
+def test_cargar_data_estadio_datos_error(conexion, entorno):
 
 	estadio=["riyadh-air-metropolitano-23", 1, "Metropolitano", "Metropo",
 				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
@@ -83,7 +83,7 @@ def test_cargar_data_estadio_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEstadio(data_limpia, "riyadh-air-metropolitano-23")
+		cargarDataEstadio(data_limpia, "riyadh-air-metropolitano-23", entorno)
 
 @pytest.mark.parametrize(["estadio_id"],
 	[
@@ -98,7 +98,7 @@ def test_cargar_data_estadio_datos_error(conexion):
 		("mestalla-22",)
 	]
 )
-def test_cargar_data_estadio_datos_correctos_con_equipo(conexion, estadio_id):
+def test_cargar_data_estadio_datos_correctos_con_equipo(conexion, entorno, estadio_id):
 
 	estadio=[estadio_id, 1, "Metropolitano", "Metropo", 40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
 
@@ -108,7 +108,7 @@ def test_cargar_data_estadio_datos_correctos_con_equipo(conexion, estadio_id):
 
 	data_limpia=limpiarDataEstadio(data)
 
-	cargarDataEstadio(data_limpia, estadio_id)
+	cargarDataEstadio(data_limpia, estadio_id, entorno)
 
 	conexion.c.execute(f"SELECT * FROM estadios WHERE Estadio_Id='{estadio_id}'")
 

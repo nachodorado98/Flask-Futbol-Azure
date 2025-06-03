@@ -40,7 +40,7 @@ def test_limpiar_data_entrenador(entrenador):
 	assert len(data_limpia.columns)==5
 	assert len(data_limpia)==1
 
-def test_cargar_data_entrenador_error_no_existe(conexion):
+def test_cargar_data_entrenador_error_no_existe(conexion, entorno):
 
 	data=extraerDataEntrenador("diego-simeone-13")
 
@@ -48,9 +48,9 @@ def test_cargar_data_entrenador_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEntrenador(data_limpia, "diego-simeone-13")
+		cargarDataEntrenador(data_limpia, "diego-simeone-13", entorno)
 
-def test_cargar_data_entrenador_datos_error(conexion):
+def test_cargar_data_entrenador_datos_error(conexion, entorno):
 
 	conexion.insertarEntrenador("diego-simeone-13")
 
@@ -62,12 +62,12 @@ def test_cargar_data_entrenador_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEntrenador(data_limpia, "diego-simeone-13")
+		cargarDataEntrenador(data_limpia, "diego-simeone-13", entorno)
 
 @pytest.mark.parametrize(["entrenador"],
 	[("diego-simeone-13",),("hansi-flick-8143",),("pep-guardiola-114",),("fernando-torres-47437",)]
 )
-def test_cargar_data_entrenador_datos_correctos_con_equipo(conexion, entrenador):
+def test_cargar_data_entrenador_datos_correctos_con_equipo(conexion, entorno, entrenador):
 
 	conexion.insertarEntrenador(entrenador)
 
@@ -75,7 +75,7 @@ def test_cargar_data_entrenador_datos_correctos_con_equipo(conexion, entrenador)
 
 	data_limpia=limpiarDataEntrenador(data)
 
-	cargarDataEntrenador(data_limpia, entrenador)
+	cargarDataEntrenador(data_limpia, entrenador, entorno)
 
 	conexion.c.execute(f"SELECT * FROM entrenadores WHERE Entrenador_Id='{entrenador}'")
 
@@ -94,7 +94,7 @@ def test_cargar_data_entrenador_datos_correctos_con_equipo(conexion, entrenador)
 @pytest.mark.parametrize(["entrenador"],
 	[("luis-aragones-1918",),("radomir-antic-2601",)]
 )
-def test_cargar_data_entrenador_datos_correctos_sin_equipo(conexion, entrenador):
+def test_cargar_data_entrenador_datos_correctos_sin_equipo(conexion, entorno, entrenador):
 
 	conexion.insertarEntrenador(entrenador)
 
@@ -102,7 +102,7 @@ def test_cargar_data_entrenador_datos_correctos_sin_equipo(conexion, entrenador)
 
 	data_limpia=limpiarDataEntrenador(data)
 
-	cargarDataEntrenador(data_limpia, entrenador)
+	cargarDataEntrenador(data_limpia, entrenador, entorno)
 
 	conexion.c.execute(f"SELECT * FROM entrenadores WHERE Entrenador_Id='{entrenador}'")
 

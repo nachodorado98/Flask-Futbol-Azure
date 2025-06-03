@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, current_app
 from flask_login import login_required, current_user
 
 from src.utilidades.utils import limpiarResultadosPartidos
@@ -14,7 +14,9 @@ bp_competicion=Blueprint("competicion", __name__)
 @login_required
 def pagina_competicion(competicion_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_competicion(competicion_id):
 
@@ -52,7 +54,9 @@ def pagina_competicion(competicion_id:str):
 @login_required
 def pagina_competiciones():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -80,7 +84,9 @@ def pagina_competiciones():
 @login_required
 def pagina_mis_competiciones():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -111,7 +117,9 @@ def pagina_mis_competiciones():
 @login_required
 def pagina_mis_competiciones_competicion_partidos_competicion(competicion_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 

@@ -1,6 +1,7 @@
 import time
 
 from utils import crearArchivoLog
+from config import ENTORNO
 from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
 
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
@@ -17,7 +18,7 @@ from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio, obten
 
 def Pipeline_Equipos_Ligas()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	ligas=con.obtenerLigas()
 
@@ -25,7 +26,7 @@ def Pipeline_Equipos_Ligas()->None:
 
 		try:
 			
-			ETL_Equipos_Liga(liga)
+			ETL_Equipos_Liga(liga, ENTORNO)
 
 		except Exception as e:
 
@@ -41,7 +42,7 @@ def Pipeline(funcion):
 
 	def wrapper():
 
-		con=Conexion()
+		con=Conexion(ENTORNO)
 
 		equipos=con.obtenerEquipos()
 
@@ -67,19 +68,19 @@ def Pipeline(funcion):
 
 @Pipeline
 def Pipeline_Detalle_Equipos(equipo):
-	ETL_Detalle_Equipo(equipo)
+	ETL_Detalle_Equipo(equipo, ENTORNO)
 
 @Pipeline
 def Pipeline_Escudo_Equipos(equipo):
-	ETL_Escudo_Equipo(equipo)
+	ETL_Escudo_Equipo(equipo, ENTORNO)
 
 @Pipeline
 def Pipeline_Entrenador_Equipos(equipo):
-	ETL_Entrenador_Equipo(equipo)
+	ETL_Entrenador_Equipo(equipo, ENTORNO)
 
 @Pipeline
 def Pipeline_Estadio_Equipos(equipo):
-	ETL_Estadio_Equipo(equipo)
+	ETL_Estadio_Equipo(equipo, ENTORNO)
 
 def ETL_Partidos_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQUIPO_ID)->None:
 
@@ -89,7 +90,7 @@ def ETL_Partidos_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQ
 
 		try:
 			
-			ETL_Partidos_Equipo(equipo, temporada)
+			ETL_Partidos_Equipo(equipo, temporada, ENTORNO)
 
 		except Exception as e:
 
@@ -101,7 +102,7 @@ def ETL_Partidos_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQ
 
 def Pipeline_Partidos_Equipo()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	if con.tabla_vacia("partidos"):
 
@@ -123,7 +124,7 @@ def Pipeline_Partidos_Equipo()->None:
 
 def Pipeline_Partidos_Estadio()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	partidos=con.obtenerPartidosSinEstadio()
 
@@ -131,7 +132,7 @@ def Pipeline_Partidos_Estadio()->None:
 
 		try:
 			
-			ETL_Partido_Estadio(equipo_local, equipo_visitante, partido_id)
+			ETL_Partido_Estadio(equipo_local, equipo_visitante, partido_id, ENTORNO)
 
 		except Exception as e:
 
@@ -157,7 +158,7 @@ def Pipeline_Partidos_Estadio()->None:
 
 def Pipeline_Partidos_Competicion()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	partidos=con.obtenerPartidosSinCompeticion()
 
@@ -165,7 +166,7 @@ def Pipeline_Partidos_Competicion()->None:
 
 		try:
 			
-			ETL_Partido_Competicion(equipo_local, equipo_visitante, partido_id)
+			ETL_Partido_Competicion(equipo_local, equipo_visitante, partido_id, ENTORNO)
 
 		except Exception as e:
 
@@ -181,7 +182,7 @@ def Pipeline_Partidos_Competicion()->None:
 
 def Pipeline_Partidos_Goleadores()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	partidos=con.obtenerPartidosSinGoleadores()
 
@@ -189,7 +190,7 @@ def Pipeline_Partidos_Goleadores()->None:
 
 		try:
 			
-			ETL_Partido_Goleadores(equipo_local, equipo_visitante, partido_id)
+			ETL_Partido_Goleadores(equipo_local, equipo_visitante, partido_id, ENTORNO)
 
 		except Exception as e:
 
@@ -205,7 +206,7 @@ def Pipeline_Partidos_Goleadores()->None:
 
 def Pipeline_Competiciones_Equipos()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	competiciones=con.obtenerCompeticionesEquipos()
 
@@ -231,7 +232,7 @@ def Pipeline_Competiciones_Equipos()->None:
 
 def Pipeline_Competiciones()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	competiciones=con.obtenerCompeticiones()
 
@@ -239,7 +240,7 @@ def Pipeline_Competiciones()->None:
 
 		try:
 			
-			ETL_Competicion(competicion)
+			ETL_Competicion(competicion, ENTORNO)
 
 		except Exception as e:
 
@@ -253,7 +254,7 @@ def Pipeline_Competiciones()->None:
 
 def Pipeline_Campeones_Competiciones()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	competiciones=con.obtenerCompeticiones()
 
@@ -261,7 +262,7 @@ def Pipeline_Campeones_Competiciones()->None:
 
 		try:
 			
-			ETL_Campeones_Competicion(competicion)
+			ETL_Campeones_Competicion(competicion, ENTORNO)
 
 		except Exception as e:
 
@@ -275,7 +276,7 @@ def Pipeline_Campeones_Competiciones()->None:
 
 def ETL_Jugadores_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQUIPO_ID)->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	temporadas=generarTemporadas(temporada, MES_FIN_TEMPORADA)
 
@@ -283,7 +284,7 @@ def ETL_Jugadores_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=E
 
 		try:
 
-			ETL_Jugadores_Equipo(equipo, temporada_jugadores)
+			ETL_Jugadores_Equipo(equipo, temporada_jugadores, ENTORNO)
 
 			con.actualizarTemporadaJugadores(temporada_jugadores)
 
@@ -299,7 +300,7 @@ def ETL_Jugadores_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=E
 
 def Pipeline_Jugadores_Equipo()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	if con.tabla_vacia("temporada_jugadores"):
 
@@ -323,7 +324,7 @@ def Pipeline_Jugadores_Equipo()->None:
 
 def Pipeline_Jugadores()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	jugadores=con.obtenerJugadores()
 
@@ -331,7 +332,7 @@ def Pipeline_Jugadores()->None:
 
 		try:
 
-			ETL_Jugador(jugador)
+			ETL_Jugador(jugador, ENTORNO)
 
 		except Exception as e:
 
@@ -345,7 +346,7 @@ def Pipeline_Jugadores()->None:
 
 def Pipeline_Jugadores_Equipos()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	jugadores=con.obtenerJugadores()
 
@@ -353,7 +354,7 @@ def Pipeline_Jugadores_Equipos()->None:
 
 		try:
 
-			ETL_Jugador_Equipos(jugador)
+			ETL_Jugador_Equipos(jugador, ENTORNO)
 
 		except Exception as e:
 
@@ -367,7 +368,7 @@ def Pipeline_Jugadores_Equipos()->None:
 
 def Pipeline_Jugadores_Seleccion()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	jugadores=con.obtenerJugadores()
 
@@ -375,7 +376,7 @@ def Pipeline_Jugadores_Seleccion()->None:
 
 		try:
 
-			ETL_Jugador_Seleccion(jugador)
+			ETL_Jugador_Seleccion(jugador, ENTORNO)
 
 		except Exception as e:
 
@@ -389,7 +390,7 @@ def Pipeline_Jugadores_Seleccion()->None:
 
 def Pipeline_Estadios_Pais()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	estadios=con.obtenerEstadios()
 
@@ -397,7 +398,7 @@ def Pipeline_Estadios_Pais()->None:
 
 		try:
 
-			ETL_Estadio(estadio)
+			ETL_Estadio(estadio, ENTORNO)
 
 		except Exception as e:
 
@@ -409,7 +410,7 @@ def Pipeline_Estadios_Pais()->None:
 
 def Pipeline_Estadios_Coordenadas()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	estadios=con.obtenerEstadiosSinCoordenadas()
 
@@ -449,7 +450,7 @@ def Pipeline_Estadios_Coordenadas()->None:
 
 def Pipeline_Estadios_Ciudades()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	estadios=con.obtenerEstadiosSinCiudad()
 
@@ -459,7 +460,7 @@ def Pipeline_Estadios_Ciudades()->None:
 
 		try:
 
-			ciudad=obtenerCiudadMasAcertada(latitud, longitud, direccion)
+			ciudad=obtenerCiudadMasAcertada(latitud, longitud, direccion, ENTORNO)
 
 			con.actualizarCiudadEstadio(ciudad, estadio)
 
@@ -475,7 +476,7 @@ def Pipeline_Estadios_Ciudades()->None:
 
 def Pipeline_Proximos_Partidos_Equipo()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	# Permite actualizar los proximos partidos (elimina los que ya se han jugado y actualiza si hay horas definidas)
 	con.vaciar_proximos_partidos()
@@ -490,7 +491,7 @@ def Pipeline_Proximos_Partidos_Equipo()->None:
 
 	try:
 		
-		ETL_Proximos_Partidos_Equipo(EQUIPO_ID, temporada)
+		ETL_Proximos_Partidos_Equipo(EQUIPO_ID, temporada, ENTORNO)
 
 	except Exception as e:
 
@@ -504,7 +505,7 @@ def Pipeline_Proximos_Partidos_Equipo()->None:
 
 def Pipeline_Entrenadores_Equipos()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	entrenadores=con.obtenerEntrenadoresEquipos()
 
@@ -530,7 +531,7 @@ def Pipeline_Entrenadores_Equipos()->None:
 
 def Pipeline_Entrenadores()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	entrenadores=con.obtenerEntrenadores()
 
@@ -538,7 +539,7 @@ def Pipeline_Entrenadores()->None:
 
 		try:
 
-			ETL_Entrenador(entrenador)
+			ETL_Entrenador(entrenador, ENTORNO)
 
 		except Exception as e:
 

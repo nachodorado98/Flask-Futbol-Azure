@@ -25,11 +25,11 @@ def limpiarDataPartidoGoleadores(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataPartidoGoleadores(tabla:pd.DataFrame, partido_id:str)->None:
+def cargarDataPartidoGoleadores(tabla:pd.DataFrame, partido_id:str, entorno:str)->None:
 
 	datos_goleadores=tabla.values.tolist()
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 

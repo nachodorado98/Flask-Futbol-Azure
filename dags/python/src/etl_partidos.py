@@ -43,13 +43,13 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 
 	return tabla_filtrada[columnas]
 
-def cargarDataPartidosEquipo(tabla:pd.DataFrame)->None:
+def cargarDataPartidosEquipo(tabla:pd.DataFrame, entorno:str)->None:
 
 	partidos=tabla.values.tolist()
 
-	def agregarEquipos(equipo_id:str)->None:
+	def agregarEquipos(equipo_id:str, entorno:str)->None:
 
-		con=Conexion()
+		con=Conexion(entorno)
 
 		if not con.existe_equipo(equipo_id):
 
@@ -59,11 +59,11 @@ def cargarDataPartidosEquipo(tabla:pd.DataFrame)->None:
 
 	for partido in partidos:
 
-		agregarEquipos(partido[1])
+		agregarEquipos(partido[1], entorno)
 
-		agregarEquipos(partido[2])
+		agregarEquipos(partido[2], entorno)
 
-		con=Conexion()
+		con=Conexion(entorno)
 
 		if not con.existe_partido(partido[0]):
 

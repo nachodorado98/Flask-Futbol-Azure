@@ -39,13 +39,13 @@ def test_limpiar_data_equipos_liga(endpoint):
 @pytest.mark.parametrize(["endpoint"],
 	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",)]
 )
-def test_cargar_data_equipos_liga(conexion, endpoint):
+def test_cargar_data_equipos_liga(conexion, entorno, endpoint):
 
 	data=extraerDataEquiposLiga(endpoint)
 
 	data_limpia=limpiarDataEquiposLiga(data)
 
-	cargarDataEquiposLiga(data_limpia)
+	cargarDataEquiposLiga(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -54,13 +54,13 @@ def test_cargar_data_equipos_liga(conexion, endpoint):
 @pytest.mark.parametrize(["endpoint"],
 	[("primera/2024",),("segunda/2024",),("/primera/1996",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",)]
 )
-def test_cargar_data_equipos_liga_existentes(conexion, endpoint):
+def test_cargar_data_equipos_liga_existentes(conexion, entorno, endpoint):
 
 	data=extraerDataEquiposLiga(endpoint)
 
 	data_limpia=limpiarDataEquiposLiga(data)
 
-	cargarDataEquiposLiga(data_limpia)
+	cargarDataEquiposLiga(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -70,7 +70,7 @@ def test_cargar_data_equipos_liga_existentes(conexion, endpoint):
 
 	data_limpia_nueva=limpiarDataEquiposLiga(data_nueva)
 
-	cargarDataEquiposLiga(data_limpia_nueva)
+	cargarDataEquiposLiga(data_limpia_nueva, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -82,7 +82,7 @@ def test_cargar_data_equipos_liga_existentes(conexion, endpoint):
 	[("primera/2024",),("segunda/2024",),("/primera/2019",),("bundesliga/2024",),
 	("premier/2024",),("/primera/1996",),("/segunda/1990",)]
 )
-def test_cargar_data_equipos_liga_nuevo_equipo(conexion, endpoint):
+def test_cargar_data_equipos_liga_nuevo_equipo(conexion, entorno, endpoint):
 
 	data=extraerDataEquiposLiga(endpoint)
 
@@ -92,7 +92,7 @@ def test_cargar_data_equipos_liga_nuevo_equipo(conexion, endpoint):
 
 	assert data_limpia.shape[0]>data_limpia_dropeada.shape[0]
 
-	cargarDataEquiposLiga(data_limpia_dropeada)
+	cargarDataEquiposLiga(data_limpia_dropeada, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -102,7 +102,7 @@ def test_cargar_data_equipos_liga_nuevo_equipo(conexion, endpoint):
 
 	data_limpia_nueva=limpiarDataEquiposLiga(data_nueva)
 
-	cargarDataEquiposLiga(data_limpia_nueva)
+	cargarDataEquiposLiga(data_limpia_nueva, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -113,13 +113,13 @@ def test_cargar_data_equipos_liga_nuevo_equipo(conexion, endpoint):
 @pytest.mark.parametrize(["temporada1", "temporada2"],
 	[("primera/2019","primera/2020"),("primera/2024","primera/2023"),("premier/2014","premier/2015")]
 )
-def test_cargar_data_equipos_liga_nueva_temporada(conexion, temporada1, temporada2):
+def test_cargar_data_equipos_liga_nueva_temporada(conexion, entorno, temporada1, temporada2):
 
 	data=extraerDataEquiposLiga(temporada1)
 
 	data_limpia=limpiarDataEquiposLiga(data)
 
-	cargarDataEquiposLiga(data_limpia)
+	cargarDataEquiposLiga(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -129,7 +129,7 @@ def test_cargar_data_equipos_liga_nueva_temporada(conexion, temporada1, temporad
 
 	data_limpia_nueva=limpiarDataEquiposLiga(data_nueva)
 
-	cargarDataEquiposLiga(data_limpia_nueva)
+	cargarDataEquiposLiga(data_limpia_nueva, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 

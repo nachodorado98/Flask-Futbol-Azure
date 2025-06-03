@@ -42,11 +42,11 @@ def limpiarDataEquipoEstadio(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataEquipoEstadio(tabla:pd.DataFrame, equipo_id:str)->None:
+def cargarDataEquipoEstadio(tabla:pd.DataFrame, equipo_id:str, entorno:str)->None:
 
 	datos_estadio=tabla.values.tolist()[0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_equipo(equipo_id):
 

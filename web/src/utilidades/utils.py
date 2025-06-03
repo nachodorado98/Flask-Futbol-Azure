@@ -515,13 +515,13 @@ def ciudad_estadio_correcta(ciudad_ida_estadio:str, ciudad_vuelta_estadio:str, c
 
 	return ciudad_ida_estadio==ciudad_vuelta_estadio==ciudad_estadio
 
-def trayecto_correcto(codigo_ciudad_origen, codigo_ciudad_destino, transporte):
+def trayecto_correcto(codigo_ciudad_origen:int, codigo_ciudad_destino:int, transporte:str, entorno:str):
 
 	if not codigo_ciudad_origen or not codigo_ciudad_destino or transporte not in TRANSPORTES:
 
 		return False
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	coordenadas_origen=con.obtenerCoordenadasCiudad(codigo_ciudad_origen)
 
@@ -816,11 +816,11 @@ def obtenerCombinacionesParadas(paradas:List[tuple])->List[tuple]:
 
 	return [(ciudad1, pais1, ciudad2, pais2, transporte2) for (transporte1, pais1, ciudad1), (transporte2, pais2, ciudad2) in zip(paradas, paradas[1:])]
 
-def obtenerDataframeTrayecto(df:pd.DataFrame, partido_id:str, usuario_id:str, tipo:str, numero:bool=False)->pd.DataFrame:
+def obtenerDataframeTrayecto(df:pd.DataFrame, partido_id:str, usuario_id:str, tipo:str, entorno:str, numero:bool=False)->pd.DataFrame:
 
 	df_base=df.copy()
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	tupla_columnas=[["Ciudad_Origen", "Pais_Origen", "Codigo_Ciudad_Origen"], ["Ciudad_Destino", "Pais_Destino", "Codigo_Ciudad_Destino"]]
 
@@ -832,7 +832,7 @@ def obtenerDataframeTrayecto(df:pd.DataFrame, partido_id:str, usuario_id:str, ti
 
 	df_base=df_base[["Ciudad_Origen", "Pais_Origen", "Codigo_Ciudad_Origen", "Ciudad_Destino", "Pais_Destino", "Codigo_Ciudad_Destino", "Transporte"]]
 
-	df_base["Correcto"]=df_base[["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino", "Transporte"]].apply(lambda fila: trayecto_correcto(fila["Codigo_Ciudad_Origen"], fila["Codigo_Ciudad_Destino"], fila["Transporte"]), axis=1)
+	df_base["Correcto"]=df_base[["Codigo_Ciudad_Origen", "Codigo_Ciudad_Destino", "Transporte"]].apply(lambda fila: trayecto_correcto(fila["Codigo_Ciudad_Origen"], fila["Codigo_Ciudad_Destino"], fila["Transporte"], entorno), axis=1)
 
 	df_base["Partido_Id"]=partido_id
 
@@ -872,7 +872,7 @@ def obtenerDataframeConParadas(df:pd.DataFrame, paradas:List[tuple], ciudad_fina
 
 		raise Exception("Error, no hay paradas")
 
-def obtenerDataframeDireccion(ciudad_origen:str, pais_origen:str, ciudad_destino:str, pais_destino:str, transporte:str, partido_id:str, usuario_id:str, tipo:str)->pd.DataFrame:
+def obtenerDataframeDireccion(ciudad_origen:str, pais_origen:str, ciudad_destino:str, pais_destino:str, transporte:str, partido_id:str, usuario_id:str, tipo:str, entorno:str)->pd.DataFrame:
 
 	if tipo not in ["I", "V"]:
 
@@ -882,11 +882,11 @@ def obtenerDataframeDireccion(ciudad_origen:str, pais_origen:str, ciudad_destino
 
 	df=pd.DataFrame([(ciudad_origen, pais_origen, ciudad_destino, pais_destino, transporte)], columns=columnas)
 
-	df_final=obtenerDataframeTrayecto(df, partido_id, usuario_id, tipo)
+	df_final=obtenerDataframeTrayecto(df, partido_id, usuario_id, tipo, entorno)
 
 	return df_final
 
-def obtenerDataframeDireccionParadas(ciudad_origen:str, pais_origen:str, ciudad_destino:str, pais_destino:str, transporte:str, paradas:List[tuple], partido_id:str, usuario_id:str, tipo:str)->pd.DataFrame:
+def obtenerDataframeDireccionParadas(ciudad_origen:str, pais_origen:str, ciudad_destino:str, pais_destino:str, transporte:str, paradas:List[tuple], partido_id:str, usuario_id:str, tipo:str, entorno:str)->pd.DataFrame:
 
 	if tipo not in ["I", "V"]:
 
@@ -896,7 +896,7 @@ def obtenerDataframeDireccionParadas(ciudad_origen:str, pais_origen:str, ciudad_
 
 	df_paradas=obtenerDataframeConParadas(df, paradas, ciudad_destino, pais_destino, transporte)
 
-	df_final=obtenerDataframeTrayecto(df_paradas, partido_id, usuario_id, tipo, True)
+	df_final=obtenerDataframeTrayecto(df_paradas, partido_id, usuario_id, tipo, entorno, True)
 
 	return df_final
 
@@ -933,7 +933,7 @@ def obtenerTrayectosConDistancia(trayectos:List)->List:
 
 def obtenerDistanciaTotalTrayecto(trayectos:List)->int:
 
-	return int(sum([trayecto[-1] for trayecto in trayectos]))
+	return round(sum([trayecto[-1] for trayecto in trayectos]))
 
 def es_numero(valor):
 

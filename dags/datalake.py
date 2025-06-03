@@ -1,6 +1,7 @@
 import os
 
 from utils import vaciarCarpeta, crearArchivoLog
+from config import ENTORNO
 from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
 from config import URL_JUGADOR
 from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES, SELECCIONES, USUARIOS
@@ -37,7 +38,7 @@ def entorno_data_lake_creado():
 
 def creacion_entorno_data_lake()->None:
 
-	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES, USUARIOS, TABLA_EQUIPOS,
+	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES, USUARIOS, SELECCIONES, TABLA_EQUIPOS,
 				TABLA_ESTADIOS, TABLA_EQUIPO_ESTADIO, TABLA_PARTIDOS, TABLA_PARTIDO_ESTADIO, TABLA_COMPETICIONES, 
 				TABLA_COMPETICIONES_CAMPEONES, TABLA_PARTIDO_COMPETICION, TABLA_JUGADORES, TABLA_PARTIDO_GOLEADOR,
 				TABLA_JUGADORES_EQUIPO, TABLA_JUGADORES_SELECCION, TABLA_ENTRENADORES]
@@ -48,7 +49,7 @@ def creacion_entorno_data_lake()->None:
 
 def subirEscudosDataLake()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_escudos=con.obtenerCodigoEscudos()
 
@@ -100,7 +101,7 @@ def subirEscudosDataLake()->None:
 
 def subirEntrenadoresDataLake()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_entrenadores=con.obtenerCodigoEntrenadores()
 
@@ -144,7 +145,7 @@ def subirEntrenadoresDataLake()->None:
 
 def subirPresidentesDataLake()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_presidentes=con.obtenerCodigoPresidentes()
 
@@ -188,7 +189,7 @@ def subirPresidentesDataLake()->None:
 
 def subirEstadiosDataLake()->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_estadios=con.obtenerCodigoEstadios()
 
@@ -244,7 +245,7 @@ def subirBackUpTablasDataLake()->None:
 
 		try:
 
-			subirTablaDataLake(tabla, CONTENEDOR, carpeta)
+			subirTablaDataLake(tabla, CONTENEDOR, carpeta, ENTORNO)
 
 		except Exception as e:
 
@@ -272,7 +273,7 @@ def data_lake_disponible_creado(tarea_siguiente:str)->str:
 
 def subirCompeticionesDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_logos_competiciones=con.obtenerCodigoLogoCompeticiones()
 
@@ -316,7 +317,7 @@ def subirCompeticionesDataLake():
 
 def subirPaisesDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_paises=con.obtenerCodigoPaises()
 
@@ -360,7 +361,7 @@ def subirPaisesDataLake():
 
 def subirJugadoresDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_jugadores=con.obtenerCodigoJugadores()
 
@@ -404,7 +405,7 @@ def subirJugadoresDataLake():
 
 def subirPaisesJugadoresDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_paises=con.obtenerCodigoPaisesJugadores()
 
@@ -448,7 +449,7 @@ def subirPaisesJugadoresDataLake():
 
 def subirPaisesEstadiosDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_paises=con.obtenerCodigoPaisesEstadios()
 
@@ -492,7 +493,7 @@ def subirPaisesEstadiosDataLake():
 
 def subirPaisesEquiposDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_paises=con.obtenerCodigoPaisesEquipos()
 
@@ -536,7 +537,7 @@ def subirPaisesEquiposDataLake():
 
 def subirPaisesEntrenadoresDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_paises=con.obtenerCodigoPaisesEntrenadores()
 
@@ -580,7 +581,7 @@ def subirPaisesEntrenadoresDataLake():
 
 def subirSeleccionesJugadoresDataLake():
 	
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	codigo_selecciones=con.obtenerCodigoSeleccionesJugadores()
 

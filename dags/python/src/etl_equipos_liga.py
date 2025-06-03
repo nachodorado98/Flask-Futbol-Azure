@@ -21,11 +21,11 @@ def limpiarDataEquiposLiga(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[["Nombre_URL"]]
 
-def cargarDataEquiposLiga(tabla:pd.DataFrame)->None:
+def cargarDataEquiposLiga(tabla:pd.DataFrame, entorno:str)->None:
 
 	equipos=[equipo[0] for equipo in tabla.values.tolist()]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	for equipo in equipos:
 

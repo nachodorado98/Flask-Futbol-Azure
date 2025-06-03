@@ -48,7 +48,7 @@ def test_limpiar_data_partido_competicion(local, visitante, partido_id):
 	assert len(data)==1
 	assert len(data_limpia.columns)==1
 
-def test_cargar_data_partido_competicion_error_no_existe(conexion):
+def test_cargar_data_partido_competicion_error_no_existe(conexion, entorno):
 
 	data=extraerDataPartidoCompeticion("atletico-madrid", "internazionale", "2024645009")
 
@@ -56,7 +56,7 @@ def test_cargar_data_partido_competicion_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataPartidoCompeticion(data_limpia, "2024645009")
+		cargarDataPartidoCompeticion(data_limpia, "2024645009", entorno)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
@@ -67,7 +67,7 @@ def test_cargar_data_partido_competicion_error_no_existe(conexion):
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_cargar_data_partido_competicion(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_competicion(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -81,7 +81,7 @@ def test_cargar_data_partido_competicion(conexion, local, visitante, partido_id)
 
 	data_limpia=limpiarDataPartidoCompeticion(data)
 
-	cargarDataPartidoCompeticion(data_limpia, partido_id)
+	cargarDataPartidoCompeticion(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones")
 
@@ -100,7 +100,7 @@ def test_cargar_data_partido_competicion(conexion, local, visitante, partido_id)
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_cargar_data_partido_competicion_existente(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_competicion_existente(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -114,7 +114,7 @@ def test_cargar_data_partido_competicion_existente(conexion, local, visitante, p
 
 	data_limpia=limpiarDataPartidoCompeticion(data)
 
-	cargarDataPartidoCompeticion(data_limpia, partido_id)
+	cargarDataPartidoCompeticion(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones")
 
@@ -128,7 +128,7 @@ def test_cargar_data_partido_competicion_existente(conexion, local, visitante, p
 
 	data_limpia=limpiarDataPartidoCompeticion(data)
 
-	cargarDataPartidoCompeticion(data_limpia, partido_id)
+	cargarDataPartidoCompeticion(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones")
 

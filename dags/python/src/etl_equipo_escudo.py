@@ -21,11 +21,11 @@ def limpiarDataEquipoEscudo(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[["Codigo_Escudo", "Puntuacion"]]
 
-def cargarDataEquipoEscudo(tabla:pd.DataFrame, equipo_id:str)->None:
+def cargarDataEquipoEscudo(tabla:pd.DataFrame, equipo_id:str, entorno:str)->None:
 
 	datos_escudo=tabla.values.tolist()[0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_equipo(equipo_id):
 

@@ -19,11 +19,11 @@ def limpiarDataPartidoCompeticion(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataPartidoCompeticion(tabla:pd.DataFrame, partido_id:str)->None:
+def cargarDataPartidoCompeticion(tabla:pd.DataFrame, partido_id:str, entorno:str)->None:
 
 	dato_competicion=tabla.values.tolist()[0][0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 

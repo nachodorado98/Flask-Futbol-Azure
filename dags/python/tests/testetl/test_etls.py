@@ -18,19 +18,19 @@ from src.scrapers.excepciones_scrapers import JugadorEquiposError, JugadorSelecc
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
 )
-def test_etl_equipos_liga_error(endpoint):
+def test_etl_equipos_liga_error(entorno, endpoint):
 
 	with pytest.raises(EquiposLigaError):
 
-		ETL_Equipos_Liga(endpoint)
+		ETL_Equipos_Liga(endpoint, entorno)
 
 @pytest.mark.parametrize(["endpoint"],
 	[("primera/2024",),("segunda/2024",),("/primera/2019",), ("bundesliga/2024",),
 	("premier/2024",),("/primera/1996",),("/segunda/1990",)]
 )
-def test_etl_equipos_liga(conexion, endpoint):
+def test_etl_equipos_liga(conexion, entorno, endpoint):
 
-	ETL_Equipos_Liga(endpoint)
+	ETL_Equipos_Liga(endpoint, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -40,15 +40,15 @@ def test_etl_equipos_liga(conexion, endpoint):
 	[("primera/2024",),("segunda/2024",),("/primera/2019",), ("bundesliga/2024",),("premier/2024",),
 	("/primera/1996",),("/segunda/1990",)]
 )
-def test_etl_equipos_liga_equipos_existentes(conexion, endpoint):
+def test_etl_equipos_liga_equipos_existentes(conexion, entorno, endpoint):
 
-	ETL_Equipos_Liga(endpoint)
+	ETL_Equipos_Liga(endpoint, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
 	numero_registros=len(conexion.c.fetchall())
 
-	ETL_Equipos_Liga(endpoint)
+	ETL_Equipos_Liga(endpoint, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -67,9 +67,9 @@ def test_etl_equipos_liga_equipos_existentes(conexion, endpoint):
 		("/segunda/1990",1)
 	]
 )
-def test_etl_equipos_liga_equipos_nuevos_equipos(conexion, endpoint, nuevos_equipos):
+def test_etl_equipos_liga_equipos_nuevos_equipos(conexion, entorno, endpoint, nuevos_equipos):
 
-	ETL_Equipos_Liga(endpoint)
+	ETL_Equipos_Liga(endpoint, entorno)
 
 	conexion.c.execute(f"""DELETE FROM equipos
 							WHERE Equipo_Id IN (SELECT Equipo_Id
@@ -83,7 +83,7 @@ def test_etl_equipos_liga_equipos_nuevos_equipos(conexion, endpoint, nuevos_equi
 
 	numero_registros=len(conexion.c.fetchall())
 
-	ETL_Equipos_Liga(endpoint)
+	ETL_Equipos_Liga(endpoint, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -98,15 +98,15 @@ def test_etl_equipos_liga_equipos_nuevos_equipos(conexion, endpoint, nuevos_equi
 		("premier/2014","premier/2015")
 	]
 )
-def test_etl_equipos_liga_equipos_nueva_temporada(conexion, temporada1, temporada2):
+def test_etl_equipos_liga_equipos_nueva_temporada(conexion, entorno, temporada1, temporada2):
 
-	ETL_Equipos_Liga(temporada1)
+	ETL_Equipos_Liga(temporada1, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
 	numero_registros=len(conexion.c.fetchall())
 
-	ETL_Equipos_Liga(temporada2)
+	ETL_Equipos_Liga(temporada2, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -117,27 +117,27 @@ def test_etl_equipos_liga_equipos_nueva_temporada(conexion, temporada1, temporad
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
 )
-def test_etl_detalle_equipo_error(endpoint):
+def test_etl_detalle_equipo_error(entorno, endpoint):
 
 	with pytest.raises(EquipoError):
 
-		ETL_Detalle_Equipo(endpoint)
+		ETL_Detalle_Equipo(endpoint, entorno)
 
-def test_etl_detalle_equipo_no_existe_error():
+def test_etl_detalle_equipo_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Detalle_Equipo("atletico-madrid")
+		ETL_Detalle_Equipo("atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("villarreal",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_etl_detalle_equipo_datos_correctos(conexion, nombre_equipo):
+def test_etl_detalle_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Detalle_Equipo(nombre_equipo)
+	ETL_Detalle_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -161,11 +161,11 @@ def test_etl_detalle_equipo_datos_correctos(conexion, nombre_equipo):
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("sporting-gijon",)]
 )
-def test_etl_detalle_equipo_dato_faltante(conexion, nombre_equipo):
+def test_etl_detalle_equipo_dato_faltante(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Detalle_Equipo(nombre_equipo)
+	ETL_Detalle_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -189,11 +189,11 @@ def test_etl_detalle_equipo_dato_faltante(conexion, nombre_equipo):
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("seleccion-santa-amalia",),("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("malaga",)]
 )
-def test_etl_detalle_equipo_sin_presidente(conexion, nombre_equipo):
+def test_etl_detalle_equipo_sin_presidente(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Detalle_Equipo(nombre_equipo)
+	ETL_Detalle_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -206,11 +206,11 @@ def test_etl_detalle_equipo_sin_presidente(conexion, nombre_equipo):
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("sheffield-united",),("afc-bournemouth",)]
 )
-def test_etl_detalle_equipo_sin_codigo_presidente(conexion, nombre_equipo):
+def test_etl_detalle_equipo_sin_codigo_presidente(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Detalle_Equipo(nombre_equipo)
+	ETL_Detalle_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -223,27 +223,27 @@ def test_etl_detalle_equipo_sin_codigo_presidente(conexion, nombre_equipo):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
 )
-def test_etl_escudo_equipo_error(endpoint):
+def test_etl_escudo_equipo_error(entorno, endpoint):
 
 	with pytest.raises(EquipoEscudoError):
 
-		ETL_Escudo_Equipo(endpoint)
+		ETL_Escudo_Equipo(endpoint, entorno)
 
-def test_etl_escudo_equipo_no_existe_error(conexion):
+def test_etl_escudo_equipo_no_existe_error(conexion, entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Escudo_Equipo("atletico-madrid")
+		ETL_Escudo_Equipo("atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_etl_escudo_equipo_datos_correctos(conexion, nombre_equipo):
+def test_etl_escudo_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Escudo_Equipo(nombre_equipo)
+	ETL_Escudo_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -255,27 +255,27 @@ def test_etl_escudo_equipo_datos_correctos(conexion, nombre_equipo):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
 )
-def test_etl_entrenador_equipo_error(endpoint):
+def test_etl_entrenador_equipo_error(entorno, endpoint):
 
 	with pytest.raises(EquipoEntrenadorError):
 
-		ETL_Entrenador_Equipo(endpoint)
+		ETL_Entrenador_Equipo(endpoint, entorno)
 
-def test_etl_entrenador_equipo_no_existe_error():
+def test_etl_entrenador_equipo_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Entrenador_Equipo("atletico-madrid")
+		ETL_Entrenador_Equipo("atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_etl_entrenador_equipo_datos_correctos(conexion, nombre_equipo):
+def test_etl_entrenador_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Entrenador_Equipo(nombre_equipo)
+	ETL_Entrenador_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -289,27 +289,27 @@ def test_etl_entrenador_equipo_datos_correctos(conexion, nombre_equipo):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
 )
-def test_etl_estadio_equipo_error(endpoint):
+def test_etl_estadio_equipo_error(entorno, endpoint):
 
 	with pytest.raises(EquipoEstadioError):
 
-		ETL_Estadio_Equipo(endpoint)
+		ETL_Estadio_Equipo(endpoint, entorno)
 
-def test_etl_estadio_equipo_no_existe_error():
+def test_etl_estadio_equipo_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Estadio_Equipo("atletico-madrid")
+		ETL_Estadio_Equipo("atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_etl_estadio_equipo_datos_correctos(conexion, nombre_equipo):
+def test_etl_estadio_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Estadio_Equipo(nombre_equipo)
+	ETL_Estadio_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -323,11 +323,11 @@ def test_etl_estadio_equipo_datos_correctos(conexion, nombre_equipo):
 	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_etl_estadio_equipo_estadio_existente(conexion, nombre_equipo):
+def test_etl_estadio_equipo_estadio_existente(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
-	ETL_Estadio_Equipo(nombre_equipo)
+	ETL_Estadio_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -337,7 +337,7 @@ def test_etl_estadio_equipo_estadio_existente(conexion, nombre_equipo):
 
 	numero_registros_equipo_estadio=len(conexion.c.fetchall())
 
-	ETL_Estadio_Equipo(nombre_equipo)
+	ETL_Estadio_Equipo(nombre_equipo, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -350,7 +350,7 @@ def test_etl_estadio_equipo_estadio_existente(conexion, nombre_equipo):
 	assert numero_registros_estadio==numero_registros_estadio_nuevos
 	assert numero_registros_equipo_estadio==numero_registros_equipo_estadio_nuevos
 
-def test_etl_estadio_equipo_estadio_nuevo(conexion):
+def test_etl_estadio_equipo_estadio_nuevo(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -369,7 +369,7 @@ def test_etl_estadio_equipo_estadio_nuevo(conexion):
 
 	numero_registros_equipo_estadio=len(conexion.c.fetchall())
 
-	ETL_Estadio_Equipo("atletico-madrid")
+	ETL_Estadio_Equipo("atletico-madrid", entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -389,15 +389,15 @@ def test_etl_estadio_equipo_estadio_nuevo(conexion):
 		("roma", "lazio")
 	]
 )
-def test_etl_estadio_equipo_estadio_compartido(conexion, equipo1, equipo2):
+def test_etl_estadio_equipo_estadio_compartido(conexion, entorno, equipo1, equipo2):
 
 	conexion.insertarEquipo(equipo1)
 
-	ETL_Estadio_Equipo(equipo1)
+	ETL_Estadio_Equipo(equipo1, entorno)
 
 	conexion.insertarEquipo(equipo2)
 
-	ETL_Estadio_Equipo(equipo2)
+	ETL_Estadio_Equipo(equipo2, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -410,18 +410,18 @@ def test_etl_estadio_equipo_estadio_compartido(conexion, equipo1, equipo2):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(-1, -1), (0, 0), (0, 2019), (1, 2024), ("equipo", 2023)]
 )
-def test_etl_partidos_equipo_error(equipo_id, temporada):
+def test_etl_partidos_equipo_error(entorno, equipo_id, temporada):
 
 	with pytest.raises(PartidosEquipoError):
 
-		ETL_Partidos_Equipo(equipo_id, temporada)
+		ETL_Partidos_Equipo(equipo_id, temporada, entorno)
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_etl_partidos_equipo(conexion, equipo_id, temporada):
+def test_etl_partidos_equipo(conexion, entorno, equipo_id, temporada):
 
-	ETL_Partidos_Equipo(equipo_id, temporada)
+	ETL_Partidos_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -434,9 +434,9 @@ def test_etl_partidos_equipo(conexion, equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_etl_partidos_equipo_todo_existente(conexion, equipo_id, temporada):
+def test_etl_partidos_equipo_todo_existente(conexion, entorno, equipo_id, temporada):
 
-	ETL_Partidos_Equipo(equipo_id, temporada)
+	ETL_Partidos_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -446,7 +446,7 @@ def test_etl_partidos_equipo_todo_existente(conexion, equipo_id, temporada):
 
 	partidos=conexion.c.fetchall()
 
-	ETL_Partidos_Equipo(equipo_id, temporada)
+	ETL_Partidos_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -472,9 +472,9 @@ def test_etl_partidos_equipo_todo_existente(conexion, equipo_id, temporada):
 		(2115, 2024, 22)
 	]
 )
-def test_etl_partidos_equipo_partidos_nuevos(conexion, equipo_id, temporada, nuevos_partidos):
+def test_etl_partidos_equipo_partidos_nuevos(conexion, entorno, equipo_id, temporada, nuevos_partidos):
 
-	ETL_Partidos_Equipo(equipo_id, temporada)
+	ETL_Partidos_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute(f"""DELETE FROM partidos
 							WHERE Partido_Id IN (SELECT Partido_Id
@@ -488,7 +488,7 @@ def test_etl_partidos_equipo_partidos_nuevos(conexion, equipo_id, temporada, nue
 
 	partidos=conexion.c.fetchall()
 
-	ETL_Partidos_Equipo(equipo_id, temporada)
+	ETL_Partidos_Equipo(equipo_id, temporada, entorno)
 
 	equipos_nuevos=conexion.c.fetchall()
 
@@ -498,17 +498,17 @@ def test_etl_partidos_equipo_partidos_nuevos(conexion, equipo_id, temporada, nue
 
 	assert len(partidos_nuevos)==len(partidos)+nuevos_partidos
 
-def test_etl_partido_estadio_error():
+def test_etl_partido_estadio_error(entorno):
 
 	with pytest.raises(PartidoEstadioError):
 
-		ETL_Partido_Estadio("equipo1", "equipo2", "partido_id")
+		ETL_Partido_Estadio("equipo1", "equipo2", "partido_id", entorno)
 
-def test_etl_partido_estadio_no_existe_error():
+def test_etl_partido_estadio_no_existe_error(entorno):
 
 	with pytest.raises(PartidoEstadioError):
 
-		ETL_Partido_Estadio("numancia", "atletico-madrid", "2024489479")
+		ETL_Partido_Estadio("numancia", "atletico-madrid", "2024489479", entorno)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
@@ -519,7 +519,7 @@ def test_etl_partido_estadio_no_existe_error():
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_etl_partido_estadio_datos_correctos(conexion, local, visitante, partido_id):
+def test_etl_partido_estadio_datos_correctos(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -529,7 +529,7 @@ def test_etl_partido_estadio_datos_correctos(conexion, local, visitante, partido
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Estadio(local, visitante, partido_id)
+	ETL_Partido_Estadio(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -548,7 +548,7 @@ def test_etl_partido_estadio_datos_correctos(conexion, local, visitante, partido
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_etl_partido_estadio_estadio_existente(conexion, local, visitante, partido_id):
+def test_etl_partido_estadio_estadio_existente(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -558,7 +558,7 @@ def test_etl_partido_estadio_estadio_existente(conexion, local, visitante, parti
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Estadio(local, visitante, partido_id)
+	ETL_Partido_Estadio(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -568,7 +568,7 @@ def test_etl_partido_estadio_estadio_existente(conexion, local, visitante, parti
 
 	numero_registros_partido_estadio=conexion.c.fetchall()
 
-	ETL_Partido_Estadio(local, visitante, partido_id)
+	ETL_Partido_Estadio(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -588,7 +588,7 @@ def test_etl_partido_estadio_estadio_existente(conexion, local, visitante, parti
 		("roma", "lazio", "2024103401", "2024662727")
 	]
 )
-def test_etl_partido_estadio_estadio_compartido(conexion, local, visitante, partido_id_ida, partido_id_vuelta):
+def test_etl_partido_estadio_estadio_compartido(conexion, entorno, local, visitante, partido_id_ida, partido_id_vuelta):
 
 	conexion.insertarEquipo(local)
 
@@ -598,13 +598,13 @@ def test_etl_partido_estadio_estadio_compartido(conexion, local, visitante, part
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Estadio(local, visitante, partido_id_ida)
+	ETL_Partido_Estadio(local, visitante, partido_id_ida, entorno)
 
 	partido=[partido_id_vuelta, visitante, local, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Estadio(visitante, local, partido_id_vuelta)
+	ETL_Partido_Estadio(visitante, local, partido_id_vuelta, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -617,27 +617,27 @@ def test_etl_partido_estadio_estadio_compartido(conexion, local, visitante, part
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_competicion_error(endpoint):
+def test_etl_competicion_error(entorno, endpoint):
 
 	with pytest.raises(CompeticionError):
 
-		ETL_Competicion(endpoint)
+		ETL_Competicion(endpoint, entorno)
 
-def test_etl_competicion_no_existe_error():
+def test_etl_competicion_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Competicion("primera")
+		ETL_Competicion("primera", entorno)
 
 @pytest.mark.parametrize(["competicion"],
 	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
 	("primera_division_argentina",),("primera_division_rfef",)]
 )
-def test_etl_competicion_datos_correctos(conexion, competicion):
+def test_etl_competicion_datos_correctos(conexion, entorno, competicion):
 
 	conexion.insertarCompeticion(competicion)
 
-	ETL_Competicion(competicion)
+	ETL_Competicion(competicion, entorno)
 
 	conexion.c.execute(f"SELECT * FROM competiciones WHERE Competicion_Id='{competicion}'")
 
@@ -650,27 +650,27 @@ def test_etl_competicion_datos_correctos(conexion, competicion):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_competicion_campeones_error(endpoint):
+def test_etl_competicion_campeones_error(entorno, endpoint):
 
 	with pytest.raises(CompeticionCampeonesError):
 
-		ETL_Campeones_Competicion(endpoint)
+		ETL_Campeones_Competicion(endpoint, entorno)
 
-def test_etl_competicion_campeones_no_existe_error():
+def test_etl_competicion_campeones_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Campeones_Competicion("primera")
+		ETL_Campeones_Competicion("primera", entorno)
 
 @pytest.mark.parametrize(["competicion"],
 	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
 	("primera_division_argentina",),("primera_division_rfef",),("champions",)]
 )
-def test_etl_competicion_campeones_datos_correctos(conexion, competicion):
+def test_etl_competicion_campeones_datos_correctos(conexion, entorno, competicion):
 
 	conexion.insertarCompeticion(competicion)
 
-	ETL_Campeones_Competicion(competicion)
+	ETL_Campeones_Competicion(competicion, entorno)
 
 	conexion.c.execute(f"SELECT * FROM competiciones_campeones")
 
@@ -680,17 +680,17 @@ def test_etl_competicion_campeones_datos_correctos(conexion, competicion):
 	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
 	("primera_division_argentina",),("primera_division_rfef",),("champions",)]
 )
-def test_etl_competicion_campeones_existentes(conexion, competicion):
+def test_etl_competicion_campeones_existentes(conexion, entorno, competicion):
 
 	conexion.insertarCompeticion(competicion)
 
-	ETL_Campeones_Competicion(competicion)
+	ETL_Campeones_Competicion(competicion, entorno)
 
 	conexion.c.execute(f"SELECT * FROM competiciones_campeones")
 
 	numero_registros=len(conexion.c.fetchone())
 
-	ETL_Campeones_Competicion(competicion)
+	ETL_Campeones_Competicion(competicion, entorno)
 
 	conexion.c.execute(f"SELECT * FROM competiciones_campeones")
 
@@ -698,11 +698,11 @@ def test_etl_competicion_campeones_existentes(conexion, competicion):
 
 	assert numero_registros==numero_registros_nuevos
 
-def test_etl_partido_competicion_error():
+def test_etl_partido_competicion_error(entorno):
 
 	with pytest.raises(PartidoCompeticionError):
 
-		ETL_Partido_Competicion("equipo1", "equipo2", "partido_id")
+		ETL_Partido_Competicion("equipo1", "equipo2", "partido_id", entorno)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
@@ -713,7 +713,7 @@ def test_etl_partido_competicion_error():
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_etl_partido_competicion_datos_correctos(conexion, local, visitante, partido_id):
+def test_etl_partido_competicion_datos_correctos(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -723,7 +723,7 @@ def test_etl_partido_competicion_datos_correctos(conexion, local, visitante, par
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Competicion(local, visitante, partido_id)
+	ETL_Partido_Competicion(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones")
 
@@ -742,7 +742,7 @@ def test_etl_partido_competicion_datos_correctos(conexion, local, visitante, par
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_etl_partido_competicion_existente(conexion, local, visitante, partido_id):
+def test_etl_partido_competicion_existente(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -752,7 +752,7 @@ def test_etl_partido_competicion_existente(conexion, local, visitante, partido_i
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Competicion(local, visitante, partido_id)
+	ETL_Partido_Competicion(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones")
 
@@ -762,7 +762,7 @@ def test_etl_partido_competicion_existente(conexion, local, visitante, partido_i
 
 	numero_registros_partido_competicion=len(conexion.c.fetchall())
 
-	ETL_Partido_Competicion(local, visitante, partido_id)
+	ETL_Partido_Competicion(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones")
 
@@ -778,18 +778,18 @@ def test_etl_partido_competicion_existente(conexion, local, visitante, partido_i
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(-1, -1), (0, 0), (0, 2019), (1, 2024), ("equipo", 2023)]
 )
-def test_etl_jugadores_equipo_error(equipo_id, temporada):
+def test_etl_jugadores_equipo_error(entorno, equipo_id, temporada):
 
 	with pytest.raises(JugadoresEquipoError):
 
-		ETL_Jugadores_Equipo(equipo_id, temporada)
+		ETL_Jugadores_Equipo(equipo_id, temporada, entorno)
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_etl_jugadores_equipo(conexion, equipo_id, temporada):
+def test_etl_jugadores_equipo(conexion, entorno, equipo_id, temporada):
 
-	ETL_Jugadores_Equipo(equipo_id, temporada)
+	ETL_Jugadores_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -798,15 +798,15 @@ def test_etl_jugadores_equipo(conexion, equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_etl_jugadores_equipo_existentes(conexion, equipo_id, temporada):
+def test_etl_jugadores_equipo_existentes(conexion, entorno, equipo_id, temporada):
 
-	ETL_Jugadores_Equipo(equipo_id, temporada)
+	ETL_Jugadores_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
 	jugadores=conexion.c.fetchall()
 
-	ETL_Jugadores_Equipo(equipo_id, temporada)
+	ETL_Jugadores_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -827,9 +827,9 @@ def test_etl_jugadores_equipo_existentes(conexion, equipo_id, temporada):
 		(2115, 2024, 22)
 	]
 )
-def test_etl_jugadores_equipo_jugadores_nuevos(conexion, equipo_id, temporada, nuevos_jugadores):
+def test_etl_jugadores_equipo_jugadores_nuevos(conexion, entorno, equipo_id, temporada, nuevos_jugadores):
 
-	ETL_Jugadores_Equipo(equipo_id, temporada)
+	ETL_Jugadores_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute(f"""DELETE FROM jugadores
 							WHERE Jugador_Id IN (SELECT Jugador_Id
@@ -843,7 +843,7 @@ def test_etl_jugadores_equipo_jugadores_nuevos(conexion, equipo_id, temporada, n
 
 	jugadores=conexion.c.fetchall()
 
-	ETL_Jugadores_Equipo(equipo_id, temporada)
+	ETL_Jugadores_Equipo(equipo_id, temporada, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -854,26 +854,26 @@ def test_etl_jugadores_equipo_jugadores_nuevos(conexion, equipo_id, temporada, n
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_jugador_error(endpoint):
+def test_etl_jugador_error(entorno, endpoint):
 
 	with pytest.raises(JugadorError):
 
-		ETL_Jugador(endpoint)
+		ETL_Jugador(endpoint, entorno)
 
-def test_etl_jugador_no_existe_error():
+def test_etl_jugador_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Jugador("j-alvarez-772644")
+		ETL_Jugador("j-alvarez-772644", entorno)
 
 @pytest.mark.parametrize(["jugador"],
 	[("j-alvarez-772644",),("c-gallagher-367792",),("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_etl_jugador_datos_correctos_con_equipo(conexion, jugador):
+def test_etl_jugador_datos_correctos_con_equipo(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
-	ETL_Jugador(jugador)
+	ETL_Jugador(jugador, entorno)
 
 	conexion.c.execute(f"SELECT * FROM jugadores WHERE Jugador_Id='{jugador}'")
 
@@ -895,11 +895,11 @@ def test_etl_jugador_datos_correctos_con_equipo(conexion, jugador):
 @pytest.mark.parametrize(["jugador"],
 	[("f-torres-29366",),("d-villa-23386",),("f-beckenbauer-321969",)]
 )
-def test_etl_jugador_datos_correctos_sin_equipo(conexion, jugador):
+def test_etl_jugador_datos_correctos_sin_equipo(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
-	ETL_Jugador(jugador)
+	ETL_Jugador(jugador, entorno)
 
 	conexion.c.execute(f"SELECT * FROM jugadores WHERE Jugador_Id='{jugador}'")
 
@@ -918,23 +918,23 @@ def test_etl_jugador_datos_correctos_sin_equipo(conexion, jugador):
 
 	assert not conexion.c.fetchall()
 
-def test_etl_partido_goleadores_error():
+def test_etl_partido_goleadores_error(entorno):
 
 	with pytest.raises(PartidoGoleadoresError):
 
-		ETL_Partido_Goleadores("equipo1", "equipo2", "partido_id")
+		ETL_Partido_Goleadores("equipo1", "equipo2", "partido_id", entorno)
 
-def test_etl_partido_goleadores_error_no_existe():
-
-	with pytest.raises(PartidoGoleadoresError):
-
-		ETL_Partido_Goleadores("atletico-madrid", "alianza-lima", "201313927")
-
-def test_etl_partido_goleadores_error_no_hay():
+def test_etl_partido_goleadores_error_no_existe(entorno):
 
 	with pytest.raises(PartidoGoleadoresError):
 
-		ETL_Partido_Goleadores("betis", "atletico-madrid", "202430028")
+		ETL_Partido_Goleadores("atletico-madrid", "alianza-lima", "201313927", entorno)
+
+def test_etl_partido_goleadores_error_no_hay(entorno):
+
+	with pytest.raises(PartidoGoleadoresError):
+
+		ETL_Partido_Goleadores("betis", "atletico-madrid", "202430028", entorno)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
@@ -945,7 +945,7 @@ def test_etl_partido_goleadores_error_no_hay():
 		("atletico-madrid", "internazionale", "2024645009")
 	]
 )
-def test_etl_partido_goleadores_datos_correctos(conexion, local, visitante, partido_id):
+def test_etl_partido_goleadores_datos_correctos(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -955,7 +955,7 @@ def test_etl_partido_goleadores_datos_correctos(conexion, local, visitante, part
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Goleadores(local, visitante, partido_id)
+	ETL_Partido_Goleadores(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -974,7 +974,7 @@ def test_etl_partido_goleadores_datos_correctos(conexion, local, visitante, part
 		("atletico-madrid", "internazionale", "2024645009")
 	]
 )
-def test_etl_partido_goleadores_existentes(conexion, local, visitante, partido_id):
+def test_etl_partido_goleadores_existentes(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -984,7 +984,7 @@ def test_etl_partido_goleadores_existentes(conexion, local, visitante, partido_i
 
 	conexion.insertarPartido(partido)
 
-	ETL_Partido_Goleadores(local, visitante, partido_id)
+	ETL_Partido_Goleadores(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -994,7 +994,7 @@ def test_etl_partido_goleadores_existentes(conexion, local, visitante, partido_i
 
 	numero_registros_goleadores=len(conexion.c.fetchall())
 
-	ETL_Partido_Goleadores(local, visitante, partido_id)
+	ETL_Partido_Goleadores(local, visitante, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -1010,28 +1010,28 @@ def test_etl_partido_goleadores_existentes(conexion, local, visitante, partido_i
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_estadio_error(endpoint):
+def test_etl_estadio_error(entorno, endpoint):
 
 	with pytest.raises(EstadioError):
 
-		ETL_Estadio(endpoint)
+		ETL_Estadio(endpoint, entorno)
 
-def test_etl_estadio_no_existe_error():
+def test_etl_estadio_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Estadio("riyadh-air-metropolitano-23")
+		ETL_Estadio("riyadh-air-metropolitano-23", entorno)
 
 @pytest.mark.parametrize(["estadio_id"],
 	[("riyadh-air-metropolitano-23",),("municipal-football-santa-amalia-4902",),("celtic-park-82",),("stadion-feijenoord-71",)]
 )
-def test_etl_estadio_datos_correctos(conexion, estadio_id):
+def test_etl_estadio_datos_correctos(conexion, entorno, estadio_id):
 
 	estadio=[estadio_id, 1, "Metropolitano", "Metropo", 40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
 
 	conexion.insertarEstadio(estadio)
 
-	ETL_Estadio(estadio_id)
+	ETL_Estadio(estadio_id, entorno)
 
 	conexion.c.execute(f"SELECT * FROM estadios WHERE Estadio_Id='{estadio_id}'")
 
@@ -1043,22 +1043,22 @@ def test_etl_estadio_datos_correctos(conexion, estadio_id):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(-1, -1), (0, 0), (0, 2019), (1, 2024), ("equipo", 2023)]
 )
-def test_etl_proximos_partidos_equipo_error(equipo_id, temporada):
+def test_etl_proximos_partidos_equipo_error(entorno, equipo_id, temporada):
 
 	with pytest.raises(PartidosEquipoError):
 
-		ETL_Proximos_Partidos_Equipo(equipo_id, temporada)
+		ETL_Proximos_Partidos_Equipo(equipo_id, temporada, entorno)
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_etl_proximos_partidos_equipo_no_hay(conexion, equipo_id, temporada):
+def test_etl_proximos_partidos_equipo_no_hay(conexion, entorno, equipo_id, temporada):
 
 	with pytest.raises(Exception):	
 
-		ETL_Proximos_Partidos_Equipo(equipo_id, temporada)
+		ETL_Proximos_Partidos_Equipo(equipo_id, temporada, entorno)
 
-def test_etl_proximos_partidos_equipo(conexion):
+def test_etl_proximos_partidos_equipo(conexion, entorno):
 
 	mock_data=pd.DataFrame({"Partido_Id": ["match-2025225057", "match-20256430"],
 							"Link": ["https://es.besoccer.com/partido/cacereno/atletico-madrid/2025225057",
@@ -1073,7 +1073,7 @@ def test_etl_proximos_partidos_equipo(conexion):
    
 	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
-		ETL_Proximos_Partidos_Equipo(369, 2025)
+		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -1083,7 +1083,7 @@ def test_etl_proximos_partidos_equipo(conexion):
 
 	assert conexion.c.fetchall()
 
-def test_etl_proximos_partidos_equipo_todo_existente(conexion):
+def test_etl_proximos_partidos_equipo_todo_existente(conexion, entorno):
 
 	mock_data=pd.DataFrame({"Partido_Id": ["match-2025225057", "match-20256430"],
 							"Link": ["https://es.besoccer.com/partido/cacereno/atletico-madrid/2025225057",
@@ -1098,7 +1098,7 @@ def test_etl_proximos_partidos_equipo_todo_existente(conexion):
    
 	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
-		ETL_Proximos_Partidos_Equipo(369, 2025)
+		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -1110,7 +1110,7 @@ def test_etl_proximos_partidos_equipo_todo_existente(conexion):
 
 	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
-		ETL_Proximos_Partidos_Equipo(369, 2025)
+		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -1123,7 +1123,7 @@ def test_etl_proximos_partidos_equipo_todo_existente(conexion):
 	assert len(equipos)==len(equipos_nuevos)
 	assert len(proximos_partidos)==len(proximos_partidos_nuevos)
 
-def test_etl_proximos_partidos_equipo_partido_nuevo(conexion):
+def test_etl_proximos_partidos_equipo_partido_nuevo(conexion, entorno):
 
 	mock_data=pd.DataFrame({"Partido_Id": ["match-2025225057", "match-20256430"],
 							"Link": ["https://es.besoccer.com/partido/cacereno/atletico-madrid/2025225057",
@@ -1138,7 +1138,7 @@ def test_etl_proximos_partidos_equipo_partido_nuevo(conexion):
    
 	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
-		ETL_Proximos_Partidos_Equipo(369, 2025)
+		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
 	conexion.c.execute("""DELETE FROM proximos_partidos
 						WHERE Partido_Id IN (SELECT Partido_Id
@@ -1154,7 +1154,7 @@ def test_etl_proximos_partidos_equipo_partido_nuevo(conexion):
 
 	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
-		ETL_Proximos_Partidos_Equipo(369, 2025)
+		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
 	conexion.c.execute("SELECT * FROM proximos_partidos")
 
@@ -1165,26 +1165,26 @@ def test_etl_proximos_partidos_equipo_partido_nuevo(conexion):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_entrenador_error(endpoint):
+def test_etl_entrenador_error(entorno, endpoint):
 
 	with pytest.raises(EntrenadorError):
 
-		ETL_Entrenador(endpoint)
+		ETL_Entrenador(endpoint, entorno)
 
-def test_etl_entrenador_no_existe_error():
+def test_etl_entrenador_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Entrenador("diego-simeone-13")
+		ETL_Entrenador("diego-simeone-13", entorno)
 
 @pytest.mark.parametrize(["entrenador"],
 	[("diego-simeone-13",),("hansi-flick-8143",),("pep-guardiola-114",),("fernando-torres-47437",)]
 )
-def test_etl_entrenador_datos_correctos_con_equipo(conexion, entrenador):
+def test_etl_entrenador_datos_correctos_con_equipo(conexion, entorno, entrenador):
 
 	conexion.insertarEntrenador(entrenador)
 
-	ETL_Entrenador(entrenador)
+	ETL_Entrenador(entrenador, entorno)
 
 	conexion.c.execute(f"SELECT * FROM entrenadores WHERE Entrenador_Id='{entrenador}'")
 
@@ -1203,11 +1203,11 @@ def test_etl_entrenador_datos_correctos_con_equipo(conexion, entrenador):
 @pytest.mark.parametrize(["entrenador"],
 	[("luis-aragones-1918",),("radomir-antic-2601",)]
 )
-def test_etl_entrenador_datos_correctos_sin_equipo(conexion, entrenador):
+def test_etl_entrenador_datos_correctos_sin_equipo(conexion, entorno, entrenador):
 
 	conexion.insertarEntrenador(entrenador)
 
-	ETL_Entrenador(entrenador)
+	ETL_Entrenador(entrenador, entorno)
 
 	conexion.c.execute(f"SELECT * FROM entrenadores WHERE Entrenador_Id='{entrenador}'")
 
@@ -1226,27 +1226,27 @@ def test_etl_entrenador_datos_correctos_sin_equipo(conexion, entrenador):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_jugador_equipos_error(endpoint):
+def test_etl_jugador_equipos_error(entorno, endpoint):
 
 	with pytest.raises(JugadorEquiposError):
 
-		ETL_Jugador_Equipos(endpoint)
+		ETL_Jugador_Equipos(endpoint, entorno)
 
-def test_etl_jugador_equipos_no_existe_error():
+def test_etl_jugador_equipos_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Jugador_Equipos("j-alvarez-772644")
+		ETL_Jugador_Equipos("j-alvarez-772644", entorno)
 
 @pytest.mark.parametrize(["jugador"],
 	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
 	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_etl_jugador_equipos(conexion, jugador):
+def test_etl_jugador_equipos(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
-	ETL_Jugador_Equipos(jugador)
+	ETL_Jugador_Equipos(jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -1260,11 +1260,11 @@ def test_etl_jugador_equipos(conexion, jugador):
 	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
 	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_etl_jugador_equipos_existentes(conexion, jugador):
+def test_etl_jugador_equipos_existentes(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
-	ETL_Jugador_Equipos(jugador)
+	ETL_Jugador_Equipos(jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -1274,7 +1274,7 @@ def test_etl_jugador_equipos_existentes(conexion, jugador):
 
 	numero_registros_equipos_jugador=len(conexion.c.fetchall())
 
-	ETL_Jugador_Equipos(jugador)
+	ETL_Jugador_Equipos(jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -1290,27 +1290,27 @@ def test_etl_jugador_equipos_existentes(conexion, jugador):
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
 )
-def test_etl_jugador_seleccion_error(endpoint):
+def test_etl_jugador_seleccion_error(entorno, endpoint):
 
 	with pytest.raises(JugadorSeleccionError):
 
-		ETL_Jugador_Seleccion(endpoint)
+		ETL_Jugador_Seleccion(endpoint, entorno)
 
-def test_etl_jugador_seleccion_no_existe_error():
+def test_etl_jugador_seleccion_no_existe_error(entorno):
 
 	with pytest.raises(Exception):
 
-		ETL_Jugador_Seleccion("j-alvarez-772644")
+		ETL_Jugador_Seleccion("j-alvarez-772644", entorno)
 
 @pytest.mark.parametrize(["jugador"],
 	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
 	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_etl_jugador_seleccion(conexion, jugador):
+def test_etl_jugador_seleccion(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
-	ETL_Jugador_Seleccion(jugador)
+	ETL_Jugador_Seleccion(jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores_seleccion")
 
@@ -1320,17 +1320,17 @@ def test_etl_jugador_seleccion(conexion, jugador):
 	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
 	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_etl_jugador_seleccion_existentes(conexion, jugador):
+def test_etl_jugador_seleccion_existentes(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
-	ETL_Jugador_Seleccion(jugador)
+	ETL_Jugador_Seleccion(jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores_seleccion")
 
 	numero_registros_seleccion_jugador=len(conexion.c.fetchall())
 
-	ETL_Jugador_Seleccion(jugador)
+	ETL_Jugador_Seleccion(jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores_seleccion")
 

@@ -542,27 +542,27 @@ def test_obtener_bool_cadena_error():
 
 		obtenerBoolCadena("no_soy_bool")
 
-def test_subir_tabla_data_lake_tabla_no_existe():
+def test_subir_tabla_data_lake_tabla_no_existe(entorno):
 
 	with pytest.raises(Exception):
 
-		subirTablaDataLake("no_existo", "contenedor", "carpeta")
+		subirTablaDataLake("no_existo", "contenedor", "carpeta", entorno)
 
-def test_subir_tabla_data_lake_tabla_vacia(conexion):
+def test_subir_tabla_data_lake_tabla_vacia(conexion, entorno):
 
 	with pytest.raises(Exception):
 
-		subirTablaDataLake("equipos", "contenedor", "carpeta")
+		subirTablaDataLake("equipos", "contenedor", "carpeta", entorno)
 
-def test_subir_tabla_data_lake_contenedor_no_existe(conexion):
+def test_subir_tabla_data_lake_contenedor_no_existe(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
 	with pytest.raises(Exception):
 
-		subirTablaDataLake("equipos", "contenedor", "carpeta")
+		subirTablaDataLake("equipos", "contenedor", "carpeta", entorno)
 
-def test_subir_tabla_data_lake_carpeta_no_existe(conexion, datalake):
+def test_subir_tabla_data_lake_carpeta_no_existe(conexion, entorno, datalake):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -570,13 +570,13 @@ def test_subir_tabla_data_lake_carpeta_no_existe(conexion, datalake):
 
 	with pytest.raises(Exception):
 
-		subirTablaDataLake("equipos", "contenedor7", "carpeta")
+		subirTablaDataLake("equipos", "contenedor7", "carpeta", entorno)
 
 	datalake.eliminarContenedor("contenedor7")
 
 	datalake.cerrarConexion()
 
-def test_subir_tabla_data_lake(conexion, datalake):
+def test_subir_tabla_data_lake(conexion, entorno, datalake):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -584,7 +584,7 @@ def test_subir_tabla_data_lake(conexion, datalake):
 
 	time.sleep(5)
 
-	subirTablaDataLake("equipos", "contenedor8", "carpeta/tabla")
+	subirTablaDataLake("equipos", "contenedor8", "carpeta/tabla", entorno)
 
 	archivo=datalake.paths_carpeta_contenedor("contenedor8", "carpeta/tabla")[0]["name"]
 
@@ -747,9 +747,9 @@ def test_obtener_archivos_no_existen_data_lake_varios_no_existen_todos(datalake)
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_obtener_ciudad_mas_cercana_muy_lejana():
+def test_obtener_ciudad_mas_cercana_muy_lejana(entorno):
 
-	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(0, 0)
+	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(0, 0, entorno)
 
 	assert ciudad_cercana=="Sekondi"
 	assert pais_cercano=="Ghana"
@@ -762,9 +762,9 @@ def test_obtener_ciudad_mas_cercana_muy_lejana():
 		(40.34037465, -3.760651172703595, "Leganés", "España")
 	]
 )
-def test_obtener_ciudad_mas_cercana_una_ciudad(latitud, longitud, ciudad, pais):
+def test_obtener_ciudad_mas_cercana_una_ciudad(entorno, latitud, longitud, ciudad, pais):
 
-	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(latitud, longitud)
+	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(latitud, longitud, entorno)
 
 	assert ciudad_cercana==ciudad
 	assert pais_cercano==pais
@@ -778,13 +778,13 @@ def test_obtener_ciudad_mas_cercana_una_ciudad(latitud, longitud, ciudad, pais):
 		(39.94420835, -0.10340461367963182, "Villareal", "España"),
 		(42.79666245, -1.63713113716193, "Pamplona", "España"),
 		(25.66911025, -100.24435594300363, "Monterrey", "México"),
-		(38.7526893, -9.184689881825172, "Lisbon", "Portugal"),
-		(47.8163956, 12.998243910546709, "Salzburg", "Austria")
+		(38.7526893, -9.184689881825172, "Lisboa", "Portugal"),
+		(47.8163956, 12.998243910546709, "Salzburgo", "Austria")
 	]
 )
-def test_obtener_ciudad_mas_cercana_dos_ciudades(latitud, longitud, ciudad, pais):
+def test_obtener_ciudad_mas_cercana_dos_ciudades(entorno, latitud, longitud, ciudad, pais):
 
-	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(latitud, longitud)
+	ciudad_cercana, pais_cercano=obtenerCiudadMasCercana(latitud, longitud, entorno)
 
 	assert ciudad_cercana==ciudad
 	assert pais_cercano==pais
@@ -849,13 +849,13 @@ def test_filtrar_ciudades_palabras_irrelevantes(posibles_ciudades, numero):
 
 	assert len(nuevas_posibles_ciudades)==numero
 
-def test_filtrar_ciudad_direccion_cadena_vacia():
+def test_filtrar_ciudad_direccion_cadena_vacia(entorno):
 
-	assert not filtrarCiudadDireccion("")
+	assert not filtrarCiudadDireccion("", entorno)
 
-def test_filtrar_ciudad_direccion_caracter_especial():
+def test_filtrar_ciudad_direccion_caracter_especial(entorno):
 
-	assert not filtrarCiudadDireccion("-")
+	assert not filtrarCiudadDireccion("-", entorno)
 
 @pytest.mark.parametrize(["direccion", "numero"],
 	[
@@ -875,50 +875,50 @@ def test_filtrar_ciudad_direccion_caracter_especial():
 		("Janefield St, Glasgow G40 3RE, Reino Unido", 0)
 	]
 )
-def test_filtrar_ciudad_direccion(direccion, numero):
+def test_filtrar_ciudad_direccion(entorno, direccion, numero):
 
-	ciudades_existen=filtrarCiudadDireccion(direccion)
+	ciudades_existen=filtrarCiudadDireccion(direccion, entorno)
 
 	assert len(ciudades_existen)==numero
 
 @pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
 	[
 
-		(38.7526893, -9.184689881825172, "-", "Lisbon"),
+		(38.7526893, -9.184689881825172, "-", "Lisboa"),
 		(37.35653545, -5.981756556248882, "", "Sevilla"),
-		(47.8163956, 12.998243910546709, "Stadionstraße 2/3, 5071 Kleßheim, Austria", "Salzburg"),
-		(41.8966, 12.4823, "Viale dei Gladiatori, 2 / Via del Foro Italico", "Rome"),
+		(47.8163956, 12.998243910546709, "Stadionstraße 2/3, 5071 Kleßheim, Austria", "Salzburgo"),
+		(41.8966, 12.4823, "Viale dei Gladiatori, 2 / Via del Foro Italico", "Roma"),
 		(55.8614, -4.2571, "Janefield St, Glasgow G40 3RE, Reino Unido", "Glasgow"),
-		(50.0752, 14.4381, "Tyršovo nábřeží 4381, Zlín, Czech Republic, 760 01", "Prague")
+		(50.0752, 14.4381, "Tyršovo nábřeží 4381, Zlín, Czech Republic, 760 01", "Praga")
 	]
 )
-def test_obtener_ciudad_mas_acertada_no_existen_ciudades_direccion(latitud, longitud, direccion, ciudad):
+def test_obtener_ciudad_mas_acertada_no_existen_ciudades_direccion(entorno, latitud, longitud, direccion, ciudad):
 
-	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion, entorno)==ciudad
 
 @pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
 	[
-		(47.8163956, 12.998243910546709, "Stadionstraße 2/3, 5071 Salzburg, Austria", "Salzburg"),
+		(47.8163956, 12.998243910546709, "Stadionstraße 2/3, 5071 Salzburg, Austria", "Salzburgo"),
 		(40.3257247, -3.7149326452090587, "Av. Teresa de Calcuta, s/n, 28903 Getafe, Madrid", "Getafe"),
 		(40.43605295, -3.599715809726445, "Av. de Luis Aragonés, 4, 28022 Madrid", "Madrid"),
 		(41.3472, 2.0750, "Avinguda Baix Llobregat, 100 08940 Cornellà de Llobregat", "Cornellà de Llobregat")
 	]
 )
-def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_en_direccion(latitud, longitud, direccion, ciudad):
+def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_en_direccion(entorno, latitud, longitud, direccion, ciudad):
 
-	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion, entorno)==ciudad
 
 @pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
 	[
-		(40.3257247, -3.7149326452090587, "Stadionstraße 2/3, 5071 Salzburg, Austria", "Salzburg"),
+		(47.79941, 13.04399, "Stadionstraße 2/3, 5071 Salzburg, Austria", "Salzburgo"),
 		(41.3472, 2.0750, "Av. de Luis Aragonés, 4, 28022 Madrid", "Madrid"),
 		(47.8163956, 12.998243910546709, "Avinguda Baix Llobregat, 100 08940 Cornellà de Llobregat", "Cornellà de Llobregat"),
 		(48.8417, 2.2567, "24 Rue du Commandant Guilbaud, 75016 Paris, Francia", "Paris")
 	]
 )
-def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_una_ciudad_direccion(latitud, longitud, direccion, ciudad):
+def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_una_ciudad_direccion(entorno, latitud, longitud, direccion, ciudad):
 
-	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion, entorno)==ciudad
 
 @pytest.mark.parametrize(["latitud", "longitud", "direccion", "ciudad"],
 	[
@@ -926,6 +926,6 @@ def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_una_ciud
 		(36.7337, -4.4257, "P.º Martiricos, s/n, Palma-Valencia, 29011 Málaga", "Malaga")
 	]
 )
-def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_mas_de_una_ciudad_direccion(latitud, longitud, direccion, ciudad):
+def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_mas_de_una_ciudad_direccion(entorno, latitud, longitud, direccion, ciudad):
 
-	assert obtenerCiudadMasAcertada(latitud, longitud, direccion)==ciudad
+	assert obtenerCiudadMasAcertada(latitud, longitud, direccion, entorno)==ciudad

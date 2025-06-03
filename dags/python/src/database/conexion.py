@@ -8,16 +8,23 @@ from .confconexion import *
 # Clase para la conexion a la BBDD
 class Conexion:
 
-	def __init__(self)->None:
+	def __init__(self, entorno:str)->None:
+
+		databases={"PRO":BBDD_PRO, "DEV":BBDD_DEV}
+
+		if entorno not in databases.keys():
+
+			raise Exception(f"Entorno incorrecto: {entorno}")
 
 		try:
 
-			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=BBDD)
+			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=databases[entorno])
 			self.c=self.bbdd.cursor(cursor_factory=RealDictCursor)
 
 		except psycopg2.OperationalError as e:
 
 			print("Error en la conexion a la BBDD")
+			print(e)
 
 	# Metodo para cerrar la conexion a la BBDD
 	def cerrarConexion(self)->None:

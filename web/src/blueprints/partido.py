@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, send_file
+from flask import Blueprint, render_template, redirect, send_file, current_app
 from flask_login import login_required, current_user
 import os
 
@@ -17,7 +17,9 @@ bp_partido=Blueprint("partido", __name__)
 @login_required
 def pagina_partido(partido_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 
@@ -71,7 +73,9 @@ def pagina_partido(partido_id:str):
 @login_required
 def pagina_partido_asistido(partido_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 
@@ -183,7 +187,9 @@ def visualizarMapaTrayecto(partido_id:str, nombre_mapa:str):
 @login_required
 def pagina_quitar_partido_asistido_favorito(partido_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 
@@ -221,7 +227,9 @@ def pagina_quitar_partido_asistido_favorito(partido_id:str):
 @login_required
 def pagina_anadir_partido_asistido_favorito(partido_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 
@@ -263,7 +271,9 @@ def pagina_anadir_partido_asistido_favorito(partido_id:str):
 @login_required
 def pagina_eliminar_partido_asistido(partido_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 

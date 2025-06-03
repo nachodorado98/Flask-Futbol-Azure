@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, jsonify
+from flask import Blueprint, render_template, request, redirect, jsonify, current_app
 import os
 
 from src.utilidades.utils import datos_correctos, generarHash, crearCarpeta
@@ -17,7 +17,9 @@ bp_registro=Blueprint("registro", __name__)
 @bp_registro.route("/registro")
 def registro():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	# paises=con.obtenerPaises()
 	paises=["España"]
@@ -30,12 +32,14 @@ def registro():
 @bp_registro.route("/ciudades_pais")
 def obtenerCiudadesPais():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	pais=request.args.get("pais")
 
 	if not pais:
 		return jsonify({"error": "No se especificó el pais"}), 400
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	ciudades=con.obtenerCiudadesPais(pais, 25000)
 
@@ -45,6 +49,8 @@ def obtenerCiudadesPais():
 
 @bp_registro.route("/singin", methods=["POST"])
 def singin():
+
+	entorno=current_app.config["ENVIROMENT"]
 
 	usuario=request.form.get("usuario")
 	nombre=request.form.get("nombre")
@@ -60,7 +66,7 @@ def singin():
 
 		return redirect("/registro")
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	codigo_ciudad=con.obtenerCodigoCiudad(ciudad)
 

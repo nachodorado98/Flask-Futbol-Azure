@@ -50,11 +50,11 @@ def limpiarDataEquipoDetalle(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataEquipoDetalle(tabla:pd.DataFrame, equipo_id:str)->None:
+def cargarDataEquipoDetalle(tabla:pd.DataFrame, equipo_id:str, entorno:str)->None:
 
 	datos_equipo=tabla.values.tolist()[0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_equipo(equipo_id):
 

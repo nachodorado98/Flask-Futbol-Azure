@@ -89,6 +89,8 @@ def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno_usuari
 		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' not in contenido
 		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' not in contenido
 		assert '<img class="no-mapa"' not in contenido
+		assert '<div id="ventana-emergente-trayecto" class="ventana-emergente-trayecto">' not in contenido
+		assert '<div id="ventana-emergente-imagen" class="ventana-emergente-imagen">' not in contenido
 
 def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno_usuario):
 
@@ -118,6 +120,8 @@ def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno_usuari
 		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' not in contenido
 		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' not in contenido
 		assert '<img class="no-mapa"' not in contenido
+		assert '<div id="ventana-emergente-trayecto" class="ventana-emergente-trayecto">' not in contenido
+		assert '<div id="ventana-emergente-imagen" class="ventana-emergente-imagen">' not in contenido
 
 def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 
@@ -137,9 +141,10 @@ def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
 		assert '<div class="info-partido-asistido-detalle">' in contenido
 		assert '<div class="contenedor-imagen">' in contenido
-		assert '<div class="imagen">' not in contenido
+		assert '<div class="imagen"' not in contenido
 		assert '<div class="contenedor-subir-imagen">' in contenido
 		assert '<div class="botones-anadir-imagen-partido-asistido">' in contenido
+		assert '<div id="ventana-emergente-imagen" class="ventana-emergente-imagen">' not in contenido
 
 def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake):
 
@@ -171,9 +176,10 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
 		assert '<div class="info-partido-asistido-detalle">' in contenido
 		assert '<div class="contenedor-imagen">' in contenido
-		assert '<div class="imagen">' in contenido
+		assert '<div class="imagen"' in contenido
 		assert '<div class="contenedor-subir-imagen">' not in contenido
 		assert '<div class="botones-anadir-imagen-partido-asistido">' not in contenido
+		assert '<div id="ventana-emergente-imagen" class="ventana-emergente-imagen">' in contenido
 		assert "/nacho98_20190622.jpeg" in contenido
 
 		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
@@ -252,6 +258,7 @@ def test_pagina_partido_asistido_con_on_tour_trayecto_simple(cliente, conexion_e
 		assert '<p class="texto-origen-destino-vuelta"><strong>Metropolitano</strong></p>' in contenido
 		assert f'<img src="/static/imagenes/iconos/{transporte_vuelta.lower()}.png" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">' in contenido
 		assert f'<p class="texto-origen-destino-vuelta"><strong>{ciudad_vuelta}</strong></p>' in contenido
+		assert '<div id="ventana-emergente-trayecto" class="ventana-emergente-trayecto">' in contenido
 
 @pytest.mark.parametrize(["ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta"],
 	[
@@ -323,6 +330,7 @@ def test_pagina_partido_asistido_con_on_tour_trayectos_complejos(cliente, conexi
 			assert f'<img src="/static/imagenes/iconos/{transporte.lower()}.png" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">' in contenido
 
 		assert '<p class="texto-origen-destino-ida"><strong>Metropolitano</strong></p>' in contenido
+		assert '<div id="ventana-emergente-trayecto" class="ventana-emergente-trayecto">' in contenido
 
 def test_pagina_partido_asistido_no_partido_anterior_no_partido_siguiente(cliente, conexion_entorno_usuario):
 
@@ -470,8 +478,8 @@ def test_pagina_partido_asistido_mapas_trayectos(cliente, conexion_entorno_usuar
 		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' in contenido
 		assert "iframe" in contenido
 		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_vuelta_user_" in contenido
-		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' in contenido
-		assert '<div class="contenido-ventana-emergente-mapa">' in contenido
+		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa"' in contenido
+		assert '<div class="contenido-ventana-emergente-mapa"' in contenido
 		assert '<div class="botones-mapa-detalle-ida-vuelta">' in contenido
 		assert '<div class="contenedor-mapa-ida-vuelta-detalle">' in contenido
 		assert "iframe" in contenido
@@ -599,8 +607,8 @@ def test_pagina_partido_asistido_mapas_trayectos_ida_vuelta_diferente(cliente, c
 		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' in contenido
 		assert "iframe" in contenido
 		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_vuelta_user_" in contenido
-		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' in contenido
-		assert '<div class="contenido-ventana-emergente-mapa">' in contenido
+		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa"' in contenido
+		assert '<div class="contenido-ventana-emergente-mapa"' in contenido
 		assert '<div class="botones-mapa-detalle-ida-vuelta">' in contenido
 		assert '<div class="contenedor-mapa-ida-vuelta-detalle">' in contenido
 		assert "iframe" in contenido
@@ -670,8 +678,8 @@ def test_pagina_partido_asistido_mapas_trayectos_usuarios(cliente, conexion_ento
 		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' in contenido
 		assert "iframe" in contenido
 		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_vuelta_user_" in contenido
-		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa">' in contenido
-		assert '<div class="contenido-ventana-emergente-mapa">' in contenido
+		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa"' in contenido
+		assert '<div class="contenido-ventana-emergente-mapa"' in contenido
 		assert '<div class="botones-mapa-detalle-ida-vuelta">' in contenido
 		assert '<div class="contenedor-mapa-ida-vuelta-detalle">' in contenido
 		assert "iframe" in contenido

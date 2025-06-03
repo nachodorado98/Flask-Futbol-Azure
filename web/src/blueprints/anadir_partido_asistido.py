@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, jsonify
+from flask import Blueprint, render_template, redirect, request, jsonify, current_app
 from flask_login import login_required, current_user
 import os
 import time
@@ -7,7 +7,7 @@ pd.set_option('display.max_columns', None)
 
 from src.database.conexion import Conexion
 
-from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, trayecto_correcto, ciudad_estadio_correcta
+from src.utilidades.utils import crearCarpeta, extraerExtension, comprobarFechas, ciudad_estadio_correcta
 from src.utilidades.utils import existen_paradas, obtenerParadas, obtenerDataframeDireccion, obtenerDataframeDireccionParadas
 from src.utilidades.utils import validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
 from src.utilidades.configutils import TRANSPORTES
@@ -27,10 +27,12 @@ bp_anadir_partido_asistido=Blueprint("anadir_partido_asistido", __name__)
 @login_required
 def pagina_anadir_partido_asistido():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	todos=request.args.get("todos", default=False, type=bool)
 	partido_id_anadir=request.args.get("partido_id", default=None)
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -83,13 +85,15 @@ def pagina_anadir_partido_asistido():
 @bp_anadir_partido_asistido.route("/fecha_partido")
 def obtenerFechaPartido():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	partido_id=request.args.get("partido_id")
 
 	if not partido_id:
 
 		return jsonify({"error": "No se especifico el partido"}), 400
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	fecha_partido=con.obtenerFechaPartido(partido_id)
 
@@ -100,12 +104,14 @@ def obtenerFechaPartido():
 @bp_anadir_partido_asistido.route("/ciudades_pais_trayectos")
 def obtenerCiudadesPais():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	pais=request.args.get("pais")
 
 	if not pais:
 		return jsonify({"error": "No se especificó el pais"}), 400
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	ciudades=con.obtenerCiudadesPais(pais, 50000)
 
@@ -116,12 +122,14 @@ def obtenerCiudadesPais():
 @bp_anadir_partido_asistido.route("/estadio_partido")
 def obtenerEstadioPartido():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	partido_id=request.args.get("partido_id")
 
 	if not partido_id:
 		return jsonify({"error": "No se especificó el partido"}), 400
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	estadio_partido=con.obtenerEstadioPartido(partido_id)
 
@@ -132,6 +140,8 @@ def obtenerEstadioPartido():
 @bp_anadir_partido_asistido.route("/insertar_partido_asistido", methods=["POST"])
 @login_required
 def pagina_insertar_partido_asistido():
+
+	entorno=current_app.config["ENVIROMENT"]
 
 	partido_id=request.form.get("partido_anadir")
 	comentario=request.form.get("comentario")
@@ -161,7 +171,7 @@ def pagina_insertar_partido_asistido():
 	teletrabajo_str=request.form.get("teletrabajo", default="False")
 	teletrabajo=teletrabajo_str in ("True", "on", "yes", True)
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 
@@ -221,9 +231,9 @@ def pagina_insertar_partido_asistido():
 
 				if paradas_ida and not paradas_vuelta:
 
-					df_ida_final=obtenerDataframeDireccionParadas(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, paradas_ida, partido_id, current_user.id, "I")
+					df_ida_final=obtenerDataframeDireccionParadas(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, paradas_ida, partido_id, current_user.id, "I", entorno)
 
-					df_vuelta_final=obtenerDataframeDireccion(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, partido_id, current_user.id, "V")
+					df_vuelta_final=obtenerDataframeDireccion(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, partido_id, current_user.id, "V", entorno)
 
 					if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final) or not validarDataFrameDuplicados(df_ida_final):
 
@@ -243,9 +253,9 @@ def pagina_insertar_partido_asistido():
 
 				elif not paradas_ida and paradas_vuelta:
 
-					df_ida_final=obtenerDataframeDireccion(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, partido_id, current_user.id, "I")
+					df_ida_final=obtenerDataframeDireccion(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, partido_id, current_user.id, "I", entorno)
 
-					df_vuelta_final=obtenerDataframeDireccionParadas(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, paradas_vuelta, partido_id, current_user.id, "V")
+					df_vuelta_final=obtenerDataframeDireccionParadas(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, paradas_vuelta, partido_id, current_user.id, "V", entorno)
 					
 					if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final) or not validarDataFrameDuplicados(df_vuelta_final):
 
@@ -265,9 +275,9 @@ def pagina_insertar_partido_asistido():
 
 				else:
 
-					df_ida_final=obtenerDataframeDireccionParadas(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, paradas_ida, partido_id, current_user.id, "I")
+					df_ida_final=obtenerDataframeDireccionParadas(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, paradas_ida, partido_id, current_user.id, "I", entorno)
 
-					df_vuelta_final=obtenerDataframeDireccionParadas(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, paradas_vuelta, partido_id, current_user.id, "V")
+					df_vuelta_final=obtenerDataframeDireccionParadas(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, paradas_vuelta, partido_id, current_user.id, "V", entorno)
 
 					if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final) or not validarDataFrameDuplicados(df_ida_final) or not validarDataFrameDuplicados(df_vuelta_final):
 
@@ -287,9 +297,9 @@ def pagina_insertar_partido_asistido():
 
 			else:
 
-				df_ida_final=obtenerDataframeDireccion(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, partido_id, current_user.id, "I")
+				df_ida_final=obtenerDataframeDireccion(ciudad_ida, pais_ida, ciudad_estadio, pais_estadio, transporte_ida, partido_id, current_user.id, "I", entorno)
 
-				df_vuelta_final=obtenerDataframeDireccion(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, partido_id, current_user.id, "V")
+				df_vuelta_final=obtenerDataframeDireccion(ciudad_estadio, pais_estadio, ciudad_vuelta, pais_vuelta, transporte_vuelta, partido_id, current_user.id, "V", entorno)
 
 				if not validarDataFramesTrayectosCorrectos(df_ida_final, df_vuelta_final):
 
@@ -369,9 +379,11 @@ def pagina_insertar_partido_asistido():
 @login_required
 def pagina_actualizar_comentario_partido_asistido(partido_id:str):
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	nuevo_comentario=request.form.get("nuevo-comentario")
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 
@@ -401,9 +413,11 @@ def pagina_actualizar_comentario_partido_asistido(partido_id:str):
 @login_required
 def pagina_actualizar_imagen_partido_asistido(partido_id:str):
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	archivos=request.files
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_partido(partido_id):
 

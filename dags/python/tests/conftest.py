@@ -29,6 +29,11 @@ from src.database.conexion import Conexion
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
+@pytest.fixture()
+def entorno():
+
+	return "DEV"
+
 @pytest.fixture
 def scraper():
 
@@ -60,9 +65,9 @@ def scraper_equipo_escudo():
 	return ScraperEquipoEscudo("atletico-madrid")
 
 @pytest.fixture()
-def conexion():
+def conexion(entorno):
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	con.c.execute("DELETE FROM equipos")
 
@@ -151,7 +156,7 @@ def scraper_jugador_seleccion():
 
 def pytest_sessionfinish(session, exitstatus):
 
-	con=Conexion()
+	con=Conexion("DEV")
 
 	con.c.execute("DELETE FROM equipos")
 

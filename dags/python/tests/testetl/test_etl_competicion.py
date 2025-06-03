@@ -38,7 +38,7 @@ def test_limpiar_data_competicion(competicion):
 	assert len(data_limpia.columns)==3
 	assert len(data_limpia)==1
 
-def test_cargar_data_competicion_error_no_existe(conexion):
+def test_cargar_data_competicion_error_no_existe(conexion, entorno):
 
 	data=extraerDataCompeticion("primera")
 
@@ -46,9 +46,9 @@ def test_cargar_data_competicion_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataCompeticion(data_limpia, "primera")
+		cargarDataCompeticion(data_limpia, "primera", entorno)
 
-def test_cargar_data_competicion_datos_error(conexion):
+def test_cargar_data_competicion_datos_error(conexion, entorno):
 
 	conexion.insertarCompeticion("primera")
 
@@ -60,12 +60,12 @@ def test_cargar_data_competicion_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataCompeticion(data_limpia, "primera")
+		cargarDataCompeticion(data_limpia, "primera", entorno)
 
 @pytest.mark.parametrize(["competicion"],
 	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",)]
 )
-def test_cargar_data_competicion_datos_correctos(conexion, competicion):
+def test_cargar_data_competicion_datos_correctos(conexion, entorno, competicion):
 
 	conexion.insertarCompeticion(competicion)
 
@@ -73,7 +73,7 @@ def test_cargar_data_competicion_datos_correctos(conexion, competicion):
 
 	data_limpia=limpiarDataCompeticion(data)
 
-	cargarDataCompeticion(data_limpia, competicion)
+	cargarDataCompeticion(data_limpia, competicion, entorno)
 
 	conexion.c.execute(f"SELECT * FROM competiciones WHERE Competicion_Id='{competicion}'")
 

@@ -51,7 +51,7 @@ def test_limpiar_data_jugador_seleccion(jugador):
 	assert len(data_limpia.columns)==4
 	assert len(data_limpia)==1
 
-def test_cargar_data_jugador_seleccion_error_no_existe(conexion):
+def test_cargar_data_jugador_seleccion_error_no_existe(conexion, entorno):
 
 	data=extraerDataJugadorSeleccion("j-alvarez-772644")
 
@@ -59,9 +59,9 @@ def test_cargar_data_jugador_seleccion_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataJugadorSeleccion(data_limpia, "j-alvarez-772644")
+		cargarDataJugadorSeleccion(data_limpia, "j-alvarez-772644", entorno)
 
-def test_cargar_data_jugador_seleccion_datos_error(conexion):
+def test_cargar_data_jugador_seleccion_datos_error(conexion, entorno):
 
 	conexion.insertarJugador("j-alvarez-772644")
 
@@ -73,13 +73,13 @@ def test_cargar_data_jugador_seleccion_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataJugadorSeleccion(data_limpia, "j-alvarez-772644")
+		cargarDataJugadorSeleccion(data_limpia, "j-alvarez-772644", entorno)
 
 @pytest.mark.parametrize(["jugador"],
 	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
 	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_cargar_data_jugador_seleccion(conexion, jugador):
+def test_cargar_data_jugador_seleccion(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
@@ -87,7 +87,7 @@ def test_cargar_data_jugador_seleccion(conexion, jugador):
 
 	data_limpia=limpiarDataJugadorSeleccion(data)
 
-	cargarDataJugadorSeleccion(data_limpia, jugador)
+	cargarDataJugadorSeleccion(data_limpia, jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores_seleccion")
 
@@ -97,7 +97,7 @@ def test_cargar_data_jugador_seleccion(conexion, jugador):
 	[("j-alvarez-772644",),("f-torres-29366",),("d-villa-23386",),("c-gallagher-367792",),
 	("sorloth-232186",),("c-martin-776234",),("a-griezmann-32465",)]
 )
-def test_cargar_data_jugador_seleccion_seleccion_existente(conexion, jugador):
+def test_cargar_data_jugador_seleccion_seleccion_existente(conexion, entorno, jugador):
 
 	conexion.insertarJugador(jugador)
 
@@ -105,7 +105,7 @@ def test_cargar_data_jugador_seleccion_seleccion_existente(conexion, jugador):
 
 	data_limpia=limpiarDataJugadorSeleccion(data)
 
-	cargarDataJugadorSeleccion(data_limpia, jugador)
+	cargarDataJugadorSeleccion(data_limpia, jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores_seleccion")
 
@@ -115,7 +115,7 @@ def test_cargar_data_jugador_seleccion_seleccion_existente(conexion, jugador):
 
 	data_limpia=limpiarDataJugadorSeleccion(data)
 
-	cargarDataJugadorSeleccion(data_limpia, jugador)
+	cargarDataJugadorSeleccion(data_limpia, jugador, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores_seleccion")
 

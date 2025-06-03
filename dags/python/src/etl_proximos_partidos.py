@@ -41,13 +41,13 @@ def limpiarDataProximosPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame
 
 	return tabla_filtrada[columnas]
 
-def cargarDataProximosPartidosEquipo(tabla:pd.DataFrame)->None:
+def cargarDataProximosPartidosEquipo(tabla:pd.DataFrame, entorno:str)->None:
 
 	proximos_partidos=tabla.values.tolist()
 
-	def agregarEquipos(equipo_id:str)->None:
+	def agregarEquipos(equipo_id:str, entorno:str)->None:
 
-		con=Conexion()
+		con=Conexion(entorno)
 
 		if not con.existe_equipo(equipo_id):
 
@@ -57,11 +57,11 @@ def cargarDataProximosPartidosEquipo(tabla:pd.DataFrame)->None:
 
 	for proximo_partido in proximos_partidos:
 
-		agregarEquipos(proximo_partido[1])
+		agregarEquipos(proximo_partido[1], entorno)
 
-		agregarEquipos(proximo_partido[2])
+		agregarEquipos(proximo_partido[2], entorno)
 
-		con=Conexion()
+		con=Conexion(entorno)
 
 		if not con.existe_proximo_partido(proximo_partido[0]):
 

@@ -42,7 +42,7 @@ def test_limpiar_data_equipo(equipo):
 	assert len(data_limpia.columns)==14
 	assert len(data_limpia)==1
 
-def test_cargar_data_equipo_error_no_existe(conexion):
+def test_cargar_data_equipo_error_no_existe(conexion, entorno):
 
 	data=extraerDataEquipoDetalle("atletico-madrid")
 
@@ -50,9 +50,9 @@ def test_cargar_data_equipo_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEquipoDetalle(data_limpia, "atletico-madrid")
+		cargarDataEquipoDetalle(data_limpia, "atletico-madrid", entorno)
 
-def test_cargar_data_equipo_datos_error(conexion):
+def test_cargar_data_equipo_datos_error(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -64,13 +64,13 @@ def test_cargar_data_equipo_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEquipoDetalle(data_limpia, "atletico-madrid")
+		cargarDataEquipoDetalle(data_limpia, "atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("villarreal",),("albacete",), ("racing",),
 	("atalanta",),("manchester-city-fc",)]
 )
-def test_cargar_data_equipo_datos_correctos(conexion, nombre_equipo):
+def test_cargar_data_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
@@ -78,7 +78,7 @@ def test_cargar_data_equipo_datos_correctos(conexion, nombre_equipo):
 
 	data_limpia=limpiarDataEquipoDetalle(data)
 
-	cargarDataEquipoDetalle(data_limpia, nombre_equipo)
+	cargarDataEquipoDetalle(data_limpia, nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -102,7 +102,7 @@ def test_cargar_data_equipo_datos_correctos(conexion, nombre_equipo):
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("sporting-gijon",)]
 )
-def test_cargar_data_equipo_dato_faltante(conexion, nombre_equipo):
+def test_cargar_data_equipo_dato_faltante(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
@@ -110,7 +110,7 @@ def test_cargar_data_equipo_dato_faltante(conexion, nombre_equipo):
 
 	data_limpia=limpiarDataEquipoDetalle(data)
 
-	cargarDataEquipoDetalle(data_limpia, nombre_equipo)
+	cargarDataEquipoDetalle(data_limpia, nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -134,7 +134,7 @@ def test_cargar_data_equipo_dato_faltante(conexion, nombre_equipo):
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("seleccion-santa-amalia",),("kakamega-homeboyz",),("cd-valdehornillo-a-senior",),("malaga",)]
 )
-def test_cargar_data_equipo_sin_presidente(conexion, nombre_equipo):
+def test_cargar_data_equipo_sin_presidente(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
@@ -142,7 +142,7 @@ def test_cargar_data_equipo_sin_presidente(conexion, nombre_equipo):
 
 	data_limpia=limpiarDataEquipoDetalle(data)
 
-	cargarDataEquipoDetalle(data_limpia, nombre_equipo)
+	cargarDataEquipoDetalle(data_limpia, nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 
@@ -155,7 +155,7 @@ def test_cargar_data_equipo_sin_presidente(conexion, nombre_equipo):
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("sheffield-united",),("afc-bournemouth",)]
 )
-def test_cargar_data_equipo_sin_codigo_presidente(conexion, nombre_equipo):
+def test_cargar_data_equipo_sin_codigo_presidente(conexion, entorno, nombre_equipo):
 
 	conexion.insertarEquipo(nombre_equipo)
 
@@ -163,7 +163,7 @@ def test_cargar_data_equipo_sin_codigo_presidente(conexion, nombre_equipo):
 
 	data_limpia=limpiarDataEquipoDetalle(data)
 
-	cargarDataEquipoDetalle(data_limpia, nombre_equipo)
+	cargarDataEquipoDetalle(data_limpia, nombre_equipo, entorno)
 
 	conexion.c.execute(f"SELECT * FROM equipos WHERE Equipo_Id='{nombre_equipo}'")
 

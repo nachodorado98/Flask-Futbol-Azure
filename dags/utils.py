@@ -1,5 +1,8 @@
 from datetime import datetime
 import os
+
+from config import ENTORNO
+
 from python.src.database.conexion import Conexion
 from python.src.utils import obtenerBoolCadena
 
@@ -27,7 +30,7 @@ def crearArchivoLog(motivo:str)->None:
 
 def actualizarVariable(variable:str, valor:str)->None:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	con.actualizarValorVariable(variable, valor)
 
@@ -35,7 +38,7 @@ def actualizarVariable(variable:str, valor:str)->None:
 
 def obtenerValorVariable(variable:str)->str:
 
-	con=Conexion()
+	con=Conexion(ENTORNO)
 
 	valor=con.obtenerValorVariable(variable)
 

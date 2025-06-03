@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, send_file
+from flask import Blueprint, render_template, redirect, request, send_file, current_app
 from flask_login import login_required, current_user
 import os
 
@@ -20,7 +20,9 @@ bp_estadio=Blueprint("estadio", __name__)
 @login_required
 def pagina_estadio(estadio_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	if not con.existe_estadio(estadio_id):
 
@@ -88,9 +90,11 @@ def visualizarMapaEstadio(nombre_mapa:str):
 @login_required
 def pagina_estadios():
 
+	entorno=current_app.config["ENVIROMENT"]
+
 	numero_top=request.args.get("top_estadios", default=8, type=int)
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -118,7 +122,9 @@ def pagina_estadios():
 @login_required
 def pagina_mis_estadios():
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -207,7 +213,9 @@ def visualizarMapaMisEstadios(nombre_mapa:str):
 @login_required
 def pagina_pais_mis_estadios(codigo_pais:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -298,7 +306,9 @@ def visualizarMapaMisEstadiosPais(nombre_mapa:str):
 @login_required
 def pagina_mis_estadios_estadio_partidos_estadio(estadio_id:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -335,7 +345,9 @@ def pagina_mis_estadios_estadio_partidos_estadio(estadio_id:str):
 @login_required
 def pagina_division_mis_estadios(codigo_division:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -384,7 +396,9 @@ def pagina_division_mis_estadios(codigo_division:str):
 @login_required
 def pagina_ciudad_mis_estadios(codigo_pais:str, ciudad:str):
 
-	con=Conexion()
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
 
 	equipo=con.obtenerEquipo(current_user.id)
 

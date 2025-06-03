@@ -49,7 +49,7 @@ def test_limpiar_data_equipo_estadio(equipo):
 	assert len(data_limpia.columns)==13
 	assert len(data_limpia)==1
 
-def test_cargar_data_equipo_estadio_error_no_existe(conexion):
+def test_cargar_data_equipo_estadio_error_no_existe(conexion, entorno):
 
 	data=extraerDataEquipoEstadio("atletico-madrid")
 
@@ -57,9 +57,9 @@ def test_cargar_data_equipo_estadio_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEquipoEstadio(data_limpia, "atletico-madrid")
+		cargarDataEquipoEstadio(data_limpia, "atletico-madrid", entorno)
 
-def test_cargar_data_equipo_estadio_datos_error(conexion):
+def test_cargar_data_equipo_estadio_datos_error(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -71,14 +71,14 @@ def test_cargar_data_equipo_estadio_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataEquipoEstadio(data_limpia, "atletico-madrid")
+		cargarDataEquipoEstadio(data_limpia, "atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
 	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
 	("salzburgo",), ("lillestrom",)]
 )
-def test_cargar_data_equipo_estadio(conexion, equipo):
+def test_cargar_data_equipo_estadio(conexion, entorno, equipo):
 
 	conexion.insertarEquipo(equipo)
 
@@ -86,7 +86,7 @@ def test_cargar_data_equipo_estadio(conexion, equipo):
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, equipo)
+	cargarDataEquipoEstadio(data_limpia, equipo, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -101,7 +101,7 @@ def test_cargar_data_equipo_estadio(conexion, equipo):
 	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
 	("salzburgo",), ("lillestrom",)]
 )
-def test_cargar_data_equipo_estadio_existente(conexion, equipo):
+def test_cargar_data_equipo_estadio_existente(conexion, entorno, equipo):
 
 	conexion.insertarEquipo(equipo)
 
@@ -109,7 +109,7 @@ def test_cargar_data_equipo_estadio_existente(conexion, equipo):
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, equipo)
+	cargarDataEquipoEstadio(data_limpia, equipo, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -123,7 +123,7 @@ def test_cargar_data_equipo_estadio_existente(conexion, equipo):
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, equipo)
+	cargarDataEquipoEstadio(data_limpia, equipo, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -136,7 +136,7 @@ def test_cargar_data_equipo_estadio_existente(conexion, equipo):
 	assert numero_registros_estadio==numero_registros_estadio_nuevos
 	assert numero_registros_equipo_estadio==numero_registros_equipo_estadio_nuevos
 
-def test_cargar_data_equipo_estadio_nuevo(conexion):
+def test_cargar_data_equipo_estadio_nuevo(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -159,7 +159,7 @@ def test_cargar_data_equipo_estadio_nuevo(conexion):
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, "atletico-madrid")
+	cargarDataEquipoEstadio(data_limpia, "atletico-madrid", entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -179,7 +179,7 @@ def test_cargar_data_equipo_estadio_nuevo(conexion):
 		("roma", "lazio")
 	]
 )
-def test_cargar_data_equipo_estadio_compartido(conexion, equipo1, equipo2):
+def test_cargar_data_equipo_estadio_compartido(conexion, entorno, equipo1, equipo2):
 
 	conexion.insertarEquipo(equipo1)
 
@@ -187,7 +187,7 @@ def test_cargar_data_equipo_estadio_compartido(conexion, equipo1, equipo2):
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, equipo1)
+	cargarDataEquipoEstadio(data_limpia, equipo1, entorno)
 
 	conexion.insertarEquipo(equipo2)
 
@@ -195,7 +195,7 @@ def test_cargar_data_equipo_estadio_compartido(conexion, equipo1, equipo2):
 
 	data_limpia=limpiarDataEquipoEstadio(data)
 
-	cargarDataEquipoEstadio(data_limpia, equipo2)
+	cargarDataEquipoEstadio(data_limpia, equipo2, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 

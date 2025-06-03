@@ -17,11 +17,11 @@ def limpiarDataJugadoresEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 
 	return tabla[columnas]
 
-def cargarDataJugadoresEquipo(tabla:pd.DataFrame)->None:
+def cargarDataJugadoresEquipo(tabla:pd.DataFrame, entorno:str)->None:
 
 	jugadores=[jugador[0] for jugador in tabla.values.tolist()]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	for jugador in jugadores:
 

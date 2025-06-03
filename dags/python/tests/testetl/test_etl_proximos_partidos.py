@@ -52,7 +52,7 @@ def test_limpiar_data_proximos_partidos_equipo(equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_cargar_data_proximos_partidos_equipo(conexion, equipo_id, temporada):
+def test_cargar_data_proximos_partidos_equipo(conexion, entorno, equipo_id, temporada):
 
 	data=extraerDataProximosPartidosEquipo(equipo_id, temporada)
 
@@ -60,7 +60,7 @@ def test_cargar_data_proximos_partidos_equipo(conexion, equipo_id, temporada):
 
 	data_limpia=limpiarDataProximosPartidosEquipo(data)
 
-	cargarDataProximosPartidosEquipo(data_limpia)
+	cargarDataProximosPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -73,7 +73,7 @@ def test_cargar_data_proximos_partidos_equipo(conexion, equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_cargar_data_proximos_partidos_equipo_todo_existente(conexion, equipo_id, temporada):
+def test_cargar_data_proximos_partidos_equipo_todo_existente(conexion, entorno, equipo_id, temporada):
 
 	data=extraerDataProximosPartidosEquipo(equipo_id, temporada)
 
@@ -81,7 +81,7 @@ def test_cargar_data_proximos_partidos_equipo_todo_existente(conexion, equipo_id
 
 	data_limpia=limpiarDataProximosPartidosEquipo(data)
 
-	cargarDataProximosPartidosEquipo(data_limpia)
+	cargarDataProximosPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -97,7 +97,7 @@ def test_cargar_data_proximos_partidos_equipo_todo_existente(conexion, equipo_id
 
 	data_limpia=limpiarDataProximosPartidosEquipo(data)
 
-	cargarDataProximosPartidosEquipo(data_limpia)
+	cargarDataProximosPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -113,7 +113,7 @@ def test_cargar_data_proximos_partidos_equipo_todo_existente(conexion, equipo_id
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_cargar_data_proximos_partidos_equipo_partido_nuevo(conexion, equipo_id, temporada):
+def test_cargar_data_proximos_partidos_equipo_partido_nuevo(conexion, entorno, equipo_id, temporada):
 
 	data=extraerDataProximosPartidosEquipo(equipo_id, temporada)
 
@@ -125,7 +125,7 @@ def test_cargar_data_proximos_partidos_equipo_partido_nuevo(conexion, equipo_id,
 
 	assert data_limpia.shape[0]>data_limpia_dropeada.shape[0]
 
-	cargarDataProximosPartidosEquipo(data_limpia_dropeada)
+	cargarDataProximosPartidosEquipo(data_limpia_dropeada, entorno)
 
 	conexion.c.execute("SELECT * FROM proximos_partidos")
 
@@ -137,7 +137,7 @@ def test_cargar_data_proximos_partidos_equipo_partido_nuevo(conexion, equipo_id,
 
 	data_limpia=limpiarDataProximosPartidosEquipo(data)
 
-	cargarDataProximosPartidosEquipo(data_limpia)
+	cargarDataProximosPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM proximos_partidos")
 

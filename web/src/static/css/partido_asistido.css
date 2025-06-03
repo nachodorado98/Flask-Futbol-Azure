@@ -173,6 +173,7 @@
     margin-bottom: 5px;
     height: 225px;
     border: 2px solid black;
+    cursor: pointer;
 }
 
 .contenedor-subir-imagen {
@@ -331,6 +332,7 @@
     margin-bottom: 30px;
     padding-bottom: 15px;
     width: 100%;
+    cursor: pointer;
 }
 
 .contenedor-pais-ciudad-partido {
@@ -348,7 +350,6 @@
 .icono-tramo-trayecto-vuelta {
     height: 35px;
     margin-right: 5px;
-    cursor: default;
 }
 
 .texto-origen-destino-ida,
@@ -366,9 +367,51 @@
 .icono-transporte-vuelta {
     height: 80px;
     width: 80px;
-    cursor: default;
     margin-right: 5px;
     margin-left: 5px;
+}
+
+.ventana-emergente-trayecto {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.contenido-ventana-emergente-trayecto {
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 900px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.titulo-detalle-trayecto {
+    color: var(--color-secundario);
+    font-size: 38px;
+    margin-bottom: 5px;
+}
+
+.cerrar {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.cerrar:hover,
+.cerrar:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .titulo-mapa-on-tour {
@@ -691,6 +734,49 @@
 
 .boton-confirmar-eliminar-favorito:hover {
     transform: scale(1.05);
+}
+
+.cerrar {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.cerrar:hover,
+.cerrar:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.ventana-emergente-imagen {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.contenido-ventana-emergente-imagen {
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    margin: 5% auto;
+    padding: 40px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 1000px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.imagen-partido-zoom {
+    margin-bottom: 5px;
+    height: 540px;
+    border: 2px solid black;
 }
 
 .cerrar {

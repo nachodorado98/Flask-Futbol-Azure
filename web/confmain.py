@@ -5,5 +5,12 @@ class Config():
 class DevelopmentConfig(Config):
 
 	DEBUG=True
+	ENVIROMENT="DEV"
 
-config={"development":DevelopmentConfig()}
+class ProductionConfig(Config):
+
+	DEBUG=True
+	ENVIROMENT="PRO"
+
+config={"development":DevelopmentConfig(),
+		"production":ProductionConfig()}

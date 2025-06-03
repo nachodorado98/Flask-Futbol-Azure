@@ -23,11 +23,11 @@ def limpiarDataCompeticion(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataCompeticion(tabla:pd.DataFrame, competicion_id:str)->None:
+def cargarDataCompeticion(tabla:pd.DataFrame, competicion_id:str, entorno:str)->None:
 
 	datos_competicion=tabla.values.tolist()[0]
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_competicion(competicion_id):
 

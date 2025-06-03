@@ -39,13 +39,13 @@ def test_limpiar_data_partidos_equipo(equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_cargar_data_partidos_equipo(conexion, equipo_id, temporada):
+def test_cargar_data_partidos_equipo(conexion, entorno, equipo_id, temporada):
 
 	data=extraerDataPartidosEquipo(equipo_id, temporada)
 
 	data_limpia=limpiarDataPartidosEquipo(data)
 
-	cargarDataPartidosEquipo(data_limpia)
+	cargarDataPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -58,13 +58,13 @@ def test_cargar_data_partidos_equipo(conexion, equipo_id, temporada):
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_cargar_data_partidos_equipo_todo_existente(conexion, equipo_id, temporada):
+def test_cargar_data_partidos_equipo_todo_existente(conexion, entorno, equipo_id, temporada):
 
 	data=extraerDataPartidosEquipo(equipo_id, temporada)
 
 	data_limpia=limpiarDataPartidosEquipo(data)
 
-	cargarDataPartidosEquipo(data_limpia)
+	cargarDataPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -78,7 +78,7 @@ def test_cargar_data_partidos_equipo_todo_existente(conexion, equipo_id, tempora
 
 	data_limpia=limpiarDataPartidosEquipo(data)
 
-	cargarDataPartidosEquipo(data_limpia)
+	cargarDataPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM equipos")
 
@@ -94,7 +94,7 @@ def test_cargar_data_partidos_equipo_todo_existente(conexion, equipo_id, tempora
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
 )
-def test_cargar_data_partidos_equipo_partido_nuevo(conexion, equipo_id, temporada):
+def test_cargar_data_partidos_equipo_partido_nuevo(conexion, entorno, equipo_id, temporada):
 
 	data=extraerDataPartidosEquipo(equipo_id, temporada)
 
@@ -104,7 +104,7 @@ def test_cargar_data_partidos_equipo_partido_nuevo(conexion, equipo_id, temporad
 
 	assert data_limpia.shape[0]>data_limpia_dropeada.shape[0]
 
-	cargarDataPartidosEquipo(data_limpia_dropeada)
+	cargarDataPartidosEquipo(data_limpia_dropeada, entorno)
 
 	conexion.c.execute("SELECT * FROM partidos")
 
@@ -114,7 +114,7 @@ def test_cargar_data_partidos_equipo_partido_nuevo(conexion, equipo_id, temporad
 
 	data_limpia=limpiarDataPartidosEquipo(data)
 
-	cargarDataPartidosEquipo(data_limpia)
+	cargarDataPartidosEquipo(data_limpia, entorno)
 
 	conexion.c.execute("SELECT * FROM partidos")
 

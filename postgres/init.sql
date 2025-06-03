@@ -227,3 +227,9 @@ WHERE (ciudad, pais, CodCiudad) IN (SELECT ciudad, pais, CodCiudad FROM ciudades
 													        GROUP BY ciudad, pais HAVING COUNT(*)>1)
 AND CodCiudad NOT IN (SELECT MIN(CodCiudad) FROM ciudades
 				        GROUP BY ciudad, pais HAVING COUNT(*)>1));
+
+INSERT INTO equipos (Equipo_Id) VALUES ('atletico-madrid');
+
+\c airflow;
+
+CREATE DATABASE bbdd_futbol_data_dev TEMPLATE bbdd_futbol_data;

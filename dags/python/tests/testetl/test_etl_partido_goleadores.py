@@ -58,7 +58,7 @@ def test_limpiar_data_partido_goleadores(local, visitante, partido_id):
 	assert not data_limpia.empty
 	assert len(data_limpia.columns)==4
 
-def test_cargar_data_partido_goleadores_error_no_existe(conexion):
+def test_cargar_data_partido_goleadores_error_no_existe(conexion, entorno):
 
 	data=extraerDataPartidoGoleadores("atletico-madrid", "internazionale", "2024645009")
 
@@ -66,7 +66,7 @@ def test_cargar_data_partido_goleadores_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataPartidoGoleadores(data_limpia, "2024645009")
+		cargarDataPartidoGoleadores(data_limpia, "2024645009", entorno)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
@@ -77,7 +77,7 @@ def test_cargar_data_partido_goleadores_error_no_existe(conexion):
 		("atletico-madrid", "internazionale", "2024645009")
 	]
 )
-def test_cargar_data_partido_goleadores(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_goleadores(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -91,7 +91,7 @@ def test_cargar_data_partido_goleadores(conexion, local, visitante, partido_id):
 
 	data_limpia=limpiarDataPartidoGoleadores(data)
 
-	cargarDataPartidoGoleadores(data_limpia, partido_id)
+	cargarDataPartidoGoleadores(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -110,7 +110,7 @@ def test_cargar_data_partido_goleadores(conexion, local, visitante, partido_id):
 		("atletico-madrid", "internazionale", "2024645009")
 	]
 )
-def test_cargar_data_partido_goleadores_existentes(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_goleadores_existentes(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -124,7 +124,7 @@ def test_cargar_data_partido_goleadores_existentes(conexion, local, visitante, p
 
 	data_limpia=limpiarDataPartidoGoleadores(data)
 
-	cargarDataPartidoGoleadores(data_limpia, partido_id)
+	cargarDataPartidoGoleadores(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 
@@ -138,7 +138,7 @@ def test_cargar_data_partido_goleadores_existentes(conexion, local, visitante, p
 
 	data_limpia=limpiarDataPartidoGoleadores(data)
 
-	cargarDataPartidoGoleadores(data_limpia, partido_id)
+	cargarDataPartidoGoleadores(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM jugadores")
 

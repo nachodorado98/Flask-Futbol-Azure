@@ -58,7 +58,7 @@ def test_limpiar_data_competicion_campeones(competicion):
 	assert not data_limpia.empty
 	assert len(data_limpia.columns)==2
 
-def test_cargar_data_competicion_campeones_error_no_existe(conexion):
+def test_cargar_data_competicion_campeones_error_no_existe(conexion, entorno):
 
 	data=extraerDataCampeonesCompeticion("primera")
 
@@ -66,13 +66,13 @@ def test_cargar_data_competicion_campeones_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataCampeonesCompeticion(data_limpia, "primera")
+		cargarDataCampeonesCompeticion(data_limpia, "primera", entorno)
 
 @pytest.mark.parametrize(["competicion"],
 	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
 	("primera_division_argentina",),("primera_division_rfef",),("champions",)]
 )
-def test_cargar_data_competicion_campeones(conexion, competicion):
+def test_cargar_data_competicion_campeones(conexion, entorno, competicion):
 
 	conexion.insertarCompeticion(competicion)
 
@@ -80,7 +80,7 @@ def test_cargar_data_competicion_campeones(conexion, competicion):
 
 	data_limpia=limpiarDataCampeonesCompeticion(data)
 
-	cargarDataCampeonesCompeticion(data_limpia, competicion)
+	cargarDataCampeonesCompeticion(data_limpia, competicion, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones_campeones")
 
@@ -90,7 +90,7 @@ def test_cargar_data_competicion_campeones(conexion, competicion):
 	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),
 	("primera_division_argentina",),("primera_division_rfef",),("champions",)]
 )
-def test_cargar_data_competicion_campeones_existentes(conexion, competicion):
+def test_cargar_data_competicion_campeones_existentes(conexion, entorno, competicion):
 
 	conexion.insertarCompeticion(competicion)
 
@@ -98,7 +98,7 @@ def test_cargar_data_competicion_campeones_existentes(conexion, competicion):
 
 	data_limpia=limpiarDataCampeonesCompeticion(data)
 
-	cargarDataCampeonesCompeticion(data_limpia, competicion)
+	cargarDataCampeonesCompeticion(data_limpia, competicion, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones_campeones")
 
@@ -108,7 +108,7 @@ def test_cargar_data_competicion_campeones_existentes(conexion, competicion):
 
 	data_limpia=limpiarDataCampeonesCompeticion(data)
 
-	cargarDataCampeonesCompeticion(data_limpia, competicion)
+	cargarDataCampeonesCompeticion(data_limpia, competicion, entorno)
 
 	conexion.c.execute("SELECT * FROM competiciones_campeones")
 

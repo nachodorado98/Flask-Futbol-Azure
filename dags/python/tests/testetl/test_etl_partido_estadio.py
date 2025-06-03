@@ -53,7 +53,7 @@ def test_limpiar_data_partido_estadio(local, visitante, partido_id):
 	assert len(data_limpia.columns)==13
 	assert len(data_limpia)==1
 
-def test_cargar_data_partido_estadio_error_no_existe(conexion):
+def test_cargar_data_partido_estadio_error_no_existe(conexion, entorno):
 
 	data=extraerDataPartidoEstadio("atletico-madrid", "internazionale", "2024645009")
 
@@ -61,9 +61,9 @@ def test_cargar_data_partido_estadio_error_no_existe(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataPartidoEstadio(data_limpia, "2024645009")
+		cargarDataPartidoEstadio(data_limpia, "2024645009", entorno)
 
-def test_cargar_data_partido_estadio_datos_error(conexion):
+def test_cargar_data_partido_estadio_datos_error(conexion, entorno):
 
 	conexion.insertarEquipo("atletico-madrid")
 
@@ -79,7 +79,7 @@ def test_cargar_data_partido_estadio_datos_error(conexion):
 
 	with pytest.raises(Exception):
 
-		cargarDataPartidoEstadio(data_limpia, "2024645009")
+		cargarDataPartidoEstadio(data_limpia, "2024645009", entorno)
 
 @pytest.mark.parametrize(["local", "visitante", "partido_id"],
 	[
@@ -90,7 +90,7 @@ def test_cargar_data_partido_estadio_datos_error(conexion):
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_cargar_data_partido_estadio(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_estadio(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -104,7 +104,7 @@ def test_cargar_data_partido_estadio(conexion, local, visitante, partido_id):
 
 	data_limpia=limpiarDataPartidoEstadio(data)
 
-	cargarDataPartidoEstadio(data_limpia, partido_id)
+	cargarDataPartidoEstadio(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -123,7 +123,7 @@ def test_cargar_data_partido_estadio(conexion, local, visitante, partido_id):
 		("seleccion-holanda", "seleccion-espanola", "201094287")
 	]
 )
-def test_cargar_data_partido_estadio_existente(conexion, local, visitante, partido_id):
+def test_cargar_data_partido_estadio_existente(conexion, entorno, local, visitante, partido_id):
 
 	conexion.insertarEquipo(local)
 
@@ -137,7 +137,7 @@ def test_cargar_data_partido_estadio_existente(conexion, local, visitante, parti
 
 	data_limpia=limpiarDataPartidoEstadio(data)
 
-	cargarDataPartidoEstadio(data_limpia, partido_id)
+	cargarDataPartidoEstadio(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -151,7 +151,7 @@ def test_cargar_data_partido_estadio_existente(conexion, local, visitante, parti
 
 	data_limpia=limpiarDataPartidoEstadio(data)
 
-	cargarDataPartidoEstadio(data_limpia, partido_id)
+	cargarDataPartidoEstadio(data_limpia, partido_id, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 
@@ -172,7 +172,7 @@ def test_cargar_data_partido_estadio_existente(conexion, local, visitante, parti
 		("roma", "lazio", "2024103401", "2024662727")
 	]
 )
-def test_cargar_data_partido_estadio_compartido(conexion, local, visitante, partido_id_ida, partido_id_vuelta):
+def test_cargar_data_partido_estadio_compartido(conexion, entorno, local, visitante, partido_id_ida, partido_id_vuelta):
 
 	conexion.insertarEquipo(local)
 
@@ -186,7 +186,7 @@ def test_cargar_data_partido_estadio_compartido(conexion, local, visitante, part
 
 	data_limpia=limpiarDataPartidoEstadio(data)
 
-	cargarDataPartidoEstadio(data_limpia, partido_id_ida)
+	cargarDataPartidoEstadio(data_limpia, partido_id_ida, entorno)
 
 	partido=[partido_id_vuelta, visitante, local, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
 
@@ -196,7 +196,7 @@ def test_cargar_data_partido_estadio_compartido(conexion, local, visitante, part
 
 	data_limpia=limpiarDataPartidoEstadio(data)
 
-	cargarDataPartidoEstadio(data_limpia, partido_id_vuelta)
+	cargarDataPartidoEstadio(data_limpia, partido_id_vuelta, entorno)
 
 	conexion.c.execute("SELECT * FROM estadios")
 

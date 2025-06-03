@@ -25,11 +25,11 @@ def limpiarDataJugadorEquipos(tabla:pd.DataFrame)->pd.DataFrame:
 
 	return tabla[columnas]
 
-def cargarDataJugadorEquipos(tabla:pd.DataFrame, jugador_id:str)->None:
+def cargarDataJugadorEquipos(tabla:pd.DataFrame, jugador_id:str, entorno:str)->None:
 
 	datos_jugador_equipos=tabla.values.tolist()
 
-	con=Conexion()
+	con=Conexion(entorno)
 
 	if not con.existe_jugador(jugador_id):
 
