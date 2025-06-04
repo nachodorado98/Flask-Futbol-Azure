@@ -3,7 +3,7 @@ import pytest
 from src.database.conexion import Conexion
 
 @pytest.mark.parametrize(["entorno_error"],
-	[("PRE",),("entorno",),("dev",),("pro",)]
+	[("PRE",),("entorno",),("develop",),("pr",)]
 )
 def test_conexion_error_entorno(entorno_error):
 

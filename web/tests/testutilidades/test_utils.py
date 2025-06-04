@@ -1438,7 +1438,7 @@ def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, l
 		assert f'"rotation": {angulo},' in contenido
 		assert "/static/imagenes/iconos/pie.png" in contenido
 		assert f'alt="Estadio_Transporte_{tipo}" style="width:50px;"' in contenido
-		assert "/contenedorequipos/estadios/23.png" in contenido
+		assert "/pro/estadios/23.png" in contenido
 		assert f'alt="Estadio_Transporte_{tipo}" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
@@ -1483,7 +1483,7 @@ def test_crear_mapa_trayecto_detalles_ida():
 		assert "background-color: #ffdd73" not in contenido
 		assert "/static/imagenes/iconos/pie.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:50px;"' in contenido
-		assert "/contenedorequipos/estadios/23.png" in contenido
+		assert "/pro/estadios/23.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
@@ -1526,7 +1526,7 @@ def test_crear_mapa_trayecto_detalles_vuelta():
 		assert "background-color: #ffcccc" not in contenido
 		assert "background-color: #95ebf7" in contenido
 		assert "background-color: #ffdd73" not in contenido
-		assert "/contenedorequipos/estadios/1.png" in contenido
+		assert "/pro/estadios/1.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:200px;"' in contenido
 		assert "/static/imagenes/iconos/autobus.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:50px;"' in contenido
@@ -1573,7 +1573,7 @@ def test_crear_mapa_trayecto_detalles_ida_vuelta():
 		assert "background-color: #ffdd73" in contenido
 		assert "/static/imagenes/iconos/avion.png" in contenido
 		assert 'alt="Estadio_Transporte_IV" style="width:50px;"' in contenido
-		assert "/contenedorequipos/estadios/22.png" in contenido
+		assert "/pro/estadios/22.png" in contenido
 		assert 'alt="Estadio_Transporte_IV" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
@@ -1703,7 +1703,7 @@ def test_crear_mapa_trayectos():
 		assert f'"rotation": {angulo_ida},' in contenido
 		assert "/static/imagenes/iconos/coche.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:50px;"' in contenido
-		assert "/contenedorequipos/estadios/13.png" in contenido
+		assert "/pro/estadios/13.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:200px;"' in contenido
 		assert "[-2.34, 40.04]" in contenido
 		assert "Cuenca" in contenido
@@ -1712,7 +1712,7 @@ def test_crear_mapa_trayectos():
 		assert "[[-2.34, 40.04], [1.01, 9.86]]" in contenido
 		assert f"[{latitud_media_vuelta}, {longitud_media_vuelta}]" in contenido
 		assert f'"rotation": {angulo_vuelta},' in contenido
-		assert "/contenedorequipos/estadios/22.png" in contenido
+		assert "/pro/estadios/22.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:200px;"' in contenido
 		assert "/static/imagenes/iconos/transporte.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:50px;"' in contenido

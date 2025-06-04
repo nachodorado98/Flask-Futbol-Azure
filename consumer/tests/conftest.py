@@ -4,41 +4,53 @@ sys.path.append("..")
 
 import pytest
 from src.datalake.conexion_data_lake import ConexionDataLake
-from src.config import CONTENEDOR
 
 @pytest.fixture()
 def datalake():
 
-    return ConexionDataLake()
+	return ConexionDataLake()
+
+@pytest.fixture()
+def entorno():
+
+	return "dev"
 
 def pytest_sessionstart(session):
 
-    dl=ConexionDataLake()
+	entorno="dev"
 
-    if not dl.existe_carpeta(CONTENEDOR, "usuarios"):
+	dl=ConexionDataLake()
 
-        dl.crearCarpeta(CONTENEDOR, "usuarios")
+	if not dl.existe_contenedor(entorno):
 
-    else:
+		dl.crearContenedor(entorno)
 
-        dl.eliminarCarpeta(CONTENEDOR, "usuarios")
+	if not dl.existe_carpeta(entorno, "usuarios"):
 
-        dl.crearCarpeta(CONTENEDOR, "usuarios")
+		dl.crearCarpeta(entorno, "usuarios")
 
-    dl.cerrarConexion()
+	else:
 
-    print("\nEntorno del DataLake creado")
+		dl.eliminarCarpeta(entorno, "usuarios")
+
+		dl.crearCarpeta(entorno, "usuarios")
+
+	dl.cerrarConexion()
+
+	print("\nEntorno del DataLake creado")
 
 def pytest_sessionfinish(session, exitstatus):
 
-    dl=ConexionDataLake()
+	entorno="dev"
 
-    if dl.existe_carpeta(CONTENEDOR, "usuarios"):
+	dl=ConexionDataLake()
 
-        dl.eliminarCarpeta(CONTENEDOR, "usuarios")
+	if dl.existe_carpeta(entorno, "usuarios"):
 
-    dl.crearCarpeta(CONTENEDOR, "usuarios")
+		dl.eliminarCarpeta(entorno, "usuarios")
 
-    dl.cerrarConexion()
+	dl.crearCarpeta(entorno, "usuarios")
 
-    print("\nLimpieza del DataLake correcta")
+	dl.cerrarConexion()
+
+	print("\nLimpieza del DataLake correcta")

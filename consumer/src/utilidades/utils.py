@@ -8,8 +8,6 @@ from .configutils import CORREO_LOGIN, CONTRASENA_LOGIN, SERVIDOR_CORREO, PUERTO
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
-from src.config import CONTENEDOR
-
 def enviarCorreo(destino:str, asunto:str, template_correo:str,
 				origen:str=CORREO_LOGIN, contrasena:str=CONTRASENA_LOGIN)->None:
 
@@ -159,15 +157,15 @@ def obtenerCorreoUsuarioNombre(mensaje:str)->Optional[tuple]:
 
 	return (correo, usuario, nombre) if correo and usuario and nombre else None
 
-def crearCarpetaDataLakeUsuario()->bool:
+def crearCarpetaDataLakeUsuario(entorno:str)->bool:
 
 	try:
 
 		dl=ConexionDataLake()
 
-		if not dl.existe_carpeta(CONTENEDOR, "usuarios"):
+		if not dl.existe_carpeta(entorno, "usuarios"):
 
-			dl.crearCarpeta(CONTENEDOR, "usuarios")
+			dl.crearCarpeta(entorno, "usuarios")
 
 		dl.cerrarConexion()
 
@@ -179,17 +177,17 @@ def crearCarpetaDataLakeUsuario()->bool:
 
 		return False
 
-def crearCarpetaDataLakeUsuarios(usuario:str)->bool:
+def crearCarpetaDataLakeUsuarios(usuario:str, entorno:str)->bool:
 
 	try:
 
 		dl=ConexionDataLake()
 
-		if not dl.existe_carpeta(CONTENEDOR, f"usuarios/{usuario}"):
+		if not dl.existe_carpeta(entorno, f"usuarios/{usuario}"):
 
-			dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/perfil")
+			dl.crearCarpeta(entorno, f"usuarios/{usuario}/perfil")
 
-			dl.crearCarpeta(CONTENEDOR, f"usuarios/{usuario}/imagenes")
+			dl.crearCarpeta(entorno, f"usuarios/{usuario}/imagenes")
 
 		dl.cerrarConexion()
 

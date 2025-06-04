@@ -3,8 +3,6 @@ import pytest
 from src.utilidades.utils import enviarCorreo, correo_enviado, convertirMensaje, obtenerClave, obtenerCorreoUsuarioNombre
 from src.utilidades.utils import crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios
 
-from src.config import CONTENEDOR
-
 def HTML()->str:
 
 	return 	"""<html>
@@ -74,50 +72,50 @@ def test_obtener_correo_usuario_nombre():
 	assert usuario=="usuario"
 	assert nombre=="nombre"
 
-def test_crear_carpeta_data_lake_usuario_no_existe(datalake):
+def test_crear_carpeta_data_lake_usuario_no_existe(datalake, entorno):
 
-	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
+	datalake.eliminarCarpeta(entorno, "usuarios")
 
-	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios")
+	assert not datalake.existe_carpeta(entorno, "usuarios")
 
-	crearCarpetaDataLakeUsuario()
+	crearCarpetaDataLakeUsuario(entorno)
 
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
-
-	datalake.cerrarConexion()
-
-def test_crear_carpeta_data_lake_usuario_existe(datalake):
-
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
-
-	crearCarpetaDataLakeUsuario()
-
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
+	assert datalake.existe_carpeta(entorno, "usuarios")
 
 	datalake.cerrarConexion()
 
-def test_crear_carpeta_data_lake_usuarios_no_existe(datalake):
+def test_crear_carpeta_data_lake_usuario_existe(datalake, entorno):
 
-	datalake.eliminarCarpeta(CONTENEDOR, "usuarios")
+	assert datalake.existe_carpeta(entorno, "usuarios")
 
-	crearCarpetaDataLakeUsuario()
+	crearCarpetaDataLakeUsuario(entorno)
 
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
-	assert not datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
-
-	crearCarpetaDataLakeUsuarios("nacho")
-
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+	assert datalake.existe_carpeta(entorno, "usuarios")
 
 	datalake.cerrarConexion()
 
-def test_crear_carpeta_data_lake_usuarios_existe(datalake):
+def test_crear_carpeta_data_lake_usuarios_no_existe(datalake, entorno):
 
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios")
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+	datalake.eliminarCarpeta(entorno, "usuarios")
 
-	crearCarpetaDataLakeUsuarios("nacho")
+	crearCarpetaDataLakeUsuario(entorno)
 
-	assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho")
+	assert datalake.existe_carpeta(entorno, "usuarios")
+	assert not datalake.existe_carpeta(entorno, "usuarios/nacho")
+
+	crearCarpetaDataLakeUsuarios("nacho", entorno)
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho")
+
+	datalake.cerrarConexion()
+
+def test_crear_carpeta_data_lake_usuarios_existe(datalake, entorno):
+
+	assert datalake.existe_carpeta(entorno, "usuarios")
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho")
+
+	crearCarpetaDataLakeUsuarios("nacho", entorno)
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho")
 
 	datalake.cerrarConexion()

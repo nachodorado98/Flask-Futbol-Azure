@@ -59,23 +59,25 @@ def realizarFuncionalidadDataLakeUsuario(mensaje:str)->None:
 
     usuario=obtenerClave(mensaje, "usuario")
 
+    entorno=obtenerClave(mensaje, "entorno")
+
     if usuario:
 
-        if crearCarpetaDataLakeUsuario():
+        if crearCarpetaDataLakeUsuario(entorno):
 
-            escribirLogKafka("Carpeta usuarios creada")
+            escribirLogKafka(f"Carpeta usuarios creada en {entorno} en el DataLake")
 
-            if crearCarpetaDataLakeUsuarios(usuario):
+            if crearCarpetaDataLakeUsuarios(usuario, entorno):
 
-                escribirLogKafka(f"Carpeta del usuario {usuario} creada correctamente en el DataLake")
+                escribirLogKafka(f"Carpeta del usuario {usuario} creada en {entorno} en el DataLake")
 
             else:
 
-                escribirLogKafka(f"Carpeta del usuario {usuario} NO creada correctamente en el DataLake")
+                escribirLogKafka(f"Carpeta del usuario {usuario} NO creada en {entorno} en el DataLake")
 
         else:
 
-            escribirLogKafka("Carpeta usuarios NO creada")
+            escribirLogKafka(f"Carpeta usuarios NO creada en el entorno {entorno}")
 
 def ejecutarConsumer()->None:
 

@@ -43,7 +43,7 @@ def test_contenedores_data_lake(datalake):
 
 	contenedores=datalake.contenedores_data_lake()
 
-	assert len(contenedores)==1
+	assert len(contenedores)==2
 
 	datalake.cerrarConexion()
 
@@ -53,7 +53,7 @@ def test_eliminar_contenedor_data_lake(datalake):
 
 	contenedores=datalake.contenedores_data_lake()
 
-	assert not contenedores
+	assert len(contenedores)==1
 
 	datalake.cerrarConexion()
 

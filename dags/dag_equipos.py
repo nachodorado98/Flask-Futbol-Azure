@@ -75,7 +75,6 @@ with DAG("dag_equipos",
 		tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
 
 
-
 	with TaskGroup("datalake") as tareas_datalake:
 
 		tarea_entorno_data_lake_creado=BranchPythonOperator(task_id="entorno_data_lake_creado", python_callable=entorno_data_lake_creado)
@@ -86,7 +85,6 @@ with DAG("dag_equipos",
 
 
 		tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_no_crear_entorno_data_lake]
-
 
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:

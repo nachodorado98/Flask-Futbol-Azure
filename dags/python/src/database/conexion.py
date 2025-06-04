@@ -12,13 +12,15 @@ class Conexion:
 
 		databases={"PRO":BBDD_PRO, "DEV":BBDD_DEV}
 
-		if entorno not in databases.keys():
+		entorno_database=entorno.upper()
+
+		if  entorno_database not in databases.keys():
 
 			raise Exception(f"Entorno incorrecto: {entorno}")
 
 		try:
 
-			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=databases[entorno])
+			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=databases[entorno_database])
 			self.c=self.bbdd.cursor(cursor_factory=RealDictCursor)
 
 		except psycopg2.OperationalError as e:

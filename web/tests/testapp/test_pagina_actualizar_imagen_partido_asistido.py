@@ -1,7 +1,6 @@
 import os
 
 from src.utilidades.utils import vaciarCarpeta
-from src.config import CONTENEDOR
 
 def test_pagina_actualizar_imagen_partido_asistido_sin_login(cliente):
 
@@ -68,9 +67,9 @@ def test_pagina_actualizar_imagen_partido_asistido_partido_asistido_no_existente
 
 		assert not conexion_entorno_usuario.c.fetchall()
 
-def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, conexion_entorno_usuario, datalake):
+def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, conexion_entorno_usuario, datalake, entorno):
 
-	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+	datalake.crearCarpeta(entorno, "usuarios/nacho98/imagenes")
 
 	with cliente as cliente_abierto:
 
@@ -101,13 +100,13 @@ def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, con
 		assert len(partidos)==1
 		assert partidos[0]["imagen"] is None
 		
-		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+		assert datalake.existe_carpeta(entorno, "usuarios/nacho98/imagenes")
 
-		objeto_archivo_imagen=datalake.obtenerFile(CONTENEDOR, "usuarios/nacho98/imagenes", "nacho98_20190622.txt")
+		objeto_archivo_imagen=datalake.obtenerFile(entorno, "usuarios/nacho98/imagenes", "nacho98_20190622.txt")
 
 		assert not objeto_archivo_imagen.exists()
 
-		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+		datalake.eliminarCarpeta(entorno, "usuarios/nacho98")
 
 		datalake.cerrarConexion()
 
@@ -117,9 +116,9 @@ def test_pagina_actualizar_imagen_partido_asistido_imagen_no_valida(cliente, con
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno_usuario, datalake):
+def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno_usuario, datalake, entorno):
 
-	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+	datalake.crearCarpeta(entorno, "usuarios/nacho98/imagenes")
 
 	with cliente as cliente_abierto:
 
@@ -150,13 +149,13 @@ def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno_usu
 		assert len(partidos)==1
 		assert partidos[0]["imagen"]=="nacho98_20190622.jpeg"
 		
-		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+		assert datalake.existe_carpeta(entorno, "usuarios/nacho98/imagenes")
 
-		objeto_archivo_imagen=datalake.obtenerFile(CONTENEDOR, "usuarios/nacho98/imagenes", "nacho98_20190622.jpeg")
+		objeto_archivo_imagen=datalake.obtenerFile(entorno, "usuarios/nacho98/imagenes", "nacho98_20190622.jpeg")
 
 		assert objeto_archivo_imagen.exists()
 
-		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+		datalake.eliminarCarpeta(entorno, "usuarios/nacho98")
 
 		datalake.cerrarConexion()
 
@@ -166,9 +165,9 @@ def test_pagina_actualizar_imagen_partido_asistido(cliente, conexion_entorno_usu
 
 		assert not os.path.exists(ruta_imagen)
 
-def test_pagina_actualizar_imagen_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario, datalake):
+def test_pagina_actualizar_imagen_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario, datalake, entorno):
 
-	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+	datalake.crearCarpeta(entorno, "usuarios/nacho98/imagenes")
 
 	with cliente as cliente_abierto:
 
@@ -195,13 +194,13 @@ def test_pagina_actualizar_imagen_partido_asistido_sin_imagen(cliente, conexion_
 		assert len(partidos)==1
 		assert partidos[0]["imagen"] is None
 		
-		assert datalake.existe_carpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+		assert datalake.existe_carpeta(entorno, "usuarios/nacho98/imagenes")
 
-		objeto_archivo_imagen=datalake.obtenerFile(CONTENEDOR, "usuarios/nacho98/imagenes", "nacho98_20190622.jpeg")
+		objeto_archivo_imagen=datalake.obtenerFile(entorno, "usuarios/nacho98/imagenes", "nacho98_20190622.jpeg")
 
 		assert not objeto_archivo_imagen.exists()
 
-		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+		datalake.eliminarCarpeta(entorno, "usuarios/nacho98")
 
 		datalake.cerrarConexion()
 

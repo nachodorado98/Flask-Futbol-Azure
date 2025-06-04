@@ -17,8 +17,12 @@ from .extensiones.manager import login_manager
 
 from .utilidades.utils import crearCarpeta
 
+from .datalake.conexion_data_lake import ConexionDataLake
+
+from .config import CARPETAS
+
 # Funcion para crear el entorno
-def creacionEntorno()->None:
+def creacionEntorno(entorno:str)->None:
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
@@ -26,6 +30,20 @@ def creacionEntorno()->None:
 	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas", "estadios"))
 	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas", "trayectos"))
 	crearCarpeta(os.path.join(ruta, "src", "templates", "imagenes"))
+
+	dl=ConexionDataLake()
+
+	if not dl.existe_contenedor(entorno):
+
+		dl.crearContenedor(entorno)
+
+		for carpeta in CARPETAS:
+
+			if not dl.existe_carpeta(entorno, carpeta):
+
+				dl.crearCarpeta(entorno, carpeta)
+
+	dl.cerrarConexion()
 
 # Funcion para crear la instancia de la aplicacion
 def crear_app(configuracion:object)->Flask:
@@ -49,6 +67,8 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_anadir_partido_asistido)
 	app.register_blueprint(bp_entrenador)
 
-	creacionEntorno()
+	entorno=app.config["ENVIROMENT"]
+
+	creacionEntorno(entorno)
 
 	return app

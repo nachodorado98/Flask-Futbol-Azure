@@ -2,7 +2,6 @@ import pytest
 import os
 
 from src.utilidades.utils import vaciarCarpeta
-from src.config import CONTENEDOR
 
 from src.utilidades.utils import obtenerNumeroDias
 
@@ -146,9 +145,9 @@ def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 		assert '<div class="botones-anadir-imagen-partido-asistido">' in contenido
 		assert '<div id="ventana-emergente-imagen" class="ventana-emergente-imagen">' not in contenido
 
-def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake):
+def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake, entorno):
 
-	datalake.crearCarpeta(CONTENEDOR, "usuarios/nacho98/imagenes")
+	datalake.crearCarpeta(entorno, "usuarios/nacho98/imagenes")
 
 	with cliente as cliente_abierto:
 
@@ -182,7 +181,7 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake)
 		assert '<div id="ventana-emergente-imagen" class="ventana-emergente-imagen">' in contenido
 		assert "/nacho98_20190622.jpeg" in contenido
 
-		datalake.eliminarCarpeta(CONTENEDOR, "usuarios/nacho98")
+		datalake.eliminarCarpeta(entorno, "usuarios/nacho98")
 
 		datalake.cerrarConexion()
 

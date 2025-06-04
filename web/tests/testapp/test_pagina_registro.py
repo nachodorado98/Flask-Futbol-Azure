@@ -1,7 +1,6 @@
 import pytest
 import os
 
-from src.config import CONTENEDOR
 from src.utilidades.utils import vaciarCarpeta
 
 def test_pagina_registro(cliente):

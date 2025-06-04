@@ -21,10 +21,10 @@ URL_COMPETICION="https://cdn.resfu.com/media/img/league_logos/"
 URL_PAIS="https://cdn.resfu.com/media/img/flags/round/"
 URL_JUGADOR="https://cdn.resfu.com/img_data/players/medium/"
 
-ENTORNO="PRO"
+ENTORNO=os.environ.get("AZURE_NAME_CONTAINER")
 
 # Contenedor y carpetas para el datalake
-CONTENEDOR=os.environ.get("AZURE_NAME_CONTAINER")
+CONTENEDOR=ENTORNO
 ESCUDOS="escudos"
 ENTRENADORES="entrenadores"
 PRESIDENTES="presidentes"

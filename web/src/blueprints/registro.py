@@ -5,8 +5,6 @@ from src.utilidades.utils import datos_correctos, generarHash, crearCarpeta
 
 from src.database.conexion import Conexion
 
-from src.config import CONTENEDOR
-
 from src.kafka.kafka_utils import crearTopic, enviarMensajeKafka
 from src.kafka.configkafka import TOPIC
 
@@ -98,7 +96,7 @@ def singin():
 
 	try:
 
-		mensaje_datalake={"categoria":"datalake_usuario", "usuario":usuario}
+		mensaje_datalake={"categoria":"datalake_usuario", "usuario":usuario, "entorno":entorno}
 
 		enviarMensajeKafka(TOPIC, mensaje_datalake)
 

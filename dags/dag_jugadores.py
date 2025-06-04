@@ -13,6 +13,7 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 
 from pipelines import Pipeline_Jugadores_Equipo, Pipeline_Jugadores, Pipeline_Jugadores_Equipos, Pipeline_Jugadores_Seleccion
 
+from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import data_lake_disponible_creado, subirJugadoresDataLake, subirPaisesJugadoresDataLake, subirSeleccionesJugadoresDataLake
 
 
@@ -70,6 +71,18 @@ with DAG("dag_jugadores",
 		tarea_pipeline_jugadores_equipo >> tareas_pipeline_jugadores_detalle >> tareas_pipeline_jugadores_equipos >> tareas_pipeline_jugadores_seleccion
 		
 
+	with TaskGroup("datalake") as tareas_datalake:
+
+		tarea_entorno_data_lake_creado=BranchPythonOperator(task_id="entorno_data_lake_creado", python_callable=entorno_data_lake_creado)
+
+		tarea_crear_entorno_data_lake=PythonOperator(task_id="crear_entorno_data_lake", python_callable=creacion_entorno_data_lake)
+
+		tarea_no_crear_entorno_data_lake=DummyOperator(task_id="no_crear_entorno_data_lake")
+
+
+		tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_no_crear_entorno_data_lake]
+
+
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
 		tarea_subir_jugadores_data_lake=PythonOperator(task_id="subir_jugadores_data_lake", python_callable=subirJugadoresDataLake, trigger_rule="none_failed_min_one_success")
@@ -84,13 +97,13 @@ with DAG("dag_jugadores",
 
 	tarea_ejecutar_dag_jugadores=PythonOperator(task_id="ejecutar_dag_jugadores", python_callable=ejecutarDagJugadores)
 
-	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=lambda: data_lake_disponible_creado("subir_data_lake.subir_jugadores_data_lake"))
+	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=data_lake_disponible)
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
 
 	tarea_dag_jugadores_completado=PythonOperator(task_id="dag_jugadores_completado", python_callable=lambda: actualizarVariable("DAG_JUGADORES_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_jugadores >> tareas_entorno >> tareas_pipelines_jugadores >> tarea_data_lake_disponible >> [tareas_subir_data_lake, tarea_log_data_lake]
+tarea_ejecutar_dag_jugadores >> tareas_entorno >> tareas_pipelines_jugadores >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
 
-tareas_subir_data_lake >> tarea_dag_jugadores_completado
+tareas_datalake >> tareas_subir_data_lake >> tarea_dag_jugadores_completado

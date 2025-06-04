@@ -8,7 +8,6 @@ from src.database.conexion import Conexion
 from src.datalake.conexion_data_lake import ConexionDataLake
 from confmain import config
 from src.utilidades.utils import vaciarCarpeta
-from src.config import CONTENEDOR
 
 @pytest.fixture()
 def app():
@@ -112,25 +111,33 @@ def datalake():
 
 def pytest_sessionstart(session):
 
+	entorno=config["development"].ENVIROMENT
+
 	dl=ConexionDataLake()
 
-	if not dl.existe_carpeta(CONTENEDOR, "usuarios"):
+	if not dl.existe_contenedor(entorno):
 
-		dl.crearCarpeta(CONTENEDOR, "usuarios")
+		dl.crearContenedor(entorno)
+
+	if not dl.existe_carpeta(entorno, "usuarios"):
+
+		dl.crearCarpeta(entorno, "usuarios")
 
 	else:
 
-		dl.eliminarCarpeta(CONTENEDOR, "usuarios")
+		dl.eliminarCarpeta(entorno, "usuarios")
 
-		dl.crearCarpeta(CONTENEDOR, "usuarios")
+		dl.crearCarpeta(entorno, "usuarios")
 
 	dl.cerrarConexion()
 
-	print("\nEntorno del DataLake creado")
+	print(f"\nEntorno del DataLake de {entorno} creado")
 
 def pytest_sessionfinish(session, exitstatus):
 
-	con=Conexion(config["development"].ENVIROMENT)
+	entorno=config["development"].ENVIROMENT
+
+	con=Conexion(entorno)
 
 	con.vaciarBBDD()
 
@@ -160,11 +167,11 @@ def pytest_sessionfinish(session, exitstatus):
 
 	dl=ConexionDataLake()
 
-	if dl.existe_carpeta(CONTENEDOR, "usuarios"):
+	if dl.existe_carpeta(entorno, "usuarios"):
 
-		dl.eliminarCarpeta(CONTENEDOR, "usuarios")
+		dl.eliminarCarpeta(entorno, "usuarios")
 
-	dl.crearCarpeta(CONTENEDOR, "usuarios")
+	dl.crearCarpeta(entorno, "usuarios")
 
 	dl.cerrarConexion()
 

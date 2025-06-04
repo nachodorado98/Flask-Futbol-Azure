@@ -14,8 +14,6 @@ from src.utilidades.configutils import TRANSPORTES
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
-from src.config import CONTENEDOR
-
 from src.kafka.kafka_utils import enviarMensajeKafka
 
 from src.kafka.configkafka import TOPIC
@@ -351,15 +349,15 @@ def pagina_insertar_partido_asistido():
 
 				dl=ConexionDataLake()
 
-				if not dl.existe_carpeta(CONTENEDOR, f"usuarios/{current_user.id}"):
+				if not dl.existe_carpeta(entorno, f"usuarios/{current_user.id}"):
 
-					mensaje_datalake={"categoria":"datalake_usuario", "usuario":current_user.id}
+					mensaje_datalake={"categoria":"datalake_usuario", "usuario":current_user.id, "entorno":entorno}
 
 					enviarMensajeKafka(TOPIC, mensaje_datalake)
 
 					time.sleep(10)
 
-				dl.subirArchivo(CONTENEDOR, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
+				dl.subirArchivo(entorno, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
 
 				dl.cerrarConexion()
 
@@ -455,7 +453,7 @@ def pagina_actualizar_imagen_partido_asistido(partido_id:str):
 
 				dl=ConexionDataLake()
 
-				if not dl.existe_carpeta(CONTENEDOR, f"usuarios/{current_user.id}"):
+				if not dl.existe_carpeta(entorno, f"usuarios/{current_user.id}"):
 
 					mensaje_datalake={"categoria":"datalake_usuario", "usuario":current_user.id}
 
@@ -463,7 +461,7 @@ def pagina_actualizar_imagen_partido_asistido(partido_id:str):
 
 					time.sleep(10)
 
-				dl.subirArchivo(CONTENEDOR, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
+				dl.subirArchivo(entorno, f"usuarios/{current_user.id}/imagenes", ruta_carpeta, archivo_imagen)
 
 				dl.cerrarConexion()
 

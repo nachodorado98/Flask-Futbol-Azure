@@ -13,6 +13,7 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 
 from pipelines import Pipeline_Estadios_Pais, Pipeline_Estadios_Coordenadas, Pipeline_Estadios_Ciudades
 
+from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake
 
 with DAG("dag_estadios",
@@ -67,6 +68,18 @@ with DAG("dag_estadios",
 		tareas_pipeline_estadios_paises >> tareas_pipeline_estadios_coordenadas >> tareas_pipeline_estadios_ciudades
 
 
+	with TaskGroup("datalake") as tareas_datalake:
+
+		tarea_entorno_data_lake_creado=BranchPythonOperator(task_id="entorno_data_lake_creado", python_callable=entorno_data_lake_creado)
+
+		tarea_crear_entorno_data_lake=PythonOperator(task_id="crear_entorno_data_lake", python_callable=creacion_entorno_data_lake)
+
+		tarea_no_crear_entorno_data_lake=DummyOperator(task_id="no_crear_entorno_data_lake")
+
+
+		tarea_entorno_data_lake_creado >> [tarea_crear_entorno_data_lake, tarea_no_crear_entorno_data_lake]
+
+
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
 		tarea_subir_paises_estadios_data_lake=PythonOperator(task_id="subir_paises_estadios_data_lake", python_callable=subirPaisesEstadiosDataLake, trigger_rule="none_failed_min_one_success")
@@ -77,13 +90,13 @@ with DAG("dag_estadios",
 
 	tarea_ejecutar_dag_estadios=PythonOperator(task_id="ejecutar_dag_estadios", python_callable=ejecutarDagEstadios)
 
-	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=lambda: data_lake_disponible_creado("subir_data_lake.subir_paises_estadios_data_lake"))
+	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=data_lake_disponible)
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
 
 	tarea_dag_estadios_completado=PythonOperator(task_id="dag_estadios_completado", python_callable=lambda: actualizarVariable("DAG_ESTADIOS_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_estadios >> tareas_entorno >> tareas_pipelines_estadios >> tarea_data_lake_disponible >> [tareas_subir_data_lake, tarea_log_data_lake]
+tarea_ejecutar_dag_estadios >> tareas_entorno >> tareas_pipelines_estadios >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
 
-tareas_subir_data_lake >> tarea_dag_estadios_completado
+tareas_datalake >> tareas_subir_data_lake >> tarea_dag_estadios_completado
