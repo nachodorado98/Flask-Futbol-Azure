@@ -1,7 +1,9 @@
 import pytest
+import os
 
 from src.utilidades.utils import enviarCorreo, correo_enviado, convertirMensaje, obtenerClave, obtenerCorreoUsuarioNombre
-from src.utilidades.utils import crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios
+from src.utilidades.utils import crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios, listarImagenesCarpetaDatalake
+from src.utilidades.utils import existe_imagen_datalake, eliminarImagenDatalake
 
 def HTML()->str:
 
@@ -117,5 +119,129 @@ def test_crear_carpeta_data_lake_usuarios_existe(datalake, entorno):
 	crearCarpetaDataLakeUsuarios("nacho", entorno)
 
 	assert datalake.existe_carpeta(entorno, "usuarios/nacho")
+
+	datalake.cerrarConexion()
+
+def test_listar_imagenes_carpeta_datalake_carpeta_no_existe(datalake, entorno):
+
+	assert not datalake.existe_carpeta(entorno, "usuarios/no_existo/imagenes")
+
+	assert not listarImagenesCarpetaDatalake("no_existo", entorno)
+
+	datalake.cerrarConexion()
+
+def test_listar_imagenes_carpeta_datalake_imagenes_no_existen(datalake, entorno):
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho/imagenes")
+
+	assert not listarImagenesCarpetaDatalake("nacho", entorno)
+
+	datalake.cerrarConexion()
+
+def borrarCarpeta(ruta:str)->None:
+
+	if os.path.exists(ruta):
+
+		os.rmdir(ruta)
+
+def crearCarpeta(ruta:str)->None:
+
+	if not os.path.exists(ruta):
+
+		os.mkdir(ruta)
+
+def vaciarCarpeta(ruta:str)->None:
+
+	if os.path.exists(ruta):
+
+		for archivo in os.listdir(ruta):
+
+			os.remove(os.path.join(ruta, archivo))
+
+def crearArchivoTXT(ruta:str, nombre:str)->None:
+
+	ruta_archivo=os.path.join(ruta, nombre)
+
+	with open(ruta_archivo, "w") as file:
+
+	    file.write("Nacho")
+
+def test_listar_imagenes_carpeta_datalake(datalake, entorno):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	crearArchivoTXT(ruta_carpeta, nombre_archivo)
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho/imagenes")
+
+	datalake.subirArchivo(entorno, "usuarios/nacho/imagenes", ruta_carpeta, nombre_archivo)
+
+	archivos=listarImagenesCarpetaDatalake("nacho", entorno)
+
+	assert nombre_archivo in archivos
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+	datalake.cerrarConexion()
+
+def test_existe_imagen_datalake_carpeta_no_existe(datalake, entorno):
+
+	assert not datalake.existe_carpeta(entorno, "usuarios/no_existo/imagenes")
+
+	assert not existe_imagen_datalake("no_existo", "archivo.txt", entorno)
+
+	datalake.cerrarConexion()
+
+def test_existe_imagen_datalake_imagen_no_existe(datalake, entorno):
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho/imagenes")
+
+	assert not existe_imagen_datalake("nacho", "nacho.txt", entorno)
+
+	datalake.cerrarConexion()
+
+def test_existe_imagen_datalake(datalake, entorno):
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho/imagenes")
+
+	assert existe_imagen_datalake("nacho", "archivo.txt", entorno)
+
+	datalake.cerrarConexion()
+
+def test_eliminar_imagen_datalake_carpeta_no_existe(datalake, entorno):
+
+	assert not datalake.existe_carpeta(entorno, "usuarios/no_existo/imagenes")
+
+	assert not eliminarImagenDatalake("no_existo", "archivo.txt", entorno)
+
+	datalake.cerrarConexion()
+
+def test_eliminar_imagen_datalake_imagen_no_existe(datalake, entorno):
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho/imagenes")
+
+	assert not existe_imagen_datalake("nacho", "nacho.txt", entorno)
+
+	assert not eliminarImagenDatalake("nacho", "nacho.txt", entorno)
+
+	datalake.cerrarConexion()
+
+def test_existe_imagen_datalake(datalake, entorno):
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nacho/imagenes")
+
+	assert existe_imagen_datalake("nacho", "archivo.txt", entorno)
+
+	assert eliminarImagenDatalake("nacho", "archivo.txt", entorno)
+
+	assert not existe_imagen_datalake("nacho", "archivo.txt", entorno)
 
 	datalake.cerrarConexion()

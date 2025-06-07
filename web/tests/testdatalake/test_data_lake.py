@@ -258,9 +258,6 @@ def test_obtener_carpeta_contenedor(datalake):
 
 	datalake.cerrarConexion()
 
-
-
-
 def test_obtener_file_contenedor_no_existe(datalake):
 
 	with pytest.raises(Exception):
@@ -371,6 +368,92 @@ def test_subir_archivo(datalake):
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
+
+	datalake.cerrarConexion()
+
+def test_obtener_archivos_carpeta_contenedor_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.obtenerArchivosCarpeta("contenedornacho", "carpeta_file")
+
+	datalake.cerrarConexion()
+
+def test_obtener_archivos_carpeta_carpeta_no_existe(datalake):
+
+	with pytest.raises(Exception):
+
+		datalake.obtenerArchivosCarpeta("contenedor2", "carpeta_no_existe")
+
+	datalake.cerrarConexion()
+
+def test_obtener_archivos_carpeta_archivos_no_existen(datalake):
+
+	archivos=datalake.obtenerArchivosCarpeta("contenedor2", "carpeta")
+
+	assert not archivos
+
+	datalake.cerrarConexion()
+
+def test_obtener_archivos_carpeta_archivos_no_existen(datalake):
+
+	archivos=datalake.obtenerArchivosCarpeta("contenedor2", "carpeta_creada")
+
+	assert archivos
+
+	datalake.cerrarConexion()
+
+def test_eliminar_archivo_contenedor_no_existe(datalake):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	with pytest.raises(Exception):
+
+		datalake.eliminarArchivo("contenedornacho", "carpeta_file", ruta_carpeta, nombre_archivo)
+
+	datalake.cerrarConexion()
+
+def test_eliminar_archivo_carpeta_no_existe(datalake):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	with pytest.raises(Exception):
+
+		datalake.eliminarArchivo("contenedor2", "carpeta_no_existe", ruta_carpeta, nombre_archivo)
+
+	datalake.cerrarConexion()
+
+def test_eliminar_archivo_archivo_no_existe(datalake):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	with pytest.raises(Exception):
+
+		datalake.eliminarArchivo("contenedor2", "carpeta_creada", "no_existo.txt")
+
+	archivos=datalake.paths_carpeta_contenedor("contenedor2", "carpeta_creada")
+
+	assert archivos
+
+	datalake.cerrarConexion()
+
+def test_eliminar_archivo(datalake):
+
+	ruta_carpeta=os.path.join(os.getcwd(), "Archivos_Tests_Data_Lake")
+
+	nombre_archivo="archivo.txt"
+
+	datalake.eliminarArchivo("contenedor2", "carpeta_creada", nombre_archivo)
+
+	archivos=datalake.paths_carpeta_contenedor("contenedor2", "carpeta_creada")
+
+	assert not archivos
 
 	datalake.eliminarContenedor("contenedor2")
 

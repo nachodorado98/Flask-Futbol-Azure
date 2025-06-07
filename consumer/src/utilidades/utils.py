@@ -198,3 +198,45 @@ def crearCarpetaDataLakeUsuarios(usuario:str, entorno:str)->bool:
 		print(f"Error en conexion con datalake: {e}")
 
 		return False
+
+def listarImagenesCarpetaDatalake(usuario:str, entorno:str)->list[str]:
+
+	try:
+
+		dl=ConexionDataLake()
+
+		imagenes=dl.obtenerArchivosCarpeta(entorno, f"usuarios/{usuario}/imagenes") if dl.existe_carpeta(entorno, f"usuarios/{usuario}/imagenes") else []
+
+		dl.cerrarConexion()
+
+		return imagenes
+
+	except Exception as e:
+
+		print(f"Error en conexion con datalake: {e}")
+
+		return []
+
+def existe_imagen_datalake(usuario:str, imagen:str, entorno:str)->bool:
+
+	imagenes=listarImagenesCarpetaDatalake(usuario, entorno)
+
+	return True if imagen in imagenes else False
+
+def eliminarImagenDatalake(usuario:str, imagen:str, entorno:str)->bool:
+
+	if existe_imagen_datalake(usuario, imagen, entorno):
+
+		try:
+
+			dl=ConexionDataLake()
+
+			dl.eliminarArchivo(entorno, f"usuarios/{usuario}/imagenes", imagen)
+
+			return True
+
+		except Exception:
+
+			return False
+
+	return False

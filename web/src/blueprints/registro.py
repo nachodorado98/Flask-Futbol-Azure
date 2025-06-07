@@ -86,7 +86,9 @@ def singin():
 
 		correo_correcto=enviarMensajeKafka(TOPIC, mensaje_correo)
 
-	except Exception:
+	except Exception as e:
+		
+		print(f"Error en conexion con kafka: {e}")
 
 		correo_correcto=False
 
@@ -102,6 +104,6 @@ def singin():
 
 	except Exception as e:
 
-		print(f"Error en conexion con datalake: {e}")
+		print(f"Error en conexion con kafka: {e}")
 
 	return render_template("singin.html", nombre=nombre, correo_correcto=correo_correcto, equipo=equipo)

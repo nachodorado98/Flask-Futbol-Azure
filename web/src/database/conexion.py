@@ -3121,3 +3121,16 @@ class Conexion:
 											trayecto["imagen_tramo_origen"],
 											trayecto["imagen_tramo_destino"],
 											trayecto["tipo_trayecto_str"]), trayectos))
+
+	# Metodo para obtener la imagen de un partido asistido
+	def obtenerImagenPartidoAsistido(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""SELECT Imagen
+							FROM partidos_asistidos
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(partido_id, usuario))
+
+		imagen=self.c.fetchone()
+
+		return None if not imagen else imagen["imagen"]

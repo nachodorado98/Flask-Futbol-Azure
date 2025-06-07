@@ -9,6 +9,10 @@ from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto, crearMapaTrayectosIdaVuelta, obtenerTrayectosConDistancia
 from src.utilidades.utils import obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias
 
+from src.kafka.kafka_utils import enviarMensajeKafka
+
+from src.kafka.configkafka import TOPIC
+
 
 bp_partido=Blueprint("partido", __name__)
 
@@ -297,11 +301,25 @@ def pagina_eliminar_partido_asistido(partido_id:str):
 
 	estadio_equipo=con.estadio_equipo(equipo)
 
+	imagen_eliminar=con.obtenerImagenPartidoAsistido(partido_id, current_user.id)
+
 	con.eliminarPartidoAsistido(partido_id, current_user.id)
 
 	con.eliminarPartidoAsistidoFavorito(partido_id, current_user.id)
 
 	con.eliminarTrayectosPartidoAsistido(partido_id, current_user.id)
+
+	if imagen_eliminar:
+
+		try:
+
+			mensaje_eliminar_imagen={"categoria":"datalake_eliminar_imagen", "usuario":current_user.id, "imagen":imagen_eliminar, "entorno":entorno}
+
+			enviarMensajeKafka(TOPIC, mensaje_eliminar_imagen)
+
+		except Exception as e:
+
+			print(f"Error en conexion con kafka: {e}")
 
 	con.cerrarConexion()
 

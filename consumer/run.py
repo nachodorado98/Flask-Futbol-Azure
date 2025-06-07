@@ -7,7 +7,8 @@ from src.kafka.configkafka import TOPIC
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
-from src.utilidades.utils import obtenerClave, obtenerCorreoUsuarioNombre, correo_enviado, crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios
+from src.utilidades.utils import obtenerClave, obtenerCorreoUsuarioNombre, correo_enviado, crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuario
+from src.utilidades.utils import existe_imagen_datalake, eliminarImagenDatalake
 
 def conectarKafka(max_intentos:int=5)->Optional[Consumer]:
 
@@ -79,6 +80,30 @@ def realizarFuncionalidadDataLakeUsuario(mensaje:str)->None:
 
             escribirLogKafka(f"Carpeta usuarios NO creada en el entorno {entorno}")
 
+def realizarFuncionalidadEliminarImagen(mensaje:str)->None:
+
+    usuario=obtenerClave(mensaje, "usuario")
+
+    imagen=obtenerClave(mensaje, "imagen")
+
+    entorno=obtenerClave(mensaje, "entorno")
+
+    if usuario and imagen:
+
+        if existe_imagen_datalake(usuario, imagen, entorno):
+
+            if eliminarImagenDatalake(usuario, imagen, entorno):
+
+                escribirLogKafka(f"Imagen {imagen} eliminada del DataLake")
+
+            else:
+
+                escribirLogKafka(f"Imagen {imagen} NO eliminada del DataLake")
+
+        else:
+
+            escribirLogKafka(f"No existe imagen {imagen} en el DataLake")
+
 def ejecutarConsumer()->None:
 
     consumer=conectarKafka()
@@ -110,6 +135,10 @@ def ejecutarConsumer()->None:
             elif categoria=="datalake_usuario":
 
                 realizarFuncionalidadDataLakeUsuario(mensaje)
+
+            elif categoria=="datalake_eliminar_imagen":
+
+                realizarFuncionalidadEliminarImagen(mensaje)   
 
             else:
 

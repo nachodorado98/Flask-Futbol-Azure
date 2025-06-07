@@ -233,3 +233,37 @@ class ConexionDataLake:
 		except Exception:
 
 			raise Exception("Error al subir el archivo al Data Lake")
+
+	# Metodo para obtener los archivos de una carpeta
+	def obtenerArchivosCarpeta(self, nombre_contenedor:str, nombre_carpeta:str)->Optional[List[str]]:
+
+		paths=self.paths_carpeta_contenedor(nombre_contenedor, nombre_carpeta)
+
+		return [path["name"].split("/")[-1] for path in paths]
+
+	# Metodo para eliminar un archivo a la carpeta
+	def eliminarArchivo(self, nombre_contenedor:str, nombre_carpeta:str, nombre_archivo:str)->None:
+
+		if not self.existe_contenedor(nombre_contenedor):
+
+			raise Exception("Error al eliminar el archivo en el contenedor. Contenedor no existente")
+
+		if not self.existe_carpeta(nombre_contenedor, nombre_carpeta):
+
+			raise Exception("Error al eliminar el archivo en el contenedor. Carpeta no existente")
+
+		archivos=self.obtenerArchivosCarpeta(nombre_contenedor, nombre_carpeta)
+
+		if nombre_archivo not in archivos:
+
+			raise Exception("Archivo no existente en el contenedor y carpeta")
+
+		objeto_file=self.obtenerFile(nombre_contenedor, nombre_carpeta, nombre_archivo)
+
+		try:
+
+			objeto_file.delete_file()
+
+		except Exception:
+
+			raise Exception("Error al borrar el archivo del Data Lake")

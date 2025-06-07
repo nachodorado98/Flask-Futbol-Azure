@@ -1,3 +1,6 @@
+import time
+import os
+
 def test_pagina_eliminar_partido_asistido_sin_login(cliente):
 
 	respuesta=cliente.get("/partido/1/asistido/eliminar", follow_redirects=True)
@@ -129,3 +132,44 @@ def test_pagina_eliminar_partido_asistido_trayectos_partido(cliente, conexion_en
 		conexion_entorno_usuario.c.execute("SELECT * FROM trayecto_partido_asistido")
 
 		assert not conexion_entorno_usuario.c.fetchall()
+
+def test_pagina_eliminar_partido_asistido_imagen_eliminada(cliente, conexion_entorno_usuario, datalake, entorno):
+
+	datalake.crearCarpeta(entorno, "usuarios/nacho98/imagenes")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		ruta_imagen_test=os.path.join(os.getcwd(), "testapp", "imagen_tests.jpeg")
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		with open(ruta_imagen_test, "rb") as imagen_file:
+			
+			data["imagen"]=(imagen_file, "imagen_tests.jpeg")
+
+			cliente_abierto.post("/insertar_partido_asistido", data=data, buffered=True, content_type="multipart/form-data")
+		
+		archivos_datalake=datalake.obtenerArchivosCarpeta(entorno, "usuarios/nacho98/imagenes")
+		
+		assert "nacho98_20190622.jpeg" in archivos_datalake
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido/eliminar")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==302
+		assert respuesta.location=="/partidos/asistidos"
+		assert "Redirecting..." in contenido
+		assert not conexion_entorno_usuario.obtenerPartidosAsistidosUsuario("nacho98")
+
+		time.sleep(12)
+
+		archivos_datalake_nuevos=datalake.obtenerArchivosCarpeta(entorno, "usuarios/nacho98/imagenes")
+		
+		assert "nacho98_20190622.jpeg" not  in archivos_datalake_nuevos
+
+		datalake.eliminarCarpeta(entorno, "usuarios/nacho98")
+
+		datalake.cerrarConexion()
