@@ -76,7 +76,7 @@ def test_pagina_partido_asistido_con_comentario(cliente, conexion_entorno_usuari
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="info-partido-asistido-detalle">' in contenido
+		assert '<div class="info-partido-asistido-detalle"' in contenido
 		assert '<div class="contenedor-comentario">' in contenido
 		assert '<div class="comentario">' in contenido
 		assert '<h2 class="no-comentario">' not in contenido
@@ -107,7 +107,7 @@ def test_pagina_partido_asistido_sin_comentario(cliente, conexion_entorno_usuari
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="info-partido-asistido-detalle">' in contenido
+		assert '<div class="info-partido-asistido-detalle"' in contenido
 		assert '<div class="contenedor-comentario">' in contenido
 		assert '<div class="comentario">' not in contenido
 		assert '<h2 class="no-comentario">' in contenido
@@ -138,7 +138,7 @@ def test_pagina_partido_asistido_sin_imagen(cliente, conexion_entorno_usuario):
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="info-partido-asistido-detalle">' in contenido
+		assert '<div class="info-partido-asistido-detalle"' in contenido
 		assert '<div class="contenedor-imagen">' in contenido
 		assert '<div class="imagen"' not in contenido
 		assert '<div class="contenedor-subir-imagen">' in contenido
@@ -173,7 +173,7 @@ def test_pagina_partido_asistido_con_imagen(cliente, conexion_entorno, datalake,
 
 		respuesta.status_code==200
 		assert '<div class="tarjeta-partido-asistido-detalle"' in contenido
-		assert '<div class="info-partido-asistido-detalle">' in contenido
+		assert '<div class="info-partido-asistido-detalle"' in contenido
 		assert '<div class="contenedor-imagen">' in contenido
 		assert '<div class="imagen"' in contenido
 		assert '<div class="contenedor-subir-imagen">' not in contenido

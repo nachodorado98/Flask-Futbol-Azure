@@ -96,3 +96,21 @@ def test_obtener_pais_ciudad_usuario(conexion_entorno):
 
 	assert pais=="España"
 	assert ciudad=="Madrid"
+
+def test_eliminar_usuario_no_existe_usuario(conexion):
+
+	assert not conexion.existe_usuario("nacho98")
+
+	conexion.eliminarUsuario("nacho98")
+
+	assert not conexion.existe_usuario("nacho98")
+
+def test_eliminar_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert conexion_entorno.existe_usuario("nacho98")
+
+	conexion_entorno.eliminarUsuario("nacho98")
+
+	assert not conexion_entorno.existe_usuario("nacho98")

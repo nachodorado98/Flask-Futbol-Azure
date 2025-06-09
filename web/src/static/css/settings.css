@@ -1,0 +1,66 @@
+/*----------------------------------------------------------SETTINGS-------------------------------------------------*/
+.tarjeta-configuracion {
+    width: 100%;
+    max-width: 870px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+}
+
+.titulo-pagina-configuracion {
+    font-size: 45px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 15px;
+}
+
+.contenedor-configuracion {
+    width: 100%;
+    max-width:250px;
+    text-align: center;
+    margin: 10px auto;
+    justify-content: center;
+    display: flex;
+    gap: 30px;
+}
+
+.button-eliminar-cuenta {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-eliminar-cuenta:hover {
+    transform: scale(1.05);
+}
+
+.boton-confirmar-eliminar-cuenta {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.boton-confirmar-eliminar-cuenta:hover {
+    transform: scale(1.05);
+}

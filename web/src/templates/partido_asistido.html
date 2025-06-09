@@ -10,353 +10,349 @@
 
 {% block principal %}
 
-<div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %} {% if partido_asistido[11] %} style="margin-bottom: 50px" {% endif %}>
+<div class="contenedor-total-partido-asistido">
 
-    {% if partido_asistido_favorito %}
-
-        <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/favorito_asistido.png') }}" alt="Favorito Icon" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/quitar_partido_favorito'">
-        <h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>
-
-    {% else %}
-
-        <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_favorito_asistido.png') }}" alt="Favorito Icon" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/anadir_partido_favorito'">
-
+    {% if partido_id_asistido_anterior %}
+        <button class="button-partido-anterior-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_anterior }}/asistido'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+            <
+        </button>
     {% endif %}
 
-    <div class="info-partido-asistido-detalle">
+    <div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %} {% if partido_asistido[11] %} style="margin-bottom: 50px" {% endif %}>
 
-        {% if partido_asistido[5]==-1 %}
-            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[3] }}'">
+        {% if partido_asistido_favorito %}
+
+            <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/favorito_asistido.png') }}" alt="Favorito Icon" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/quitar_partido_favorito'">
+            <h3 class="titulo-partido-asistido-favorito">¡El mejor partido asistido!</h3>
+
         {% else %}
-            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido_asistido[5] }}.png" alt="Local Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[3] }}'">
+
+            <img class="favorito-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_favorito_asistido.png') }}" alt="Favorito Icon" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/anadir_partido_favorito'">
+
         {% endif %}
 
-        <h4>{{ partido_asistido[4] }} {{ partido_asistido[2] }} {{ partido_asistido[7] }}</h4>
+        <div class="info-partido-asistido-detalle" onclick="window.location.href='/partido/{{ partido_asistido[1] }}'" style="cursor: pointer;">
 
-        {% if partido_asistido[8]==-1 %}
-            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[6] }}'">
-        {% else %}
-            <img class="escudo" src="{{ url_imagen_escudo }}{{ partido_asistido[8] }}.png" alt="Visitante Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[6] }}'">
-        {% endif %}
+            {% if partido_asistido[5]==-1 %}
+                <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[3] }}'">
+            {% else %}
+                <img class="escudo" src="{{ url_imagen_escudo }}{{ partido_asistido[5] }}.png" alt="Local Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[3] }}'">
+            {% endif %}
 
-    </div>
+            <h4>{{ partido_asistido[4] }} {{ partido_asistido[2] }} {{ partido_asistido[7] }}</h4>
 
-    {% if partido_asistido[11] %}
+            {% if partido_asistido[8]==-1 %}
+                <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[6] }}'">
+            {% else %}
+                <img class="escudo" src="{{ url_imagen_escudo }}{{ partido_asistido[8] }}.png" alt="Visitante Asistido Icon" onclick="window.location.href='/equipo/{{ partido_asistido[6] }}'">
+            {% endif %}
 
-        <div class="contenedor-desplegable-on-tour">
-            <div id="contenedorOnTour"  class="contenedor-boton-on-tour">
-                <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
-                <p  class="button-on-tour-partido-asistido"><strong>DATOS ON TOUR</strong></p>
-                <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha" id="botonOnTourPartidoAsistido">
-            </div>
         </div>
 
-        <div class="seccion-on-tour-partido-asistido" id="contenedorOnTourPartidoAsistido" style="display: none;">
+        {% if partido_asistido[11] %}
 
-            {% if trayectos_ida and trayectos_vuelta %}
-
-                <hr style="width: 800px">
-
-                <div class="contenedor-datos-detalle">
-
-                    <p class="titulo-datos-on-tour"><strong>Datos de los Trayectos</strong></p>
-
-                    <div class="contenedor-datos-on-tour">
-                        <img class="icono-dias-on-tour" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
-                        <p class="dias-on-tour-total"><strong>Duracion: {{ partido_asistido[12] | obtenerNumeroDias(partido_asistido[13]) }} dias</strong></p>
-                        <img class="icono-distancia-on-tour-total" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
-                        <p class="distancia-on-tour-total"><strong>Distancia: {{ distancia_total_ida+distancia_total_vuelta }} kilometros</strong></p>
-                        <img class="icono-teletrabajo-on-tour" src="{{ url_for('static', filename='imagenes/iconos/teletrabajo.png') }}" alt="Teletrabajo Icon">
-                        <p class="teletrabajo-on-tour">
-                            {% if partido_asistido[14] %}
-                                <strong>Teletrabajo: Si</strong>
-                            {% else %}
-                                <strong>Teletrabajo: No</strong>
-                            {% endif %}
-                        </p>
-                    </div>
-
+            <div class="contenedor-desplegable-on-tour">
+                <div id="contenedorOnTour"  class="contenedor-boton-on-tour">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/british_rail.png') }}" alt="Rail Icon" class="icono-rail">
+                    <p  class="button-on-tour-partido-asistido"><strong>DATOS ON TOUR</strong></p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha.png') }}" alt="Flecha Icon" class="icono-flecha" id="botonOnTourPartidoAsistido">
                 </div>
+            </div>
 
-                <hr style="width: 800px">
+            <div class="seccion-on-tour-partido-asistido" id="contenedorOnTourPartidoAsistido" style="display: none;">
 
-                <div class="contenedor-datos-ida">
+                {% if trayectos_ida and trayectos_vuelta %}
 
-                    <p class="titulo-datos-ida-on-tour"><strong>Trayecto de Ida</strong></p>
+                    <hr style="width: 800px">
 
-                    <div class="contenedor-datos-on-tour-ida">
-                        <img class="icono-fecha-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
-                        <p class="fecha-on-tour-ida"><strong>Fecha: {{ partido_asistido[12] }}</strong></p>
-                        <img class="icono-distancia-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
-                        <p class="distancia-on-tour-ida"><strong>Distancia: {{ distancia_total_ida }} kilometros</strong></p>
-                        <img class="icono-escala-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/destino.png') }}" alt="Escala Icon">
-                        <p class="escala-on-tour-ida"><strong>Escalas: {{ (trayectos_ida|length)-1 }}</strong></p>
+                    <div class="contenedor-datos-detalle">
+
+                        <p class="titulo-datos-on-tour"><strong>Datos de los Trayectos</strong></p>
+
+                        <div class="contenedor-datos-on-tour">
+                            <img class="icono-dias-on-tour" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
+                            <p class="dias-on-tour-total"><strong>Duracion: {{ partido_asistido[12] | obtenerNumeroDias(partido_asistido[13]) }} dias</strong></p>
+                            <img class="icono-distancia-on-tour-total" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
+                            <p class="distancia-on-tour-total"><strong>Distancia: {{ distancia_total_ida+distancia_total_vuelta }} kilometros</strong></p>
+                            <img class="icono-teletrabajo-on-tour" src="{{ url_for('static', filename='imagenes/iconos/teletrabajo.png') }}" alt="Teletrabajo Icon">
+                            <p class="teletrabajo-on-tour">
+                                {% if partido_asistido[14] %}
+                                    <strong>Teletrabajo: Si</strong>
+                                {% else %}
+                                    <strong>Teletrabajo: No</strong>
+                                {% endif %}
+                            </p>
+                        </div>
+
                     </div>
 
-                    {% for trayecto in trayectos_ida %}
+                    <hr style="width: 800px">
 
-                        <div class="contenedor-origen-destino" onclick="abrirDesdeAtributo(this)" data-trayecto='{{ trayecto | tojson | safe }}'>
+                    <div class="contenedor-datos-ida">
 
-                            <div class="contenedor-pais-ciudad-partido">
+                        <p class="titulo-datos-ida-on-tour"><strong>Trayecto de Ida</strong></p>
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[13]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida"
-                                >
+                        <div class="contenedor-datos-on-tour-ida">
+                            <img class="icono-fecha-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
+                            <p class="fecha-on-tour-ida"><strong>Fecha: {{ partido_asistido[12] }}</strong></p>
+                            <img class="icono-distancia-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
+                            <p class="distancia-on-tour-ida"><strong>Distancia: {{ distancia_total_ida }} kilometros</strong></p>
+                            <img class="icono-escala-on-tour-ida" src="{{ url_for('static', filename='imagenes/iconos/destino.png') }}" alt="Escala Icon">
+                            <p class="escala-on-tour-ida"><strong>Escalas: {{ (trayectos_ida|length)-1 }}</strong></p>
+                        </div>
 
-                                <p class="texto-origen-destino-ida"><strong>{{ trayecto[3] }}</strong></p>
+                        {% for trayecto in trayectos_ida %}
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+                            <div class="contenedor-origen-destino" onclick="abrirDesdeAtributo(this)" data-trayecto='{{ trayecto | tojson | safe }}'>
 
-                                {% if (trayecto[12] | es_numero) %}
-                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[11]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[12]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
-                                {% endif %}
+                                <div class="contenedor-pais-ciudad-partido">
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[13]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida"
+                                    >
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[14]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida"
-                                >
-                                <p class="texto-origen-destino-ida"><strong>{{ trayecto[7] }}</strong></p>
+                                    <p class="texto-origen-destino-ida"><strong>{{ trayecto[3] }}</strong></p>
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+
+                                    {% if (trayecto[12] | es_numero) %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[11]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[12]+'.png') }}" alt="Transporte Icon Ida" class="icono-transporte-ida">
+                                    {% endif %}
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[14]+'.png') }}" alt="Tramo Icon Ida" class="icono-tramo-trayecto-ida"
+                                    >
+                                    <p class="texto-origen-destino-ida"><strong>{{ trayecto[7] }}</strong></p>
+
+                                </div>
 
                             </div>
 
-                        </div>
+                        {% endfor %}
 
-                    {% endfor %}
-
-                </div>
-
-                <hr style="width: 800px">
-
-                <div class="contenedor-datos-vuelta">
-
-                    <p class="titulo-datos-vuelta-on-tour"><strong>Trayecto de Vuelta</strong></p>
-
-                    <div class="contenedor-datos-on-tour-vuelta">
-                        <img class="icono-fecha-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
-                        <p class="fecha-on-tour-vuelta"><strong>Fecha: {{ partido_asistido[13] }}</strong></p>
-                        <img class="icono-distancia-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
-                        <p class="distancia-on-tour-vuelta"><strong>Distancia: {{ distancia_total_vuelta }} kilometros</strong></p>
-                        <img class="icono-escala-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/destino.png') }}" alt="Escala Icon">
-                        <p class="escala-on-tour-vuelta"><strong>Escalas: {{ (trayectos_vuelta|length)-1 }}</strong></p>
                     </div>
 
-                    {% for trayecto in trayectos_vuelta %}
+                    <hr style="width: 800px">
 
-                        <div class="contenedor-origen-destino" onclick="abrirDesdeAtributo(this)" data-trayecto='{{ trayecto | tojson | safe }}'>
+                    <div class="contenedor-datos-vuelta">
 
-                            <div class="contenedor-pais-ciudad-partido">
+                        <p class="titulo-datos-vuelta-on-tour"><strong>Trayecto de Vuelta</strong></p>
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[13]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+                        <div class="contenedor-datos-on-tour-vuelta">
+                            <img class="icono-fecha-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/fecha.png') }}" alt="Fecha Icon">
+                            <p class="fecha-on-tour-vuelta"><strong>Fecha: {{ partido_asistido[13] }}</strong></p>
+                            <img class="icono-distancia-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
+                            <p class="distancia-on-tour-vuelta"><strong>Distancia: {{ distancia_total_vuelta }} kilometros</strong></p>
+                            <img class="icono-escala-on-tour-vuelta" src="{{ url_for('static', filename='imagenes/iconos/destino.png') }}" alt="Escala Icon">
+                            <p class="escala-on-tour-vuelta"><strong>Escalas: {{ (trayectos_vuelta|length)-1 }}</strong></p>
+                        </div>
 
-                                <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[3] }}</strong></p>
+                        {% for trayecto in trayectos_vuelta %}
+
+                            <div class="contenedor-origen-destino" onclick="abrirDesdeAtributo(this)" data-trayecto='{{ trayecto | tojson | safe }}'>
+
+                                <div class="contenedor-pais-ciudad-partido">
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[13]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+
+                                    <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[3] }}</strong></p>
+                                
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+
+                                    {% if (trayecto[12] | es_numero) %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[11]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[12]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
+                                    {% endif %}
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[14]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+
+                                    <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[7] }}</strong></p>
+
+                                </div>
+
+                            </div>
                             
-                                <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+                        {% endfor %}
 
-                                {% if (trayecto[12] | es_numero) %}
-                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[11]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[12]+'.png') }}" alt="Transporte Icon Vuelta" class="icono-transporte-vuelta">
-                                {% endif %}
+                    </div>
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+                {% endif %}
 
-                                <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[14]+'.png') }}" alt="Tramo Icon Vuelta" class="icono-tramo-trayecto-vuelta">
+                <hr style="width: 800px">
 
-                                <p class="texto-origen-destino-vuelta"><strong>{{ trayecto[7] }}</strong></p>
+                <p class="titulo-mapa-on-tour"><strong>Mapa de los Trayectos</strong></p>
 
+                {% if mapas_correcto %}
+                    <div class="tarjeta-mapa-trayecto-ida-vuelta-total" onclick="abrirVentanaEmergenteMapa()" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
+                        <div class="contenedor-mapa-trayecto-ida-vuelta-total">
+                            <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida_vuelta }}"></iframe>
+                        </div>
+                    </div>
+                {% else %}
+                    <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
+                {% endif %}
+
+                <div class="botones-on-tour-partido-asistido">
+                    <button id="botonNoOnTourPartidoAsistido" class="boton-no-on-tour-partido-asistido" type="button" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                        Cerrar
+                    </button>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        <hr style="width: 800px">
+
+        <p class="titulo-imagen"><strong>Fotografia del Partido</strong></p>
+
+        <div class="contenedor-imagen">
+
+            {% if partido_asistido[10]=='-1' %}
+
+                <form action="/actualizar_imagen_partido_asistido/{{ partido_asistido[1] }}" method="POST" enctype="multipart/form-data" novalidate>
+
+                    <div class="contenedor-subir-imagen">
+                        <p class="imagen-partido-asistido"><strong>Subir Imagen Partido</strong></p>
+                        <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>Seleccionar Imagen</label>
+                        <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
+                        <div class="previsualizacion">
+                          <p id="mensaje" class="mensaje">No se ha seleccionado archivo</p>
+                          <img class="imagen-preview" id="preview" src="" alt="Previsualización">
+                        </div>
+                    </div>
+
+                    <div class="botones-anadir-imagen-partido-asistido">
+                        <button type="submit" class="boton-anadir-imagen-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                            Confirmar Imagen
+                        </button>
+                    </div>
+
+                </form>
+
+            {% else %}
+                <div class="imagen" onclick="abrirVentanaEmergenteImagen()">
+                    <img class="imagen-partido" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido[10] }}" alt="Imagen Icon">
+                </div>
+            {% endif %}
+
+        </div>
+
+        <hr style="width: 800px">
+
+        <div class="contenedor-comentario">
+
+            {% if partido_asistido[9] %}
+
+                <div class="comentario">
+                    <p>{{ partido_asistido[9] }}</p>
+                </div>
+
+            {% else %}
+
+                <div class="contenedor-no-comentario">
+
+                    <h2 class="no-comentario">No hay comentario para este partido...</h2>
+
+                    <div id="contenedorBoton" style="display: block;">
+                        <button id="botonComentarPartidoAsistido" class="button-comentar-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                            Realizar un comentario
+                        </button>
+                    </div>
+
+                    <div class="seccion-comentar-partido-asistido" id="contenedorComentarPartidoAsistido" style="display: none;">
+                        <form action="/actualizar_comentario_partido_asistido/{{ partido_asistido[1] }}" method="POST">
+
+                            <div class="contenedor-nuevo-comentario">
+                                <textarea id="nuevo-comentario" name="nuevo-comentario" class="campo-nuevo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
                             </div>
 
-                        </div>
-                        
-                    {% endfor %}
+                            <div class="botones-anadir-comentario-partido-asistido">
+                                <button type="submit" class="boton-anadir-comentario-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                                    Añadir Comentario
+                                </button>
+                                <button id="botonNoComentarPartidoAsistido" class="boton-cancelar-comentario-partido-asistido" type="button" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                                    Cerrar
+                                </button>
+                            </div>
 
-                </div>
-
-            {% endif %}
-
-            <hr style="width: 800px">
-
-            <p class="titulo-mapa-on-tour"><strong>Mapa de los Trayectos</strong></p>
-
-            {% if mapas_correcto %}
-                <div class="tarjeta-mapa-trayecto-ida-vuelta-total" onclick="abrirVentanaEmergenteMapa()" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
-                    <div class="contenedor-mapa-trayecto-ida-vuelta-total">
-                        <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida_vuelta }}"></iframe>
+                        </form>
                     </div>
+
                 </div>
-            {% else %}
-                <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
+
             {% endif %}
 
-            <div class="botones-on-tour-partido-asistido">
-                <button id="botonNoOnTourPartidoAsistido" class="boton-no-on-tour-partido-asistido" type="button" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                    Cerrar
+        </div>
+
+        <img class="papelera-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/papelera.png') }}" alt="Papelera Icon" onclick="abrirVentanaEmergente()">
+
+        <div id="ventana-emergente" class="ventana-emergente">
+            <div class="contenido-ventana-emergente" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
+                <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+                <h2>¿Estas seguro de eliminar este partido asistido?</h2>
+                <button class="boton-confirmar-eliminar-partido" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/eliminar'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                    Si, eliminar el partido
                 </button>
             </div>
-
         </div>
 
-    {% endif %}
-
-    <hr style="width: 800px">
-
-    <p class="titulo-imagen"><strong>Fotografia del Partido</strong></p>
-
-    <div class="contenedor-imagen">
-
-        {% if partido_asistido[10]=='-1' %}
-
-            <form action="/actualizar_imagen_partido_asistido/{{ partido_asistido[1] }}" method="POST" enctype="multipart/form-data" novalidate>
-
-                <div class="contenedor-subir-imagen">
-                    <p class="imagen-partido-asistido"><strong>Subir Imagen Partido</strong></p>
-                    <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>Seleccionar Imagen</label>
-                    <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
-                    <div class="previsualizacion">
-                      <p id="mensaje" class="mensaje">No se ha seleccionado archivo</p>
-                      <img class="imagen-preview" id="preview" src="" alt="Previsualización">
+        {% if mapas_correcto %}
+            <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+            <div id="ventana-emergente-mapa" class="ventana-emergente-mapa">
+                <div class="contenido-ventana-emergente-mapa" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
+                    <span class="cerrar-mapa" onclick="cerrarVentanaEmergenteMapa()">&times;</span>
+                    <div class="botones-mapa-detalle-ida-vuelta">
+                        <button onclick="cambiarMapaTrayecto('/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}', this)" class="boton-mapa-ida-vuelta active" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                            <span class="boton-mapa-ida-vuelta-text">Ida</span>
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_ida.png') }}" alt="Flecha Ida Icon" class="icono-trayecto-mapa">
+                        </button>
+                        <button onclick="cambiarMapaTrayecto('/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_vuelta }}', this)" class="boton-mapa-ida-vuelta" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+                            <span class="boton-mapa-ida-vuelta-text">Vuelta</span>
+                            <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vuelta.png') }}" alt="Flecha Vuelta Icon" class="icono-trayecto-mapa">
+                        </button>
+                    </div>
+                    <div class="contenedor-mapa-ida-vuelta-detalle">
+                        <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}" id="iframe-mapa-trayecto"></iframe>
                     </div>
                 </div>
+            </div>
+        {% endif %}
 
-                <div class="botones-anadir-imagen-partido-asistido">
-                    <button type="submit" class="boton-anadir-imagen-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                        Confirmar Imagen
-                    </button>
+        {% if partido_asistido[11] %}
+            <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+            <div id="ventana-emergente-trayecto" class="ventana-emergente-trayecto">
+                <div class="contenido-ventana-emergente-trayecto" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
+                    <span class="cerrar" onclick="cerrarVentanaEmergenteTrayecto()">&times;</span>
+                    <div id="contenido-ventana-trayecto">
+                    </div>
                 </div>
+            </div>
+        {% endif %}
 
-            </form>
-
-        {% else %}
-            <div class="imagen" onclick="abrirVentanaEmergenteImagen()">
-                <img class="imagen-partido" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido[10] }}" alt="Imagen Icon">
+        {% if partido_asistido[10]!='-1' %}
+             <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+            <div id="ventana-emergente-imagen" class="ventana-emergente-imagen">
+                <div class="contenido-ventana-emergente-imagen" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
+                    <span class="cerrar" onclick="cerrarVentanaEmergenteImagen()">&times;</span>
+                    <div class="imagen-zoom">
+                        <img class="imagen-partido-zoom" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido[10] }}" alt="Imagen Icon">
+                    </div>
+                </div>
             </div>
         {% endif %}
 
     </div>
 
-    <hr style="width: 800px">
-
-    <div class="contenedor-comentario">
-
-        {% if partido_asistido[9] %}
-
-            <div class="comentario">
-                <p>{{ partido_asistido[9] }}</p>
-            </div>
-
-        {% else %}
-
-            <div class="contenedor-no-comentario">
-
-                <h2 class="no-comentario">No hay comentario para este partido...</h2>
-
-                <div id="contenedorBoton" style="display: block;">
-                    <button id="botonComentarPartidoAsistido" class="button-comentar-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                        Realizar un comentario
-                    </button>
-                </div>
-
-                <div class="seccion-comentar-partido-asistido" id="contenedorComentarPartidoAsistido" style="display: none;">
-                    <form action="/actualizar_comentario_partido_asistido/{{ partido_asistido[1] }}" method="POST">
-
-                        <div class="contenedor-nuevo-comentario">
-                            <textarea id="nuevo-comentario" name="nuevo-comentario" class="campo-nuevo-comentario" rows="4" placeholder="Añade un comentario sobre el partido"></textarea>
-                        </div>
-
-                        <div class="botones-anadir-comentario-partido-asistido">
-                            <button type="submit" class="boton-anadir-comentario-partido-asistido" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                                Añadir Comentario
-                            </button>
-                            <button id="botonNoComentarPartidoAsistido" class="boton-cancelar-comentario-partido-asistido" type="button" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                                Cerrar
-                            </button>
-                        </div>
-
-                    </form>
-                </div>
-
-            </div>
-
-        {% endif %}
-
-    </div>
-
-    <div class="contenedor-botones-asistido">
-
-        {% if partido_id_asistido_anterior %}
-            <button class="button-partido-anterior-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_anterior }}/asistido'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                <
-            </button>
-        {% endif %}
-
-        <button class="button-volver-partido-asistido" onclick="window.location.href='/partido/{{ partido_asistido[1] }}'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-            Ver Detalle Del Partido
+    {% if partido_id_asistido_siguiente %}
+        <button class="button-partido-siguiente-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_siguiente }}/asistido'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+            >
         </button>
-
-        {% if partido_id_asistido_siguiente %}
-            <button class="button-partido-siguiente-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_siguiente }}/asistido'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                >
-            </button>
-        {% endif %}
-
-    </div>
-
-    <img class="papelera-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/papelera.png') }}" alt="Papelera Icon" onclick="abrirVentanaEmergente()">
-
-    <div id="ventana-emergente" class="ventana-emergente">
-        <div class="contenido-ventana-emergente" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
-            <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
-            <h2>¿Estas seguro de eliminar este partido asistido?</h2>
-            <button class="boton-confirmar-eliminar-favorito" onclick="window.location.href='/partido/{{ partido_asistido[1] }}/asistido/eliminar'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                Si, eliminar el partido
-            </button>
-        </div>
-    </div>
-
-    {% if mapas_correcto %}
-        <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-        <div id="ventana-emergente-mapa" class="ventana-emergente-mapa">
-            <div class="contenido-ventana-emergente-mapa" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
-                <span class="cerrar-mapa" onclick="cerrarVentanaEmergenteMapa()">&times;</span>
-                <div class="botones-mapa-detalle-ida-vuelta">
-                    <button onclick="cambiarMapaTrayecto('/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}', this)" class="boton-mapa-ida-vuelta active" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                        <span class="boton-mapa-ida-vuelta-text">Ida</span>
-                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_ida.png') }}" alt="Flecha Ida Icon" class="icono-trayecto-mapa">
-                    </button>
-                    <button onclick="cambiarMapaTrayecto('/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_vuelta }}', this)" class="boton-mapa-ida-vuelta" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
-                        <span class="boton-mapa-ida-vuelta-text">Vuelta</span>
-                        <img src="{{ url_for('static', filename='imagenes/iconos/flecha_vuelta.png') }}" alt="Flecha Vuelta Icon" class="icono-trayecto-mapa">
-                    </button>
-                </div>
-                <div class="contenedor-mapa-ida-vuelta-detalle">
-                    <iframe src="/partido/{{ partido_asistido[1] }}/asistido/trayecto/mapa/{{ nombre_mapa_ida }}" id="iframe-mapa-trayecto"></iframe>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-    {% if partido_asistido[11] %}
-        <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-        <div id="ventana-emergente-trayecto" class="ventana-emergente-trayecto">
-            <div class="contenido-ventana-emergente-trayecto" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
-                <span class="cerrar" onclick="cerrarVentanaEmergenteTrayecto()">&times;</span>
-                <div id="contenido-ventana-trayecto">
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-    {% if partido_asistido[10]!='-1' %}
-         <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-        <div id="ventana-emergente-imagen" class="ventana-emergente-imagen">
-            <div class="contenido-ventana-emergente-imagen" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
-                <span class="cerrar" onclick="cerrarVentanaEmergenteImagen()">&times;</span>
-                <div class="imagen-zoom">
-                    <img class="imagen-partido-zoom" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido[10] }}" alt="Imagen Icon">
-                </div>
-            </div>
-        </div>
     {% endif %}
 
 </div>

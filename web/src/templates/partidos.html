@@ -82,13 +82,19 @@
 
             <div id="menuDesplegableNavBarUsuario" class="menu-desplegable-navbar-usuario">
                 <a href="#" class="opcion-desplegable-navbar-usuario">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/perfil.png') }}" alt="Perfil Icon" class="icono-perfil">
                     <strong>{{ usuario }}</strong>
                 </a>
                 <a href="/anadir_partido_asistido" class="opcion-desplegable-navbar-usuario">
                     <strong>Añadir Partido</strong>
                 </a>
+                <a href="/settings" class="opcion-desplegable-navbar-usuario">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/setting.png') }}" alt="Settings Icon" class="icono-settings">
+                    <strong>Cuenta</strong>
+                </a>
                 <a href="/logout" class="opcion-desplegable-navbar-usuario">
-                    <strong>Cerrar Sesión</strong>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/logout.png') }}" alt="Logout Icon" class="icono-logout">
+                    <strong>Salir</strong>
                 </a>
             </div>
 

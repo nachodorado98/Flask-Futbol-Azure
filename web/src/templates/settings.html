@@ -1,0 +1,35 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-configuracion">
+
+    <p class="titulo-pagina-configuracion"><strong>Configuracion</strong></p>
+
+    <div class="contenedor-configuracion">
+    	<button class="button-eliminar-cuenta" onclick="abrirVentanaEmergente()">Eiminar cuenta</button>
+     </div>
+</div>
+
+
+<div id="ventana-emergente" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+        <h2>¿Estas seguro de eliminar la cuenta? La accion no se puede deshacer</h2>
+        <button class="boton-confirmar-eliminar-cuenta" onclick="window.location.href='/settings/eliminar_cuenta'" >
+            Si, deseo eliminar mi cuenta
+        </button>
+    </div>
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

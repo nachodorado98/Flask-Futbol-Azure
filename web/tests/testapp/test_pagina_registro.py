@@ -1,5 +1,6 @@
 import pytest
 import os
+import time
 
 from src.utilidades.utils import vaciarCarpeta
 
@@ -185,6 +186,32 @@ def test_pagina_singins_correctos(cliente, conexion_entorno, usuarios_agregar):
 		ruta_carpeta_imagenes_usuario=os.path.join(ruta_carpeta_imagenes, usuario)
 
 		assert os.path.exists(ruta_carpeta_imagenes_usuario)
+
+	vaciarCarpeta(ruta_carpeta_imagenes)
+
+	time.sleep(3)
+
+def test_pagina_singins_correcto_carpeta_datalake(cliente, conexion_entorno, datalake, entorno):
+
+	time.sleep(15)
+
+	cliente.post("/singin", data={"usuario":"nachodorado", "correo":"nacho@gmail.com", "nombre":"nacho",
+									"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
+									"fecha-nacimiento":"1998-02-16", "ciudad": "Madrid", "equipo":"atletico-madrid"})
+
+	conexion_entorno.c.execute("SELECT * FROM usuarios")
+
+	assert len(conexion_entorno.c.fetchall())==1
+
+	time.sleep(20)
+
+	assert datalake.existe_carpeta(entorno, "usuarios/nachodorado")
+	assert datalake.existe_carpeta(entorno, "usuarios/nachodorado/imagenes")
+	assert datalake.existe_carpeta(entorno, "usuarios/nachodorado/perfil")
+
+	datalake.cerrarConexion()
+
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
 
 	vaciarCarpeta(ruta_carpeta_imagenes)
 

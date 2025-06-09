@@ -175,6 +175,18 @@ body {
     height: 40px;
 }
 
+.icono-perfil {
+    height: 23px;
+}
+
+.icono-logout {
+    height: 23px;
+}
+
+.icono-settings {
+    height: 23px;
+}
+
 .button-navbar-club {
     left: 80px;
 }
@@ -219,8 +231,8 @@ body {
     background-color: var(--color-toogle);
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    min-width: 150px;
-    padding: 10px 16px;
+    min-width: 200px;
+    padding: 20px 15px;
     border-radius: 5px;
     transition: all 0.3s ease;
 }
@@ -234,7 +246,8 @@ body {
     text-decoration: none;
     display: block;
     font-size: 17px;
-    margin: 10px;
+    margin: 15px;
+    white-space: nowrap;
 }
 .menu-desplegable-navbar-club .opcion-desplegable-navbar-club:hover,
 .menu-desplegable-navbar-mis-partidos .opcion-desplegable-navbar-mis-partidos:hover,

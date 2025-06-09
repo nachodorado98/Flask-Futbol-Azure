@@ -7,7 +7,7 @@ from src.kafka.configkafka import TOPIC
 
 from src.datalake.conexion_data_lake import ConexionDataLake
 
-from src.utilidades.utils import obtenerClave, obtenerCorreoUsuarioNombre, correo_enviado, crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuario
+from src.utilidades.utils import obtenerClave, obtenerCorreoUsuarioNombre, correo_enviado, crearCarpetaDataLakeUsuario, crearCarpetaDataLakeUsuarios
 from src.utilidades.utils import existe_imagen_datalake, eliminarImagenDatalake
 
 def conectarKafka(max_intentos:int=5)->Optional[Consumer]:
@@ -104,6 +104,28 @@ def realizarFuncionalidadEliminarImagen(mensaje:str)->None:
 
             escribirLogKafka(f"No existe imagen {imagen} en el DataLake")
 
+def realizarFuncionalidadEliminarCarpeta(mensaje:str)->None:
+
+    usuario=obtenerClave(mensaje, "usuario")
+
+    entorno=obtenerClave(mensaje, "entorno")
+
+    if usuario:
+
+        dl=ConexionDataLake()
+
+        if dl.existe_carpeta(entorno, f"usuarios/{usuario}"):
+
+            dl.eliminarCarpeta(entorno, f"usuarios/{usuario}")
+
+            escribirLogKafka(f"Carpeta {usuario} eliminada del DataLake")
+
+        else:
+
+            escribirLogKafka(f"No existe carpeta {usuario} en el DataLake")
+
+        dl.cerrarConexion()
+
 def ejecutarConsumer()->None:
 
     consumer=conectarKafka()
@@ -116,11 +138,14 @@ def ejecutarConsumer()->None:
 
     escribirLogKafka(f"Suscrito al topic {TOPIC}")
 
-    print(f"Escuchando del topic {TOPIC}...")
-
     escribirLogKafka(f"Escuchando del topic {TOPIC}...")
 
     while True:
+
+        categorias={"correo":realizarFuncionalidadCorreo,
+                    "datalake_usuario":realizarFuncionalidadDataLakeUsuario,
+                    "datalake_eliminar_imagen":realizarFuncionalidadEliminarImagen,
+                    "datalake_eliminar_carpeta":realizarFuncionalidadEliminarCarpeta}
 
         mensaje=consumirMensajes(consumer)
 
@@ -128,17 +153,9 @@ def ejecutarConsumer()->None:
 
             categoria=obtenerClave(mensaje, "categoria")
 
-            if categoria=="correo":
+            if categoria in categorias:
 
-                realizarFuncionalidadCorreo(mensaje)                
-
-            elif categoria=="datalake_usuario":
-
-                realizarFuncionalidadDataLakeUsuario(mensaje)
-
-            elif categoria=="datalake_eliminar_imagen":
-
-                realizarFuncionalidadEliminarImagen(mensaje)   
+                categorias[categoria](mensaje)
 
             else:
 

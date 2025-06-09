@@ -3134,3 +3134,12 @@ class Conexion:
 		imagen=self.c.fetchone()
 
 		return None if not imagen else imagen["imagen"]
+
+	# Metodo para eliminar un usuario
+	def eliminarUsuario(self, usuario:str)->None:
+
+		self.c.execute("""DELETE FROM usuarios
+							WHERE Usuario=%s""",
+							(usuario,))
+
+		self.confirmar()

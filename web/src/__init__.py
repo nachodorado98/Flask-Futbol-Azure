@@ -12,6 +12,7 @@ from .blueprints.competicion import bp_competicion
 from .blueprints.jugador import bp_jugador
 from .blueprints.anadir_partido_asistido import bp_anadir_partido_asistido
 from .blueprints.entrenador import bp_entrenador
+from .blueprints.settings import bp_settings
 
 from .extensiones.manager import login_manager
 
@@ -66,6 +67,7 @@ def crear_app(configuracion:object)->Flask:
 	app.register_blueprint(bp_jugador)
 	app.register_blueprint(bp_anadir_partido_asistido)
 	app.register_blueprint(bp_entrenador)
+	app.register_blueprint(bp_settings)
 
 	entorno=app.config["ENVIROMENT"]
 

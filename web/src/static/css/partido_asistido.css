@@ -1,10 +1,36 @@
 /*----------------------------------------------------------PARTIDO ASISTIDO----------------------------------------------------*/
+.contenedor-total-partido-asistido {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-direction: row;
+}
+
+.button-partido-anterior-asistido,
+.button-partido-siguiente-asistido {
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    font-size: 50px;
+    padding: 15px;
+    margin: 0;
+    border: 1px solid var(--color-secundario);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-partido-anterior-asistido:hover,
+.button-partido-siguiente-asistido:hover {
+    transform: scale(1.05);
+}
+
 .tarjeta-partido-asistido-detalle {
     position: relative;
     width: 100%;
-    max-width: 950px;
-    min-width: 900px;
-    margin: 5px auto;
+    max-width: 960px;
+    min-width: 950px;
+    margin: 0;
     padding: 5px;
     border: 1px solid #bdc3c7;
     border-radius: 8px;
@@ -56,13 +82,13 @@
     display: flex;
     justify-content: center;
     margin-top: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .contenedor-comentario .comentario {
     width: 100%;
     max-width: 850px;
-    padding: 10px;
+    padding: 5px;
     border-radius: 5px;
     border: 1px solid #bdc3c7;
     background-color: #f9f9f9;
@@ -158,8 +184,9 @@
 
 .titulo-imagen {
     color: var(--color-secundario);
-    font-size: 38px;
+    font-size: 35px;
     margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 .contenedor-imagen {
@@ -171,7 +198,7 @@
 
 .imagen-partido {
     margin-bottom: 5px;
-    height: 225px;
+    height: 230px;
     border: 2px solid black;
     cursor: pointer;
 }
@@ -275,7 +302,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .contenedor-datos-ida,
@@ -293,6 +320,7 @@
     color: var(--color-secundario);
     font-size: 38px;
     margin-bottom: 5px;
+    margin-top: 15px;
 }
 
 .contenedor-datos-on-tour-ida,
@@ -418,6 +446,7 @@
     color: var(--color-secundario);
     font-size: 38px;
     margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 .tarjeta-mapa-trayecto-ida-vuelta-total {
@@ -616,6 +645,7 @@
     color: var(--color-secundario);
     font-size: 38px;
     margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 .contenedor-datos-on-tour {
@@ -660,35 +690,6 @@
     background-color: var(--color-fondo);
 }
 
-.tarjeta-partido-asistido-detalle .contenedor-botones-asistido {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 18px;
-    margin-bottom: 10px;
-}
-
-.tarjeta-partido-asistido-detalle .button-volver-partido-asistido,
-.tarjeta-partido-asistido-detalle .button-partido-anterior-asistido,
-.tarjeta-partido-asistido-detalle .button-partido-siguiente-asistido {
-    background-color: var(--color-secundario);
-    color: var(--color-primario);
-    font-size: 20px;
-    padding: 10px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.tarjeta-partido-asistido-detalle .button-volver-partido-asistido:hover,
-.tarjeta-partido-asistido-detalle .button-partido-anterior-asistido:hover,
-.tarjeta-partido-asistido-detalle .button-partido-siguiente-asistido:hover {
-    transform: scale(1.05);
-}
-
 .papelera-partido-asistido {
     position: absolute;
     bottom: 10px;
@@ -721,7 +722,7 @@
     border-radius: 10px;
 }
 
-.boton-confirmar-eliminar-favorito {
+.boton-confirmar-eliminar-partido {
     margin-top: 15px;
     padding: 10px 15px;
     background-color: var(--color-secundario);
@@ -732,7 +733,7 @@
     font-size: 18px;
 }
 
-.boton-confirmar-eliminar-favorito:hover {
+.boton-confirmar-eliminar-partido:hover {
     transform: scale(1.05);
 }
 
