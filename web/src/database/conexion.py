@@ -3123,7 +3123,7 @@ class Conexion:
 											trayecto["tipo_trayecto_str"]), trayectos))
 
 	# Metodo para obtener la imagen de un partido asistido
-	def obtenerImagenPartidoAsistido(self, partido_id:str, usuario:str)->None:
+	def obtenerImagenPartidoAsistido(self, partido_id:str, usuario:str)->Optional[str]:
 
 		self.c.execute("""SELECT Imagen
 							FROM partidos_asistidos
@@ -3141,5 +3141,31 @@ class Conexion:
 		self.c.execute("""DELETE FROM usuarios
 							WHERE Usuario=%s""",
 							(usuario,))
+
+		self.confirmar()
+
+	# Metodo para obtener la imagen de usuario
+	def obtenerImagenPerfilUsuario(self, usuario:str)->Optional[str]:
+
+		self.c.execute("""SELECT
+							CASE WHEN Imagen_Perfil IS NULL
+									THEN '-1'
+									ELSE Imagen_Perfil
+							END as Imagen
+							FROM usuarios
+							WHERE Usuario=%s""",
+							(usuario,))
+
+		imagen=self.c.fetchone()
+
+		return None if not imagen else imagen["imagen"]
+
+	# Metodo para actualizar la imagen de perfil del usuario
+	def actualizarImagenPerfilUsuario(self, usuario:str, imagen:str)->None:
+
+		self.c.execute("""UPDATE usuarios
+							SET Imagen_Perfil=%s
+							WHERE Usuario=%s""",
+							(imagen, usuario))
 
 		self.confirmar()

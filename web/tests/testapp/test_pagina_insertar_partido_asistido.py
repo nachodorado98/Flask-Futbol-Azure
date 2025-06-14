@@ -231,7 +231,7 @@ def test_pagina_insertar_partido_asistido_con_imagen_no_valida(cliente, conexion
 
 		datalake.cerrarConexion()
 
-		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "partidos", "nacho98")
 
 		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.txt")
 
@@ -275,7 +275,7 @@ def test_pagina_insertar_partido_asistido_con_imagen(cliente, conexion_entorno_u
 
 		datalake.cerrarConexion()
 
-		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+		ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "partidos", "nacho98")
 
 		ruta_imagen=os.path.join(ruta_carpeta_imagenes, "nacho98_20190622.jpeg")
 

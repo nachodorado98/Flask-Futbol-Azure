@@ -31,6 +31,8 @@ def creacionEntorno(entorno:str)->None:
 	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas", "estadios"))
 	crearCarpeta(os.path.join(ruta, "src", "templates", "mapas", "trayectos"))
 	crearCarpeta(os.path.join(ruta, "src", "templates", "imagenes"))
+	crearCarpeta(os.path.join(ruta, "src", "templates", "imagenes", "partidos"))
+	crearCarpeta(os.path.join(ruta, "src", "templates", "imagenes", "perfil"))
 
 	dl=ConexionDataLake()
 

@@ -114,3 +114,49 @@ def test_eliminar_usuario(conexion_entorno):
 	conexion_entorno.eliminarUsuario("nacho98")
 
 	assert not conexion_entorno.existe_usuario("nacho98")
+
+def test_obtener_imagen_perfil_usuario_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerImagenPerfilUsuario("nacho98")
+
+def test_obtener_imagen_perfil_usuario_no_existe_imagen(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert conexion_entorno.obtenerImagenPerfilUsuario("nacho98")=='-1'
+
+def test_obtener_imagen_perfil_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho98", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.c.execute("UPDATE usuarios SET Imagen_Perfil='imagen_perfil.png'")
+
+	conexion_entorno.confirmar()
+
+	assert conexion_entorno.obtenerImagenPerfilUsuario("nacho98")=='imagen_perfil.png'
+
+def test_actualizar_imagen_perfil_usuario_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+	conexion_entorno.actualizarImagenPerfilUsuario("nacho", "imagen.png")
+
+	assert not conexion_entorno.existe_usuario("nacho")
+
+def test_actualizar_imagen_perfil_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.c.execute("SELECT Imagen_Perfil FROM usuarios")
+
+	imagen=conexion_entorno.c.fetchone()["imagen_perfil"]
+
+	assert imagen==None
+
+	conexion_entorno.actualizarImagenPerfilUsuario("nacho", "imagen.png")
+
+	conexion_entorno.c.execute("SELECT Imagen_Perfil FROM usuarios")
+
+	imagen=conexion_entorno.c.fetchone()["imagen_perfil"]
+
+	assert imagen=="imagen.png"

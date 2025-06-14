@@ -201,6 +201,13 @@
     height: 230px;
     border: 2px solid black;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    object-fit: cover;
+}
+
+.imagen-partido:hover {
+    transform: scale(1.05);
 }
 
 .contenedor-subir-imagen {

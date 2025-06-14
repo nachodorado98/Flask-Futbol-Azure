@@ -33,6 +33,107 @@
     gap: 30px;
 }
 
+.contenedor-imagen {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.imagen-perfil {
+    margin-bottom: 5px;
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+    border: 2px solid black;
+    object-fit: cover;
+    cursor: default;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.imagen-perfil:hover {
+    transform: scale(1.05);
+}
+
+.button-actualizar-imagen-perfil {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-left: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.contenedor-subir-imagen {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.imagen-perfil-texto {
+    color: var(--color-secundario);
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+#imagen {
+    display: none;
+}
+
+.boton-seleccionar-imagen {
+    display: inline-block;
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.boton-seleccionar-imagen:hover {
+    transform: scale(1.03);
+}
+
+.previsualizacion {
+  text-align: center;
+}
+
+.imagen-preview{
+    display: none;
+    max-width: 125px;
+    margin-left: 20px;
+}
+
+.mensaje {
+  font-size: 14px;
+  color: var(--color-secundario);
+  margin-left: 10px;
+}
+
+.botones-anadir-imagen-perfil .boton-anadir-imagen-perfil {
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botones-anadir-imagen-perfil .boton-anadir-imagen-perfil:hover {
+    transform: scale(1.05);
+    background-color: var(--color-fondo);
+}
+
 .button-eliminar-cuenta {
     background-color: var(--color-secundario);
     color: var(--color-primario);

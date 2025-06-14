@@ -153,7 +153,9 @@ def pytest_sessionfinish(session, exitstatus):
 
 	ruta_carpeta_mapas_trayectos=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "trayectos")
 
-	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes")
+	ruta_carpeta_imagenes_partidos=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "partidos")
+
+	ruta_carpeta_imagenes_perfil=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "perfil")
 
 	vaciarCarpeta(ruta_carpeta_mapas_estadios)
 
@@ -161,7 +163,9 @@ def pytest_sessionfinish(session, exitstatus):
 
 	print("\nLimpieza de la carpeta mapas correcta")
 
-	vaciarCarpeta(ruta_carpeta_imagenes)
+	vaciarCarpeta(ruta_carpeta_imagenes_partidos)
+
+	vaciarCarpeta(ruta_carpeta_imagenes_perfil)
 
 	print("\nLimpieza de la carpeta imagenes correcta")
 

@@ -189,11 +189,11 @@ def test_pagina_singins_correctos(cliente, conexion_entorno, usuarios_agregar):
 
 	vaciarCarpeta(ruta_carpeta_imagenes)
 
-	time.sleep(3)
+	time.sleep(5)
 
 def test_pagina_singins_correcto_carpeta_datalake(cliente, conexion_entorno, datalake, entorno):
 
-	time.sleep(15)
+	time.sleep(20)
 
 	cliente.post("/singin", data={"usuario":"nachodorado", "correo":"nacho@gmail.com", "nombre":"nacho",
 									"apellido":"dorado", "contrasena":"Ab!CdEfGhIJK3LMN",
@@ -203,7 +203,7 @@ def test_pagina_singins_correcto_carpeta_datalake(cliente, conexion_entorno, dat
 
 	assert len(conexion_entorno.c.fetchall())==1
 
-	time.sleep(20)
+	time.sleep(25)
 
 	assert datalake.existe_carpeta(entorno, "usuarios/nachodorado")
 	assert datalake.existe_carpeta(entorno, "usuarios/nachodorado/imagenes")

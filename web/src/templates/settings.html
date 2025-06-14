@@ -14,6 +14,62 @@
 
     <p class="titulo-pagina-configuracion"><strong>Configuracion</strong></p>
 
+    <div class="contenedor-imagen-perfil">
+
+        {% if imagen_perfil=='-1' %}
+
+            <form action="/settings/actualizar_imagen_perfil" method="POST" enctype="multipart/form-data" novalidate>
+
+                <div class="contenedor-subir-imagen">
+                    <p class="imagen-perfil-texto"><strong>Subir Imagen Perfil</strong></p>
+                    <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel">Seleccionar Imagen</label>
+                    <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
+                    <div class="previsualizacion">
+                      <p id="mensaje" class="mensaje">No se ha seleccionado archivo</p>
+                      <img class="imagen-preview" id="preview" src="" alt="Previsualización">
+                    </div>
+                </div>
+
+                <div class="botones-anadir-imagen-perfil">
+                    <button type="submit" class="boton-anadir-imagen-perfil">Confirmar Imagen</button>
+                </div>
+
+            </form>
+
+        {% else %}
+            <div class="contenedor-imagen" id="contenedorImagen">
+                <p class="imagen-perfil-texto"><strong>Imagen de Perfil</strong></p>
+                <img class="imagen-perfil" src="{{ url_imagen_usuario_perfil }}{{ imagen_perfil }}" alt="Imagen Icon">
+                <button class="button-actualizar-imagen-perfil" id="botonActualizarImagenPerfil">Actualizar imagen</button>
+            </div>
+
+            <div class="seccion-actualizar-imagen-perfil" id="contenedorActualizarImagenPerfil" style="display: none;">
+
+                <form action="/settings/actualizar_imagen_perfil" method="POST" enctype="multipart/form-data" novalidate>
+
+                    <div class="contenedor-subir-imagen">
+                        <p class="imagen-perfil-texto"><strong>Subir Nueva Imagen Perfil</strong></p>
+                        <label for="imagen" class="boton-seleccionar-imagen" id="botonLabel">Seleccionar Imagen</label>
+                        <input type="file" name="imagen" id="imagen" accept=".jpg, .jpeg, .png">
+                        <div class="previsualizacion">
+                          <p id="mensaje" class="mensaje">No se ha seleccionado archivo</p>
+                          <img class="imagen-preview" id="preview" src="" alt="Previsualización">
+                        </div>
+                    </div>
+
+                    <div class="botones-anadir-imagen-perfil">
+                        <button type="submit" class="boton-anadir-imagen-perfil">Confirmar Imagen</button>
+                    </div>
+
+                </form>
+
+            </div>
+        {% endif %}
+
+    </div>
+
+    <hr style="width: 800px">
+
     <div class="contenedor-configuracion">
     	<button class="button-eliminar-cuenta" onclick="abrirVentanaEmergente()">Eiminar cuenta</button>
      </div>
@@ -29,6 +85,9 @@
         </button>
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/cargar_imagen_preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/abrir_actualizar_imagen_perfil.js') }}"></script>
 
 {% endblock principal %}
 

@@ -323,7 +323,7 @@ def pagina_insertar_partido_asistido():
 
 	ruta=os.path.dirname(os.path.join(os.path.dirname(__file__)))
 
-	crearCarpeta(os.path.join(ruta, "templates", "imagenes", current_user.id))
+	crearCarpeta(os.path.join(ruta, "templates", "imagenes", "partidos", current_user.id))
 
 	if not existe_partido_asistido_favorito and partido_asistido_favorito:
 
@@ -337,7 +337,7 @@ def pagina_insertar_partido_asistido():
 
 		if imagen.filename!="" and extension in ("png", "jpg", "jpeg"):
 
-			ruta_carpeta=os.path.join(ruta, "templates", "imagenes", current_user.id)
+			ruta_carpeta=os.path.join(ruta, "templates", "imagenes", "partidos", current_user.id)
 
 			archivo_imagen=f"{current_user.id}_{partido_id}.{extension}"
 
