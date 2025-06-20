@@ -90,6 +90,11 @@ def conexion(entorno):
 	return con
 
 @pytest.fixture()
+def conexion_clonar():
+
+	return Conexion("CLONAR")
+
+@pytest.fixture()
 def datalake():
 
     return ConexionDataLake()

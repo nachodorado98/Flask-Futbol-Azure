@@ -8,9 +8,11 @@ from src.utils import limpiarCodigoImagen, limpiarFecha, limpiarTiempo, normaliz
 from src.utils import obtenerCoordenadasEstadio, limpiarTamano, realizarDescarga, url_disponible
 from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, subirArchivosDataLake
 from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
-from src.utils import obtenerBoolCadena, subirTablaDataLake, limpiarMinuto, obtenerArchivosNoExistenDataLake
+from src.utils import obtenerBoolCadena, limpiarMinuto, obtenerArchivosNoExistenDataLake
 from src.utils import obtenerCiudadMasCercana, obtenerPosiblesCiudadesCaracteres, filtrarCiudadesPalabrasIrrelevantes
-from src.utils import filtrarCiudadDireccion, obtenerCiudadMasAcertada
+from src.utils import filtrarCiudadDireccion, obtenerCiudadMasAcertada, realizarBackUpBBDD
+
+from src.database.conexion import Conexion
 
 def test_limpiar_codigo_imagen_cadena_vacia():
 
@@ -542,59 +544,6 @@ def test_obtener_bool_cadena_error():
 
 		obtenerBoolCadena("no_soy_bool")
 
-def test_subir_tabla_data_lake_tabla_no_existe(entorno):
-
-	with pytest.raises(Exception):
-
-		subirTablaDataLake("no_existo", "contenedor", "carpeta", entorno)
-
-def test_subir_tabla_data_lake_tabla_vacia(conexion, entorno):
-
-	with pytest.raises(Exception):
-
-		subirTablaDataLake("equipos", "contenedor", "carpeta", entorno)
-
-def test_subir_tabla_data_lake_contenedor_no_existe(conexion, entorno):
-
-	conexion.insertarEquipo("atletico-madrid")
-
-	with pytest.raises(Exception):
-
-		subirTablaDataLake("equipos", "contenedor", "carpeta", entorno)
-
-def test_subir_tabla_data_lake_carpeta_no_existe(conexion, entorno, datalake):
-
-	conexion.insertarEquipo("atletico-madrid")
-
-	datalake.crearContenedor("contenedor7")
-
-	with pytest.raises(Exception):
-
-		subirTablaDataLake("equipos", "contenedor7", "carpeta", entorno)
-
-	datalake.eliminarContenedor("contenedor7")
-
-	datalake.cerrarConexion()
-
-def test_subir_tabla_data_lake(conexion, entorno, datalake):
-
-	conexion.insertarEquipo("atletico-madrid")
-
-	crearEntornoDataLake("contenedor8", ["carpeta/tabla"])
-
-	time.sleep(5)
-
-	subirTablaDataLake("equipos", "contenedor8", "carpeta/tabla", entorno)
-
-	archivo=datalake.paths_carpeta_contenedor("contenedor8", "carpeta/tabla")[0]["name"]
-
-	assert archivo.startswith("carpeta/tabla/tabla_equipos_backup_")
-	assert archivo.endswith(".csv")
-
-	datalake.eliminarContenedor("contenedor8")
-
-	datalake.cerrarConexion()
-
 @pytest.mark.parametrize(["minuto", "minuto_numero", "anadido_numero"],
 	[
 		("39'", 39, 0),
@@ -929,3 +878,66 @@ def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_una_ciud
 def test_obtener_ciudad_mas_acertada_ciudad_coordenadas_no_en_direccion_mas_de_una_ciudad_direccion(entorno, latitud, longitud, direccion, ciudad):
 
 	assert obtenerCiudadMasAcertada(latitud, longitud, direccion, entorno)==ciudad
+
+@pytest.mark.parametrize(["entorno_error"],
+	[("PRE",),("entorno",),("develop",),("pr",),("clona",)]
+)
+def test_realizar_backup_bbdd_conexion_entorno_error(conexion, conexion_clonar, entorno, entorno_error):
+
+	conexion_clonar.eliminarBBDD("bbdd_futbol_data_backup")
+
+	conexion_clonar.cerrarConexion()
+
+	conexion.c.execute("SELECT 1 FROM pg_database WHERE datname='bbdd_futbol_data_backup'")
+
+	assert not conexion.c.fetchone()
+
+	conexion.cerrarConexion()
+
+	with pytest.raises(Exception):
+
+		realizarBackUpBBDD(entorno_error)
+
+	conexion=Conexion(entorno)
+
+	conexion.c.execute("SELECT 1 FROM pg_database WHERE datname='bbdd_futbol_data_backup'")
+
+	assert not conexion.c.fetchone()
+
+def test_realizar_backup_bbdd(conexion, entorno):
+
+	conexion.c.execute("SELECT 1 FROM pg_database WHERE datname='bbdd_futbol_data_backup'")
+
+	assert not conexion.c.fetchone()
+
+	conexion.cerrarConexion()
+
+	realizarBackUpBBDD(entorno)
+
+	conexion=Conexion(entorno)
+
+	conexion.c.execute("SELECT 1 FROM pg_database WHERE datname='bbdd_futbol_data_backup'")
+
+	assert conexion.c.fetchone()
+
+def test_realizar_backup_bbdd_existente(conexion, entorno):
+
+	conexion.c.execute("SELECT 1 FROM pg_database WHERE datname='bbdd_futbol_data_backup'")
+
+	assert conexion.c.fetchone()
+
+	conexion.cerrarConexion()
+
+	realizarBackUpBBDD(entorno)
+
+	conexion=Conexion(entorno)
+
+	conexion.c.execute("SELECT 1 FROM pg_database WHERE datname='bbdd_futbol_data_backup'")
+
+	assert conexion.c.fetchone()
+
+	conexion_clonar=Conexion("CLONAR")
+
+	conexion_clonar.eliminarBBDD("bbdd_futbol_data_backup")
+
+	conexion_clonar.cerrarConexion()

@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import List, Optional
 from datetime import datetime
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 from .confconexion import *
 
@@ -10,7 +11,7 @@ class Conexion:
 
 	def __init__(self, entorno:str)->None:
 
-		databases={"PRO":BBDD_PRO, "DEV":BBDD_DEV}
+		databases={"PRO":BBDD_PRO, "DEV":BBDD_DEV, "CLONAR":"postgres"}
 
 		entorno_database=entorno.upper()
 
@@ -21,6 +22,11 @@ class Conexion:
 		try:
 
 			self.bbdd=psycopg2.connect(host=HOST, user=USUARIO, password=CONTRASENA, port=PUERTO, database=databases[entorno_database])
+
+			if entorno_database=="CLONAR":
+
+				self.bbdd.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+
 			self.c=self.bbdd.cursor(cursor_factory=RealDictCursor)
 
 		except psycopg2.OperationalError as e:
@@ -920,3 +926,69 @@ class Conexion:
 							(ciudad,))
 
 		return False if self.c.fetchone() is None else True
+
+	def ejecutarBackUp(self, entorno:str)->None:
+
+		if self.bbdd.get_dsn_parameters().get("dbname")!="postgres":
+
+			raise Exception("Esta conexión no permite crear backups")
+
+		databases={"PRO":BBDD_PRO, "DEV":BBDD_DEV}
+
+		entorno_database=entorno.upper()
+
+		if  entorno_database not in databases.keys():
+
+			raise Exception(f"Entorno incorrecto: {entorno}")
+
+		try:
+
+			self.matar_conexiones_bbdd(databases[entorno_database])
+
+			self.c.execute(f"CREATE DATABASE {BBDD_BACKUP} TEMPLATE {databases[entorno_database]}")
+
+			print(f"Backup de la bbdd {databases[entorno_database]} correcta")
+
+		except Exception:
+
+			raise Exception(f"Error al hacer el backup de {databases[entorno_database]}")
+
+	def eliminarBBDD(self, bbdd:str)->None:
+
+		if self.bbdd.get_dsn_parameters().get("dbname")!="postgres":
+
+			raise Exception("Esta conexion no permite eliminar bbdds")
+
+		if bbdd=="postgres":
+
+			raise Exception("No puedes borrar la bbdd en la que estas")
+
+		try:
+
+			self.matar_conexiones_bbdd(bbdd)
+
+			self.c.execute(f"DROP DATABASE IF EXISTS {bbdd}")
+			
+			print(f"BBDD {bbdd} eliminada")
+
+		except Exception:
+
+			raise Exception(f"Error al eliminar la bbdd {bbdd}")
+
+	def eliminarBBDDBackUp(self)->None:
+
+		self.eliminarBBDD(BBDD_BACKUP)
+
+	def matar_conexiones_bbdd(self, bbdd:str)->None:
+
+		if self.bbdd.get_dsn_parameters().get("dbname")==bbdd:
+
+			raise Exception("No puedes eliminar conexiones con la bbdd a la que estas conectada")
+
+		print(f"Matar conexiones de {bbdd}")
+
+		self.c.execute("""SELECT pg_terminate_backend(pid)
+							FROM pg_stat_activity
+            				WHERE datname=%s
+            				AND pid<>pg_backend_pid()""",
+            				(bbdd,))

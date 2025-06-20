@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_SELECCIONES 
+from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_SELECCIONES, URL_DATALAKE_USUARIOS
 
 bp_jugador=Blueprint("jugador", __name__)
 
@@ -36,6 +36,7 @@ def pagina_jugador(jugador_id:str):
 
 	return render_template("jugador.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							datos_jugador=datos_jugador,
@@ -44,7 +45,8 @@ def pagina_jugador(jugador_id:str):
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,
-							url_imagen_seleccion=URL_DATALAKE_SELECCIONES)
+							url_imagen_seleccion=URL_DATALAKE_SELECCIONES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_jugador.route("/jugadores")
 @login_required
@@ -68,6 +70,7 @@ def pagina_jugadores():
 
 	return render_template("jugadores.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							datos_jugadores=datos_jugadores,
@@ -75,4 +78,5 @@ def pagina_jugadores():
 							datos_jugadores_top=datos_jugadores_top,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_jugador=URL_DATALAKE_JUGADORES)
+							url_imagen_jugador=URL_DATALAKE_JUGADORES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")

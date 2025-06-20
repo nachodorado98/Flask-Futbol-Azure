@@ -30,15 +30,13 @@ def settings():
 
 	estadio_equipo=con.estadio_equipo(equipo)
 
-	imagen_perfil=con.obtenerImagenPerfilUsuario(current_user.id)
-
 	con.cerrarConexion()
 
 	return render_template("settings.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
-							imagen_perfil=imagen_perfil,
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_settings.route("/settings/eliminar_cuenta")

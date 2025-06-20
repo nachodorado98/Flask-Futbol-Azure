@@ -6,7 +6,7 @@ from src.utilidades.utils import limpiarResultadosPartidos
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_USUARIOS
 
 from src.utilidades.utils import anadirPuntos, obtenerNombrePaisSeleccionado, obtenerPaisesNoSeleccionados
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
@@ -63,6 +63,7 @@ def pagina_estadio(estadio_id:str):
 
 	return render_template("estadio.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							estadio=estadio,
@@ -74,7 +75,8 @@ def pagina_estadio(estadio_id:str):
 							mapa_correcto=mapa_correcto,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							url_imagen_pais=URL_DATALAKE_PAISES)
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_estadio.route("/estadio/mapa/<nombre_mapa>")
 @login_required
@@ -108,6 +110,7 @@ def pagina_estadios():
 
 	return render_template("estadios.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							datos_estadios=datos_estadios,
@@ -116,7 +119,8 @@ def pagina_estadios():
 							datos_estadios_top=datos_estadios_top,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_estadio.route("/estadios/mis_estadios")
 @login_required
@@ -183,6 +187,7 @@ def pagina_mis_estadios():
 
 	return render_template("mis_estadios.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							estadios_asistidos=estadios_asistidos,
@@ -197,7 +202,8 @@ def pagina_mis_estadios():
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_estadio.route("/estadios/mis_estadios/mapa/<nombre_mapa>")
 @login_required
@@ -276,6 +282,7 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 
 	return render_template("mis_estadios_pais.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							codigo_pais=codigo_pais,
@@ -290,7 +297,8 @@ def pagina_pais_mis_estadios(codigo_pais:str):
 							ciudades_estadios_pais=ciudades_estadios_pais,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_estadio.route("/estadios/mis_estadios_pais/mapa/<nombre_mapa>")
 @login_required
@@ -330,6 +338,7 @@ def pagina_mis_estadios_estadio_partidos_estadio(estadio_id:str):
 
 	return render_template("partidos_asistidos_estadio.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							estadio_id=estadio_id,
@@ -339,7 +348,8 @@ def pagina_mis_estadios_estadio_partidos_estadio(estadio_id:str):
 							resultados_partidos_asistidos_estadio=resultados_partidos_asistidos_estadio,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,
-							url_imagen_estadio=URL_DATALAKE_ESTADIOS)
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_estadio.route("/estadios/mis_estadios/division/<codigo_division>")
 @login_required
@@ -379,6 +389,7 @@ def pagina_division_mis_estadios(codigo_division:str):
 
 	return render_template("mis_estadios_division.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							codigo_logo=codigo_logo,
@@ -390,7 +401,8 @@ def pagina_division_mis_estadios(codigo_division:str):
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_estadio.route("/estadios/mis_estadios/<codigo_pais>/<ciudad>")
 @login_required
@@ -420,6 +432,7 @@ def pagina_ciudad_mis_estadios(codigo_pais:str, ciudad:str):
 
 	return render_template("partidos_asistidos_ciudad.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							ciudad_id=ciudad,
@@ -429,4 +442,5 @@ def pagina_ciudad_mis_estadios(codigo_pais:str, ciudad:str):
 							numero_partidos_asistidos_ciudad=len(partidos_asistidos_ciudad),
 							resultados_partidos_asistidos_ciudad=resultados_partidos_asistidos_ciudad,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_pais=URL_DATALAKE_PAISES)
+							url_imagen_pais=URL_DATALAKE_PAISES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")

@@ -9,6 +9,7 @@ import pandas as pd
 import re
 
 from .datalake.conexion_data_lake import ConexionDataLake
+
 from .database.conexion import Conexion
 
 def limpiarCodigoImagen(link:str)->Optional[str]:
@@ -231,40 +232,6 @@ def obtenerBoolCadena(cadena_bool:str)->bool:
 
 		raise Exception("No es bool")
 
-def subirTablaDataLake(tabla:str, contenedor:str, carpeta:str, entorno:str)->None:
-
-	conexion=Conexion(entorno)
-
-	datalake=ConexionDataLake()
-
-	try:
-
-		if conexion.tabla_vacia(tabla):
-
-			raise Exception("La tabla esta vacia")
-
-		df=pd.read_sql(f"SELECT * FROM {tabla}", conexion.bbdd)
-
-		if not datalake.existe_contenedor(contenedor) or not datalake.existe_carpeta(contenedor, carpeta):
-
-			raise Exception("El contendor o la carpeta no existen en el data lake")
-
-		ruta_archivo=f"abfs://{contenedor}@{datalake.cuenta}.dfs.core.windows.net/{carpeta}/"
-
-		nombre_archivo=f"tabla_{tabla}_backup_{datetime.now().strftime('%Y%m%d')}.csv"
-
-		df.to_csv(ruta_archivo+nombre_archivo, storage_options={"account_key":datalake.clave}, index=False)
-
-	except Exception as e:
-
-		raise Exception(f"Error al subir la tabla {tabla} al data lake: {e}")
-
-	finally:
-
-		datalake.cerrarConexion()
-
-		conexion.cerrarConexion()
-
 def limpiarMinuto(minuto:str)->tuple:
 
 	minuto_numero, anadido=minuto.split("'")
@@ -428,3 +395,19 @@ def obtenerCiudadMasAcertada(latitud:float, longitud:str, direccion:str, entorno
 		else:
 
 			return ciudad_coordenadas
+
+def realizarBackUpBBDD(entorno:str)->None:
+
+	con=Conexion("CLONAR")
+
+	try:
+
+		con.eliminarBBDDBackUp()
+
+		con.ejecutarBackUp(entorno)
+
+	except Exception:
+
+		raise Exception(f"Error al crear el back up de {entorno}")
+
+	con.cerrarConexion()

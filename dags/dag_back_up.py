@@ -6,12 +6,10 @@ from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
 
-from utils import existe_entorno, ejecutarDagBackUp
+from utils import existe_entorno, ejecutarDagBackUp, realizarBackUpBBDDPRO
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES
-
-from datalake import subirBackUpTablasDataLake
 
 
 
@@ -55,7 +53,7 @@ with DAG("dag_back_up",
 
 	tarea_ejecutar_dag_back_up=PythonOperator(task_id="ejecutar_dag_back_up", python_callable=ejecutarDagBackUp)
 
-	tarea_subir_back_up_data_lake=PythonOperator(task_id="subir_back_up_data_lake", python_callable=subirBackUpTablasDataLake, trigger_rule="none_failed_min_one_success")
+	tarea_ejecutar_back_up_bbdd=PythonOperator(task_id="ejecutar_back_up_bbdd", python_callable=realizarBackUpBBDDPRO, trigger_rule="none_failed_min_one_success")
 
 
-tarea_ejecutar_dag_back_up >> tareas_entorno >> tarea_subir_back_up_data_lake
+tarea_ejecutar_dag_back_up >> tareas_entorno >> tarea_ejecutar_back_up_bbdd

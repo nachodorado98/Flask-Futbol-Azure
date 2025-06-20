@@ -9,7 +9,7 @@ from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente, limpiarRes
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_COMPETICIONES
+from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_USUARIOS
 
 bp_partidos=Blueprint("partidos", __name__)
 
@@ -57,6 +57,7 @@ def pagina_partidos():
 
 		return render_template("no_partidos.html",
 								usuario=current_user.id,
+								imagen_perfil=current_user.imagen_perfil,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
@@ -65,7 +66,8 @@ def pagina_partidos():
 								resultado_filtrado=None,
 								local=local,
 								ano_mes_calendario=None,
-								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+								url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	temporada_filtrada=temporadas[0] if not temporada else temporada
 
@@ -81,6 +83,7 @@ def pagina_partidos():
 
 		return render_template("no_partidos.html",
 						usuario=current_user.id,
+						imagen_perfil=current_user.imagen_perfil,
 						equipo=equipo,
 						nombre_equipo=nombre_equipo,
 						estadio_equipo=estadio_equipo,
@@ -89,7 +92,8 @@ def pagina_partidos():
 						resultado_filtrado=None,
 						local=local,
 						ano_mes_calendario=ano_mes_calendario,
-						url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+						url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+						url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	competiciones_unicas=obtenerCompeticionesPartidosUnicas(partidos_filtrados)
 
@@ -107,6 +111,7 @@ def pagina_partidos():
 
 		return render_template("no_partidos.html",
 					usuario=current_user.id,
+					imagen_perfil=current_user.imagen_perfil,
 					equipo=equipo,
 					nombre_equipo=nombre_equipo,
 					estadio_equipo=estadio_equipo,
@@ -115,7 +120,8 @@ def pagina_partidos():
 					resultado_filtrado=None,
 					local=local,
 					ano_mes_calendario=ano_mes_calendario,
-					url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+					url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+					url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	resultado_filtrado="Todo" if not resultados else resultados
 
@@ -139,6 +145,7 @@ def pagina_partidos():
 
 		return render_template("no_partidos.html",
 								usuario=current_user.id,
+								imagen_perfil=current_user.imagen_perfil,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
@@ -147,7 +154,8 @@ def pagina_partidos():
 								resultado_filtrado=resultado_filtrado,
 								local=local,
 								ano_mes_calendario=ano_mes_calendario,
-								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+								url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	resultados_partidos_disputados=limpiarResultadosPartidos(partidos_filtrados_resultado)
 
@@ -155,6 +163,7 @@ def pagina_partidos():
 
 	return render_template("partidos.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
 							estadio_equipo=estadio_equipo,
@@ -171,7 +180,8 @@ def pagina_partidos():
 							resultado_filtrado=resultado_filtrado,
 							local=local,
 							ano_mes_calendario=ano_mes_calendario,
-							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_partidos.route("/partidos/calendario/<ano_mes>")
 @login_required
@@ -229,6 +239,7 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	return render_template("partidos_calendario.html",
 								usuario=current_user.id,
+								imagen_perfil=current_user.imagen_perfil,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
@@ -244,7 +255,8 @@ def pagina_partidos_calendario(ano_mes:str):
 								numero_partidos_asistidos_calendario=len(partidos_asistidos_calendario),
 								datos_partido_proximo_calendario=datos_partido_proximo_calendario,
 								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-								fecha_minima_maxima=fecha_minima_maxima)
+								fecha_minima_maxima=fecha_minima_maxima,
+								url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_partidos.route("/partidos/asistidos")
 @login_required
@@ -280,11 +292,13 @@ def pagina_partidos_asistidos():
 
 		return render_template("no_partidos_asistidos.html",
 								usuario=current_user.id,
+								imagen_perfil=current_user.imagen_perfil,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
 								local=local,
-								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+								url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	resultados_partidos_asistidos=limpiarResultadosPartidos(partidos_asistidos)
 
@@ -302,11 +316,13 @@ def pagina_partidos_asistidos():
 
 		return render_template("error.html",
 								usuario=current_user.id,
+								imagen_perfil=current_user.imagen_perfil,
 								equipo=equipo,
 								nombre_equipo=nombre_equipo,
 								estadio_equipo=estadio_equipo,
 								local=local,
-								url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+								url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+								url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	id_partido_asistido_favorito=con.obtenerPartidoAsistidoFavorito(current_user.id)
 
@@ -316,6 +332,7 @@ def pagina_partidos_asistidos():
 
 	return render_template("partidos_asistidos.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
 							estadio_equipo=estadio_equipo,
@@ -331,7 +348,8 @@ def pagina_partidos_asistidos():
 							datos_partido_asistido_favorito=datos_partido_asistido_favorito,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_partidos.route("/partidos/proximos")
 @login_required
@@ -363,9 +381,11 @@ def pagina_partidos_proximos():
 
 	return render_template("proximos_partidos.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
 							estadio_equipo=estadio_equipo,
 							proximos_partidos=proximos_partidos,
 							ano_mes_calendario=ano_mes_calendario,
-							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")

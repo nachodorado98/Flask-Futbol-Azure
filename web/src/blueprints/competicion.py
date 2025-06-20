@@ -5,7 +5,7 @@ from src.utilidades.utils import limpiarResultadosPartidos
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_ESCUDOS
+from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_USUARIOS
 
 bp_competicion=Blueprint("competicion", __name__)
 
@@ -40,6 +40,7 @@ def pagina_competicion(competicion_id:str):
 
 	return render_template("competicion.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							datos_competicion=datos_competicion,
@@ -48,7 +49,8 @@ def pagina_competicion(competicion_id:str):
 							partidos_competicion=partidos_competicion,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
-							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_competicion.route("/competiciones")
 @login_required
@@ -72,13 +74,15 @@ def pagina_competiciones():
 
 	return render_template("competiciones.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							datos_competiciones=datos_competiciones,
 							numero_top=numero_top,
 							datos_competiciones_top=datos_competiciones_top,
 							url_imagen_pais=URL_DATALAKE_PAISES,
-							url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_competicion.route("/competiciones/mis_competiciones")
 @login_required
@@ -106,12 +110,14 @@ def pagina_mis_competiciones():
 
 	return render_template("mis_competiciones.html",
 						usuario=current_user.id,
+						imagen_perfil=current_user.imagen_perfil,
 						equipo=equipo,
 						estadio_equipo=estadio_equipo,
 						competiciones_asistidos=competiciones_asistidos,
 						numero_competiciones=len(competiciones_asistidos),
 						url_imagen_pais=URL_DATALAKE_PAISES,
-						url_imagen_competicion=URL_DATALAKE_COMPETICIONES)
+						url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+						url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_competicion.route("/competiciones/mis_competiciones/partidos_competicion/<competicion_id>")
 @login_required
@@ -141,6 +147,7 @@ def pagina_mis_competiciones_competicion_partidos_competicion(competicion_id:str
 
 	return render_template("partidos_asistidos_competicion.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							partidos_asistidos_competicion=partidos_asistidos_competicion,
@@ -149,4 +156,5 @@ def pagina_mis_competiciones_competicion_partidos_competicion(competicion_id:str
 							resultados_partidos_asistidos_competicion=resultados_partidos_asistidos_competicion,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
-							url_imagen_escudo=URL_DATALAKE_ESCUDOS)
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")

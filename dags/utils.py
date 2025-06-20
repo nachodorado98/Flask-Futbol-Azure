@@ -6,6 +6,8 @@ from config import ENTORNO
 from python.src.database.conexion import Conexion
 from python.src.utils import obtenerBoolCadena
 
+from python.src.utils import realizarBackUpBBDD
+
 def existe_entorno()->str:
 
 	return "entorno.entorno_creado" if os.path.exists(os.path.join(os.getcwd(), "dags", "entorno")) else "entorno.carpeta_logs"
@@ -98,3 +100,7 @@ def ejecutarDagBackUp()->None:
 	if not all(map(obtenerBoolCadena, valores_dags)):
 
 		raise Exception("Debes iniciar al menos una vez el DAG de los equipos, partidos, competiciones, jugadores, estadios y entrenadores")
+
+def realizarBackUpBBDDPRO()->None:
+
+	realizarBackUpBBDD(ENTORNO)

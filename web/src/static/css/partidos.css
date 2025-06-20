@@ -173,6 +173,18 @@ body {
 
 .icono-usuario {
     height: 40px;
+    cursor: pointer;
+}
+
+.icono-usuario-imagen {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 1px solid black;
+    object-fit: cover;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
 }
 
 .icono-perfil {

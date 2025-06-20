@@ -3,7 +3,7 @@ import pytest
 from src.database.conexion import Conexion
 
 @pytest.mark.parametrize(["entorno_error"],
-	[("PRE",),("entorno",),("develop",),("pr",)]
+	[("PRE",),("entorno",),("develop",),("pr",),("clona",)]
 )
 def test_conexion_error_entorno(entorno_error):
 
@@ -72,6 +72,38 @@ def test_conexion_dev(conexion):
 	assert "variables" in tablas
 	assert "paises" in tablas
 	assert "ciudades" in tablas
+
+def test_conexion_postgres():
+
+	conexion=Conexion("CLONAR")
+
+	conexion.c.execute("SELECT current_database();")
+
+	assert conexion.c.fetchone()["current_database"]=="postgres"
+
+	conexion.c.execute("select relname from pg_class where relkind='r' and relname !~ '^(pg_|sql_)';")
+
+	tablas=[tabla["relname"] for tabla in conexion.c.fetchall()]
+
+	assert "ligas_scrapear" not in tablas
+	assert "equipos" not in tablas
+	assert "estadios" not in tablas
+	assert "equipo_estadio" not in tablas
+	assert "partidos" not in tablas
+	assert "proximos_partidos" not in tablas
+	assert "partido_estadio" not in tablas
+	assert "partido_competicion" not in tablas
+	assert "competiciones" not in tablas
+	assert "competiciones_campeones" not in tablas
+	assert "jugadores" not in tablas
+	assert "jugadores_equipo" not in tablas
+	assert "jugadores_seleccion" not in tablas
+	assert "partido_goleador" not in tablas
+	assert "entrenadores" not in tablas
+	assert "temporada_jugadores" not in tablas
+	assert "variables" not in tablas
+	assert "paises" not in tablas
+	assert "ciudades" not in tablas
 
 def test_cerrar_conexion(conexion):
 

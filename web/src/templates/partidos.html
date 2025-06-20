@@ -77,7 +77,13 @@
         <div class="desplegable-contenedor-navbar-usuario">
 
             <button class="button-navbar-usuario" onclick="desplegableNavBarUsuario()">
-                <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" alt="Usuario Icon" class="icono-usuario">
+
+                {% if imagen_perfil=='-1' %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" alt="Usuario Icon" class="icono-usuario">
+                {% else %}
+                    <img src="{{ url_imagen_usuario_perfil }}{{ imagen_perfil }}" alt="Usuario Icon" class="icono-usuario-imagen">
+                {% endif %}
+
             </button>
 
             <div id="menuDesplegableNavBarUsuario" class="menu-desplegable-navbar-usuario">

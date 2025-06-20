@@ -18,6 +18,8 @@ from src.kafka.kafka_utils import enviarMensajeKafka
 
 from src.kafka.configkafka import TOPIC
 
+from src.config import URL_DATALAKE_USUARIOS
+
 bp_anadir_partido_asistido=Blueprint("anadir_partido_asistido", __name__)
 
 
@@ -50,8 +52,10 @@ def pagina_anadir_partido_asistido():
 
 		return render_template("anadir_no_partido_asistido.html",
 								usuario=current_user.id,
+								imagen_perfil=current_user.imagen_perfil,
 								equipo=equipo,
-								estadio_equipo=estadio_equipo)
+								estadio_equipo=estadio_equipo,
+								url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 	existe_partido_asistido_favorito=False if not con.obtenerPartidoAsistidoFavorito(current_user.id) else True
 
@@ -67,6 +71,7 @@ def pagina_anadir_partido_asistido():
 
 	return render_template("anadir_partido_asistido.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							partidos_no_asistidos=partidos_no_asistidos,
@@ -78,7 +83,8 @@ def pagina_anadir_partido_asistido():
 							pais_usuario=pais_usuario,
 							ciudad_usuario=ciudad_usuario,
 							estadio_partido=estadio_partido,
-							transportes=TRANSPORTES)
+							transportes=TRANSPORTES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_anadir_partido_asistido.route("/fecha_partido")
 def obtenerFechaPartido():

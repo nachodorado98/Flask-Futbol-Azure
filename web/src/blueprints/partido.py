@@ -59,6 +59,7 @@ def pagina_partido(partido_id:str):
 
 	return render_template("partido.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							partido=partido,
@@ -71,7 +72,8 @@ def pagina_partido(partido_id:str):
 							partido_asistido=partido_asistido,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							url_imagen_jugador=URL_DATALAKE_JUGADORES)
+							url_imagen_jugador=URL_DATALAKE_JUGADORES,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_partido.route("/partido/<partido_id>/asistido")
 @login_required
@@ -158,6 +160,7 @@ def pagina_partido_asistido(partido_id:str):
 
 	return render_template("partido_asistido.html",
 							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
 							estadio_equipo=estadio_equipo,
 							partido_asistido=partido_asistido,
@@ -175,7 +178,8 @@ def pagina_partido_asistido(partido_id:str):
 							distancia_total_vuelta=distancia_total_vuelta,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
-							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")
+							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_partido.route("/partido/<partido_id>/asistido/trayecto/mapa/<nombre_mapa>")
 @login_required

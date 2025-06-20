@@ -35,21 +35,6 @@ JUGADORES="jugadores"
 SELECCIONES="selecciones"
 USUARIOS="usuarios"
 
-# Carpetas para las tablas de back up en el datalake
-TABLA_EQUIPOS="tablas/equipos"
-TABLA_ESTADIOS="tablas/estadios"
-TABLA_EQUIPO_ESTADIO="tablas/equipo_estadio"
-TABLA_PARTIDOS="tablas/partidos"
-TABLA_PARTIDO_ESTADIO="tablas/partido_estadio"
-TABLA_PARTIDO_COMPETICION="tablas/partido_competicion"
-TABLA_COMPETICIONES="tablas/competiciones"
-TABLA_COMPETICIONES_CAMPEONES="tablas/competiciones_campeones"
-TABLA_JUGADORES="tablas/jugadores"
-TABLA_JUGADORES_EQUIPO="tablas/jugadores_equipo"
-TABLA_JUGADORES_SELECCION="tablas/jugadores_seleccion"
-TABLA_PARTIDO_GOLEADOR="tablas/partido_goleador"
-TABLA_ENTRENADORES="tablas/entrenadores"
-
 EQUIPO_ID=369 # Atletico de Madrid. Numero del escudo realmente, no el equipo_id. La web crea asi la URL
 TEMPORADA_INICIO=2025 # Año de inicio minimo: 1921. Año de inicio maximo: Año actual
 MES_FIN_TEMPORADA=6 # Mes para indicar un cambio de temporada. El mes 6, Junio, sera el ultimo mes de la temporada actual.
