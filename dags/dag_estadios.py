@@ -14,7 +14,7 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 from pipelines import Pipeline_Estadios_Pais, Pipeline_Estadios_Coordenadas, Pipeline_Estadios_Ciudades
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake
+from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake, subirEstadiosDataLake
 
 with DAG("dag_estadios",
 		start_date=days_ago(1),
@@ -84,8 +84,12 @@ with DAG("dag_estadios",
 
 		tarea_subir_paises_estadios_data_lake=PythonOperator(task_id="subir_paises_estadios_data_lake", python_callable=subirPaisesEstadiosDataLake, trigger_rule="none_failed_min_one_success")
 		
+		tarea_subir_estadios_data_lake=PythonOperator(task_id="subir_estadios_data_lake", python_callable=subirEstadiosDataLake, trigger_rule="none_failed_min_one_success")
 
-		tarea_subir_paises_estadios_data_lake
+
+		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
+
+		tarea_subir_paises_estadios_data_lake >> tarea_subir_estadios_data_lake
 
 
 	tarea_ejecutar_dag_estadios=PythonOperator(task_id="ejecutar_dag_estadios", python_callable=ejecutarDagEstadios)

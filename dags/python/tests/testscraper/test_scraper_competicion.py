@@ -32,7 +32,7 @@ def test_scraper_competicion_obtener_cabecera(scraper_competicion):
 	assert cabecera is not None
 
 @pytest.mark.parametrize(["competicion"],
-	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",)]
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",),("partidos_amistosos",)]
 )
 def test_scraper_competicion_obtener_informacion_nombre(competicion):
 
@@ -47,7 +47,7 @@ def test_scraper_competicion_obtener_informacion_nombre(competicion):
 	assert nombre is not ""
 
 @pytest.mark.parametrize(["competicion"],
-	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",)]
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",),("partidos_amistosos",)]
 )
 def test_scraper_competicion_obtener_informacion_logo_pais(competicion):
 
@@ -66,7 +66,7 @@ def test_scraper_competicion_obtener_informacion_logo_pais(competicion):
 	assert imagen_pais.startswith("https://cdn.resfu.com/media/img/flags")
 
 @pytest.mark.parametrize(["competicion"],
-	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",)]
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",),("partidos_amistosos",)]
 )
 def test_scraper_competicion_obtener_data_limpia(competicion):
 
@@ -92,7 +92,7 @@ def test_scraper_competicion_obtener_competicion_error(endpoint):
 		scraper.obtenerCompeticion()
 
 @pytest.mark.parametrize(["competicion"],
-	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",)]
+	[("primera",),("segunda",),("premier",),("serie_a",),("escocia",),("primera_division_argentina",),("primera_division_rfef",),("partidos_amistosos",)]
 )
 def test_scraper_competicion_obtener_competicion(competicion):
 

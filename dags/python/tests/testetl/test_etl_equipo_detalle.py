@@ -16,7 +16,8 @@ def test_extraer_data_equipo_detalle_error_endpoint(endpoint):
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),
 	("kakamega-homeboyz",),("sporting-gijon",),("albacete",),
-	("racing",),("atalanta",),("malaga",),("hull-city",)]
+	("racing",),("atalanta",),("malaga",),("hull-city",),
+	("real-oviedo",), ("levante",),("elche",)]
 )
 def test_extraer_data_equipo_detalle(equipo):
 
@@ -29,7 +30,8 @@ def test_extraer_data_equipo_detalle(equipo):
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),
 	("kakamega-homeboyz",),("sporting-gijon",),("albacete",),
-	("racing",),("atalanta",),("malaga",),("hull-city",)]
+	("racing",),("atalanta",),("malaga",),("hull-city",),
+	("real-oviedo",), ("levante",),("elche",)]
 )
 def test_limpiar_data_equipo(equipo):
 
@@ -41,6 +43,22 @@ def test_limpiar_data_equipo(equipo):
 	assert not data_limpia.empty
 	assert len(data_limpia.columns)==14
 	assert len(data_limpia)==1
+	assert not data_limpia["Codigo_Categoria_Definitiva"].isna().any()
+
+@pytest.mark.parametrize(["equipo"],
+	[("ca-almeria",),("cd-malaga",),("merida-cp",),]
+)
+def test_limpiar_data_equipo_una_competicion(equipo):
+
+	data=extraerDataEquipoDetalle(equipo)
+
+	data_limpia=limpiarDataEquipoDetalle(data)
+
+	assert isinstance(data_limpia, pd.DataFrame)
+	assert not data_limpia.empty
+	assert len(data_limpia.columns)==14
+	assert len(data_limpia)==1
+	assert data_limpia["Codigo_Categoria_Definitiva"].isna().any()
 
 def test_cargar_data_equipo_error_no_existe(conexion, entorno):
 

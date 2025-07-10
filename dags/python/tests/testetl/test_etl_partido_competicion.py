@@ -16,7 +16,8 @@ def test_extraer_data_partido_competicion_error_endpoint():
 		("rayo-vallecano", "atletico-madrid", "202430031"),
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
-		("seleccion-holanda", "seleccion-espanola", "201094287")
+		("seleccion-holanda", "seleccion-espanola", "201094287"),
+		("atletico-madrid", "botafogo-rio-janeiro", "2025228089")
 	]
 )
 def test_extraer_data_partido_competicion(local, visitante, partido_id):
@@ -34,7 +35,8 @@ def test_extraer_data_partido_competicion(local, visitante, partido_id):
 		("rayo-vallecano", "atletico-madrid", "202430031"),
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
-		("seleccion-holanda", "seleccion-espanola", "201094287")
+		("seleccion-holanda", "seleccion-espanola", "201094287"),
+		("atletico-madrid", "botafogo-rio-janeiro", "2025228089")
 	]
 )
 def test_limpiar_data_partido_competicion(local, visitante, partido_id):
@@ -64,7 +66,8 @@ def test_cargar_data_partido_competicion_error_no_existe(conexion, entorno):
 		("rayo-vallecano", "atletico-madrid", "202430031"),
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
-		("seleccion-holanda", "seleccion-espanola", "201094287")
+		("seleccion-holanda", "seleccion-espanola", "201094287"),
+		("atletico-madrid", "botafogo-rio-janeiro", "2025228089")
 	]
 )
 def test_cargar_data_partido_competicion(conexion, entorno, local, visitante, partido_id):
@@ -97,7 +100,8 @@ def test_cargar_data_partido_competicion(conexion, entorno, local, visitante, pa
 		("rayo-vallecano", "atletico-madrid", "202430031"),
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
-		("seleccion-holanda", "seleccion-espanola", "201094287")
+		("seleccion-holanda", "seleccion-espanola", "201094287"),
+		("atletico-madrid", "botafogo-rio-janeiro", "2025228089")
 	]
 )
 def test_cargar_data_partido_competicion_existente(conexion, entorno, local, visitante, partido_id):

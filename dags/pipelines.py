@@ -495,9 +495,9 @@ def Pipeline_Proximos_Partidos_Equipo()->None:
 
 	except Exception as e:
 
-		mensaje=f"Proximos Partidos Equipo: {equipo} Temporada: {temporada} - Motivo: {e}"
+		mensaje=f"Proximos Partidos Equipo: {EQUIPO_ID} Temporada: {temporada} - Motivo: {e}"
 	
-		print(f"Error en proximo partido de equipo {equipo} en temporada {temporada}")
+		print(f"Error en proximo partido de equipo {EQUIPO_ID} en temporada {temporada}")
 
 		crearArchivoLog(mensaje)
 

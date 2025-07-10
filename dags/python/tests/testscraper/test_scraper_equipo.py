@@ -305,6 +305,59 @@ def test_scraper_equipo_informacion_datos_tecnicos_datos_faltantes(equipo):
 	assert len(datos_tecnicos)==3
 	assert datos_tecnicos.count("")==2
 
+def test_scraper_equipo_obtener_cabecera(scraper_equipo):
+
+	contenido=scraper_equipo._Scraper__realizarPeticion()
+
+	cabecera=scraper_equipo._ScraperEquipo__contenido_cabecera(contenido)
+
+	assert cabecera is not None
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),("kakamega-homeboyz",),("sporting-gijon",), ("albacete",)]
+)
+def test_scraper_equipo_obtener_informacion_nombre_detalle(equipo):
+
+	scraper_equipo=ScraperEquipo(equipo)
+
+	contenido=scraper_equipo._Scraper__realizarPeticion()
+
+	cabecera=scraper_equipo._ScraperEquipo__contenido_cabecera(contenido)
+
+	nombre=scraper_equipo._ScraperEquipo__informacion_nombre_detalle(cabecera)
+
+	assert nombre is not ""
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),("kakamega-homeboyz",),("sporting-gijon",), ("albacete",)]
+)
+def test_scraper_equipo_obtener_informacion_competicion_actualizada(equipo):
+
+	scraper_equipo=ScraperEquipo(equipo)
+
+	contenido=scraper_equipo._Scraper__realizarPeticion()
+
+	cabecera=scraper_equipo._ScraperEquipo__contenido_cabecera(contenido)
+
+	url_competicion=scraper_equipo._ScraperEquipo__informacion_competicion_actualizada(cabecera)
+
+	assert url_competicion is not ""
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),("kakamega-homeboyz",),("sporting-gijon",), ("albacete",)]
+)
+def test_scraper_equipo_obtener_informacion_cabacera(equipo):
+
+	scraper_equipo=ScraperEquipo(equipo)
+
+	contenido=scraper_equipo._Scraper__realizarPeticion()
+
+	cabecera=scraper_equipo._ScraperEquipo__contenido_cabecera(contenido)
+
+	info_cabacera=scraper_equipo._ScraperEquipo__informacion_cabecera(cabecera)
+
+	assert "" not in info_cabacera
+
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),("kakamega-homeboyz",),("sporting-gijon",), ("albacete",)]
 )
@@ -316,7 +369,9 @@ def test_scraper_equipo_obtener_data_limpia(equipo):
 
 	tabla_info=scraper_equipo._ScraperEquipo__contenido_tabla_info(contenido)
 
-	data_limpia=scraper_equipo._ScraperEquipo__obtenerDataLimpia(tabla_info)
+	cabecera=scraper_equipo._ScraperEquipo__contenido_cabecera(contenido)
+
+	data_limpia=scraper_equipo._ScraperEquipo__obtenerDataLimpia(tabla_info, cabecera)
 
 	assert isinstance(data_limpia, pd.DataFrame)
 

@@ -1071,7 +1071,7 @@ def test_etl_proximos_partidos_equipo(conexion, entorno):
 							"Marcador": ["19:00", "21:00"],
 							"Fecha_Str": ["05 DIC", "08 DIC"]})
    
-	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+	with patch("src.etls.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
 		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
@@ -1096,7 +1096,7 @@ def test_etl_proximos_partidos_equipo_todo_existente(conexion, entorno):
 							"Marcador": ["19:00", "21:00"],
 							"Fecha_Str": ["05 DIC", "08 DIC"]})
    
-	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+	with patch("src.etls.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
 		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
@@ -1108,7 +1108,7 @@ def test_etl_proximos_partidos_equipo_todo_existente(conexion, entorno):
 
 	proximos_partidos=conexion.c.fetchall()
 
-	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+	with patch("src.etls.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
 		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
@@ -1136,7 +1136,7 @@ def test_etl_proximos_partidos_equipo_partido_nuevo(conexion, entorno):
 							"Marcador": ["19:00", "21:00"],
 							"Fecha_Str": ["05 DIC", "08 DIC"]})
    
-	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+	with patch("src.etls.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
 		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 
@@ -1152,7 +1152,7 @@ def test_etl_proximos_partidos_equipo_partido_nuevo(conexion, entorno):
 
 	proximos_partidos=conexion.c.fetchall()
 
-	with patch("src.etl_proximos_partidos.extraerDataProximosPartidosEquipo", return_value=mock_data):
+	with patch("src.etls.extraerDataProximosPartidosEquipo", return_value=mock_data):
 
 		ETL_Proximos_Partidos_Equipo(369, 2025, entorno)
 

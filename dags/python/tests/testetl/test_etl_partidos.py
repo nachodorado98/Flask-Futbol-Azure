@@ -14,7 +14,7 @@ def test_extraer_data_partidos_equipo_error_endpoint(equipo_id, temporada):
 		extraerDataPartidosEquipo(equipo_id, temporada)
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
-	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971)]
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024),(369, 2025)]
 )
 def test_extraer_data_partidos_equipo(equipo_id, temporada):
 
@@ -24,7 +24,7 @@ def test_extraer_data_partidos_equipo(equipo_id, temporada):
 	assert not data.empty
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
-	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024),(369, 2025)]
 )
 def test_limpiar_data_partidos_equipo(equipo_id, temporada):
 
@@ -37,7 +37,7 @@ def test_limpiar_data_partidos_equipo(equipo_id, temporada):
 	assert len(data_limpia.columns)==8
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
-	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024),(369, 2025)]
 )
 def test_cargar_data_partidos_equipo(conexion, entorno, equipo_id, temporada):
 
@@ -56,7 +56,7 @@ def test_cargar_data_partidos_equipo(conexion, entorno, equipo_id, temporada):
 	assert conexion.c.fetchall()
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
-	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024),(369, 2025)]
 )
 def test_cargar_data_partidos_equipo_todo_existente(conexion, entorno, equipo_id, temporada):
 
@@ -92,7 +92,7 @@ def test_cargar_data_partidos_equipo_todo_existente(conexion, entorno, equipo_id
 	assert len(partidos)==len(partidos_nuevos)
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
-	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024)]
+	[(369, 2021),(369, 2014),(4, 2020),(449, 2017),(429, 1990),(369, 2000),(369, 1940),(449, 1971),(2115, 2024),(369, 2025)]
 )
 def test_cargar_data_partidos_equipo_partido_nuevo(conexion, entorno, equipo_id, temporada):
 

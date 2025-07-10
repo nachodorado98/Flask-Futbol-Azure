@@ -14,7 +14,7 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import data_lake_disponible_creado, subirPaisesEntrenadoresDataLake
+from datalake import data_lake_disponible_creado, subirPaisesEntrenadoresDataLake, subirEntrenadoresDataLake
 
 
 with DAG("dag_entrenadores",
@@ -83,8 +83,12 @@ with DAG("dag_entrenadores",
 
 		tarea_subir_paises_entrenadores_data_lake=PythonOperator(task_id="subir_paises_entrenadores_data_lake", python_callable=subirPaisesEntrenadoresDataLake, trigger_rule="none_failed_min_one_success")
 		
+		tarea_subir_entrenadores_data_lake=PythonOperator(task_id="subir_entrenadores_data_lake", python_callable=subirEntrenadoresDataLake, trigger_rule="none_failed_min_one_success")
 
-		tarea_subir_paises_entrenadores_data_lake
+
+		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
+
+		tarea_subir_paises_entrenadores_data_lake >> tarea_subir_entrenadores_data_lake
 
 
 	tarea_ejecutar_dag_entrenadores=PythonOperator(task_id="ejecutar_dag_entrenadores", python_callable=ejecutarDagEntrenadores)

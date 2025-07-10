@@ -31,6 +31,16 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 
 	tabla_filtrada["Resultado"]=tabla_filtrada["Marcador"].apply(obtenerResultado)
 
+	tabla_filtrada["Competicion_Partido"]=tabla_filtrada["Competicion"].apply(lambda competicion: competicion.split(". ")[0].strip())
+
+	try:
+
+		tabla_filtrada["Detalle_Competicion_Partido"]=tabla_filtrada["Competicion"].apply(lambda competicion: competicion.split(". ")[1].strip())
+
+	except Exception:
+
+		tabla_filtrada["Detalle_Competicion_Partido"]=""
+
 	def obtenerEquiposId(link:str)->tuple:
 
 		local, visitante, partido_id=link.split("partido/")[1].split("/")
@@ -39,7 +49,7 @@ def limpiarDataPartidosEquipo(tabla:pd.DataFrame)->Optional[pd.DataFrame]:
 
 	tabla_filtrada[["Equipo_Id_Local", "Equipo_Id_Visitante"]]=tabla_filtrada["Link"].apply(lambda link: pd.Series(obtenerEquiposId(link)))
 
-	columnas=["Partido_Id", "Equipo_Id_Local", "Equipo_Id_Visitante", "Fecha", "Hora", "Competicion", "Marcador", "Resultado"]
+	columnas=["Partido_Id", "Equipo_Id_Local", "Equipo_Id_Visitante", "Fecha", "Hora", "Competicion_Partido", "Marcador", "Resultado"]
 
 	return tabla_filtrada[columnas]
 

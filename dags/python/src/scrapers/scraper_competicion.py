@@ -1,12 +1,13 @@
 from bs4 import BeautifulSoup as bs4
 import pandas as pd
 from typing import Optional, List
+import requests
 
 from .scraper import Scraper
 
-from .excepciones_scrapers import CompeticionError
+from .excepciones_scrapers import CompeticionError, PaginaError
 
-from .configscrapers import ENDPOINT_COMPETICION_INFO
+from .configscrapers import ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS
 
 class ScraperCompeticion(Scraper):
 
@@ -15,6 +16,24 @@ class ScraperCompeticion(Scraper):
         self.competicion=competicion
 
         super().__init__(f"{ENDPOINT_COMPETICION_INFO}/{self.competicion}")
+
+    def _Scraper__realizarPeticion(self)->bs4:
+
+        peticion=requests.get(self.url_scrapear)
+
+        url_peticion=peticion.url
+
+        urls_validas=[ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS]
+
+        if peticion.status_code!=200 or not any(url in url_peticion for url in urls_validas):
+
+            print(f"Codigo de estado de la peticion: {peticion.status_code}")
+
+            print(f"URL de la peticion: {peticion.url}")
+            
+            raise PaginaError("Error en la pagina")
+
+        return bs4(peticion.text,"html.parser")
 
     def __contenido_cabecera(self, contenido:bs4)->bs4:
 

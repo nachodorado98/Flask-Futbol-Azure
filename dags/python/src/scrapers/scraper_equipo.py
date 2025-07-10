@@ -233,7 +233,43 @@ class ScraperEquipo(Scraper):
 
             return [""]*3
 
-    def __obtenerDataLimpia(self, tabla_info:bs4)->pd.DataFrame:
+    def __contenido_cabecera(self, contenido:bs4)->bs4:
+
+        return contenido.find("div", class_="head-info")
+
+    def __informacion_nombre_detalle(self, cabecera:bs4)->str:
+
+        try:
+
+            titulo_nombre=cabecera.find("div", class_="head-content").find("div", class_="head-title").find("h2")
+
+            return titulo_nombre.text.strip()
+
+        except Exception:
+
+            return ""
+
+    def __informacion_competicion_actualizada(self, cabecera:bs4)->str:
+
+        try:
+
+            url_competicion=cabecera.find("div", class_="head-content").find("div", class_="bottom-row").find("a", href=True)["href"]
+
+            return url_competicion.strip()
+
+        except Exception:
+
+            return ""
+
+    def __informacion_cabecera(self, cabecera:bs4)->List[str]:
+
+        nombre_detalle=self.__informacion_nombre_detalle(cabecera)
+
+        competicion_actualizada=self.__informacion_competicion_actualizada(cabecera)
+
+        return [nombre_detalle, competicion_actualizada]
+
+    def __obtenerDataLimpia(self, tabla_info:bs4, cabecera:bs4)->pd.DataFrame:
 
         nombre, alias, siglas=self.__informacion_nombre(tabla_info)
 
@@ -243,12 +279,14 @@ class ScraperEquipo(Scraper):
 
         datos_tecnicos=self.__informacion_datos_tecnicos(tabla_info)
 
-        fila_datos_unificados=[nombre, alias, siglas]+general+presidente+datos_tecnicos
+        datos_cabacera=self.__informacion_cabecera(cabecera)
+
+        fila_datos_unificados=[nombre, alias, siglas]+general+presidente+datos_tecnicos+datos_cabacera
 
         columnas=["Nombre", "Alias", "Siglas", "Pais", "Pais_URL", "Categoria", "Categoria_URL", "Temporadas",
                     "Presidente", "Presidente_Nombre", "Presidente_URL", "Presidente_Pais", "Presidente_Ciudad",
                     "Presidente_Edad", "Presidente_Fecha", "Presidente_Cargo_Anos", "Presidente_Cargo_Meses",
-                    "Ciudad", "Estadio", "Fundacion"]
+                    "Ciudad", "Estadio", "Fundacion", "Nombre_Detalle", "Categoria_URL_Actualizada"]
 
         return pd.DataFrame([fila_datos_unificados], columns=columnas)
 
@@ -260,7 +298,9 @@ class ScraperEquipo(Scraper):
 
             tabla_info=self.__contenido_tabla_info(contenido)
 
-            return self.__obtenerDataLimpia(tabla_info)
+            cabecera=self.__contenido_cabecera(contenido)
+
+            return self.__obtenerDataLimpia(tabla_info, cabecera)
 
         except Exception:
 
