@@ -49,7 +49,7 @@ def limpiarDataEquipoDetalle(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Codigo_Categoria_Actualizada"]=tabla["Categoria_URL_Actualizada"].apply(lambda url: None if url=="" else url.split("/")[-1].strip())
 
-	tabla["Codigo_Categoria_Definitiva"]=tabla.apply(lambda r: r["Codigo_Categoria"] if pd.isna(r["Codigo_Categoria"]) else r["Codigo_Categoria_Actualizada"], axis=1)
+	tabla["Codigo_Categoria_Definitiva"]=tabla.apply(lambda r: r["Codigo_Categoria"] if pd.isna(r["Codigo_Categoria"]) else r["Codigo_Categoria"], axis=1)
 
 	columnas=["Nombre", "Alias", "Siglas", "Pais","Codigo_Pais", "Ciudad", "Categoria", "Codigo_Categoria_Definitiva",
 			"Temporadas", "Estadio", "Fundacion", "Presidente_Nombre", "Presidente_URL", "Presidente_Codigo"]

@@ -34,7 +34,7 @@ def test_existe_partido_existe(conexion):
 
 def test_fecha_mas_reciente_tabla_vacia(conexion):
 
-	assert conexion.fecha_mas_reciente() is None
+	assert conexion.fecha_mas_reciente("atleti-madrid") is None
 
 def test_fecha_mas_reciente(conexion):
 
@@ -51,11 +51,33 @@ def test_fecha_mas_reciente(conexion):
 
 		conexion.insertarPartido(partido)
 
-	assert conexion.fecha_mas_reciente().strftime("%Y-%m-%d")=="2024-06-22"
+	assert conexion.fecha_mas_reciente("atleti-madrid").strftime("%Y-%m-%d")=="2024-06-22"
+
+def test_fecha_mas_reciente_otros_equipos(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarEquipo("inter")
+
+	partidos=[["1", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"],
+				["2", "atleti-madrid", "atleti-madrid", "2018-06-22", "20:00", "Liga", "1-0", "Victoria"],
+				["3", "inter", "atleti-madrid", "2024-06-21", "20:00", "Liga", "1-0", "Victoria"],
+				["4", "atleti-madrid", "atleti-madrid", "2010-05-22", "20:00", "Liga", "1-0", "Victoria"],
+				["5", "atleti-madrid", "atleti-madrid", "2019-07-11", "20:00", "Liga", "1-0", "Victoria"],
+				["6", "inter", "inter", "2024-06-21", "20:00", "Liga", "1-0", "Victoria"],
+				["7", "atleti-madrid", "atleti-madrid", "2024-06-22", "20:00", "Liga", "1-0", "Victoria"],
+				["8", "atleti-madrid", "atleti-madrid", "2024-06-21", "20:00", "Liga", "1-0", "Victoria"],
+				["9", "inter", "inter", "2025-06-21", "20:00", "Liga", "1-0", "Victoria"]]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	assert conexion.fecha_mas_reciente("atleti-madrid").strftime("%Y-%m-%d")=="2024-06-22"
 
 def test_ultimo_ano_tabla_vacia(conexion):
 
-	assert conexion.ultimo_ano() is None
+	assert conexion.ultimo_ano("atleti-madrid") is None
 
 def test_ultimo_ano(conexion):
 
@@ -72,7 +94,29 @@ def test_ultimo_ano(conexion):
 
 		conexion.insertarPartido(partido)
 
-	assert conexion.ultimo_ano()==2024
+	assert conexion.ultimo_ano("atleti-madrid")==2024
+
+def test_ultimo_ano_otros_equipos(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarEquipo("inter")
+
+	partidos=[["1", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"],
+				["2", "atleti-madrid", "atleti-madrid", "2018-06-22", "20:00", "Liga", "1-0", "Victoria"],
+				["3", "inter", "atleti-madrid", "2024-06-21", "20:00", "Liga", "1-0", "Victoria"],
+				["4", "atleti-madrid", "atleti-madrid", "2010-05-22", "20:00", "Liga", "1-0", "Victoria"],
+				["5", "atleti-madrid", "atleti-madrid", "2019-07-11", "20:00", "Liga", "1-0", "Victoria"],
+				["6", "inter", "inter", "2024-06-21", "20:00", "Liga", "1-0", "Victoria"],
+				["7", "atleti-madrid", "atleti-madrid", "2024-06-22", "20:00", "Liga", "1-0", "Victoria"],
+				["8", "atleti-madrid", "atleti-madrid", "2024-06-21", "20:00", "Liga", "1-0", "Victoria"],
+				["9", "inter", "inter", "2025-06-21", "20:00", "Liga", "1-0", "Victoria"]]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	assert conexion.ultimo_ano("atleti-madrid")==2024
 
 def test_obtener_partidos_sin_estadio_tabla_vacia(conexion):
 

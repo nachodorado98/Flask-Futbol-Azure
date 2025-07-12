@@ -36,7 +36,7 @@ def test_vaciar_tabla_proximos_partidos_no_hay(conexion):
 
 	assert not conexion.c.fetchall()
 
-	conexion.vaciar_proximos_partidos()
+	conexion.vaciar_proximos_partidos("atleti-madrid")
 
 	conexion.c.execute("SELECT * FROM proximos_partidos")
 
@@ -54,8 +54,32 @@ def test_vaciar_tabla_proximos_partidos(conexion):
 
 	assert conexion.c.fetchall()
 
-	conexion.vaciar_proximos_partidos()
+	conexion.vaciar_proximos_partidos("atleti-madrid")
 
 	conexion.c.execute("SELECT * FROM proximos_partidos")
 
 	assert not conexion.c.fetchall()
+
+def test_vaciar_tabla_proximos_partidos_otros_equipos(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarEquipo("inter")
+
+	proximo_partido=["1", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga"]
+
+	conexion.insertarProximoPartido(proximo_partido)
+
+	proximo_partido=["2", "inter", "inter", "2019-06-22", "20:00", "Liga"]
+
+	conexion.insertarProximoPartido(proximo_partido)
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	assert conexion.c.fetchall()
+
+	conexion.vaciar_proximos_partidos("atleti-madrid")
+
+	conexion.c.execute("SELECT * FROM proximos_partidos")
+
+	assert conexion.c.fetchall()

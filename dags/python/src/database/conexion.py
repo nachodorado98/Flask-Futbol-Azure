@@ -244,18 +244,21 @@ class Conexion:
 
 			raise Exception("Tabla no existente")
 
-	# Metodo para obtener la fecha mas reciente de los partidos
-	def fecha_mas_reciente(self)->Optional[datetime]:
+	# Metodo para obtener la fecha mas reciente de los partidos de un equipo
+	def fecha_mas_reciente(self, equipo_id:str)->Optional[datetime]:
 
 		self.c.execute("""SELECT MAX(fecha) AS fecha_mas_reciente
-							FROM partidos""")
+							FROM partidos
+							WHERE Equipo_Id_Local=%s
+							OR Equipo_Id_Visitante=%s""",
+							(equipo_id, equipo_id))
 
 		return self.c.fetchone()["fecha_mas_reciente"]
 
-	# Metodo para obtener el ultimo ano de los partidos
-	def ultimo_ano(self)->Optional[int]:
+	# Metodo para obtener el ultimo ano de los partidos de un equipo
+	def ultimo_ano(self, equipo_id:str)->Optional[int]:
 
-		fecha=self.fecha_mas_reciente()
+		fecha=self.fecha_mas_reciente(equipo_id)
 
 		return None if fecha is None else fecha.year
 
@@ -675,9 +678,12 @@ class Conexion:
 		return False if self.c.fetchone() is None else True
 
 	# Metodo para vaciar la tabla de proximos partidos
-	def vaciar_proximos_partidos(self)->None:
+	def vaciar_proximos_partidos(self, equipo_id:str)->None:
 
-		self.c.execute("""DELETE FROM proximos_partidos""")
+		self.c.execute("""DELETE FROM proximos_partidos
+							WHERE Equipo_Id_Local=%s
+							OR Equipo_Id_Visitante=%s""",
+							(equipo_id, equipo_id))
 
 		self.confirmar()
 

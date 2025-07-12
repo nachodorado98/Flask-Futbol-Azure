@@ -16,6 +16,15 @@ body {
     background-color: var(--color-fondo);
 }
 
+.body-equipo-internazionale {
+    --color-primario: #031A77;
+    --color-secundario: #FFF;
+    --color-footer: #031A77;
+    --color-toogle: #031A77;
+    --color-fondo: #FFF;
+    background-color: var(--color-fondo);
+}
+
 .contenedor-pagina {
     display: flex;
     justify-content: space-between;

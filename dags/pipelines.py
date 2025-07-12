@@ -2,7 +2,7 @@ import time
 
 from utils import crearArchivoLog
 from config import ENTORNO
-from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA
+from config import EQUIPO_ID, TEMPORADA_INICIO, MES_FIN_TEMPORADA, EQUIPO_ID_REAL
 
 from python.src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo
 from python.src.etls import ETL_Entrenador_Equipo, ETL_Estadio_Equipo, ETL_Partidos_Equipo
@@ -114,13 +114,19 @@ def Pipeline_Partidos_Equipo()->None:
 
 	else:
 
-		ano_mas_reciente=con.ultimo_ano()
+		ano_mas_reciente=con.ultimo_ano(EQUIPO_ID_REAL)
 
 		print(f"Obtencion de los datos desde {ano_mas_reciente}")
 
 		con.cerrarConexion()
 
 		ETL_Partidos_Temporadas_Equipo(temporada=ano_mas_reciente)
+
+def Pipeline_Partidos_Equipo_Total(equipo:int, temporada:int=TEMPORADA_INICIO)->None:
+
+	print(f"Obtencion total de los partidos desde {temporada}")
+
+	ETL_Partidos_Temporadas_Equipo(temporada, equipo)
 
 def Pipeline_Partidos_Estadio()->None:
 
@@ -322,6 +328,12 @@ def Pipeline_Jugadores_Equipo()->None:
 
 		ETL_Jugadores_Temporadas_Equipo(temporada=ano_mas_reciente)
 
+def Pipeline_Jugadores_Equipo_Total(equipo:int, temporada:int=TEMPORADA_INICIO)->None:
+
+	print(f"Obtencion total de los jugadores desde {temporada}")
+
+	ETL_Jugadores_Temporadas_Equipo(temporada, equipo)
+
 def Pipeline_Jugadores()->None:
 
 	con=Conexion(ENTORNO)
@@ -474,14 +486,14 @@ def Pipeline_Estadios_Ciudades()->None:
 
 	con.cerrarConexion()
 
-def Pipeline_Proximos_Partidos_Equipo()->None:
+def Pipeline_Proximos_Partidos_Equipo(equipo_id:int=EQUIPO_ID, equipo_id_real:str=EQUIPO_ID_REAL)->None:
 
 	con=Conexion(ENTORNO)
 
 	# Permite actualizar los proximos partidos (elimina los que ya se han jugado y actualiza si hay horas definidas)
-	con.vaciar_proximos_partidos()
+	con.vaciar_proximos_partidos(equipo_id_real)
 
-	ano_mas_reciente=con.ultimo_ano()
+	ano_mas_reciente=con.ultimo_ano(equipo_id_real)
 
 	temporadas=generarTemporadas(ano_mas_reciente, MES_FIN_TEMPORADA)
 
@@ -491,13 +503,13 @@ def Pipeline_Proximos_Partidos_Equipo()->None:
 
 	try:
 		
-		ETL_Proximos_Partidos_Equipo(EQUIPO_ID, temporada, ENTORNO)
+		ETL_Proximos_Partidos_Equipo(equipo_id, temporada, ENTORNO)
 
 	except Exception as e:
 
-		mensaje=f"Proximos Partidos Equipo: {EQUIPO_ID} Temporada: {temporada} - Motivo: {e}"
+		mensaje=f"Proximos Partidos Equipo: {equipo_id} Temporada: {temporada} - Motivo: {e}"
 	
-		print(f"Error en proximo partido de equipo {EQUIPO_ID} en temporada {temporada}")
+		print(f"Error en proximo partido de equipo {equipo_id} en temporada {temporada}")
 
 		crearArchivoLog(mensaje)
 
