@@ -102,10 +102,14 @@
     <p class="competicion">
         <strong class="strong-competicion"{% if partido[16] %} onclick="window.location.href='/competicion/{{ partido[15] }}'" style="cursor: pointer"{% endif %}>{{ partido[3] }} - {{ partido[1] }} - {{ partido[2] }}h</strong>
 
-        {% if partido_asistido %}
-            <img class="icono-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/partido_asistido.png') }}" height="30" alt="Partido Asistido Icon" onclick="window.location.href='/partido/{{ partido_id }}/asistido'" style="cursor: pointer">
-        {% else %}
-            <img class="icono-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/anadir_partido_asistido.png') }}" height="30" alt="Partido No Asistido Icon" onclick="window.location.href='/anadir_partido_asistido?partido_id={{ partido_id }}&todos=True'" style="cursor: pointer">
+        {% if equipo_partido %}
+
+            {% if partido_asistido %}
+                <img class="icono-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/partido_asistido.png') }}" height="30" alt="Partido Asistido Icon" onclick="window.location.href='/partido/{{ partido_id }}/asistido'" style="cursor: pointer">
+            {% else %}
+                <img class="icono-partido-asistido" src="{{ url_for('static', filename='imagenes/iconos/anadir_partido_asistido.png') }}" height="30" alt="Partido No Asistido Icon" onclick="window.location.href='/anadir_partido_asistido?partido_id={{ partido_id }}&todos=True'" style="cursor: pointer">
+            {% endif %}
+
         {% endif %}
 
     </p>

@@ -26,7 +26,7 @@ class ScraperJugador(Scraper):
 
         try:
 
-            titulo_nombre=cabecera.find("div", class_="head-content").find("div", class_="head-title").find("h2")
+            titulo_nombre=cabecera.find("div", class_="head-content").find("div", class_="head-title").find("p", class_="title")
 
             return titulo_nombre.text.strip()
 

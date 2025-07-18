@@ -175,7 +175,11 @@ class ScraperEquipo(Scraper):
 
             return list(itertools.chain(*filas_limpias))
 
-        datos_informacion_presidente=limpiarPresidenteInformacion(tabla_presidente)            
+        datos_informacion_presidente=limpiarPresidenteInformacion(tabla_presidente)
+
+        if datos_informacion_presidente[-1]=="":
+
+            datos_informacion_presidente[-1]="0" 
 
         return datos_nombre_presidente+datos_informacion_presidente
 
@@ -241,7 +245,7 @@ class ScraperEquipo(Scraper):
 
         try:
 
-            titulo_nombre=cabecera.find("div", class_="head-content").find("div", class_="head-title").find("h2")
+            titulo_nombre=cabecera.find("div", class_="head-content").find("div", class_="head-title").find("p")
 
             return titulo_nombre.text.strip()
 

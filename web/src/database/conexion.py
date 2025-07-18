@@ -460,9 +460,11 @@ class Conexion:
 						    		WHERE partido_id=%s
 						    		AND (equipo_id_local=%s
 									OR equipo_id_visitante=%s))
+						AND (equipo_id_local=%s
+						OR equipo_id_visitante=%s)
 						ORDER BY fecha ASC
 						LIMIT 1""",
-						(partido_id,  equipo_id, equipo_id))
+						(partido_id, equipo_id, equipo_id, equipo_id, equipo_id))
 
 		partido=self.c.fetchone()
 
@@ -478,9 +480,11 @@ class Conexion:
 						    		WHERE partido_id=%s
 						    		AND (equipo_id_local=%s
 									OR equipo_id_visitante=%s))
+						AND (equipo_id_local=%s
+						OR equipo_id_visitante=%s)
 						ORDER BY fecha DESC
 						LIMIT 1""",
-						(partido_id,  equipo_id, equipo_id))
+						(partido_id, equipo_id, equipo_id, equipo_id, equipo_id))
 
 		partido=self.c.fetchone()
 
@@ -593,7 +597,11 @@ class Conexion:
 	# Metodo para obtener los equipos de una competicion
 	def obtenerEquiposCompeticion(self, competicion_id:str)->List[Optional[tuple]]:
 
-		self.c.execute("""SELECT equipo_id, nombre, escudo
+		self.c.execute("""SELECT equipo_id, nombre, 
+							CASE WHEN escudo IS NULL
+									THEN -1
+									ELSE escudo
+							END as escudo_equipo
 						FROM equipos
 						WHERE codigo_competicion=%s
 						ORDER BY equipo_id""",
@@ -603,7 +611,7 @@ class Conexion:
 
 		return list(map(lambda equipo: (equipo["equipo_id"],
 										equipo["nombre"],
-										equipo["escudo"]), equipos))
+										equipo["escudo_equipo"]), equipos))
 
 	# Metodo para obtener los campeones de una competicion
 	def obtenerCampeonesCompeticion(self, competicion_id:str)->List[Optional[tuple]]:

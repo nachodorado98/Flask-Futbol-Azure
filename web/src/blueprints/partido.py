@@ -33,11 +33,7 @@ def pagina_partido(partido_id:str):
 
 	equipo=con.obtenerEquipo(current_user.id)
 
-	if not con.equipo_partido(equipo, partido_id):
-
-		con.cerrarConexion()
-
-		return redirect("/partidos")
+	equipo_partido=True if con.equipo_partido(equipo, partido_id) else False
 
 	estadio_equipo=con.estadio_equipo(equipo)
 
@@ -70,6 +66,7 @@ def pagina_partido(partido_id:str):
 							partidos_entre_equipos=partidos_entre_equipos,
 							historial_entre_equipos=historial_entre_equipos,
 							partido_asistido=partido_asistido,
+							equipo_partido=equipo_partido,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,

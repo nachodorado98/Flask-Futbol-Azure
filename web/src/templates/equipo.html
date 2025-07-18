@@ -6,38 +6,37 @@
 
 {% block contenedor_lateral_izq %}
 
-<div class="contenedor-lateral contenedor-lateral-izq">
-    <div class="tarjeta-jugadores-equipo">
+{% if jugadores_equipo %}
 
-        <p class="titulo-equipo-jugadores"><strong>Jugadores</strong></p>
+    <div class="contenedor-lateral contenedor-lateral-izq">
+        <div class="tarjeta-jugadores-equipo">
 
-        {% if jugadores_equipo %}
+            <p class="titulo-equipo-jugadores"><strong>Jugadores</strong></p>
 
-            <div class="tarjetas-jugadores-equipo">
-                <div class="tarjetas-jugadores-equipo-wrapper">
+                <div class="tarjetas-jugadores-equipo">
+                    <div class="tarjetas-jugadores-equipo-wrapper">
 
-                {% for jugador_equipo in jugadores_equipo %}
+                    {% for jugador_equipo in jugadores_equipo %}
 
-                    <div class="tarjeta-jugador-equipo" onclick="window.location.href='/jugador/{{ jugador_equipo[0] }}'">
-                        <p><strong>{{ jugador_equipo[1] }}</strong></p>
+                        <div class="tarjeta-jugador-equipo" onclick="window.location.href='/jugador/{{ jugador_equipo[0] }}'">
+                            <p><strong>{{ jugador_equipo[1] }}</strong></p>
 
-                        {% if jugador_equipo[2]=='-1' %}
-                            <img class="imagen-jugador-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
-                        {% else %}
-                            <img class="imagen-jugador-equipo" src="{{ url_imagen_jugador }}{{ jugador_equipo[2] }}.png" alt="Jugador Icon">
-                        {% endif %}
+                            {% if jugador_equipo[2]=='-1' %}
+                                <img class="imagen-jugador-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
+                            {% else %}
+                                <img class="imagen-jugador-equipo" src="{{ url_imagen_jugador }}{{ jugador_equipo[2] }}.png" alt="Jugador Icon">
+                            {% endif %}
 
-                    </div>
-                    
-                {% endfor %}
+                        </div>
+                        
+                    {% endfor %}
 
-                 </div>
-            </div>
-
-        {% endif %}
-
+                     </div>
+                </div>
+        </div>
     </div>
-</div>
+
+{% endif %}
 
 {% endblock contenedor_lateral_izq %}
 

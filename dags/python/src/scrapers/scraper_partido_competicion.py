@@ -20,7 +20,7 @@ class ScraperPartidoCompeticion(Scraper):
 
     def __contenido_competicion(self, contenido:bs4)->bs4:
 
-        return contenido.find("h3", class_="competition")
+        return contenido.find("p", class_="competition")
 
     def __competicion_partido(self, competicion:bs4)->str:
 

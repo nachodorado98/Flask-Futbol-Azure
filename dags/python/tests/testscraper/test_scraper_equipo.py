@@ -346,7 +346,7 @@ def test_scraper_equipo_obtener_informacion_competicion_actualizada(equipo):
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("seleccion-santa-amalia",),("kakamega-homeboyz",),("sporting-gijon",), ("albacete",)]
 )
-def test_scraper_equipo_obtener_informacion_cabacera(equipo):
+def test_scraper_equipo_obtener_informacion_cabecera(equipo):
 
 	scraper_equipo=ScraperEquipo(equipo)
 

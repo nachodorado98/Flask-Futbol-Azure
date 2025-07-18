@@ -23,26 +23,6 @@ def test_pagina_partido_partido_no_existe(cliente, conexion_entorno_usuario):
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_partido_equipo_no_pertenece(cliente, conexion_entorno, password_hash):
-
-	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
-
-	conexion_entorno.confirmar()
-
-	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "equipo-no-partido")
-
-	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
-
-		respuesta=cliente_abierto.get("/partido/20190622")
-
-		contenido=respuesta.data.decode()
-
-		respuesta.status_code==302
-		assert respuesta.location=="/partidos"
-		assert "Redirecting..." in contenido
-
 def test_pagina_partido_con_estadio(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
@@ -393,3 +373,30 @@ def test_pagina_partido_partido_asistido(cliente, conexion_entorno_usuario):
 		assert '/anadir_partido_asistido.png' not in contenido
 		assert 'alt="Partido No Asistido Icon"' not in contenido
 		assert 'alt="Partido Asistido Icon"' in contenido
+
+def test_pagina_partido_equipo_no_pertenece(cliente, conexion_entorno, password_hash):
+
+	conexion_entorno.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('equipo-no-partido')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarUsuario("nacho98", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "equipo-no-partido")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-partido-detalle"' in contenido
+		assert '<p class="competicion"' in contenido
+		assert '<div class="info-partido-detalle">' in contenido
+		assert '<div class="info-partido-estadio"' in contenido
+		assert '<img class="icono-partido-asistido"' not in contenido
+		assert '/partido_asistido.png' not in contenido
+		assert '/anadir_partido_asistido.png' not in contenido
+		assert 'alt="Partido No Asistido Icon"' not in contenido
+		assert 'alt="Partido Asistido Icon"' not in contenido

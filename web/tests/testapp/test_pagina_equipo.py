@@ -307,6 +307,6 @@ def test_pagina_equipo_equipo_sin_jugadores(cliente, conexion_entorno_usuario):
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
-		assert '<div class="tarjeta-jugadores-equipo">' in contenido
-		assert '<p class="titulo-equipo-jugadores">' in contenido
+		assert '<div class="tarjeta-jugadores-equipo">' not in contenido
+		assert '<p class="titulo-equipo-jugadores">' not in contenido
 		assert '<div class="tarjetas-jugadores-equipo">' not in contenido
