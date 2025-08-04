@@ -265,3 +265,78 @@ def test_obtener_codigo_paises_equipos(conexion, datos, numero_paises):
 	paises=conexion.obtenerCodigoPaisesEquipos()
 
 	assert len(paises)==numero_paises
+
+def test_obtener_equipos_sin_nombre_no_hay(conexion):
+
+	assert not conexion.obtenerEquiposNombreVacio()
+
+def test_obtener_equipos_sin_nombre(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.c.execute("UPDATE equipos SET Nombre='Nombre', Nombre_Completo='Nombre'")
+
+	for numero in range(1,11):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+	equipos=conexion.obtenerEquiposNombreVacio()
+
+	assert len(equipos)==10
+
+def test_obtener_equipos_sin_escudo_no_hay(conexion):
+
+	assert not conexion.obtenerEquiposEscudoVacio()
+
+def test_obtener_equipos_sin_escudo(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.c.execute("UPDATE equipos SET Escudo=1")
+
+	for numero in range(1,11):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+	equipos=conexion.obtenerEquiposEscudoVacio()
+
+	assert len(equipos)==10
+
+def test_obtener_equipos_sin_entrenador_no_hay(conexion):
+
+	assert not conexion.obtenerEquiposEntrenadorVacio()
+
+def test_obtener_equipos_sin_entrenador(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.c.execute("UPDATE equipos SET Entrenador='Entrenador'")
+
+	for numero in range(1,11):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+	equipos=conexion.obtenerEquiposEntrenadorVacio()
+
+	assert len(equipos)==10
+
+def test_obtener_equipos_sin_estadio_no_hay(conexion):
+
+	assert not conexion.obtenerEquiposEstadioVacio()
+
+def test_obtener_equipos_sin_estadio(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarEstadio(['metropolitano', 23, 'Metropolitano', 'Av Luis Aragones', 40.436, -3.599, 'Madrid', 100000,
+							2017, 105, 68, 'Telefono', 'Cedped'])
+
+	conexion.insertarEquipoEstadio(('atleti-madrid', 'metropolitano'))
+
+	for numero in range(1,11):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+	equipos=conexion.obtenerEquiposEstadioVacio()
+
+	assert len(equipos)==10

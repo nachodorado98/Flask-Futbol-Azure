@@ -100,6 +100,57 @@ class Conexion:
 
 		return list(map(lambda equipo: equipo["equipo_id"], equipos))
 
+	# Metodo para obtener los equipos con nombre vacio
+	def obtenerEquiposNombreVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT Equipo_Id
+						FROM equipos
+						WHERE Nombre IS NULL
+						OR Nombre_Completo IS NULL
+						ORDER BY Equipo_Id""")
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: equipo["equipo_id"], equipos))
+
+	# Metodo para obtener los equipos con escudo vacio
+	def obtenerEquiposEscudoVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT Equipo_Id
+						FROM equipos
+						WHERE Escudo IS NULL
+						ORDER BY Equipo_Id""")
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: equipo["equipo_id"], equipos))
+
+	# Metodo para obtener los equipos con entrenador vacio
+	def obtenerEquiposEntrenadorVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT Equipo_Id
+						FROM equipos
+						WHERE Entrenador IS NULL
+						ORDER BY Equipo_Id""")
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: equipo["equipo_id"], equipos))
+
+	# Metodo para obtener los equipos con estadio vacio
+	def obtenerEquiposEstadioVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT e.Equipo_Id 
+						FROM equipos e
+						LEFT JOIN equipo_estadio ee
+						ON ee.equipo_id=e.equipo_id
+						WHERE Estadio_Id IS NULL
+						ORDER BY e.equipo_id;""")
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: equipo["equipo_id"], equipos))
+
 	# Metodo para actualizar el escudo de un equipo
 	def actualizarEscudoEquipo(self, datos_escudo:List[int], equipo_id:str)->None:
 
