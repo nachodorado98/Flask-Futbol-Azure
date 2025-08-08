@@ -1,4 +1,8 @@
 import pytest
+from datetime import datetime
+import os
+
+from src.utilidades.utils import vaciarCarpeta
 
 def test_pagina_partidos_sin_partidos(cliente, conexion_entorno_usuario):
 
@@ -23,6 +27,7 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno_usuario):
 	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 	assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
 	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' not in contenido
+	assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' not in contenido
 
 def test_pagina_partidos_con_partido(cliente, conexion_entorno_usuario):
 
@@ -46,6 +51,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno_usuario):
 	assert '<div class="tarjeta-no-proximo-partido">' not in contenido
 	assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' in contenido
+	assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' not in contenido
 
 @pytest.mark.parametrize(["nombre_completo"],
 	[("atleti",),("atm",),("Club Atletico de Madrid",)]
@@ -1985,3 +1991,216 @@ def test_pagina_partidos_calendario_varios_diferentes_temporadas(cliente, conexi
 
 		assert respuesta.status_code==200
 		assert f'<a href="/partidos/calendario/{ano_mes}" class="tipo-partidos-calendario">' in contenido
+
+def test_pagina_partidos_partidos_asistido_fecha_fecha_no_coincide(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' not in contenido
+		assert '<div class="contenido-ventana-emergente-partido-login">' not in contenido
+
+def test_pagina_partidos_partidos_asistido_fecha(cliente, conexion_entorno_usuario):
+
+	hoy=datetime.now()
+
+	hoy_dia_mes=hoy.strftime("%m-%d")
+
+	conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+										VALUES('202411111', 'atletico-madrid', 'atletico-madrid', '2024-{hoy_dia_mes}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno_usuario.c.execute("""INSERT INTO partido_estadio
+											VALUES('202411111', 'metropolitano')""")
+
+	conexion_entorno_usuario.confirmar()
+
+	conexion_entorno_usuario.insertarPartidoAsistido("202411111", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' in contenido
+		assert '<div class="contenido-ventana-emergente-partido-login">' in contenido
+		assert f'<h2>Hace {hoy.year-2024} año(s) estabas en...</h2>' in contenido
+		assert '<h1>¡Madrid!</h1>' in contenido
+		assert "/partido/202411111/asistido" in contenido
+		assert '<img class="imagen-partido-asistido-dia"' in contenido
+		assert '/estadios/23.png' in contenido
+		assert 'imagenes/iconos/no_estadio.png' not in contenido
+		assert f'/usuarios/nacho98/imagenes/nacho98_202411111.jpeg' not in contenido
+
+@pytest.mark.parametrize(["ano"],
+	[(2019,),(2020,),(2016,),(2015,),(1998,)]
+)
+def test_pagina_partidos_partidos_asistido_fecha_diferentes_anos(cliente, conexion_entorno_usuario, ano):
+
+	hoy=datetime.now()
+
+	hoy_dia_mes=hoy.strftime("%m-%d")
+
+	conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+										VALUES('{ano}11111', 'atletico-madrid', 'atletico-madrid', '{ano}-{hoy_dia_mes}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio
+											VALUES('{ano}11111', 'metropolitano')""")
+
+	conexion_entorno_usuario.confirmar()
+
+	conexion_entorno_usuario.insertarPartidoAsistido(f"{ano}11111", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' in contenido
+		assert '<div class="contenido-ventana-emergente-partido-login">' in contenido
+		assert f'<h2>Hace {hoy.year-ano} año(s) estabas en...</h2>' in contenido
+		assert '<h1>¡Madrid!</h1>' in contenido
+		assert f"/partido/{ano}11111/asistido" in contenido
+		assert '<img class="imagen-partido-asistido-dia"' in contenido
+		assert '/estadios/23.png' in contenido
+		assert 'imagenes/iconos/no_estadio.png' not in contenido
+		assert f'/usuarios/nacho98/imagenes/nacho98_{ano}11111.jpeg' not in contenido
+
+def test_pagina_partidos_partidos_asistido_fecha_varios_mismo_dia(cliente, conexion_entorno_usuario):
+
+	hoy=datetime.now()
+
+	hoy_dia_mes=hoy.strftime("%m-%d")
+
+	for ano in [2018, 2023, 2000, 2017, 2024]:
+
+		conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+											VALUES('{ano}11111', 'atletico-madrid', 'atletico-madrid', '{ano}-{hoy_dia_mes}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio
+												VALUES('{ano}11111', 'metropolitano')""")
+
+		conexion_entorno_usuario.confirmar()
+
+		conexion_entorno_usuario.insertarPartidoAsistido(f"{ano}11111", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' in contenido
+		assert '<div class="contenido-ventana-emergente-partido-login">' in contenido
+		assert f'<h2>Hace {hoy.year-2024} año(s) estabas en...</h2>' in contenido
+		assert '<h1>¡Madrid!</h1>' in contenido
+		assert f"/partido/202411111/asistido" in contenido
+		assert '<img class="imagen-partido-asistido-dia"' in contenido
+		assert '/estadios/23.png' in contenido
+		assert 'imagenes/iconos/no_estadio.png' not in contenido
+		assert f'/usuarios/nacho98/imagenes/nacho98_202411111.jpeg' not in contenido
+
+def test_pagina_partidos_partidos_asistido_fecha_sin_estadio(cliente, conexion_entorno_usuario):
+
+	hoy=datetime.now()
+
+	hoy_dia_mes=hoy.strftime("%m-%d")
+
+	conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+										VALUES('202411111', 'atletico-madrid', 'atletico-madrid', '2024-{hoy_dia_mes}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno_usuario.confirmar()
+
+	conexion_entorno_usuario.insertarPartidoAsistido("202411111", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' in contenido
+		assert '<div class="contenido-ventana-emergente-partido-login">' in contenido
+		assert f'<h2>Hace {hoy.year-2024} año(s) estabas en...</h2>' in contenido
+		assert '<h1>¡Madrid!</h1>' not in contenido
+		assert "/partido/202411111/asistido" in contenido
+		assert '<img class="imagen-partido-asistido-dia"' in contenido
+		assert '/estadios/23.png' not in contenido
+		assert 'imagenes/iconos/no_estadio.png' in contenido
+		assert '/usuarios/nacho98/imagenes/nacho98_202411111.jpeg' not in contenido
+
+def test_pagina_partidos_partidos_asistido_fecha_con_imagen(cliente, conexion_entorno_usuario, datalake, entorno):
+
+	datalake.crearCarpeta(entorno, "usuarios/nacho98/imagenes")
+
+	hoy=datetime.now()
+
+	hoy_dia_mes=hoy.strftime("%m-%d")
+
+	conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+										VALUES('202411111', 'atletico-madrid', 'atletico-madrid', '2024-{hoy_dia_mes}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno_usuario.c.execute("""INSERT INTO partido_estadio
+											VALUES('202411111', 'metropolitano')""")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		ruta_imagen_test=os.path.join(os.getcwd(), "testapp", "imagen_tests.jpeg")
+
+		data={"partido_anadir":"202411111", "comentario":"Comentario"}
+
+		with open(ruta_imagen_test, "rb") as imagen_file:
+				
+			data["imagen"]=(imagen_file, "imagen_tests.jpeg")
+
+			cliente_abierto.post("/insertar_partido_asistido", data=data, buffered=True, content_type="multipart/form-data")
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' in contenido
+		assert '<div class="contenido-ventana-emergente-partido-login">' in contenido
+		assert f'<h2>Hace {hoy.year-2024} año(s) estabas en...</h2>' in contenido
+		assert '<h1>¡Madrid!</h1>' in contenido
+		assert "/partido/202411111/asistido" in contenido
+		assert '<img class="imagen-partido-asistido-dia"' in contenido
+		assert '/estadios/23.png' not in contenido
+		assert 'imagenes/iconos/no_estadio.png' not in contenido
+		assert '/usuarios/nacho98/imagenes/nacho98_202411111.jpeg' in contenido
+
+	datalake.eliminarCarpeta(entorno, "usuarios/nacho98")
+
+	datalake.cerrarConexion()
+
+	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
+
+	vaciarCarpeta(ruta_carpeta_imagenes)

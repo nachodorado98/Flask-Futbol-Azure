@@ -3177,3 +3177,69 @@ class Conexion:
 							(imagen, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener un partido asistido de una fecha concreta
+	def obtenerPartidoAsistidoFecha(self, fecha:str, usuario:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								p.competicion,
+								pe.estadio_id as estadio_partido,
+								e.ciudad as ciudad_partido,
+								CASE WHEN pa.imagen IS NULL
+									THEN
+										CASE WHEN e.codigo_estadio IS NULL
+					                		THEN '-1'
+											ELSE e.codigo_estadio::TEXT
+					           			END
+									ELSE pa.imagen
+								END as imagen_partido,
+								CASE WHEN pa.imagen IS NULL
+									THEN False
+									ELSE True
+								END as es_imagen_partido,
+								EXTRACT(YEAR FROM CURRENT_DATE)::INT-EXTRACT(YEAR FROM p.fecha)::INT AS diferencia_anos
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+							LEFT JOIN equipos e1
+							ON p.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON p.equipo_id_visitante=e2.equipo_id
+							LEFT JOIN partido_estadio pe
+							ON p.partido_id=pe.partido_id
+							LEFT JOIN estadios e
+							ON pe.estadio_id=e.estadio_id
+							WHERE EXTRACT(MONTH FROM p.Fecha)=EXTRACT(MONTH FROM %s::DATE)
+							AND EXTRACT(DAY FROM p.Fecha)=EXTRACT(DAY FROM %s::DATE)
+							AND (EXTRACT(YEAR FROM CURRENT_DATE)::INT-EXTRACT(YEAR FROM p.Fecha)::INT)!=0
+							ORDER BY p.Fecha DESC
+							LIMIT 1""",
+							(usuario, fecha, fecha))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else (partido["partido_id"],
+											partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"],
+											partido["estadio_partido"],
+											partido["ciudad_partido"],
+											partido["imagen_partido"],
+											partido["es_imagen_partido"],
+											partido["diferencia_anos"])

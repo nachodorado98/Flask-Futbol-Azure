@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 
 def test_tabla_partidos_asistidos_vacia(conexion):
 
@@ -3664,10 +3665,6 @@ def test_obtener_partidos_asistidos_usuario_ciudad(conexion_entorno):
 
 	assert conexion_entorno.obtenerPartidosAsistidosUsuarioCiudad("nacho", "atletico-madrid", "Madrid", "es")
 
-def test_obtener_imagen_partido_asistido_no_existe_usuario(conexion_entorno):
-
-	assert not conexion_entorno.obtenerImagenPartidoAsistido("20190622", "nacho")
-
 def test_obtener_imagen_partido_asistido_no_existe_usuario(conexion):
 
 	assert not conexion.obtenerImagenPartidoAsistido("20190622", "nacho")
@@ -3707,3 +3704,82 @@ def test_obtener_imagen_partido_asistido_no_existe_imagen(conexion_entorno):
 	imagen=conexion_entorno.obtenerImagenPartidoAsistido("20190622", "nacho")
 
 	assert imagen=="imagen.png"
+
+def test_obtener_partido_asistido_fecha_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidoAsistidoFecha("2024-06-22", "nacho")
+
+def test_obtener_partido_asistido_fecha_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion.obtenerPartidoAsistidoFecha("2024-06-22", "nacho")
+
+def test_obtener_partido_asistido_fecha_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFecha("2024-06-22", "nacho")
+
+def test_obtener_partido_asistido_fecha_fecha_no_coincide(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFecha("2024-06-23", "nacho")
+
+def test_obtener_partido_asistido_fecha_mismo_dia(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	hoy=datetime.now().strftime("%Y-%m-%d")
+
+	conexion_entorno.c.execute(f"""INSERT INTO partidos
+								VALUES('202511111', 'atletico-madrid', 'atletico-madrid', '{hoy}', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.confirmar()
+
+	conexion_entorno.insertarPartidoAsistido("202511111", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidoAsistidoFecha(hoy, "nacho")
+
+def test_obtener_partido_asistido_fecha(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	partido_fecha=conexion_entorno.obtenerPartidoAsistidoFecha("2023-06-22", "nacho")
+
+	hoy=datetime.now()
+
+	assert hoy.year-2019==partido_fecha[-1]
+	assert partido_fecha[0]=="20190622"
+
+def test_obtener_partido_asistido_fecha_varios_mismo_dia(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.c.execute("""INSERT INTO partidos
+								VALUES ('20180622', 'atletico-madrid', 'atletico-madrid', '2018-06-22', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20200622', 'atletico-madrid', 'atletico-madrid', '2020-06-22', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20150622', 'atletico-madrid', 'atletico-madrid', '2015-06-22', '22:00', 'Liga', '1-0', 'Victoria'),
+								('20220622', 'atletico-madrid', 'atletico-madrid', '2022-06-22', '22:00', 'Liga', '1-0', 'Victoria')""")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+	conexion_entorno.insertarPartidoAsistido("20180622", "nacho", "comentario")
+	conexion_entorno.insertarPartidoAsistido("20200622", "nacho", "comentario")
+	conexion_entorno.insertarPartidoAsistido("20150622", "nacho", "comentario")
+	conexion_entorno.insertarPartidoAsistido("20220622", "nacho", "comentario")
+
+	partido_fecha=conexion_entorno.obtenerPartidoAsistidoFecha("2025-06-22", "nacho")
+
+	hoy=datetime.now()
+
+	assert hoy.year-2022==partido_fecha[-1]
+	assert partido_fecha[0]=="20220622"

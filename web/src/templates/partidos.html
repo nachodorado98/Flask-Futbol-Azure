@@ -405,6 +405,31 @@
                 </div>    
             </div>
 
+            {% if partido_asistido_dia %}
+                <div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">
+                    <div class="contenido-ventana-emergente-partido-login">
+                        <span class="cerrar" onclick="cerrarVentanaEmergentePartidoLogin()">&times;</span>
+                        <h2>Hace {{ partido_asistido_dia[-1] }} año(s) estabas en...</h2>
+                        <h1>¡{{ partido_asistido_dia[-4] }}!</h1>
+
+                        <div class="imagen" onclick="window.location.href='/partido/{{ partido_asistido_dia[0] }}/asistido'">
+                            {% if partido_asistido_dia[-2] %}
+                                <img class="imagen-partido-asistido-dia" src="{{ url_imagen_usuario_imagenes }}{{ partido_asistido_dia[-3] }}" alt="Imagen Partido Icon">
+                            {% else %}
+
+                                {% if partido_asistido_dia[-3]=='-1' %}
+                                    <img class="imagen-partido-asistido-dia" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Imagen Partido Icon">
+                                {% else %}
+                                    <img class="imagen-partido-asistido-dia" src="{{ url_imagen_estadio }}{{ partido_asistido_dia[-3] }}.png" alt="Imagen Partido Icon">
+                                {% endif %}
+
+                            {% endif %}
+                        </div>  
+
+                    </div>    
+                </div>
+            {% endif %}
+
         </div>
 
         {% endblock contenedor_lateral_der %}
@@ -418,6 +443,8 @@
     <script src="{{ url_for('static', filename='js/home_away.js') }}"></script>
     <script src="{{ url_for('static', filename='js/competiciones.js') }}"></script>
     <script src="{{ url_for('static', filename='js/resultados.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/limpiar_login_param.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ventana_emergente_partido_login.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>

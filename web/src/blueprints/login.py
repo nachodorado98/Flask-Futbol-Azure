@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, current_app
 from flask_login import login_user, login_required, current_user, logout_user
 from typing import Optional
+import datetime
 
 from src.extensiones.manager import login_manager
 
@@ -72,7 +73,7 @@ def login():
 
 	siguiente=request.args.get("next")
 
-	return redirect(siguiente or "/partidos")
+	return redirect(siguiente or "/partidos?login=True")
 
 @bp_login.route("/logout")
 @login_required

@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, current_app
 from flask_login import login_required, current_user
-
 from datetime import datetime
 
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas, obtenerPrimerUltimoDiaAnoMes
@@ -24,8 +23,13 @@ def pagina_partidos():
 	temporada=request.args.get("temporada", default=None, type=int)
 	competicion=request.args.get("competicion", default=None, type=str)
 	resultados=request.args.get("resultados", default=None, type=str)
+	login=request.args.get("login", default=False, type=bool)
+
+	fecha_hoy=datetime.now().strftime("%Y-%m-%d")
 
 	con=Conexion(entorno)
+
+	partido_asistido_dia=con.obtenerPartidoAsistidoFecha(fecha_hoy, current_user.id) if login else None
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -180,8 +184,11 @@ def pagina_partidos():
 							resultado_filtrado=resultado_filtrado,
 							local=local,
 							ano_mes_calendario=ano_mes_calendario,
+							partido_asistido_dia=partido_asistido_dia,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
-							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
+							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/",
+							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/")
 
 @bp_partidos.route("/partidos/calendario/<ano_mes>")
 @login_required
