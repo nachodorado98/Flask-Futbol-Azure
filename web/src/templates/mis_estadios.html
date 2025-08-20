@@ -34,7 +34,7 @@
 
                 {% for estadio_visitado_fecha in estadios_asistidos_fecha %}
 
-                    <div class="tarjeta-estadio-mis-estadios-recientes" onclick="window.location.href='/estadio/{{ estadio_visitado_fecha[0] }}'">
+                    <div class="tarjeta-estadio-mis-estadios-recientes" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ estadio_visitado_fecha[0] | replace("\"", "\\\"") }}")'>
 
                         <div class="info-estadio-mis-estadios-recientes">
 
@@ -84,7 +84,7 @@
 
         {% for estadio in estadios_asistidos %}
 
-        <div class="tarjeta-estadio-asistido" onclick="window.location.href='/estadios/mis_estadios/partidos_estadio/{{ estadio[0] }}'">
+        <div class="tarjeta-estadio-asistido" onclick='window.location.href="/estadios/mis_estadios/partidos_estadio/"+encodeURIComponent("{{ estadio[0] | replace("\"", "\\\"") }}")'>
 
             <div class="info-estadio-asistido">
 

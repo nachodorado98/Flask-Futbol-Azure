@@ -175,7 +175,7 @@ CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						CodCiudad INT,
 						Equipo_Id VARCHAR(255),
 						Imagen_Perfil VARCHAR(255) DEFAULT NULL,
-						Admin BOOl DEFAULT FALSE
+						Admin BOOl DEFAULT FALSE,
 						FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
 						FOREIGN KEY (CodCiudad) REFERENCES ciudades (CodCiudad));
 

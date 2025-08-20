@@ -73,7 +73,7 @@
 
         {% for estadio in estadios_division %}
 
-            <div class="tarjeta-estadio-asistido-division" {% if estadio[5]==1 %}onclick="window.location.href='/estadio/{{ estadio[0] }}'" style="cursor: pointer;"{% else %}style="background-color: #d1d1d1;"{% endif %}>
+            <div class="tarjeta-estadio-asistido-division" {% if estadio[5]==1 %}onclick='window.location.href="/estadio/"+encodeURIComponent("{{ estadio[0] | replace("\"", "\\\"") }}")' style="cursor: pointer;"{% else %}style="background-color: #d1d1d1;"{% endif %}>
 
             <div class="info-estadio-asistido-division">
 

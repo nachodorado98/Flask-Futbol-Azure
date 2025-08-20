@@ -959,3 +959,13 @@ def obtenerNumeroDias(fecha_inicio:str, fecha_fin:str)->int:
 	except:
 
 		raise Exception("Error en la obtencion de los dias")
+
+def anadirDiaActualCalendario(calendario:List[List[tuple]], dia:str)->List[List[tuple]]:
+
+    semanas_actualizadas=[[d+(True,) if isinstance(d, tuple) and len(d)>=3 and d[0]==dia
+				            else d+(False,) if isinstance(d, tuple) and len(d)>=3
+				            else d
+				            for d in semana]
+				        for semana in calendario]
+
+    return semanas_actualizadas

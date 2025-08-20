@@ -19,7 +19,7 @@ from src.utilidades.utils import crearMapaTrayectosIdaVuelta, distancia_maxima_c
 from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivisionesNoSeleccionados, existen_paradas, obtenerParadas
 from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
 from src.utilidades.utils import obtenerDataframeDireccionParadas, validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
-from src.utilidades.utils import obtenerTrayectosConDistancia, obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias
+from src.utilidades.utils import obtenerTrayectosConDistancia, obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias, anadirDiaActualCalendario
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2429,3 +2429,91 @@ def test_obtener_numero_dias_inicio_superior(fecha_inicio, fecha_fin):
 def test_obtener_numero_dias(fecha_inicio, fecha_fin, dias):
 
 	assert obtenerNumeroDias(fecha_inicio, fecha_fin)==dias
+
+def test_anadir_dia_actual_calendario_sin_calendario():
+
+	assert not anadirDiaActualCalendario([], "2019-06-22")
+
+def test_anadir_dia_actual_calendario_sin_partidos_sin_fecha():
+
+	semanas=generarCalendario("2019-06-01", "2019-06-30")
+
+	partidos_calendario=cruzarPartidosCalendario([], semanas)
+
+	partidos_calendario_dia=anadirDiaActualCalendario(partidos_calendario, "2019-07-22")
+
+	partidos_filtrados=[[valor for valor in sublista if isinstance(valor, tuple) and valor[2] is not None] for sublista in partidos_calendario_dia]
+
+	assert not [sublista for sublista in partidos_filtrados if sublista]
+
+	partidos_filtrados_dia=[[valor for valor in sublista if isinstance(valor, tuple) and valor[-1] is True] for sublista in partidos_calendario_dia]
+
+	assert not [sublista for sublista in partidos_filtrados_dia if sublista]
+
+def test_anadir_dia_actual_calendario_sin_partidos_con_fecha():
+
+	semanas=generarCalendario("2019-06-01", "2019-06-30")
+
+	partidos_calendario=cruzarPartidosCalendario([], semanas)
+
+	partidos_calendario_dia=anadirDiaActualCalendario(partidos_calendario, "2019-06-22")
+
+	partidos_filtrados=[[valor for valor in sublista if isinstance(valor, tuple) and valor[2] is not None] for sublista in partidos_calendario_dia]
+
+	assert not [sublista for sublista in partidos_filtrados if sublista]
+
+	partidos_filtrados_dia=[[valor for valor in sublista if isinstance(valor, tuple) and valor[-1] is True] for sublista in partidos_calendario_dia]
+
+	assert [sublista for sublista in partidos_filtrados_dia if sublista]
+
+@pytest.mark.parametrize(["fechas_partidos", "numero_partidos"],
+	[
+		(["2019-06-22", "2019-06-06", "2019-06-13", "2019-06-30"], 4),
+		(["2019-07-22", "2019-06-06", "2019-06-13", "2019-06-30"], 3),
+		(["2020-06-22", "2019-06-06", "2019-06-13", "2019-06-31"], 2),
+		(["2019-06-22", "2019-06-06"], 2)
+	]
+)
+def test_anadir_dia_actual_calendario_sin_fecha(fechas_partidos, numero_partidos):
+
+	partidos=[["id", "1-0", "22/06/2019", fecha] for fecha in fechas_partidos]
+
+	semanas=generarCalendario("2019-06-01", "2019-06-30")
+
+	partidos_calendario=cruzarPartidosCalendario(partidos, semanas)
+
+	partidos_calendario_dia=anadirDiaActualCalendario(partidos_calendario, "2019-07-22")
+
+	partidos_filtrados=[[valor for valor in sublista if isinstance(valor, tuple) and valor[2] is not None] for sublista in partidos_calendario_dia]
+
+	assert [sublista for sublista in partidos_filtrados if sublista]
+
+	partidos_filtrados_dia=[[valor for valor in sublista if isinstance(valor, tuple) and valor[-1] is True] for sublista in partidos_calendario_dia]
+
+	assert not [sublista for sublista in partidos_filtrados_dia if sublista]
+
+@pytest.mark.parametrize(["fechas_partidos", "numero_partidos"],
+	[
+		(["2019-06-22", "2019-06-06", "2019-06-13", "2019-06-30"], 4),
+		(["2019-07-22", "2019-06-06", "2019-06-13", "2019-06-30"], 3),
+		(["2020-06-22", "2019-06-06", "2019-06-13", "2019-06-31"], 2),
+		(["2019-06-22", "2019-06-06"], 2)
+	]
+)
+def test_anadir_dia_actual_calendario_con_fecha(fechas_partidos, numero_partidos):
+
+	partidos=[["id", "1-0", "22/06/2019", fecha] for fecha in fechas_partidos]
+
+	semanas=generarCalendario("2019-06-01", "2019-06-30")
+
+	partidos_calendario=cruzarPartidosCalendario(partidos, semanas)
+
+	partidos_calendario_dia=anadirDiaActualCalendario(partidos_calendario, "2019-06-22")
+
+	partidos_filtrados=[[valor for valor in sublista if isinstance(valor, tuple) and valor[2] is not None] for sublista in partidos_calendario_dia]
+
+	assert [sublista for sublista in partidos_filtrados if sublista]
+
+	partidos_filtrados_dia=[[valor for valor in sublista if isinstance(valor, tuple) and valor[-1] is True] for sublista in partidos_calendario_dia]
+
+	assert [sublista for sublista in partidos_filtrados_dia if sublista]

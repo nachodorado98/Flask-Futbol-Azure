@@ -191,3 +191,4 @@ web/src/templates/mapas/
 web/src/templates/imagenes/
 dags/entorno
 consumer/consumer_log_kafka.txt
+commands.txt

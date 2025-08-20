@@ -138,14 +138,14 @@
                             {% if dia[2] %}
 
                                 {% if dia[2][-1]==1 %}
-                                    <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'">
+                                    <div class="dia" onclick="window.location.href='/partido/{{ dia[2][0] }}'" {% if dia[3] %} style="background-color: #d3d3d3;"{% endif %}>
                                 {% elif dia[2][-1]==2 %}
-                                    <div class="dia-asistido" onclick="window.location.href='/partido/{{ dia[2][0] }}/asistido'">
+                                    <div class="dia-asistido" onclick="window.location.href='/partido/{{ dia[2][0] }}/asistido'" {% if dia[3] %} style="background-color: #d3d3d3;"{% endif %}>
                                 {% else %}
-                                    <div class="dia-proximo">
+                                    <div class="dia-proximo" {% if dia[3] %} style="background-color: #d3d3d3;"{% endif %}>
                                 {% endif %}
 
-                                        <div class="contenido-partido">
+                                        <div class="contenido-partido" {% if dia[3] %} style="background-color: #d3d3d3;"{% endif %}>
 
                                             {% if dia[2][6]==-1 %}
                                                 <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
@@ -173,8 +173,8 @@
 
                                     </div>
                             {% else %}
-                                <div class="dia-sin-partido">
-                                    <div class="contenido-no-partido"></div>
+                                <div class="dia-sin-partido" {% if dia[3] %} style="background-color: #d3d3d3;"{% endif %}>
+                                    <div class="contenido-no-partido" {% if dia[3] %} style="background-color: #d3d3d3;"{% endif %}></div>
                                     <p class="numero-dia-no-partido">{{ dia[1] }}</p>
                                 </div>
                             {% endif %}

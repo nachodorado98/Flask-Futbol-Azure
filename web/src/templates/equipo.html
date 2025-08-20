@@ -114,7 +114,8 @@
         {% endif %}
 
         {% if datos_equipo[19] %}
-        <div class="info-estadio" onclick="window.location.href='/estadio/{{ datos_equipo[17] }}'">
+        <div class="info-estadio" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ datos_equipo[17] | replace("\"", "\\\"") }}")'>
+            
             <p><strong>{{ datos_equipo[18] }}</strong></p>
 
             {% if datos_equipo[20]==-1 %}

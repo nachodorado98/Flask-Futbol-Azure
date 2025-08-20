@@ -185,7 +185,7 @@
     {% endif %}
 
     {% if partido[12] %}
-        <div class="info-partido-estadio" onclick="window.location.href='/estadio/{{ partido[10] }}'">
+        <div class="info-partido-estadio" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ partido[10] | replace("\"", "\\\"") }}")'>
         	<p class="nombre-estadio"><strong>{{ partido[11] }}</strong></p>
             {% if partido[13]==-1 %}
                 <img class="estadio" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Local Icon">

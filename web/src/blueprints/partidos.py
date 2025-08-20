@@ -4,7 +4,7 @@ from datetime import datetime
 
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas, obtenerPrimerUltimoDiaAnoMes
 from src.utilidades.utils import obtenerAnoMesFechas, generarCalendario, mapearAnoMes, cruzarPartidosCalendario
-from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario
+from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario, anadirDiaActualCalendario
 
 from src.database.conexion import Conexion
 
@@ -196,6 +196,8 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	entorno=current_app.config["ENVIROMENT"]
 
+	fecha_hoy=datetime.now().strftime("%Y-%m-%d")
+
 	proximos_partidos=True if request.args.get("proximos_partidos", default="false").lower() in ["true", "1", "yes"] else False
 
 	con=Conexion(entorno)
@@ -244,6 +246,8 @@ def pagina_partidos_calendario(ano_mes:str):
 
 	semanas=cruzarPartidosCalendario(partidos_totales_calendario, calendario)
 
+	semanas_dia_hoy=anadirDiaActualCalendario(semanas, fecha_hoy)
+
 	return render_template("partidos_calendario.html",
 								usuario=current_user.id,
 								imagen_perfil=current_user.imagen_perfil,
@@ -252,7 +256,7 @@ def pagina_partidos_calendario(ano_mes:str):
 								estadio_equipo=estadio_equipo,
 								ano_mes_calendario=ano_mes_calendario,
 								anos_meses=anos_meses,
-								semanas=semanas,
+								semanas=semanas_dia_hoy,
 								partidos_totales_calendario=partidos_totales_calendario,
 								ano_mes_anterior_boton=ano_mes_anterior_boton,
 								ano_mes_siguiente_boton=ano_mes_siguiente_boton,

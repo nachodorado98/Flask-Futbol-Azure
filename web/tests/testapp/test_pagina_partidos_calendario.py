@@ -66,7 +66,7 @@ def test_pagina_partidos_calendario_con_partido_otra_fecha(cliente, conexion_ent
 		assert '<p class="numero-dia-partido">' not in contenido
 		assert '<div class="dia-proximo">' not in contenido
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' not in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -97,7 +97,7 @@ def test_pagina_partidos_calendario_con_partido_otra_fecha_varios(cliente, conex
 		assert '<p class="numero-dia-partido">' not in contenido
 		assert '<div class="dia-proximo">' not in contenido
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' not in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -127,7 +127,7 @@ def test_pagina_partidos_calendario_con_partido(cliente, conexion_entorno_usuari
 		assert '<p class="numero-dia-partido">' in contenido
 		assert '<div class="dia-proximo">' not in contenido
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' not in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -179,7 +179,7 @@ def test_pagina_partidos_calendario_con_partidos(cliente, conexion, password_has
 		assert '<p class="numero-dia-partido">' in contenido
 		assert '<div class="dia-proximo">' not in contenido
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' not in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -287,9 +287,9 @@ def test_pagina_partidos_calendario_con_proximo_partido(cliente, conexion_entorn
 		assert '<div class="dia" onclick="window.location.href' not in contenido
 		assert "/partido/20190622" not in contenido
 		assert '<p class="numero-dia-partido">' not in contenido
-		assert '<div class="dia-proximo">' in contenido
+		assert '<div class="dia-proximo"' in contenido
 		assert '<p class="numero-dia-partido-proximo">' in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' not in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -322,9 +322,9 @@ def test_pagina_partidos_calendario_con_partido_y_proximo_partido(cliente, conex
 		assert '<div class="dia" onclick="window.location.href' in contenido
 		assert "/partido/20190622" in contenido
 		assert '<p class="numero-dia-partido">' in contenido
-		assert '<div class="dia-proximo">' in contenido
+		assert '<div class="dia-proximo"' in contenido
 		assert '<p class="numero-dia-partido-proximo">' in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' not in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -386,7 +386,7 @@ def test_pagina_partidos_calendario_proximos_con_partido_proximo_otra_fecha(clie
 		assert '<p class="numero-dia-partido">' not in contenido
 		assert '<div class="dia-proximo">' not in contenido
 		assert '<p class="numero-dia-partido-proximo">' not in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -414,9 +414,9 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido(cliente, conexi
 		assert '<div class="dia" onclick="window.location.href' not in contenido
 		assert "/partido/20190622" not in contenido
 		assert '<p class="numero-dia-partido">' not in contenido
-		assert '<div class="dia-proximo">' in contenido
+		assert '<div class="dia-proximo"' in contenido
 		assert '<p class="numero-dia-partido-proximo">' in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido
@@ -449,9 +449,9 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido_y_partido(clien
 		assert '<div class="dia" onclick="window.location.href' not in contenido
 		assert "/partido/20190622" not in contenido
 		assert '<p class="numero-dia-partido">' not in contenido
-		assert '<div class="dia-proximo">' in contenido
+		assert '<div class="dia-proximo"' in contenido
 		assert '<p class="numero-dia-partido-proximo">' in contenido
-		assert '<div class="dia-sin-partido">' in contenido
+		assert '<div class="dia-sin-partido"' in contenido
 		assert '?proximos_partidos=True' in contenido
 		assert '<div class="dia-asistido" onclick="window.location.href' not in contenido
 		assert "/partido/20190622/asistido" not in contenido

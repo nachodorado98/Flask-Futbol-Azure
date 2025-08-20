@@ -56,7 +56,7 @@ def test_pagina_mis_estadios_division_partidos_asistidos_no_existen(cliente, con
 		assert '<p class="titulo-pagina-estadios-asistidos-division">' in contenido
 		assert "primera-division-ea.png" in contenido
 		assert '<div class="tarjetas-estadios-asistidos-division">' in contenido
-		assert '<div class="tarjeta-estadio-asistido-division" onclick="window.location.href=' not in contenido
+		assert '<div class="tarjeta-estadio-asistido-division" onclick=' not in contenido
 		assert 'style="background-color: #d1d1d1;"' in contenido
 		assert '<p class="titulo-circulo-estadios-asistidos-division">' in contenido
 		assert "Estadios Visitados" in contenido
@@ -100,7 +100,7 @@ def test_pagina_mis_estadios_division(cliente, conexion_entorno_usuario):
 		assert '<p class="titulo-pagina-estadios-asistidos-division">' in contenido
 		assert "primera-division-ea.png" in contenido
 		assert '<div class="tarjetas-estadios-asistidos-division">' in contenido
-		assert '<div class="tarjeta-estadio-asistido-division" onclick="window.location.href=' in contenido
+		assert '<div class="tarjeta-estadio-asistido-division" onclick=' in contenido
 		assert "/estadio/metropolitano" in contenido
 		assert 'style="background-color: #d1d1d1;"' not in contenido
 		assert '<p class="titulo-circulo-estadios-asistidos-division">' in contenido
@@ -140,7 +140,7 @@ def test_pagina_mis_estadios_division_varios_estadios_division(cliente, conexion
 		assert '<p class="titulo-pagina-estadios-asistidos-division">' in contenido
 		assert "primera-division-ea.png" in contenido
 		assert '<div class="tarjetas-estadios-asistidos-division">' in contenido
-		assert '<div class="tarjeta-estadio-asistido-division" onclick="window.location.href=' in contenido
+		assert '<div class="tarjeta-estadio-asistido-division" onclick=' in contenido
 		assert "/estadio/metropolitano" in contenido
 		assert 'style="background-color: #d1d1d1;"' in contenido
 		assert '<p class="titulo-circulo-estadios-asistidos-division">' in contenido
