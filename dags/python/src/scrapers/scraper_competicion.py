@@ -1,13 +1,16 @@
 from bs4 import BeautifulSoup as bs4
 import pandas as pd
 from typing import Optional, List
-import requests
+import urllib.request
+import json
+import time
+import random
 
 from .scraper import Scraper
 
 from .excepciones_scrapers import CompeticionError, PaginaError
 
-from .configscrapers import ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS
+from .configscrapers import ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS, HEADERS
 
 class ScraperCompeticion(Scraper):
 
@@ -19,21 +22,37 @@ class ScraperCompeticion(Scraper):
 
     def _Scraper__realizarPeticion(self)->bs4:
 
-        peticion=requests.get(self.url_scrapear)
+        tiempo_sleep_random=0.5+random.random()*2.1
 
-        url_peticion=peticion.url
+        time.sleep(tiempo_sleep_random)
+
+        req=urllib.request.Request(self.url_scrapear, headers=HEADERS)
+
+        try:
+
+            with urllib.request.urlopen(req, timeout=10) as response:
+
+                status_code=response.status
+
+                final_url=response.geturl()
+
+                text=response.read().decode("utf-8")
+
+        except Exception as e:
+
+            raise PaginaError(f"Error en la pagina: {e}")
 
         urls_validas=[ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS]
 
-        if peticion.status_code!=200 or not any(url in url_peticion for url in urls_validas):
+        if status_code!=200 or not any(url in final_url for url in urls_validas):
 
-            print(f"Codigo de estado de la peticion: {peticion.status_code}")
+            print(f"Codigo de estado de la peticion: {status_code}")
 
-            print(f"URL de la peticion: {peticion.url}")
-            
+            print(f"URL de la peticion: {final_url}")
+
             raise PaginaError("Error en la pagina")
 
-        return bs4(peticion.text,"html.parser")
+        return bs4(text,"html.parser")
 
     def __contenido_cabecera(self, contenido:bs4)->bs4:
 

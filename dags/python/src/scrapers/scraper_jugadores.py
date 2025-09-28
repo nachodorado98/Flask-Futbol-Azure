@@ -1,11 +1,14 @@
-import requests
 from bs4 import BeautifulSoup as bs4
 import pandas as pd
 from typing import List, Optional, Dict
+import urllib.request
+import json
+import time
+import random
 
 from .excepciones_scrapers import PaginaError, JugadoresEquipoError
 
-from .configscrapers import URL, ENDPOINT_JUGADORES
+from .configscrapers import URL, ENDPOINT_JUGADORES, HEADERS
 
 class ScraperJugadores:
 
@@ -16,33 +19,49 @@ class ScraperJugadores:
 
         self.url_scrapear=URL+f"{ENDPOINT_JUGADORES}teamId={self.equipo_id}&season={self.ano}"
 
-    def __realizarPeticion(self)->bs4:
+    def __realizarPeticion(self)->List[Dict]:
 
-        peticion=requests.get(self.url_scrapear)
+        tiempo_sleep_random=0.5+random.random()*2.1
 
-        if peticion.status_code!=200 or not peticion.url.startswith(self.url_scrapear):
+        time.sleep(tiempo_sleep_random)
 
-            print(f"Codigo de estado de la peticion: {peticion.status_code}")
+        req=urllib.request.Request(self.url_scrapear, headers=HEADERS)
 
-            print(f"URL de la peticion: {peticion.url}")
-            
+        try:
+
+            with urllib.request.urlopen(req, timeout=10) as response:
+
+                status_code=response.status
+
+                final_url=response.geturl()
+
+                text=response.read().decode("utf-8")
+
+        except Exception as e:
+
+            raise PaginaError(f"Error en la pagina: {e}")
+
+        if status_code!=200 or not final_url.startswith(self.url_scrapear):
+
+            print(f"Codigo de estado de la peticion: {status_code}")
+
+            print(f"URL de la peticion: {final_url}")
+
             raise PaginaError("Error en la pagina")
 
         try:
 
-            contenido_json=peticion.json()["data"]["players"]
+            contenido_json=json.loads(text)["data"]["players"]
 
         except Exception:
 
-            print(f"Error en obtener el JSON {peticion.url}")
-
-            raise PaginaError("Error en la pagina")
+            raise PaginaError(f"Error en obtener el JSON {final_url}")
 
         if not contenido_json:
 
-            print(f"URL sin contenido JSON {peticion.url}")
+            print(f"URL sin contenido JSON {final_url}")
 
-            raise PaginaError("Error en la pagina")
+            raise PaginaError(f"URL sin contenido JSON {final_url}")
 
         return contenido_json
 

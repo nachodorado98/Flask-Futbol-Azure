@@ -1,12 +1,15 @@
-import requests
 from bs4 import BeautifulSoup as bs4
 import pandas as pd
 from typing import List, Optional
 import itertools
+import urllib.request
+import json
+import time
+import random
 
 from .excepciones_scrapers import PaginaError, PartidosEquipoError
 
-from .configscrapers import URL, ENDPOINT_PARTIDOS
+from .configscrapers import URL, ENDPOINT_PARTIDOS, HEADERS
 
 class ScraperPartidos:
 
@@ -19,33 +22,47 @@ class ScraperPartidos:
 
     def __realizarPeticion(self)->bs4:
 
-        peticion=requests.get(self.url_scrapear)
+        tiempo_sleep_random=0.5+random.random()*2.1
 
-        if peticion.status_code!=200 or not peticion.url.startswith(self.url_scrapear):
+        time.sleep(tiempo_sleep_random)
 
-            print(f"Codigo de estado de la peticion: {peticion.status_code}")
+        req=urllib.request.Request(self.url_scrapear, headers=HEADERS)
 
-            print(f"URL de la peticion: {peticion.url}")
-            
+        try:
+
+            with urllib.request.urlopen(req, timeout=10) as response:
+
+                status_code=response.status
+
+                final_url=response.geturl()
+
+                text=response.read().decode("utf-8")
+
+        except Exception as e:
+
+            raise PaginaError(f"Error en la pagina: {e}")
+
+        if status_code!=200 or not final_url.startswith(self.url_scrapear):
+
+            print(f"Codigo de estado de la peticion: {status_code}")
+
+            print(f"URL de la peticion: {final_url}")
+
             raise PaginaError("Error en la pagina")
 
         try:
 
-            contenido_json=peticion.json()["matches"]
+            contenido_json=json.loads(text)["matches"]
 
         except Exception:
 
-            print(f"Error en obtener el JSON {peticion.url}")
+            raise PaginaError(f"Error en obtener el JSON {final_url}")
 
-            raise PaginaError("Error en la pagina")
+        if contenido_json and str(contenido_json).replace("\n", "").strip()=="":
 
-        if contenido_json.replace("\n", "").strip()=="":
+            raise PaginaError(f"URL sin contenido JSON {final_url}")
 
-            print(f"URL sin contenido JSON {peticion.url}")
-
-            raise PaginaError("Error en la pagina")
-
-        return bs4(contenido_json,"html.parser")
+        return bs4(str(contenido_json), "html.parser")
 
     def __obtenerPaneles(self, tabla_partidos:bs4)->List[bs4]:
 

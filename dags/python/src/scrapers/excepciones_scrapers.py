@@ -16,6 +16,9 @@ class EquipoEntrenadorError(Exception):
 class EquipoEscudoError(Exception):
     pass
 
+class EquipoPalmaresError(Exception):
+    pass
+
 class PartidosEquipoError(Exception):
     pass
 

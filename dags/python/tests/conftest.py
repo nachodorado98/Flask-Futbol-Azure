@@ -3,6 +3,8 @@ import sys
 sys.path.append(os.path.abspath(".."))
 
 import pytest
+import time
+import random
 
 from src.scrapers.scraper import Scraper
 from src.scrapers.scraper_equipos_liga import ScraperEquiposLiga
@@ -22,6 +24,7 @@ from src.scrapers.scraper_estadio import ScraperEstadio
 from src.scrapers.scraper_entrenador import ScraperEntrenador
 from src.scrapers.scraper_jugador_equipos import ScraperJugadorEquipos
 from src.scrapers.scraper_jugador_seleccion import ScraperJugadorSeleccion
+from src.scrapers.scraper_equipo_palmares import ScraperEquipoPalmares
 
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
@@ -63,6 +66,11 @@ def scraper_equipo_entrenador():
 def scraper_equipo_escudo():
 
 	return ScraperEquipoEscudo("atletico-madrid")
+
+@pytest.fixture
+def scraper_equipo_palmares():
+
+	return ScraperEquipoPalmares("atletico-madrid")
 
 @pytest.fixture()
 def conexion(entorno):
@@ -182,3 +190,9 @@ def pytest_sessionfinish(session, exitstatus):
 	con.cerrarConexion()
 
 	print("\nLimpieza de la BBDD correcta")
+
+def pytest_runtest_call(item):
+ 
+    sleep_time=2.5+random.random()*3.7
+
+    time.sleep(sleep_time)
