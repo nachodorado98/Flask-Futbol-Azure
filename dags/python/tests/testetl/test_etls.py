@@ -6,14 +6,14 @@ from src.etls import ETL_Equipos_Liga, ETL_Detalle_Equipo, ETL_Escudo_Equipo, ET
 from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadio, ETL_Competicion
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
 from src.etls import ETL_Jugador, ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
-from src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion
+from src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion, ETL_Palmares_Equipo
 
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
 from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionError, CompeticionCampeonesError
 from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError, JugadorError
 from src.scrapers.excepciones_scrapers import PartidoGoleadoresError, EstadioError, EntrenadorError
-from src.scrapers.excepciones_scrapers import JugadorEquiposError, JugadorSeleccionError
+from src.scrapers.excepciones_scrapers import JugadorEquiposError, JugadorSeleccionError, EquipoPalmaresError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -406,6 +406,129 @@ def test_etl_estadio_equipo_estadio_compartido(conexion, entorno, equipo1, equip
 	conexion.c.execute("SELECT * FROM equipo_estadio")
 
 	assert len(conexion.c.fetchall())==2
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
+)
+def test_etl_equipo_palmares_error(entorno, endpoint):
+
+	with pytest.raises(EquipoPalmaresError):
+
+		ETL_Palmares_Equipo(endpoint, entorno)
+
+def test_etl_equipo_palmares_no_existe_error(entorno):
+
+	with pytest.raises(Exception):
+
+		ETL_Palmares_Equipo("atletico-madrid", entorno)
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("barcelona",)]
+)
+def test_etl_equipo_palmares_no_competiciones(conexion, entorno, equipo):
+
+	conexion.insertarEquipo(equipo)
+
+	ETL_Palmares_Equipo(equipo, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	assert not conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM equipo_titulo")
+
+	assert not conexion.c.fetchall()
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("barcelona",)]
+)
+def test_etl_equipo_palmares_no_competicion_logo(conexion, entorno, equipo):
+
+	conexion.insertarEquipo(equipo)
+
+	conexion.insertarCompeticion("primera")
+
+	ETL_Palmares_Equipo(equipo, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	assert not conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM equipo_titulo")
+
+	assert not conexion.c.fetchall()
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("barcelona",)]
+)
+def test_etl_equipo_palmares(conexion, entorno, equipo):
+
+	conexion.insertarEquipo(equipo)
+
+	conexion.insertarCompeticion("primera")
+
+	conexion.actualizarDatosCompeticion(["Nombre", "primera-division-ea", "Pais"], "primera")
+
+	ETL_Palmares_Equipo(equipo, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	assert conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM equipo_titulo")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["equipo"],
+	[("atletico-madrid",),("barcelona",)]
+)
+def test_etl_equipo_palmares_existente(conexion, entorno, equipo):
+
+	conexion.insertarEquipo(equipo)
+
+	conexion.insertarCompeticion("primera")
+
+	conexion.actualizarDatosCompeticion(["Nombre", "primera-division-ea", "Pais"], "primera")
+
+	ETL_Palmares_Equipo(equipo, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	numero_registros_competiciones=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	codigo_titulo=conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM equipo_titulo")
+
+	numero_registros_equipo_titulo=conexion.c.fetchall()
+
+	ETL_Palmares_Equipo(equipo, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	numero_registros_competiciones_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	codigo_titulo_nuevo=conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM equipo_titulo")
+
+	numero_registros_equipo_titulo_nuevos=conexion.c.fetchall()
+
+	assert numero_registros_competiciones==numero_registros_competiciones_nuevos
+	assert codigo_titulo==codigo_titulo_nuevo
+	assert numero_registros_equipo_titulo==numero_registros_equipo_titulo_nuevos
 
 @pytest.mark.parametrize(["equipo_id", "temporada"],
 	[(-1, -1), (0, 0), (0, 2019), (1, 2024), ("equipo", 2023)]

@@ -984,6 +984,7 @@ class Conexion:
 
 		return False if self.c.fetchone() is None else True
 
+	# Metodo para ejecutar el backup de la BBDD
 	def ejecutarBackUp(self, entorno:str)->None:
 
 		if self.bbdd.get_dsn_parameters().get("dbname")!="postgres":
@@ -1010,6 +1011,7 @@ class Conexion:
 
 			raise Exception(f"Error al hacer el backup de {databases[entorno_database]}")
 
+	# Metodo para eliminar una BBDD
 	def eliminarBBDD(self, bbdd:str)->None:
 
 		if self.bbdd.get_dsn_parameters().get("dbname")!="postgres":
@@ -1032,10 +1034,12 @@ class Conexion:
 
 			raise Exception(f"Error al eliminar la bbdd {bbdd}")
 
+	# Metodo para eliminar la BBDD de backup
 	def eliminarBBDDBackUp(self)->None:
 
 		self.eliminarBBDD(BBDD_BACKUP)
 
+	# Metodo para matar conecxiones con la BBDD
 	def matar_conexiones_bbdd(self, bbdd:str)->None:
 
 		if self.bbdd.get_dsn_parameters().get("dbname")==bbdd:
@@ -1049,3 +1053,59 @@ class Conexion:
             				WHERE datname=%s
             				AND pid<>pg_backend_pid()""",
             				(bbdd,))
+
+	# Metodo para obtener la competicion por su logo
+	def obtenerCompeticionPorLogo(self, codigo_logo:str)->Optional[str]:
+
+		self.c.execute("""SELECT Competicion_Id
+							FROM competiciones
+							WHERE Codigo_Logo=%s""",
+							(codigo_logo,))
+
+		competicion=self.c.fetchone()
+
+		return None if not competicion else competicion["competicion_id"]
+
+	# Metodo para actualizar el titulo de una competicion
+	def actualizarTituloCompeticion(self, titulo:str, competicion_id:str)->None:
+
+		self.c.execute("""UPDATE competiciones
+							SET Codigo_Titulo=%s
+							WHERE Competicion_Id=%s""",
+							(titulo, competicion_id))
+
+		self.confirmar()
+
+	# Metodo para insertar un titulo de un equipo
+	def insertarTituloEquipo(self, titulo_equipo:tuple)->None:
+
+		self.c.execute("""INSERT INTO equipo_titulo
+							VALUES(%s, %s, %s, %s, %s)""",
+							titulo_equipo)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el titulo de un equipo
+	def existe_titulo_equipo(self, competicion_id:str, equipo_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM equipo_titulo
+							WHERE Competicion_Id=%s
+							AND Equipo_Id=%s""",
+							(competicion_id, equipo_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos del titulo de un equipo
+	def actualizarDatosTituloEquipo(self, datos_titulo_equipo:List[str], competicion_id:str, equipo_id:str)->None:
+
+		datos_titulo_equipo.append(competicion_id)
+
+		datos_titulo_equipo.append(equipo_id)
+
+		self.c.execute("""UPDATE equipo_titulo
+							SET Nombre=%s, Numero=%s, Annos=%s
+							WHERE Competicion_Id=%s
+							AND Equipo_Id=%s""",
+							tuple(datos_titulo_equipo))
+		self.confirmar()

@@ -48,7 +48,7 @@ class ScraperEquipoPalmares(Scraper):
 
             annos=[dato.text.strip() for dato in datos_annos]
 
-            annos_unidos=", ".join(annos)
+            annos_unidos=";".join(annos)
 
             return [imagen_titulo, annos_unidos]
 

@@ -148,3 +148,37 @@ def test_obtener_codigo_paises(conexion, datos, numero_paises):
 	paises=conexion.obtenerCodigoPaises()
 
 	assert len(paises)==numero_paises
+
+def test_obtener_competicion_por_logo_no_existe(conexion):
+
+	assert not conexion.obtenerCompeticionPorLogo("primera-ea")
+
+def test_obtener_competicion_por_logo(conexion):
+
+	conexion.insertarCompeticion("primera")
+
+	conexion.actualizarDatosCompeticion(["Nombre", "primera-ea", "Pais"], "primera")
+
+	assert conexion.obtenerCompeticionPorLogo("primera-ea")=="primera"
+
+def test_actualizar_titulo_competicion_no_existe(conexion):
+
+	assert not conexion.existe_competicion("competicion")
+
+	conexion.actualizarTituloCompeticion("1", "competicion")
+
+	assert not conexion.existe_competicion("competicion")
+
+def test_actualizar_titulo_competicion(conexion):
+
+	conexion.insertarCompeticion("primera")
+
+	assert conexion.existe_competicion("primera")
+
+	conexion.actualizarTituloCompeticion("1", "primera")
+
+	conexion.c.execute("SELECT * FROM competiciones WHERE Competicion_Id='primera'")
+
+	datos_actualizados=conexion.c.fetchone()
+
+	assert datos_actualizados["codigo_titulo"]=="1"

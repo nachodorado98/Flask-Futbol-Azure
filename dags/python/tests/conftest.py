@@ -193,6 +193,6 @@ def pytest_sessionfinish(session, exitstatus):
 
 def pytest_runtest_call(item):
  
-    sleep_time=2.5+random.random()*3.7
+    sleep_time=2+random.random()*3.5
 
     time.sleep(sleep_time)

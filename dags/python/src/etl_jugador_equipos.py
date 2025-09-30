@@ -37,7 +37,6 @@ def cargarDataJugadorEquipos(tabla:pd.DataFrame, jugador_id:str, entorno:str)->N
 
 		raise Exception(f"Error al cargar los equipos del jugador {jugador_id}. No existe")
 
-
 	try:
 
 		for equipo_id, temporadas, goles, partidos in datos_jugador_equipos:

@@ -12,7 +12,7 @@ from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES,
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES
 
 from pipelines import Pipeline_Equipos_Ligas
-from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipeline_Entrenador_Equipos, Pipeline_Estadio_Equipos
+from pipelines import Pipeline_Detalle_Equipos, Pipeline_Escudo_Equipos, Pipeline_Entrenador_Equipos, Pipeline_Estadio_Equipos, Pipeline_Palmares_Equipos
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresidentesDataLake, subirEstadiosDataLake, subirPaisesEquiposDataLake
@@ -69,10 +69,12 @@ with DAG("dag_equipos",
 
 		tarea_pipeline_estadio_equipos=PythonOperator(task_id="pipeline_estadio_equipos", python_callable=Pipeline_Estadio_Equipos)
 
+		tarea_pipeline_palmares_equipos=PythonOperator(task_id="pipeline_palmares_equipos", python_callable=Pipeline_Palmares_Equipos)
+
 
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
-		tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos
+		tarea_pipeline_detalle_equipos >> tarea_pipeline_escudo_equipos >> tarea_pipeline_entrenador_equipos >> tarea_pipeline_estadio_equipos >> tarea_pipeline_palmares_equipos
 
 
 	with TaskGroup("datalake") as tareas_datalake:

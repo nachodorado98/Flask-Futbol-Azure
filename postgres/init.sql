@@ -68,6 +68,15 @@ CREATE TABLE equipo_estadio (Equipo_Id VARCHAR(255),
 							FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
 							FOREIGN KEY (Estadio_Id) REFERENCES estadios (Estadio_Id) ON DELETE CASCADE);
 
+CREATE TABLE equipo_titulo (Equipo_Id VARCHAR(255),
+							Competicion_Id VARCHAR(255),
+							Nombre VARCHAR(255),
+							Numero INTEGER,
+							Annos VARCHAR(500),
+							PRIMARY KEY (Equipo_Id, Competicion_Id),
+							FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
+							FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
+
 CREATE TABLE partidos (Partido_Id VARCHAR(255) PRIMARY KEY,
 						Equipo_Id_Local VARCHAR(255),
 						Equipo_Id_Visitante VARCHAR(255),
@@ -97,7 +106,8 @@ CREATE TABLE partido_estadio (Partido_Id VARCHAR(255),
 CREATE TABLE competiciones (Competicion_Id VARCHAR(255) PRIMARY KEY,
 							Nombre VARCHAR(255) DEFAULT NULL,
 							Codigo_Logo VARCHAR(255) DEFAULT NULL,
-							Codigo_Pais VARCHAR(5) DEFAULT NULL);
+							Codigo_Pais VARCHAR(5) DEFAULT NULL,
+							Codigo_Titulo VARCHAR(50) DEFAULT NULL);
 
 CREATE TABLE competiciones_campeones (Competicion_Id VARCHAR(255),
 										Temporada INTEGER,

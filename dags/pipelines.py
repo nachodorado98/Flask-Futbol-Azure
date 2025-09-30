@@ -10,6 +10,7 @@ from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
 from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion
+from python.src.etls import ETL_Palmares_Equipo
 
 from python.src.database.conexion import Conexion
 
@@ -81,6 +82,10 @@ def Pipeline_Entrenador_Equipos(equipo):
 @Pipeline_Equipos
 def Pipeline_Estadio_Equipos(equipo):
 	ETL_Estadio_Equipo(equipo, ENTORNO)
+
+@Pipeline_Equipos
+def Pipeline_Palmares_Equipos(equipo):
+	ETL_Palmares_Equipo(equipo, ENTORNO)
 
 def Pipeline_Equipos_Faltantes(obtener_funcion_equipos):
 
