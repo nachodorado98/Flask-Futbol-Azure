@@ -2,9 +2,9 @@ import os
 
 from utils import vaciarCarpeta, crearArchivoLog
 from config import ENTORNO
-from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS
+from config import URL_ESCUDO, URL_ESCUDO_ALTERNATIVA, URL_ENTRENADOR, URL_PRESIDENTE, URL_ESTADIO, URL_COMPETICION, URL_PAIS, URL_TITULO
 from config import URL_JUGADOR
-from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES, SELECCIONES, USUARIOS
+from config import ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, CONTENEDOR, COMPETICIONES, PAISES, JUGADORES, SELECCIONES, USUARIOS, TITULOS
 
 from python.src.database.conexion import Conexion
 from python.src.datalake.conexion_data_lake import ConexionDataLake
@@ -35,7 +35,7 @@ def entorno_data_lake_creado():
 
 def creacion_entorno_data_lake()->None:
 
-	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES, USUARIOS, SELECCIONES]
+	carpetas=[ESCUDOS, ENTRENADORES, PRESIDENTES, ESTADIOS, COMPETICIONES, PAISES, JUGADORES, USUARIOS, SELECCIONES, TITULOS]
 
 	crearEntornoDataLake(CONTENEDOR, carpetas)
 
@@ -590,3 +590,47 @@ def subirSeleccionesJugadoresDataLake():
 			crearArchivoLog(mensaje)
 
 	vaciarCarpeta(ruta_selecciones)
+
+def subirTitulosCompeticionesDataLake():
+	
+	con=Conexion(ENTORNO)
+
+	codigo_titulos=con.obtenerCodigoTituloCompeticiones()
+
+	codigo_titulos_descargar=obtenerArchivosNoExistenDataLake(CONTENEDOR, TITULOS, codigo_titulos)
+
+	con.cerrarConexion()
+
+	ruta_titulos=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", TITULOS)
+
+	for codigo in codigo_titulos_descargar:
+
+		print(f"Descargando titulo {codigo}...")
+
+		try:
+
+			descargarImagen(URL_TITULO, codigo, ruta_titulos)
+
+		except Exception as e:
+
+			mensaje=f"Titulo: {codigo} - Motivo: {e}"
+
+			print(f"Error en titulo con codigo {codigo}")
+
+			crearArchivoLog(mensaje)
+
+	print("Descarga de titulos finalizada")
+
+	try:
+
+		subirArchivosDataLake(CONTENEDOR, TITULOS, ruta_titulos)
+
+	except Exception as e:
+
+			mensaje=f"Motivo: {e}"
+
+			print(f"Error al subir los titulos al data lake")
+
+			crearArchivoLog(mensaje)
+
+	vaciarCarpeta(ruta_titulos)

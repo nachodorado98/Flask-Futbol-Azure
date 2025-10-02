@@ -1109,3 +1109,16 @@ class Conexion:
 							AND Equipo_Id=%s""",
 							tuple(datos_titulo_equipo))
 		self.confirmar()
+
+	# Metodo para obtener los codigos del titulo de las competiciones
+	def obtenerCodigoTituloCompeticiones(self)->List[str]:
+
+		self.c.execute("""SELECT DISTINCT(Codigo_Titulo)
+							FROM competiciones
+							WHERE Codigo_Titulo IS NOT NULL
+							AND Codigo_Titulo NOT LIKE '%nofoto%'
+							ORDER BY Codigo_Titulo""")
+
+		titulos=self.c.fetchall()
+
+		return list(map(lambda titulo: titulo["codigo_titulo"], titulos))

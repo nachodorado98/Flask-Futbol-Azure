@@ -182,3 +182,28 @@ def test_actualizar_titulo_competicion(conexion):
 	datos_actualizados=conexion.c.fetchone()
 
 	assert datos_actualizados["codigo_titulo"]=="1"
+
+def test_obtener_codigo_titulo_competiciones_no_hay(conexion):
+
+	assert not conexion.obtenerCodigoTituloCompeticiones()
+
+@pytest.mark.parametrize(["datos", "numero_titulos"],
+	[
+		([("primera","1"),("segunda","22"),("champions",None)], 2),
+		([("primera","1"),("segunda","22"),("champions","13")], 3),
+		([("primera","1"),("segunda",None),("champions","no_foto")], 2),
+		([("primera","1"),("segunda","22"),("champions","nofoto")], 2),
+		([("primera","1"),("segunda",None),("champions","a_nofoto_b")], 1)
+	]
+)
+def test_obtener_codigo_titulo_competiciones(conexion, datos, numero_titulos):
+
+	for competicion, codigo_titulo in datos:
+
+		conexion.insertarCompeticion(competicion)
+
+		conexion.actualizarTituloCompeticion(codigo_titulo, competicion)
+	
+	codigos_titulos=conexion.obtenerCodigoTituloCompeticiones()
+
+	assert len(codigos_titulos)==numero_titulos

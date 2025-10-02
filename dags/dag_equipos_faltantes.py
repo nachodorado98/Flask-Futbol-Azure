@@ -9,7 +9,7 @@ from airflow.utils.dates import days_ago
 from utils import existe_entorno, crearArchivoLog, actualizarVariable
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
-from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES
+from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
 from pipelines import Pipeline_Detalle_Equipos_Faltantes, Pipeline_Escudo_Equipos_Faltantes, Pipeline_Entrenador_Equipos_Faltantes, Pipeline_Estadio_Equipos_Faltantes
 
@@ -48,6 +48,8 @@ with DAG("dag_equipos_faltantes",
 
 		tarea_carpeta_selecciones=BashOperator(task_id="carpeta_selecciones", bash_command=BASH_SELECCIONES)
 
+		tarea_carpeta_titulos=BashOperator(task_id="carpeta_titulos", bash_command=BASH_TITULOS)
+
 		tarea_entorno_creado=DummyOperator(task_id="entorno_creado")
 
 
@@ -55,7 +57,7 @@ with DAG("dag_equipos_faltantes",
 
 		tarea_carpeta_logs >> tarea_carpeta_escudos >> tarea_carpeta_entrenadores >> tarea_carpeta_presidentes >> tarea_carpeta_estadios
 
-		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises >> tarea_carpeta_jugadores >> tarea_carpeta_selecciones
+		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises >> tarea_carpeta_jugadores >> tarea_carpeta_selecciones >> tarea_carpeta_titulos
 
 
 	with TaskGroup("pipelines_equipos_faltantes") as tareas_pipelines_equipos_faltantes:

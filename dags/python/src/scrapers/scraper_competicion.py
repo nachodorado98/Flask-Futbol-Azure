@@ -10,7 +10,7 @@ from .scraper import Scraper
 
 from .excepciones_scrapers import CompeticionError, PaginaError
 
-from .configscrapers import ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS, HEADERS
+from .configscrapers import ENDPOINT_COMPETICION_INFO, ENDPOINT_COMPETICION_RESULTADOS, HEADERS, TIEMPO_BASE, MULTIPLICADOR
 
 class ScraperCompeticion(Scraper):
 
@@ -22,7 +22,7 @@ class ScraperCompeticion(Scraper):
 
     def _Scraper__realizarPeticion(self)->bs4:
 
-        tiempo_sleep_random=0.5+random.random()*2.1
+        tiempo_sleep_random=TIEMPO_BASE+random.random()*MULTIPLICADOR
 
         time.sleep(tiempo_sleep_random)
 

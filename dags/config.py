@@ -10,6 +10,7 @@ BASH_COMPETICIONES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/compe
 BASH_PAISES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/paises"
 BASH_JUGADORES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/jugadores"
 BASH_SELECCIONES="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/selecciones"
+BASH_TITULOS="cd ../../opt/airflow/dags && mkdir -p entorno/imagenes/titulos"
 
 # URL para descargar las imagenes
 URL_ESCUDO="https://cdn.resfu.com/img_data/equipos/"
@@ -20,6 +21,7 @@ URL_ESTADIO="https://cdn.resfu.com/img_data/estadios/original_new/"
 URL_COMPETICION="https://cdn.resfu.com/media/img/league_logos/"
 URL_PAIS="https://cdn.resfu.com/media/img/flags/round/"
 URL_JUGADOR="https://cdn.resfu.com/img_data/players/medium/"
+URL_TITULO="https://cdn.resfu.com/img_data/competiciones/copa/"
 
 ENTORNO=os.environ.get("AZURE_NAME_CONTAINER")
 
@@ -34,6 +36,7 @@ PAISES="paises"
 JUGADORES="jugadores"
 SELECCIONES="selecciones"
 USUARIOS="usuarios"
+TITULOS="titulos"
 
 EQUIPO_ID=369 # Atletico de Madrid. Numero del escudo realmente, no el equipo_id. La web crea asi la URL
 EQUIPO_ID_REAL="atletico-madrid" # Atletico de Madrid. Este si es el equipo_id

@@ -8,7 +8,7 @@ import random
 
 from .excepciones_scrapers import PaginaError, JugadoresEquipoError
 
-from .configscrapers import URL, ENDPOINT_JUGADORES, HEADERS
+from .configscrapers import URL, ENDPOINT_JUGADORES, HEADERS, TIEMPO_BASE, MULTIPLICADOR
 
 class ScraperJugadores:
 
@@ -21,7 +21,7 @@ class ScraperJugadores:
 
     def __realizarPeticion(self)->List[Dict]:
 
-        tiempo_sleep_random=0.5+random.random()*2.1
+        tiempo_sleep_random=TIEMPO_BASE+random.random()*MULTIPLICADOR
 
         time.sleep(tiempo_sleep_random)
 
