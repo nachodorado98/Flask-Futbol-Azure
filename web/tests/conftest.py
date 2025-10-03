@@ -66,7 +66,7 @@ def conexion_entorno(conexion):
 						VALUES('atletico-madrid', 'metropolitano')""")
 
 	conexion.c.execute("""INSERT INTO competiciones
-						VALUES('primera', 'Primera', 'primera-division-ea', 'es')""")
+						VALUES('primera', 'Primera', 'primera-division-ea', 'es', '1')""")
 
 	conexion.c.execute("""INSERT INTO partido_competicion
 						VALUES('20190622', 'primera')""")
@@ -92,6 +92,9 @@ def conexion_entorno(conexion):
 
 	conexion.c.execute("""INSERT INTO entrenadores
 						VALUES('diego-pablo', 'Diego Simeone', 'atletico-madrid', 'ar', '13', 100)""")
+
+	conexion.c.execute("""INSERT INTO equipo_titulo
+						VALUES('atletico-madrid', 'primera', 'Primera Division', '22', '2019')""")
 
 	conexion.confirmar()
 

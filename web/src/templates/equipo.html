@@ -192,4 +192,44 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+{% if titulos_equipo %}
+
+    <div class="contenedor-lateral contenedor-lateral-der">
+
+        <div class="tarjeta-palmares-equipo">
+
+            <p class="titulo-palmares-equipos">
+                <strong>Palmares</strong>
+            </p>
+
+            <div class="tarjetas-palmares-equipo">
+                <div class="tarjetas-palmares-equipo-wrapper">
+
+                {% for titulo in titulos_equipo %}
+
+                    <div class="tarjeta-titulo-equipo" onclick="window.location.href='/competicion/{{ titulo[0] }}'">
+
+                        <p><strong>{{ titulo[1] }} - {{ titulo[2] }}</strong></p>
+
+                        {% if titulo[3]=='-1' %}
+                            <img class="imagen-titulo-equipo" src="{{ url_for('static', filename='imagenes/iconos/no_titulo.png') }}" alt="Titulo Icon">
+                        {% else %}
+                            <img class="imagen-titulo-equipo" src="{{ url_imagen_titulos }}{{ titulo[3] }}.png" alt="Titulo Icon">
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+{% endblock contenedor_lateral_der %}

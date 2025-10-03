@@ -49,6 +49,9 @@ def test_pagina_equipo_equipo(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjeta-jugadores-equipo">' in contenido
 		assert '<p class="titulo-equipo-jugadores">' in contenido
 		assert '<div class="tarjetas-jugadores-equipo">' in contenido
+		assert '<div class="tarjeta-palmares-equipo">' in contenido
+		assert '<p class="titulo-palmares-equipos">' in contenido
+		assert '<div class="tarjetas-palmares-equipo">' in contenido
 
 def test_pagina_equipo_equipo_sin_fundacion(cliente, conexion_entorno_usuario):
 
@@ -310,3 +313,22 @@ def test_pagina_equipo_equipo_sin_jugadores(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjeta-jugadores-equipo">' not in contenido
 		assert '<p class="titulo-equipo-jugadores">' not in contenido
 		assert '<div class="tarjetas-jugadores-equipo">' not in contenido
+
+def test_pagina_equipo_equipo_sin_titulos(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("""DELETE FROM equipo_titulo""")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/equipo/atletico-madrid")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-palmares-equipo">' not in contenido
+		assert '<p class="titulo-palmares-equipos">' not in contenido
+		assert '<div class="tarjetas-palmares-equipo">' not in contenido

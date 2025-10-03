@@ -575,7 +575,7 @@ class Conexion:
 	def obtenerDatosCompeticion(self, competicion_id:str)->Optional[tuple]:
 
 		self.c.execute("""SELECT competicion_id, nombre,
-								CASE WHEN codigo_logo IS NULL
+								CASE WHEN codigo_logo IS NULL OR codigo_logo LIKE %s
 										THEN '-1'
 										ELSE codigo_logo
 								END as logo,
@@ -585,7 +585,7 @@ class Conexion:
 								END as pais
 						FROM competiciones
 						WHERE competicion_id=%s""",
-						(competicion_id,))
+						(r'%nofoto%', competicion_id))
 
 		competicion=self.c.fetchone()
 
@@ -3243,3 +3243,25 @@ class Conexion:
 											partido["imagen_partido"],
 											partido["es_imagen_partido"],
 											partido["diferencia_anos"])
+
+	# Metodo para obtener los titulos de un equipo
+	def obtenerTitulosEquipo(self, equipo_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT et.competicion_id as competicion_titulo, et.nombre as nombre_titulo, et.numero,
+							CASE WHEN c.codigo_titulo IS NULL OR c.codigo_titulo LIKE %s
+									THEN '-1'
+									ELSE c.codigo_titulo
+							END as titulo
+						FROM equipo_titulo et
+						JOIN competiciones c
+						ON et.competicion_id=c.competicion_id
+						WHERE et.equipo_id=%s
+						ORDER BY et.numero DESC""",
+						(r'%nofoto%', equipo_id))
+
+		titulos=self.c.fetchall()
+
+		return list(map(lambda titulo: (titulo["competicion_titulo"],
+										titulo["nombre_titulo"],
+										titulo["numero"],
+										titulo["titulo"]), titulos))

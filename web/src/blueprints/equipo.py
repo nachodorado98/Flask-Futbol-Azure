@@ -7,6 +7,7 @@ from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_ENTRENADORES, URL_DATALAKE_PRESIDENTES
 from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_JUGADORES, URL_DATALAKE_USUARIOS
+from src.config import URL_DATALAKE_TITULOS
 
 bp_equipo=Blueprint("equipo", __name__)
 
@@ -39,6 +40,8 @@ def pagina_equipo(equipo_id:str):
 
 	jugadores_equipo=con.obtenerJugadoresEquipo(equipo_id)
 
+	titulos_equipo=con.obtenerTitulosEquipo(equipo_id)
+
 	con.cerrarConexion()
 
 	return render_template("equipo.html",
@@ -51,6 +54,7 @@ def pagina_equipo(equipo_id:str):
 							jugador=jugador_equipo,
 							ultimo_partido=ultimo_partido,
 							jugadores_equipo=jugadores_equipo,
+							titulos_equipo=titulos_equipo,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_entrenador=URL_DATALAKE_ENTRENADORES,
@@ -58,6 +62,7 @@ def pagina_equipo(equipo_id:str):
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
+							url_imagen_titulos=URL_DATALAKE_TITULOS,
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_equipo.route("/equipos")
