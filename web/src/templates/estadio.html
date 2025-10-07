@@ -25,6 +25,38 @@
         {% endif %}
     </div>
 
+    {% if ultimo_partido_estadio %}
+        <div class="circulo-ultimo-partido-estadio">
+            <div class="tarjeta-ultimo-partido-estadio" onclick="window.location.href='/partido/{{ ultimo_partido_estadio[0] }}'">
+
+                <p class="titulo-circulo-ultimo-partido-estadio"><strong>Ultimo Partido</strong></p>
+
+                <p><strong>{{ ultimo_partido_estadio[9] }}</strong></p>
+
+                <div class="info-ultimo-partido-estadio">
+
+                    {% if ultimo_partido_estadio[5]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ ultimo_partido_estadio[5] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4>{{ ultimo_partido_estadio[1] }}</h4>
+
+                    {% if ultimo_partido_estadio[8]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ ultimo_partido_estadio[8] }}.png" alt="Visitante Icon">
+                    {% endif %}
+
+                </div>
+
+                 <p><strong>{{ ultimo_partido_estadio[2] }}</strong></p>
+
+            </div>
+        </div>
+    {% endif %}
+
 </div>
 
 {% endblock contenedor_lateral_izq %}
@@ -98,4 +130,42 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+    <div class="contenedor-lateral contenedor-lateral-der">
+
+        {% if ultimo_partido_asistido_estadio %}
+            <div class="circulo-ultimo-partido-asistido-estadio">
+                <div class="tarjeta-ultimo-partido-asistido-estadio" onclick="window.location.href='/partido/{{ ultimo_partido_asistido_estadio[0] }}/asistido'">
+
+                    <p class="titulo-circulo-ultimo-partido-asistido-estadio"><strong>Ultimo Partido Asistido</strong></p>
+
+                    <p><strong>{{ ultimo_partido_asistido_estadio[9] }}</strong></p>
+
+                    <div class="info-ultimo-partido-asistido-estadio">
+
+                        {% if ultimo_partido_asistido_estadio[5]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        {% else %}
+                            <img src="{{ url_imagen_escudo }}{{ ultimo_partido_asistido_estadio[5] }}.png" alt="Local Icon">
+                        {% endif %}
+
+                        <h4>{{ ultimo_partido_asistido_estadio[1] }}</h4>
+
+                        {% if ultimo_partido_asistido_estadio[8]==-1 %}
+                            <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                        {% else %}
+                            <img src="{{ url_imagen_escudo }}{{ ultimo_partido_asistido_estadio[8] }}.png" alt="Visitante Icon">
+                        {% endif %}
+
+                    </div>
+
+                     <p><strong>{{ ultimo_partido_asistido_estadio[2] }}</strong></p>
+
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+{% endblock contenedor_lateral_der %}

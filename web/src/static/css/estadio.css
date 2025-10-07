@@ -77,6 +77,134 @@
     pointer-events: none;
 }
 
+.circulo-ultimo-partido-estadio {
+    width: 198px;
+    height: 170px;
+    background-color: var(--color-fondo);
+    color: var(--color-fondo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 70px;
+    text-align: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.tarjeta-ultimo-partido-estadio {
+    width: 185px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-ultimo-partido-estadio .titulo-circulo-ultimo-partido-estadio {
+    font-size: 20px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-ultimo-partido-estadio p {
+    font-size: 15px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.info-ultimo-partido-estadio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-ultimo-partido-estadio img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 43px;
+    height: 43px;
+}
+
+.info-ultimo-partido-estadio h4 {
+    font-size: 25px;
+    color: #fff;
+    margin: 2px;
+    color: var(--color-secundario) 
+}
+
+.circulo-ultimo-partido-asistido-estadio {
+    width: 220px;
+    height: 170px;
+    background-color: var(--color-fondo);
+    color: var(--color-fondo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 25px;
+    text-align: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.tarjeta-ultimo-partido-asistido-estadio {
+    width: 205px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-ultimo-partido-asistido-estadio .titulo-circulo-ultimo-partido-asistido-estadio {
+    font-size: 18px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-ultimo-partido-asistido-estadio p {
+    font-size: 15px;
+    margin: 3px;
+    color: var(--color-secundario) 
+}
+
+.info-ultimo-partido-asistido-estadio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-ultimo-partido-asistido-estadio img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 43px;
+    height: 43px;
+}
+
+.info-ultimo-partido-asistido-estadio h4 {
+    font-size: 25px;
+    color: #fff;
+    margin: 2px;
+    color: var(--color-secundario) 
+}
+
 .tarjeta-estadio {
     width: 100%;
     max-width: 920px;

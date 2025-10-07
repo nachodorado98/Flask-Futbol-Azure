@@ -59,6 +59,10 @@ def pagina_estadio(estadio_id:str):
 		print(e)
 		mapa_correcto=False
 
+	ultimo_partido_estadio=con.obtenerUltimoPartidoEstadio(estadio_id)
+
+	ultimo_partido_asistido_estadio=con.obtenerUltimoPartidoAsistidoEstadio(estadio_id, current_user.id)
+
 	con.cerrarConexion()
 
 	return render_template("estadio.html",
@@ -73,6 +77,8 @@ def pagina_estadio(estadio_id:str):
 							numero_veces_asistido=numero_veces_asistido,
 							nombre_mapa_small_estadio=nombre_mapa_small_estadio,
 							mapa_correcto=mapa_correcto,
+							ultimo_partido_estadio=ultimo_partido_estadio,
+							ultimo_partido_asistido_estadio=ultimo_partido_asistido_estadio,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,

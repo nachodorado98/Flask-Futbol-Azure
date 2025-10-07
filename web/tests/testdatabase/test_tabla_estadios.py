@@ -109,3 +109,87 @@ def test_estadio_asistido_usuario(conexion_entorno):
 	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
 
 	assert conexion_entorno.estadio_asistido_usuario("nacho", "metropolitano")
+
+def test_ultimo_partido_estadio_no_existe_estadio(conexion):
+
+	assert not conexion.obtenerUltimoPartidoEstadio("metropolitano")
+
+def test_ultimo_partido_estadio_no_existen_partidos(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.confirmar()	
+
+	assert not conexion_entorno.obtenerUltimoPartidoEstadio("metropolitano")
+
+def test_ultimo_partido_estadio(conexion_entorno):
+
+	assert conexion_entorno.obtenerUltimoPartidoEstadio("metropolitano")
+
+def test_ultimo_partido_estadio_existen_varios(conexion_entorno):
+
+	for numero in range(8):
+
+		conexion_entorno.c.execute(f"""INSERT INTO partidos
+									VALUES('{numero}', 'atletico-madrid', 'atletico-madrid', '201{numero}-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO partido_estadio
+									VALUES('{numero}', 'metropolitano')""")
+
+	conexion_entorno.confirmar()
+
+	ultimo_partido_estadio=conexion_entorno.obtenerUltimoPartidoEstadio("metropolitano")
+
+	assert ultimo_partido_estadio[2]=="22/06/2019"
+
+def test_ultimo_partido_estadio_asistido_no_existe_estadio(conexion):
+
+	assert not conexion.obtenerUltimoPartidoAsistidoEstadio("metropolitano", "nacho")
+
+def test_ultimo_partido_estadio_asistido_no_existen_partidos(conexion_entorno):
+
+	conexion_entorno.c.execute("DELETE FROM partidos")
+
+	conexion_entorno.confirmar()	
+
+	assert not conexion_entorno.obtenerUltimoPartidoAsistidoEstadio("metropolitano", "nacho")
+
+def test_ultimo_partido_estadio_asistido_no_existe_usuario(conexion_entorno):
+
+	assert not conexion_entorno.obtenerUltimoPartidoAsistidoEstadio("metropolitano", "nacho")
+
+def test_ultimo_partido_estadio_asistido_no_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerUltimoPartidoAsistidoEstadio("metropolitano", "nacho")
+
+def test_ultimo_partido_estadio_asistido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.obtenerUltimoPartidoAsistidoEstadio("metropolitano", "nacho")
+
+def test_ultimo_partido_estadio_asistido_existen_varios(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	for numero in range(8):
+
+		conexion_entorno.c.execute(f"""INSERT INTO partidos
+									VALUES('{numero}', 'atletico-madrid', 'atletico-madrid', '201{numero}-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno.c.execute(f"""INSERT INTO partido_estadio
+									VALUES('{numero}', 'metropolitano')""")
+
+		conexion_entorno.insertarPartidoAsistido(numero, "nacho", "comentario")
+
+	conexion_entorno.confirmar()
+
+	ultimo_partido_asistido_estadio=conexion_entorno.obtenerUltimoPartidoAsistidoEstadio("metropolitano", "nacho")
+
+	assert ultimo_partido_asistido_estadio[2]=="22/06/2019"

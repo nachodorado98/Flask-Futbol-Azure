@@ -3265,3 +3265,100 @@ class Conexion:
 										titulo["nombre_titulo"],
 										titulo["numero"],
 										titulo["titulo"]), titulos))
+
+	# Metodo para obtener el titulo de una competicion
+	def obtenerCodigoTituloCompeticion(self, competicion_id:str)->Optional[str]:
+
+		self.c.execute("""SELECT CASE WHEN codigo_titulo IS NULL OR codigo_titulo LIKE %s
+									THEN '-1'
+									ELSE codigo_titulo
+							END as titulo
+						FROM competiciones 
+						WHERE competicion_id=%s""",
+						(r'%nofoto%', competicion_id))
+
+		titulo=self.c.fetchone()
+
+		return "-1" if not titulo else titulo["titulo"]
+
+	# Metodo para obtener el ultimo partido de un estadio
+	def obtenerUltimoPartidoEstadio(self, estadio_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+							p.equipo_id_local as cod_local, e1.nombre as local,
+							CASE WHEN e1.escudo IS NULL
+									THEN -1
+									ELSE e1.escudo
+							END as escudo_local,
+							p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+							CASE WHEN e2.escudo IS NULL
+									THEN -1
+									ELSE e2.escudo
+							END as escudo_visitante,
+							p.competicion
+						FROM partidos p 
+						JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
+						JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						WHERE pe.estadio_id=%s
+						ORDER BY fecha DESC
+						LIMIT 1""",
+						(estadio_id,))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else (partido["partido_id"],
+											partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"])
+
+	# Metodo para obtener el ultimo partido asistido de un estadio
+	def obtenerUltimoPartidoAsistidoEstadio(self, estadio_id:str, usuario:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.partido_id, p.marcador, p.fecha,
+							p.equipo_id_local as cod_local, e1.nombre as local,
+							CASE WHEN e1.escudo IS NULL
+									THEN -1
+									ELSE e1.escudo
+							END as escudo_local,
+							p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+							CASE WHEN e2.escudo IS NULL
+									THEN -1
+									ELSE e2.escudo
+							END as escudo_visitante,
+							p.competicion
+						FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+						JOIN partidos p
+		                ON pa.partido_id=p.partido_id
+						JOIN partido_estadio pe
+						ON p.partido_id=pe.partido_id
+						JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						WHERE pe.estadio_id=%s
+						ORDER BY fecha DESC
+						LIMIT 1""",
+						(usuario, estadio_id))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else (partido["partido_id"],
+											partido["marcador"],
+											partido["fecha"].strftime("%d/%m/%Y"),
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"],
+											partido["competicion"])

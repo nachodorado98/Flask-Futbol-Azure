@@ -50,6 +50,12 @@ def test_pagina_estadio_estadio(cliente, conexion_entorno_usuario):
 		assert "iframe" in contenido
 		assert "/estadio/mapa/mapa_small_estadio_user_" in contenido
 		assert '<img class="no-mapa"' not in contenido
+		assert '<div class="circulo-ultimo-partido-estadio">' in contenido
+		assert '<div class="tarjeta-ultimo-partido-estadio"' in contenido
+		assert '<div class="info-ultimo-partido-estadio">' in contenido
+		assert '<div class="circulo-ultimo-partido-asistido-estadio">' not in contenido
+		assert '<div class="tarjeta-ultimo-partido-asistido-estadio"' not in contenido
+		assert '<div class="info-ultimo-partido-asistido-estadio">' not in contenido
 
 def test_pagina_estadio_estadio_sin_equipo(cliente, conexion_entorno_usuario):
 
@@ -432,3 +438,125 @@ def test_pagina_mapa_estadio_mapa_small_existe(cliente, conexion_entorno_usuario
 		assert "L.marker" in contenido
 		assert "[40.436, -3.599]" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+
+def test_pagina_estadio_estadio_sin_ultimo_partido(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("DELETE FROM partidos")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="circulo-ultimo-partido-estadio">' not in contenido
+		assert '<div class="tarjeta-ultimo-partido-estadio"' not in contenido
+		assert '<div class="info-ultimo-partido-estadio">' not in contenido
+
+def test_pagina_estadio_estadio_con_ultimo_partido(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="circulo-ultimo-partido-estadio">' in contenido
+		assert '<div class="tarjeta-ultimo-partido-estadio"' in contenido
+		assert '<div class="info-ultimo-partido-estadio">' in contenido
+
+def test_pagina_estadio_estadio_con_ultimo_partido_varios(cliente, conexion_entorno_usuario):
+
+	for numero in range(8):
+
+		conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+									VALUES('{numero}', 'atletico-madrid', 'atletico-madrid', '201{numero}-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio
+									VALUES('{numero}', 'metropolitano')""")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="circulo-ultimo-partido-estadio">' in contenido
+		assert '<div class="tarjeta-ultimo-partido-estadio"' in contenido
+		assert '<div class="info-ultimo-partido-estadio">' in contenido
+		assert '<p><strong>22/06/2019</strong></p>' in contenido
+
+def test_pagina_estadio_estadio_sin_ultimo_partido_asistido(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="circulo-ultimo-partido-asistido-estadio">' not in contenido
+		assert '<div class="tarjeta-ultimo-partido-asistido-estadio"' not in contenido
+		assert '<div class="info-ultimo-partido-asistido-estadio">' not in contenido
+
+def test_pagina_estadio_estadio_con_ultimo_partido_asistido(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="circulo-ultimo-partido-asistido-estadio">' in contenido
+		assert '<div class="tarjeta-ultimo-partido-asistido-estadio"' in contenido
+		assert '<div class="info-ultimo-partido-asistido-estadio">' in contenido
+
+def test_pagina_estadio_estadio_con_ultimo_partido_asistido_varios(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.insertarPartidoAsistido("20190622", "nacho98", "comentario")
+
+	for numero in range(8):
+
+		conexion_entorno_usuario.c.execute(f"""INSERT INTO partidos
+									VALUES('{numero}', 'atletico-madrid', 'atletico-madrid', '202{numero}-06-22', '20:00', 'Liga', '1-0', 'Victoria')""")
+
+		conexion_entorno_usuario.c.execute(f"""INSERT INTO partido_estadio
+									VALUES('{numero}', 'metropolitano')""")
+
+		conexion_entorno_usuario.insertarPartidoAsistido(numero, "nacho98", "comentario")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/estadio/metropolitano")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="circulo-ultimo-partido-asistido-estadio">' in contenido
+		assert '<div class="tarjeta-ultimo-partido-asistido-estadio"' in contenido
+		assert '<div class="info-ultimo-partido-asistido-estadio">' in contenido
+		assert '<p><strong>22/06/2027</strong></p>' in contenido

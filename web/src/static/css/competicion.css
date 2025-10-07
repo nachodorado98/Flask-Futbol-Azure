@@ -230,3 +230,35 @@
     margin: 0px;
     color: var(--color-secundario) 
 }
+
+.circulo-titulo-competicion {
+    width: 195px;
+    height: 195px;
+    border-radius: 50%;
+    background-color: var(--color-footer);
+    color: var(--color-secundario);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 10px 70px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden;
+    cursor: default;
+    border: 3px solid #000;
+}
+
+.circulo-titulo-competicion .titulo-circulo-titulo-competicion {
+    margin: 1px 0;
+    margin-top: 10px;
+    padding: 0;
+    font-size: 21px;
+}
+
+.circulo-titulo-competicion .titulo-competicion {
+    margin-top: 15px;
+    width: 64.5px;
+    height: 95px;
+    cursor: default;
+}

@@ -5,7 +5,7 @@ from src.utilidades.utils import limpiarResultadosPartidos
 
 from src.database.conexion import Conexion
 
-from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_USUARIOS
+from src.config import URL_DATALAKE_PAISES, URL_DATALAKE_COMPETICIONES, URL_DATALAKE_ESCUDOS, URL_DATALAKE_USUARIOS, URL_DATALAKE_TITULOS
 
 bp_competicion=Blueprint("competicion", __name__)
 
@@ -36,6 +36,8 @@ def pagina_competicion(competicion_id:str):
 
 	partidos_competicion=con.obtenerPartidosCompeticion(competicion_id)
 
+	titulo_competicion=con.obtenerCodigoTituloCompeticion(competicion_id)
+
 	con.cerrarConexion()
 
 	return render_template("competicion.html",
@@ -47,9 +49,11 @@ def pagina_competicion(competicion_id:str):
 							equipos_competicion=equipos_competicion,
 							equipos_campeones=equipos_campeones,
 							partidos_competicion=partidos_competicion,
+							titulo_competicion=titulo_competicion,
 							url_imagen_pais=URL_DATALAKE_PAISES,
 							url_imagen_competicion=URL_DATALAKE_COMPETICIONES,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_titulos=URL_DATALAKE_TITULOS,
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_competicion.route("/competiciones")

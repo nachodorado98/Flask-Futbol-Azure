@@ -4,7 +4,22 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/competicion.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+
+    <div class="circulo-titulo-competicion">
+        <p class="titulo-circulo-titulo-competicion">Trofeo</p>
+        {% if titulo_competicion=='-1' %}
+            <img class="titulo-competicion" src="{{ url_for('static', filename='imagenes/iconos/no_titulo.png') }}" alt="Titulo Icon">
+        {% else %}
+            <img class="titulo-competicion" src="{{ url_imagen_titulos }}{{ titulo_competicion }}.png" alt="Titulo Icon">
+        {% endif %}
+    </div>
+
+ </div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 

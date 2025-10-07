@@ -42,6 +42,8 @@ def test_pagina_competicion_competicion(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjetas-campeones-competicion">' in contenido
 		assert '<p class="titulo-partidos-competicion">' in contenido
 		assert '<div class="tarjetas-partidos-competicion">' in contenido
+		assert '<div class="circulo-titulo-competicion">' in contenido
+		assert '<p class="titulo-circulo-titulo-competicion">Trofeo</p>' in contenido
 
 def test_pagina_competicion_competicion_sin_equipos(cliente, conexion_entorno_usuario):
 
