@@ -1,0 +1,43 @@
+/*-----------------------------------------------------PORRA PROXIMO PARTIDO-------------------------------------------------------------*/
+.tarjeta-proximo-partido-detalle {
+    width: 100%;
+    max-width: 910px;
+    min-width: 900px;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-proximo-partido-detalle .competicion {
+    font-size: 30px;
+    margin: 5px;
+    color: var(--color-secundario);
+}
+
+.info-proximo-partido-detalle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-proximo-partido-detalle .escudo {
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 5px;
+    width: 115px;
+    height: 115px;
+    cursor: pointer;
+}
+
+.info-proximo-partido-detalle h4 {
+    font-size: 45px;
+    color: #fff;
+    margin: 0px;
+    color: var(--color-secundario) 
+}

@@ -326,6 +326,48 @@ def pagina_eliminar_partido_asistido(partido_id:str):
 
 	return redirect("/partidos/asistidos")
 
+@bp_partido.route("/partido/<partido_id>/porra")
+@login_required
+def pagina_partido_porra(partido_id:str):
+
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
+
+	if not con.existe_proximo_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	if not con.equipo_proximo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	porra_disponible=True if partido_id==con.obtenerProximoPartidoPorra(equipo) else False
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	proximo_partido=con.obtenerProximoPartido(partido_id)
+
+	con.cerrarConexion()
+
+	return render_template("porra_proximo_partido.html",
+							usuario=current_user.id,
+							imagen_perfil=current_user.imagen_perfil,
+							equipo=equipo,
+							estadio_equipo=estadio_equipo,
+							proximo_partido=proximo_partido,
+							partido_id=partido_id,
+							porra_disponible=porra_disponible,
+							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
+
 
 bp_partido.add_app_template_filter(es_numero, name="es_numero")
 bp_partido.add_app_template_filter(obtenerNumeroDias, name="obtenerNumeroDias")

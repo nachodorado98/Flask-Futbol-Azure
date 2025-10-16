@@ -127,3 +127,62 @@ def test_obtener_fecha_primer_proximo_partido_varios(conexion, fechas, primer_fe
 	fecha=conexion.obtenerFechaPrimerProximoPartido("atletico-madrid")
 
 	assert fecha==primer_fecha
+
+@pytest.mark.parametrize(["partido_id"],
+	[("20190622",),("2023986382",),("20197589",),("2020625",),("201976809",),("20195666",),("20236517",),("20200622",)]
+)
+def test_existe_proximo_partido_no_existe(conexion, partido_id):
+
+	assert not conexion.existe_proximo_partido(partido_id)
+
+def test_existe_proximo_partido(conexion_entorno):
+
+	assert conexion_entorno.existe_proximo_partido("20200622")
+
+@pytest.mark.parametrize(["partido_id"],
+	[("20190622",),("2023986382",),("20197589",),("2020625",),("201976809",),("20195666",),("20236517",),("20200622",)]
+)
+def test_obtener_proximo_partido_no_existe(conexion, partido_id):
+
+	assert not conexion.obtenerProximoPartido(partido_id)
+
+def test_obtener_proximo_partido(conexion_entorno):
+
+	assert conexion_entorno.obtenerProximoPartido("20200622")
+
+def test_equipo_proximo_partido_no_existe_partido(conexion):
+
+	assert not conexion.equipo_proximo_partido("atletico-madrid", "20200622")
+
+def test_equipo_proximo_partido_no_existe_equipo(conexion_entorno):
+
+	assert not conexion_entorno.equipo_proximo_partido("atletico", "20200622")
+
+def test_equipo_proximo_partido_equipo_distinto(conexion_entorno):
+
+	assert not conexion_entorno.equipo_proximo_partido("betis", "20200622")
+
+def test_equipo_proximo_partido(conexion_entorno):
+
+	assert conexion_entorno.equipo_proximo_partido("atletico-madrid", "20200622")
+
+def test_obtener_proximo_partido_porra_no_existen_partidos(conexion):
+
+	assert not conexion.obtenerProximoPartidoPorra("atletico-madrid")
+
+def test_obtener_proximo_partido_porra(conexion_entorno):
+
+	assert conexion_entorno.obtenerProximoPartidoPorra("atletico-madrid")
+
+def test_obtener_proximo_partido_porra_existen_varios(conexion_entorno):
+
+	conexion_entorno.c.execute("""INSERT INTO proximos_partidos
+									VALUES ('20210622', 'atletico-madrid', 'atletico-madrid', '2021-06-22', '22:00', 'Liga'),
+									('20190622', 'atletico-madrid', 'atletico-madrid', '2019-06-22', '22:00', 'Liga'),
+									('20250622', 'atletico-madrid', 'atletico-madrid', '2025-06-22', '22:00', 'Liga')""")
+
+	conexion_entorno.confirmar()
+
+	partido_id=conexion_entorno.obtenerProximoPartidoPorra("atletico-madrid")
+
+	assert partido_id=="20190622"

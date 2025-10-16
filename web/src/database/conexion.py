@@ -3362,3 +3362,61 @@ class Conexion:
 											partido["visitante"],
 											partido["escudo_visitante"],
 											partido["competicion"])
+
+	# Metodo para saber si existe el proximo partido
+	def existe_proximo_partido(self, partido_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM proximos_partidos
+							WHERE Partido_Id=%s""",
+							(partido_id,))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para obtener la informacion de un proximo partido
+	def obtenerProximoPartido(self, partido_id:str)->Optional[tuple]:
+
+		self.c.execute("""SELECT p.fecha, p.hora, p.competicion,
+								p.equipo_id_local as cod_local, e1.nombre as local,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								p.equipo_id_visitante as cod_visitante, e2.nombre as visitante,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante
+						FROM proximos_partidos p
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						WHERE p.partido_id=%s""",
+						(partido_id,))
+
+		partido=self.c.fetchone()
+
+		return None if not partido else (partido["fecha"].strftime("%d-%m-%Y"),
+											partido["hora"],
+											partido["competicion"],
+											partido["cod_local"],
+											partido["local"],
+											partido["escudo_local"],
+											partido["cod_visitante"],
+											partido["visitante"],
+											partido["escudo_visitante"])
+
+	# Metodo para saber si un equipo esta en un proximo partido
+	def equipo_proximo_partido(self, equipo_id:str, partido_id:str)->bool:
+
+		partido=self.obtenerProximoPartido(partido_id)
+
+		return partido is not None and (partido[3]==equipo_id or partido[6]==equipo_id)
+
+	# Metodo para obtener el proximo partido porra
+	def obtenerProximoPartidoPorra(self, equipo_id:str)->str:
+
+		partido_porra=self.obtenerProximosPartidosEquipo(equipo_id, 1)
+
+		return None if not partido_porra else partido_porra[0][0]
