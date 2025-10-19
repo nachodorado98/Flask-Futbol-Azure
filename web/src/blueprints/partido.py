@@ -371,9 +371,10 @@ def pagina_partido_porra(partido_id:str):
 							estadio_equipo=estadio_equipo,
 							proximo_partido=proximo_partido,
 							partido_id=partido_id,
-							jugadores_local=[{"id":jugador[0], "nombre":jugador[1]} for jugador in jugadores_local],
-							jugadores_visitante=[{"id":jugador[0], "nombre":jugador[1]} for jugador in jugadores_visitante],
+							jugadores_local=[{"id":jugador[0], "nombre":jugador[1], "imagen":jugador[2]} for jugador in jugadores_local],
+							jugadores_visitante=[{"id":jugador[0], "nombre":jugador[1], "imagen":jugador[2]} for jugador in jugadores_visitante],
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
+							url_imagen_jugador=URL_DATALAKE_JUGADORES,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 

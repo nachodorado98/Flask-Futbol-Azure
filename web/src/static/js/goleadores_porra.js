@@ -6,38 +6,118 @@ document.addEventListener("DOMContentLoaded", function() {
     const divVisitante = document.getElementById("goleadores-visitante");
 
     const porraData = document.getElementById("porra-data");
-    const nombreLocal = porraData.dataset.local;
-    const nombreVisitante = porraData.dataset.visitante;
+    const nombreLocal = porraData ? porraData.dataset.local : "Local";
+    const nombreVisitante = porraData ? porraData.dataset.visitante : "Visitante";
 
     const jugadoresLocal = window.jugadoresLocal || [];
     const jugadoresVisitante = window.jugadoresVisitante || [];
+    const urlImagenJugador = window.urlImagenJugador || '/static/';
 
-    function generarSelects(div, goles, equipo, titulo, jugadores) {
-        div.innerHTML = `<p>${titulo}</p>`;
+    /**
+     * Genera los selects de goleadores dentro del contenedor .lista-goleadores
+     */
+    function generarSelects(div, goles, jugadores, titulo) {
+        const lista = div.querySelector(".lista-goleadores");
+        if (!lista) return;
+        lista.innerHTML = ""; // Limpiamos solo la lista, no el título ni la imagen
+
         for (let i = 0; i < goles; i++) {
             const select = document.createElement("select");
-            select.name = `${equipo.toLowerCase()}_goleador_${i+1}`;
+
+            const equipoSlug = titulo.toLowerCase().includes(nombreLocal.toLowerCase())
+                ? 'local'
+                : 'visitante';
+
+            select.name = `${equipoSlug}_goleador_${i + 1}`;
             select.required = true;
+            select.classList.add('select-goleador');
 
             const optionDefault = document.createElement("option");
             optionDefault.value = "";
-            optionDefault.textContent = `Selecciona goleador`;
+            optionDefault.textContent = "Selecciona goleador";
             optionDefault.disabled = true;
             optionDefault.selected = true;
             select.appendChild(optionDefault);
 
+            jugadores.forEach(j => {
+                let id, nombre, imagen;
 
-            jugadores.forEach(jugador => {
+                if (Array.isArray(j)) {
+                    id = j[0];
+                    nombre = j[1];
+                    imagen = j[2] !== undefined ? j[2] : null;
+                } else if (typeof j === 'object' && j !== null) {
+                    id = j.id ?? j[0];
+                    nombre = j.nombre ?? j[1];
+                    imagen = j.imagen ?? j[2] ?? null;
+                } else {
+                    id = j;
+                    nombre = String(j);
+                    imagen = null;
+                }
+
                 const opt = document.createElement("option");
-                opt.value = jugador.id;
-                opt.textContent = jugador.nombre;
+                opt.value = id;
+                opt.textContent = nombre;
+
+                // Imagen asociada a cada jugador
+                if (imagen === undefined || imagen === null || imagen === "-1") {
+                    opt.dataset.img = "/static/imagenes/iconos/no_jugador.png";
+                } else {
+                    if (
+                        imagen.startsWith("http://") ||
+                        imagen.startsWith("https://") ||
+                        imagen.startsWith("/")
+                    ) {
+                        opt.dataset.img = imagen;
+                    } else {
+                        opt.dataset.img = urlImagenJugador + imagen + ".png";
+                    }
+                }
+
                 select.appendChild(opt);
             });
 
-            div.appendChild(select);
+            lista.appendChild(select);
         }
+
+        aplicarImagenesSelect();
     }
 
+    /**
+     * Aplica la imagen del jugador seleccionado al fondo del select
+     */
+    function aplicarImagenesSelect() {
+        document.querySelectorAll(".equipo-goleadores select.select-goleador").forEach(select => {
+            const aplicarFondo = el => {
+                const selectedOption = el.options[el.selectedIndex];
+                const img = selectedOption ? selectedOption.dataset.img : null;
+                if (img) {
+                    el.style.backgroundImage = `url('${img}')`;
+                    el.style.backgroundRepeat = "no-repeat";
+                    el.style.backgroundPosition = "8px center";
+                    el.style.backgroundSize = "30px 30px";
+                    el.style.paddingLeft = "45px";
+                } else {
+                    el.style.backgroundImage = "none";
+                    el.style.paddingLeft = "8px";
+                }
+            };
+
+            aplicarFondo(select);
+
+            select.removeEventListener("change", select._changeHandler || (() => {}));
+            const handler = function() {
+                aplicarFondo(this);
+            };
+            select.addEventListener("change", handler);
+            select._changeHandler = handler;
+        });
+    }
+
+    /**
+     * Actualiza los selects según los goles introducidos
+     */
     function actualizarGoleadores() {
         const gL = parseInt(golesLocal.value);
         const gV = parseInt(golesVisitante.value);
@@ -45,15 +125,23 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!isNaN(gL) && !isNaN(gV)) {
             contenedorGoleadores.classList.remove("oculto");
 
-            generarSelects(divLocal, gL, nombreLocal, `Goleadores del ${nombreLocal}`, jugadoresLocal);
-            generarSelects(divVisitante, gV, nombreVisitante, `Goleadores del ${nombreVisitante}`, jugadoresVisitante);
+            generarSelects(divLocal, gL, jugadoresLocal, `Goleadores del ${nombreLocal}`);
+            generarSelects(divVisitante, gV, jugadoresVisitante, `Goleadores del ${nombreVisitante}`);
         } else {
             contenedorGoleadores.classList.add("oculto");
-            divLocal.innerHTML = `<p>Goleadores del ${nombreLocal}</p>`;
-            divVisitante.innerHTML = `<p>Goleadores del ${nombreVisitante}</p>`;
+
+            const listaLocal = divLocal.querySelector(".lista-goleadores");
+            const listaVisitante = divVisitante.querySelector(".lista-goleadores");
+            if (listaLocal) listaLocal.innerHTML = "";
+            if (listaVisitante) listaVisitante.innerHTML = "";
         }
     }
 
     golesLocal.addEventListener("input", actualizarGoleadores);
     golesVisitante.addEventListener("input", actualizarGoleadores);
+
+    // Si ya hay valores cargados al entrar, genera los selects automáticamente
+    if (golesLocal.value !== "" && golesVisitante.value !== "") {
+        actualizarGoleadores();
+    }
 });

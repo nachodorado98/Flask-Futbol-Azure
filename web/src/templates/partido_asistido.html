@@ -13,12 +13,12 @@
 <div class="contenedor-total-partido-asistido">
 
     {% if partido_id_asistido_anterior %}
-        <button class="button-partido-anterior-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_anterior }}/asistido'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+        <button class="button-partido-anterior-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_anterior }}/asistido'" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
             <
         </button>
     {% endif %}
 
-    <div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %} {% if partido_asistido[11] %} style="margin-bottom: 50px" {% endif %}>
+    <div class="tarjeta-partido-asistido-detalle" {% if partido_asistido_favorito %} style="background-color: #ffbf00; margin-bottom: 40px;"{% endif %} {% if partido_asistido[11] %} style="margin-bottom: 40px" {% endif %}>
 
         {% if partido_asistido_favorito %}
 
@@ -350,7 +350,7 @@
     </div>
 
     {% if partido_id_asistido_siguiente %}
-        <button class="button-partido-siguiente-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_siguiente }}/asistido'" {% if partido_asistido_favorito %} style="color: #ffbf00;"{% endif %}>
+        <button class="button-partido-siguiente-asistido" onclick="window.location.href='/partido/{{ partido_id_asistido_siguiente }}/asistido'" {% if partido_asistido_favorito %} style="background-color: #ffbf00;"{% endif %}>
             >
         </button>
     {% endif %}
