@@ -672,7 +672,7 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrad
 
 		assert respuesta.status_code==200
 		assert '<div class="circulo-partido-proximo-calendario">' in contenido
-		assert '<div class="tarjeta-partido-proximo-calendario">' in contenido
+		assert '<div class="tarjeta-partido-proximo-calendario"' in contenido
 		assert '<p class="titulo-circulo-partido-proximo-calendario">' in contenido
 		assert "22/06/2020" in contenido
 		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido
@@ -690,7 +690,7 @@ def test_pagina_partidos_calendario_proximos_con_proximo_partido_ano_mes_filtrad
 
 		assert respuesta.status_code==200
 		assert '<div class="circulo-partido-proximo-calendario">' in contenido
-		assert '<div class="tarjeta-partido-proximo-calendario">' in contenido
+		assert '<div class="tarjeta-partido-proximo-calendario"' in contenido
 		assert '<p class="titulo-circulo-partido-proximo-calendario">' in contenido
 		assert "22/06/2020" in contenido
 		assert '<div class="circulo-estadisticas-partidos-calendario">' not in contenido

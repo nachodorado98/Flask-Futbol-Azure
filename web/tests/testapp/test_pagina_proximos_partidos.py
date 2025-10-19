@@ -55,6 +55,7 @@ def test_pagina_proximos_partidos_calendario_solo_un_proximo_partido(cliente, co
 
 		respuesta.status_code==200
 		assert '<a href="/partidos/calendario/2020-06?proximos_partidos=True" class="tipo-partidos-calendario">' in contenido
+		assert "/partido/20200622/porra" in contenido
 
 def test_pagina_proximos_partidos_calendario_varios(cliente, conexion, password_hash):
 
@@ -82,3 +83,5 @@ def test_pagina_proximos_partidos_calendario_varios(cliente, conexion, password_
 
 		respuesta.status_code==200
 		assert '<a href="/partidos/calendario/2019-06?proximos_partidos=True" class="tipo-partidos-calendario">' in contenido
+		assert "/partido/20200622/porra" not in contenido
+		assert "/partido/20190502/porra" in contenido

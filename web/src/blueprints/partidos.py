@@ -386,7 +386,11 @@ def pagina_partidos_proximos():
 
 	fecha_primer_proximo_partido=con.obtenerFechaPrimerProximoPartido(equipo)
 
+	partido_porra=con.obtenerProximoPartidoPorra(equipo)
+
 	con.cerrarConexion()
+
+	proximos_partidos_porra=list(map(lambda proximo_partido: list(proximo_partido)+[1] if proximo_partido[0]==partido_porra else list(proximo_partido)+[0], proximos_partidos))
 
 	ano_mes_calendario=datetime.strptime(fecha_primer_proximo_partido, "%Y-%m-%d").strftime("%Y-%m") if fecha_primer_proximo_partido else None
 
@@ -396,7 +400,7 @@ def pagina_partidos_proximos():
 							equipo=equipo,
 							nombre_equipo=nombre_equipo,
 							estadio_equipo=estadio_equipo,
-							proximos_partidos=proximos_partidos,
+							proximos_partidos=proximos_partidos_porra,
 							ano_mes_calendario=ano_mes_calendario,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")

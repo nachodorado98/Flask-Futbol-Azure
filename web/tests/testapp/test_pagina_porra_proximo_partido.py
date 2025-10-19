@@ -46,23 +46,6 @@ def test_pagina_porra_proximo_partido_equipo_distinto(cliente, conexion_entorno_
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno_usuario):
-
-	with cliente as cliente_abierto:
-
-		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
-
-		respuesta=cliente_abierto.get("/partido/20200622/porra")
-
-		contenido=respuesta.data.decode()
-
-		respuesta.status_code==200
-		assert '<div class="tarjeta-proximo-partido-detalle">' in contenido
-		assert '<div class="info-proximo-partido-detalle">' in contenido
-		assert '<div class="porra-proximo-partido">' in contenido
-		assert '<p class="competicion">Porra</p>' in contenido
-		assert '<p class="competicion">Porra Aun No Disponible</p>' not in contenido
-
 def test_pagina_porra_proximo_partido_porra_no_disponible(cliente, conexion_entorno_usuario):
 
 	conexion_entorno_usuario.c.execute("""INSERT INTO proximos_partidos
@@ -80,9 +63,23 @@ def test_pagina_porra_proximo_partido_porra_no_disponible(cliente, conexion_ento
 
 		contenido=respuesta.data.decode()
 
+		respuesta.status_code==302
+		assert respuesta.location=="/partidos"
+		assert "Redirecting..." in contenido
+
+def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20200622/porra")
+
+		contenido=respuesta.data.decode()
+
 		respuesta.status_code==200
 		assert '<div class="tarjeta-proximo-partido-detalle">' in contenido
-		assert '<div class="info-proximo-partido-detalle">' in contenido
 		assert '<div class="porra-proximo-partido">' in contenido
-		assert '<p class="competicion">Porra</p>' not in contenido
-		assert '<p class="competicion">Porra Aun No Disponible</p>' in contenido
+		assert '<h4 class="titulo-porra">LA PORRA</h4>' in contenido
+		assert '<div class="resultado-container">' in contenido
+		assert '<div id="goleadores-container"' in contenido

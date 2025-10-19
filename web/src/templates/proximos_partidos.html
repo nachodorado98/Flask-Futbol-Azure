@@ -28,7 +28,7 @@
 
         {% for partido in proximos_partidos %}
 
-            <div class="tarjeta-proximo-partido" onclick="window.location.href='/partido/{{ partido[0] }}/porra'">
+            <div class="tarjeta-proximo-partido" {% if partido[10]==1 %}onclick="window.location.href='/partido/{{ partido[0] }}/porra'"{% else %}style="cursor: default;"{% endif %}>
                 <p><strong>{{ partido[1] }} - {{ partido[9] }}</strong></p>
                 <div class="info-proximo-partido">
 

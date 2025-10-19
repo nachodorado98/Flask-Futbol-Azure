@@ -348,11 +348,19 @@ def pagina_partido_porra(partido_id:str):
 
 		return redirect("/partidos")
 
-	porra_disponible=True if partido_id==con.obtenerProximoPartidoPorra(equipo) else False
+	if partido_id!=con.obtenerProximoPartidoPorra(equipo):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
 
 	estadio_equipo=con.estadio_equipo(equipo)
 
 	proximo_partido=con.obtenerProximoPartido(partido_id)
+
+	jugadores_local=con.obtenerJugadoresEquipo(proximo_partido[3])
+
+	jugadores_visitante=con.obtenerJugadoresEquipo(proximo_partido[6])
 
 	con.cerrarConexion()
 
@@ -363,7 +371,8 @@ def pagina_partido_porra(partido_id:str):
 							estadio_equipo=estadio_equipo,
 							proximo_partido=proximo_partido,
 							partido_id=partido_id,
-							porra_disponible=porra_disponible,
+							jugadores_local=[{"id":jugador[0], "nombre":jugador[1]} for jugador in jugadores_local],
+							jugadores_visitante=[{"id":jugador[0], "nombre":jugador[1]} for jugador in jugadores_visitante],
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")

@@ -33,7 +33,7 @@
     {% else %}
         {% if datos_partido_proximo_calendario %}
             <div class="circulo-partido-proximo-calendario">
-                <div class="tarjeta-partido-proximo-calendario">
+                <div class="tarjeta-partido-proximo-calendario" onclick="window.location.href='/partido/{{ datos_partido_proximo_calendario[0] }}/porra'">
 
                     <p class="titulo-circulo-partido-proximo-calendario"><strong>Proximo Partido</strong></p>
 
