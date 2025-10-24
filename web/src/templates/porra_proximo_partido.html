@@ -13,7 +13,7 @@
 
     <div class="porra-proximo-partido">
 
-        <form class="form-porra" method="POST" action="#">
+        <form class="form-porra" method="POST" action="/insertar_porra_partido">
 
             <p class="competicion">
                 <strong class="strong-competicion">{{ proximo_partido[2] }} - {{ proximo_partido[0] }} - {{ proximo_partido[1] }}</strong>
@@ -39,7 +39,7 @@
                     <input type="number" id="goles_local" name="goles_local" min="0" max="9" step="1" required onkeydown="return false">
                 </div>
 
-                <span class="vs">vs</span>
+                <span class="vs">VS</span>
 
                 <div class="equipo">
                     <input type="number" id="goles_visitante" name="goles_visitante" min="0" max="9" step="1" required onkeydown="return false">
@@ -55,7 +55,6 @@
 
             <div id="goleadores-container" class="goleadores-container oculto">
                 <div class="goleadores-grupo">
-                    <!-- LOCAL -->
                     <div id="goleadores-local" class="equipo-goleadores">
                         <div class="titulo-goleadores">
                             {% if proximo_partido[5]==-1 %}
@@ -68,7 +67,6 @@
                         <div class="lista-goleadores"></div>
                     </div>
 
-                    <!-- VISITANTE -->
                     <div id="goleadores-visitante" class="equipo-goleadores">
                         <div class="titulo-goleadores">
                             {% if proximo_partido[8]==-1 %}
@@ -84,10 +82,9 @@
             </div>
 
             <div class="botones-porra">
+                <input type="hidden" name="partido_id" value="{{ partido_id }}">
                 <button type="submit" class="btn-enviar-porra">Enviar Porra</button>
-                <button type="button" class="btn-restablecer-porra" onclick="window.location.href='/partido/{{ partido_id }}/porra'">
-                    Restablecer
-                </button>
+                <button type="button" class="btn-restablecer-porra" onclick="window.location.href='/partido/{{ partido_id }}/porra'">Restablecer</button>
             </div>
 
         </form>

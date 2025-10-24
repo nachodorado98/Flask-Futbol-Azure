@@ -20,6 +20,7 @@ from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivis
 from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
 from src.utilidades.utils import obtenerDataframeDireccionParadas, validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
 from src.utilidades.utils import obtenerTrayectosConDistancia, obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias, anadirDiaActualCalendario
+from src.utilidades.utils import validarNumeroGoles, validarGoleadores, validarGolesGoleadores
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2517,3 +2518,85 @@ def test_anadir_dia_actual_calendario_con_fecha(fechas_partidos, numero_partidos
 	partidos_filtrados_dia=[[valor for valor in sublista if isinstance(valor, tuple) and valor[-1] is True] for sublista in partidos_calendario_dia]
 
 	assert [sublista for sublista in partidos_filtrados_dia if sublista]
+
+@pytest.mark.parametrize(["goles"],
+	[("0",),(10,),("3",),(22,),(-9,)]
+)
+def test_validar_numero_goles_no_valido(goles):
+
+	assert not validarNumeroGoles(goles)
+
+@pytest.mark.parametrize(["goles"],
+	[(0,),(1,),(3,),(2,),(9,)]
+)
+def test_validar_numero_goles(goles):
+
+	assert validarNumeroGoles(goles)
+
+@pytest.mark.parametrize(["goleadores"],
+	[(["no-existo"],),(["julian"],),(["alvarez"],),(["no-existo", "julian-alvarez"],)]
+)
+def test_validar_goleadores_no_validos(conexion_entorno, entorno, goleadores):
+
+	assert not validarGoleadores(goleadores, entorno)
+
+@pytest.mark.parametrize(["goleadores"],
+	[(["julian-alvarez"],),(["antoine-griezmann", "julian-alvarez"],)]
+)
+def test_validar_goleadores(conexion_entorno, entorno, goleadores):
+
+	conexion_entorno.c.execute("""INSERT INTO jugadores
+								VALUES('antoine-griezmann', 'Grizzi', 'atletico-madrid', 'fr', '1324', 100, 100.0, 9, 'DC')""")
+
+	conexion_entorno.confirmar()
+
+	assert validarGoleadores(goleadores, entorno)
+
+@pytest.mark.parametrize(["goles_local", "goles_visitante"],
+	[(100, 1),(0, 10),(32, 2),(22, 5),(1, -9)]
+)
+def test_validar_goles_goleadores_goles_no_validos(entorno, goles_local, goles_visitante):
+
+	assert not validarGolesGoleadores(goles_local, goles_visitante, ["antoine-grizmann", "julian-alvarez"], ["julian-alvarez"], entorno)
+
+@pytest.mark.parametrize(["goles_local", "goles_visitante", "goleadores_local", "goleadores_visitante"],
+	[
+		(0, 0, ["goleador_local1"], ["goleador_visitante1"]),
+		(2, 0, ["goleador_local1", "goleador_local2"], ["goleador_visitante1"]),
+		(3, 1, ["goleador_local1", "goleador_local2", "goleador_local3"], []),
+		(1, 2, ["goleador_local1"], ["goleador_visitante1"])
+	]
+)
+def test_validar_goles_goleadores_goleadores_no_validos(entorno, goles_local, goles_visitante, goleadores_local, goleadores_visitante):
+
+	assert not validarGolesGoleadores(goles_local, goles_visitante, goleadores_local, goleadores_visitante, entorno)
+
+@pytest.mark.parametrize(["goles_local", "goles_visitante", "goleadores_local", "goleadores_visitante"],
+	[
+		(1, 1, ["julian-alvarez"], ["antoine-griezmann"]),
+		(2, 0, ["goleador_local1", "antoine-griezmann"], []),
+		(3, 1, ["goleador_local1", "goleador_local2", "goleador_local3"], ["julian-alvarez"]),
+		(1, 2, ["antoine-griezmann"], ["goleador_visitante1", "julian-alvarez"])
+	]
+)
+def test_validar_goles_goleadores_goleadores_no_existen(conexion_entorno, entorno, goles_local, goles_visitante, goleadores_local, goleadores_visitante):
+
+	assert not validarGolesGoleadores(goles_local, goles_visitante, goleadores_local, goleadores_visitante, entorno)
+
+@pytest.mark.parametrize(["goles_local", "goles_visitante", "goleadores_local", "goleadores_visitante"],
+	[
+		(1, 1, ["julian-alvarez"], ["antoine-griezmann"]),
+		(2, 0, ["koke", "antoine-griezmann"], []),
+		(3, 1, ["koke", "antoine-griezmann", "koke"], ["julian-alvarez"]),
+		(1, 2, ["antoine-griezmann"], ["koke", "julian-alvarez"])
+	]
+)
+def test_validar_goles_goleadores_goleadores(conexion_entorno, entorno, goles_local, goles_visitante, goleadores_local, goleadores_visitante):
+
+	conexion_entorno.c.execute("""INSERT INTO jugadores
+								VALUES('antoine-griezmann', 'Grizzi', 'atletico-madrid', 'fr', '1324', 100, 100.0, 9, 'DC'),
+										('koke', 'Koke', 'atletico-madrid', 'es', '1324', 100, 100.0, 9, 'DC')""")
+
+	conexion_entorno.confirmar()
+
+	assert validarGolesGoleadores(goles_local, goles_visitante, goleadores_local, goleadores_visitante, entorno)

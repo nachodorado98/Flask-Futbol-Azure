@@ -937,14 +937,14 @@ def obtenerDistanciaTotalTrayecto(trayectos:List)->int:
 
 def es_numero(valor):
 
-    try:
+	try:
 
-        float(valor)
-        return True
+		float(valor)
+		return True
 
-    except (ValueError, TypeError):
-    	
-        return False
+	except (ValueError, TypeError):
+		
+		return False
 
 def obtenerNumeroDias(fecha_inicio:str, fecha_fin:str)->int:
 
@@ -962,10 +962,52 @@ def obtenerNumeroDias(fecha_inicio:str, fecha_fin:str)->int:
 
 def anadirDiaActualCalendario(calendario:List[List[tuple]], dia:str)->List[List[tuple]]:
 
-    semanas_actualizadas=[[d+(True,) if isinstance(d, tuple) and len(d)>=3 and d[0]==dia
-				            else d+(False,) if isinstance(d, tuple) and len(d)>=3
-				            else d
-				            for d in semana]
-				        for semana in calendario]
+	semanas_actualizadas=[[d+(True,) if isinstance(d, tuple) and len(d)>=3 and d[0]==dia
+							else d+(False,) if isinstance(d, tuple) and len(d)>=3
+							else d
+							for d in semana]
+						for semana in calendario]
 
-    return semanas_actualizadas
+	return semanas_actualizadas
+
+def validarNumeroGoles(goles:int)->bool:
+
+	try:
+
+		return 0<=goles<=9
+
+	except Exception:
+
+		return False
+
+def validarGoleadores(goleadores:List[str], entorno:str)->bool:
+
+	con=Conexion(entorno)
+
+	for goleador in goleadores:
+
+		if not con.existe_jugador(goleador):
+
+			con.cerrarConexion()
+
+			return False
+
+	con.cerrarConexion()
+
+	return True
+
+def validarGolesGoleadores(goles_local:int, goles_visitante:int, goleadores_local:List[str], goleadores_visitante:List[str], entorno:str)->bool:
+
+	if not all(map(validarNumeroGoles, [goles_local, goles_visitante])):
+
+		return False
+
+	if len(goleadores_local)!=goles_local or len(goleadores_visitante)!=goles_visitante:
+
+		return False
+
+	if not all(map(lambda goleadores: validarGoleadores(goleadores, entorno), [goleadores_local, goleadores_visitante])):
+
+		return False
+
+	return True
