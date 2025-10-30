@@ -60,6 +60,10 @@ def pagina_insertar_porra_partido():
 
 		return redirect("/partidos")
 
+	if not con.existe_porra_partido(partido_id, current_user.id):
+
+		con.insertarPorraPartido(current_user.id, partido_id, goles_local, goles_visitante)
+
 	con.cerrarConexion()
 
-	return f"{partido_id}, {goles_local}, {goles_visitante}, {goleadores_local}, {goleadores_visitante}"
+	return redirect(f"/partido/{partido_id}/porra")

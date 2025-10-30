@@ -362,6 +362,8 @@ def pagina_partido_porra(partido_id:str):
 
 	jugadores_visitante=con.obtenerJugadoresEquipo(proximo_partido[6])
 
+	datos_porra=con.obtenerPorraPartido(partido_id, current_user.id) if con.existe_porra_partido(partido_id, current_user.id) else ()
+
 	con.cerrarConexion()
 
 	return render_template("porra_proximo_partido.html",
@@ -373,6 +375,8 @@ def pagina_partido_porra(partido_id:str):
 							partido_id=partido_id,
 							jugadores_local=[{"id":jugador[0], "nombre":jugador[1], "imagen":jugador[2]} for jugador in jugadores_local],
 							jugadores_visitante=[{"id":jugador[0], "nombre":jugador[1], "imagen":jugador[2]} for jugador in jugadores_visitante],
+							datos_porra=datos_porra,
+							porra_realizada=True if datos_porra else False,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",

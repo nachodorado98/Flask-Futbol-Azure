@@ -82,4 +82,29 @@ def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno
 		assert '<div class="porra-proximo-partido">' in contenido
 		assert '<h4 class="titulo-porra">LA PORRA</h4>' in contenido
 		assert '<div class="resultado-container">' in contenido
+		assert '<div class="resultado-container-porra-hecha">' not in contenido
+		assert '<input type="number" id="goles_local" name="goles_local" value="1"' not in contenido
+		assert '<input type="number" id="goles_visitante" name="goles_visitante" value="0"' not in contenido
 		assert '<div id="goleadores-container"' in contenido
+
+def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20200622/porra")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-proximo-partido-detalle">' in contenido
+		assert '<div class="porra-proximo-partido">' in contenido
+		assert '<h4 class="titulo-porra">LA PORRA</h4>' in contenido
+		assert '<div class="resultado-container">' not in contenido
+		assert '<div class="resultado-container-porra-hecha">' in contenido
+		assert '<input type="number" id="goles_local" name="goles_local" value="1"' in contenido
+		assert '<input type="number" id="goles_visitante" name="goles_visitante" value="0"' in contenido
+		assert '<div id="goleadores-container"' not in contenido

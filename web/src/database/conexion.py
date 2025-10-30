@@ -64,6 +64,8 @@ class Conexion:
 
 		self.c.execute("DELETE FROM trayecto_partido_asistido")
 
+		self.c.execute("DELETE FROM porra_partidos")
+
 		self.confirmar()
 
 	# Metodo para insertar un usuario
@@ -3420,3 +3422,36 @@ class Conexion:
 		partido_porra=self.obtenerProximosPartidosEquipo(equipo_id, 1)
 
 		return None if not partido_porra else partido_porra[0][0]
+
+	# Metodo para comprobar si ya existe una porra de un partido de un usuario
+	def existe_porra_partido(self, partido_id:str, usuario:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM porra_partidos
+						WHERE partido_id=%s
+						AND usuario=%s""",
+						(partido_id, usuario))
+
+		return False if not self.c.fetchone() else True
+
+	# Metodo para insertar la porra de un partido
+	def insertarPorraPartido(self, usuario:str, partido_id:str, goles_local:int, goles_visitante:int)->None:
+
+		self.c.execute("""INSERT INTO porra_partidos
+							VALUES (%s, %s, %s, %s)""",
+							(usuario, partido_id, goles_local, goles_visitante))
+
+		self.confirmar()
+
+	# Metodo para obtener la porra de un partido
+	def obtenerPorraPartido(self, partido_id:str, usuario:str)->bool:
+
+		self.c.execute("""SELECT *
+						FROM porra_partidos
+						WHERE partido_id=%s
+						AND usuario=%s""",
+						(partido_id, usuario))
+
+		porra_partido=self.c.fetchone()
+
+		return None if not porra_partido else (porra_partido["goles_local"], porra_partido["goles_visitante"])

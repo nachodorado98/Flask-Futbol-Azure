@@ -26,66 +26,99 @@
                 data-visitante="{{ proximo_partido[7] }}">
             </div>
 
-            <div class="resultado-container">
+            {% if porra_realizada %}
 
-                <div class="equipo">
-                    {% if proximo_partido[5]==-1 %}
-                        <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon" onclick="window.location.href='/equipo/{{ proximo_partido[3] }}'">
-                    {% else %}
-                        <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Local Icon" onclick="window.location.href='/equipo/{{ proximo_partido[3] }}'">
-                    {% endif %}
+                <div class="resultado-container-porra-hecha">
 
-                    <label>{{ proximo_partido[4] }}</label>
-                    <input type="number" id="goles_local" name="goles_local" min="0" max="9" step="1" required onkeydown="return false">
-                </div>
+                    <div class="equipo">
+                        {% if proximo_partido[5]==-1 %}
+                            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon" onclick="window.location.href='/equipo/{{ proximo_partido[3] }}'">
+                        {% else %}
+                            <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Local Icon" onclick="window.location.href='/equipo/{{ proximo_partido[3] }}'">
+                        {% endif %}
 
-                <span class="vs">VS</span>
-
-                <div class="equipo">
-                    <input type="number" id="goles_visitante" name="goles_visitante" min="0" max="9" step="1" required onkeydown="return false">
-                    <label>{{ proximo_partido[7] }}</label>
-
-                    {% if proximo_partido[8]==-1 %}
-                        <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
-                    {% else %}
-                        <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
-                    {% endif %}
-                </div>
-            </div>
-
-            <div id="goleadores-container" class="goleadores-container oculto">
-                <div class="goleadores-grupo">
-                    <div id="goleadores-local" class="equipo-goleadores">
-                        <div class="titulo-goleadores">
-                            {% if proximo_partido[5]==-1 %}
-                                <img class="escudo-porra" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo local">
-                            {% else %}
-                                <img class="escudo-porra" src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Escudo local">
-                            {% endif %}
-                            <p>Goleadores del {{ proximo_partido[4] }}</p>
-                        </div>
-                        <div class="lista-goleadores"></div>
+                        <label>{{ proximo_partido[4] }}</label>
+                        <input type="number" id="goles_local" name="goles_local" value="{{ datos_porra[0] }}" readonly>
                     </div>
 
-                    <div id="goleadores-visitante" class="equipo-goleadores">
-                        <div class="titulo-goleadores">
-                            {% if proximo_partido[8]==-1 %}
-                                <img class="escudo-porra" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo visitante">
-                            {% else %}
-                                <img class="escudo-porra" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Escudo visitante">
-                            {% endif %}
-                            <p>Goleadores del {{ proximo_partido[7] }}</p>
-                        </div>
-                        <div class="lista-goleadores"></div>
+                    <span class="vs">VS</span>
+
+                    <div class="equipo">
+                        <input type="number" id="goles_visitante" name="goles_visitante" value="{{ datos_porra[1] }}" readonly>
+                        <label>{{ proximo_partido[7] }}</label>
+
+                        {% if proximo_partido[8]==-1 %}
+                            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
+                        {% else %}
+                            <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
+                        {% endif %}
                     </div>
                 </div>
-            </div>
 
-            <div class="botones-porra">
-                <input type="hidden" name="partido_id" value="{{ partido_id }}">
-                <button type="submit" class="btn-enviar-porra">Enviar Porra</button>
-                <button type="button" class="btn-restablecer-porra" onclick="window.location.href='/partido/{{ partido_id }}/porra'">Restablecer</button>
-            </div>
+            {% else %}
+
+                <div class="resultado-container">
+
+                    <div class="equipo">
+                        {% if proximo_partido[5]==-1 %}
+                            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon" onclick="window.location.href='/equipo/{{ proximo_partido[3] }}'">
+                        {% else %}
+                            <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Local Icon" onclick="window.location.href='/equipo/{{ proximo_partido[3] }}'">
+                        {% endif %}
+
+                        <label>{{ proximo_partido[4] }}</label>
+                        <input type="number" id="goles_local" name="goles_local" min="0" max="9" step="1" required onkeydown="return false">
+                    </div>
+
+                    <span class="vs">VS</span>
+
+                    <div class="equipo">
+                        <input type="number" id="goles_visitante" name="goles_visitante" min="0" max="9" step="1" required onkeydown="return false">
+                        <label>{{ proximo_partido[7] }}</label>
+
+                        {% if proximo_partido[8]==-1 %}
+                            <img class="escudo" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
+                        {% else %}
+                            <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div id="goleadores-container" class="goleadores-container oculto">
+                    <div class="goleadores-grupo">
+                        <div id="goleadores-local" class="equipo-goleadores">
+                            <div class="titulo-goleadores">
+                                {% if proximo_partido[5]==-1 %}
+                                    <img class="escudo-porra" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo local">
+                                {% else %}
+                                    <img class="escudo-porra" src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Escudo local">
+                                {% endif %}
+                                <p>Goleadores del {{ proximo_partido[4] }}</p>
+                            </div>
+                            <div class="lista-goleadores"></div>
+                        </div>
+
+                        <div id="goleadores-visitante" class="equipo-goleadores">
+                            <div class="titulo-goleadores">
+                                {% if proximo_partido[8]==-1 %}
+                                    <img class="escudo-porra" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo visitante">
+                                {% else %}
+                                    <img class="escudo-porra" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Escudo visitante">
+                                {% endif %}
+                                <p>Goleadores del {{ proximo_partido[7] }}</p>
+                            </div>
+                            <div class="lista-goleadores"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="botones-porra">
+                    <input type="hidden" name="partido_id" value="{{ partido_id }}">
+                    <button type="submit" class="btn-enviar-porra">Enviar Porra</button>
+                    <button type="button" class="btn-restablecer-porra" onclick="window.location.href='/partido/{{ partido_id }}/porra'">Restablecer</button>
+                </div>
+
+            {% endif %}
 
         </form>
 

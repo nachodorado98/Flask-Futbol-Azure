@@ -41,6 +41,7 @@ def test_conexion_pro():
 	assert "partidos_asistidos" in tablas
 	assert "partido_asistido_favorito" in tablas
 	assert "trayecto_partido_asistido" in tablas
+	assert "porra_partidos" in tablas
 
 def test_conexion_dev(conexion):
 
@@ -70,6 +71,7 @@ def test_conexion_dev(conexion):
 	assert "partidos_asistidos" in tablas
 	assert "partido_asistido_favorito" in tablas
 	assert "trayecto_partido_asistido" in tablas
+	assert "porra_partidos" in tablas
 	
 def test_cerrar_conexion(conexion):
 
@@ -87,9 +89,12 @@ def test_vaciar_bbdd(conexion_entorno_usuario):
 
 	conexion_entorno_usuario.insertarTrayectoPartidoAsistido("trayecto_id", "20190622", "nacho98", "I", 103, "Transporte", 103)
 
+	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+
 	tablas=["equipos", "partidos", "estadios", "equipo_estadio", "competiciones", "competiciones_campeones",
 			"partido_competicion", "jugadores", "jugadores_equipo", "jugadores_seleccion", "entrenadores",
-			"partido_goleador", "usuarios", "partidos_asistidos", "partido_asistido_favorito", "trayecto_partido_asistido"]
+			"partido_goleador", "usuarios", "partidos_asistidos", "partido_asistido_favorito", "trayecto_partido_asistido",
+			"porra_partidos"]
 
 	for tabla in tablas:
 

@@ -113,6 +113,71 @@
     margin: 0 10px;
 }
 
+.resultado-container-porra-hecha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    gap: 25px;
+}
+
+.resultado-container-porra-hecha .equipo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resultado-container-porra-hecha .escudo {
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 5px;
+    width: 115px;
+    height: 115px;
+    cursor: pointer;
+}
+
+.resultado-container-porra-hecha label {
+    font-weight: bold;
+    color: var(--color-secundario);
+    font-size: 1.7rem;
+    white-space: nowrap;
+}
+
+.resultado-container-porra-hecha input {
+    width: 70px;
+    height: 55px;
+    text-align: center;
+    font-size: 1.8rem;
+    border-radius: 10px;
+    border: 2px solid var(--color-secundario);
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    -moz-appearance: textfield;
+    cursor: default;
+    caret-color: transparent;
+}
+
+.resultado-container-porra-hecha input:focus {
+    outline: none;
+    box-shadow: none;
+    transform: none;
+}
+
+.resultado-container-porra-hecha input::-webkit-inner-spin-button,
+.resultado-container-porra-hecha input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.resultado-container-porra-hecha .vs {
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--color-secundario);
+    margin: 0 10px;
+}
+
 .goleadores-container {
     width: 100%;
     background-color: var(--color-secundario);

@@ -219,15 +219,32 @@ def test_pagina_insertar_porra_partido_proximos_partidos(cliente, conexion_entor
 
 		contenido=respuesta.data.decode()
 
-		respuesta.status_code==200
-		assert "20200622" in contenido
-		assert str(goles_local) in contenido
-		assert str(goles_visitante) in contenido
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partido/20200622/porra"
+		assert "Redirecting..." in contenido
 
-		for goleador_local in goleadores_local:
+		conexion_entorno_usuario.c.execute("SELECT * FROM porra_partidos")
 
-			assert goleador_local in contenido
+		assert len(conexion_entorno_usuario.c.fetchall())==1
 
-		for goleador_visitante in goleadores_visitante:
+def test_pagina_insertar_porra_partido_proximos_partidos_existente(cliente, conexion_entorno_usuario):
 
-			assert goleador_visitante in contenido
+	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_id":"20200622", "goles_local":0, "goles_visitante":0}
+
+		respuesta=cliente_abierto.post("/insertar_porra_partido", data=data)
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==302
+		assert respuesta.location=="/partido/20200622/porra"
+		assert "Redirecting..." in contenido
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM porra_partidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
