@@ -364,6 +364,8 @@ def pagina_partido_porra(partido_id:str):
 
 	datos_porra=con.obtenerPorraPartido(partido_id, current_user.id) if con.existe_porra_partido(partido_id, current_user.id) else ()
 
+	porras_usuarios=list(filter(lambda porra: porra[0]!=current_user.id, con.obtenerPorrasPartido(partido_id)))
+
 	con.cerrarConexion()
 
 	return render_template("porra_proximo_partido.html",
@@ -377,10 +379,46 @@ def pagina_partido_porra(partido_id:str):
 							jugadores_visitante=[{"id":jugador[0], "nombre":jugador[1], "imagen":jugador[2]} for jugador in jugadores_visitante],
 							datos_porra=datos_porra,
 							porra_realizada=True if datos_porra else False,
+							porras_usuarios=porras_usuarios,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",
-							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
+							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/",
+							url_imagen_usuario_perfil_general=URL_DATALAKE_USUARIOS)
+
+@bp_partido.route("/partido/<partido_id>/porra/eliminar")
+@login_required
+def pagina_eliminar_partido_porra(partido_id:str):
+
+	entorno=current_app.config["ENVIROMENT"]
+
+	con=Conexion(entorno)
+
+	if not con.existe_proximo_partido(partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	equipo=con.obtenerEquipo(current_user.id)
+
+	if not con.equipo_proximo_partido(equipo, partido_id):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	if partido_id!=con.obtenerProximoPartidoPorra(equipo):
+
+		con.cerrarConexion()
+
+		return redirect("/partidos")
+
+	estadio_equipo=con.estadio_equipo(equipo)
+
+	con.eliminarPorraPartido(partido_id, current_user.id)
+
+	return redirect(f"/partido/{partido_id}/porra")
 
 
 bp_partido.add_app_template_filter(es_numero, name="es_numero")

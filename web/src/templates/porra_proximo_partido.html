@@ -4,7 +4,66 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/porra_proximo_partido.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+{% if porras_usuarios %}
+
+    <div class="contenedor-lateral contenedor-lateral-izq">
+        <div class="tarjeta-mas-porras">
+
+            <p class="titulo-mas-porras"><strong>Más Porras</strong></p>
+
+                <div class="tarjetas-mas-porras">
+                    <div class="tarjetas-mas-porras-wrapper">
+
+                    {% for porra_usuario in porras_usuarios %}
+
+                        <div class="tarjeta-porra-usuario">
+
+                            <div class="usuario-porra">
+
+                                {% if porra_usuario[2]=='-1' %}
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" 
+                                         alt="Usuario Icon" class="icono-usuario-porra">
+                                {% else %}
+                                    <img src="{{ url_imagen_usuario_perfil_general }}/{{ porra_usuario[0] }}/perfil/{{ porra_usuario[2] }}" 
+                                         alt="Usuario Icon" class="icono-usuario-imagen-porra">
+                                {% endif %}
+                                
+                                <strong>{{ porra_usuario[1] }}</strong>
+                            </div>
+
+                            <div class="info-porra-usuario">
+
+                                {% if proximo_partido[5]==-1 %}
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                                {% else %}
+                                    <img src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Local Icon">
+                                {% endif %}
+
+                                <h4>{{ porra_usuario[3] }} - {{ porra_usuario[4] }}</h4>
+
+                                {% if proximo_partido[8]==-1 %}
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                                {% else %}
+                                    <img src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Visitante Icon">
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                     </div>
+                </div>
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock contenedor_lateral_izq %}
+
 {% block partidos %}{% endblock partidos %}
 
 {% block principal %}
@@ -13,7 +72,7 @@
 
     <div class="porra-proximo-partido">
 
-        <form class="form-porra" method="POST" action="/insertar_porra_partido">
+        <form class="form-porra" method="POST" {% if porra_realizada %}action="#"{% else %}action="/insertar_porra_partido"{% endif %}>
 
             <p class="competicion">
                 <strong class="strong-competicion">{{ proximo_partido[2] }} - {{ proximo_partido[0] }} - {{ proximo_partido[1] }}</strong>
@@ -53,6 +112,10 @@
                             <img class="escudo" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Visitante Icon" onclick="window.location.href='/equipo/{{ proximo_partido[6] }}'">
                         {% endif %}
                     </div>
+                </div>
+
+                <div class="botones-porra">
+                    <button type="button" class="btn-modificar-porra" onclick="window.location.href='/partido/{{ partido_id }}/porra/eliminar'">Modificar Porra</button>
                 </div>
 
             {% else %}

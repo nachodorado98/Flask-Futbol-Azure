@@ -1,4 +1,106 @@
 /*-----------------------------------------------------PORRA PROXIMO PARTIDO-------------------------------------------------------------*/
+.tarjeta-mas-porras {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 10px 5px;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 310px;
+    position: fixed;
+    top: 71px;
+    bottom: 33px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-mas-porras .titulo-mas-porras {
+    font-size: 28px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-mas-porras {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-mas-porras::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-mas-porras-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-porra-usuario {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.usuario-porra {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    margin: 4px;
+    color: var(--color-secundario);
+    margin-bottom: 6px;
+}
+
+.icono-usuario-porra,
+.icono-usuario-imagen-porra {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.info-porra-usuario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px;
+}
+
+.info-porra-usuario img {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    width: 41px;
+    height: 41px;
+}
+
+.info-porra-usuario h4 {
+    font-size: 27px;
+    color: #fff;
+    margin: 2px;
+    color: var(--color-secundario) 
+}
+
 .tarjeta-proximo-partido-detalle {
     width: 100%;
     max-width: 910px;
@@ -270,21 +372,8 @@
     margin-top: 25px;
 }
 
-.btn-enviar-porra {
-    background-color: var(--color-secundario);
-    color: var(--color-primario);
-    font-size: 20px;
-    padding: 10px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.btn-enviar-porra:hover {
-    transform: scale(1.05);
-}
-
+.btn-enviar-porra,
+.btn-modificar-porra,
 .btn-restablecer-porra {
     background-color: var(--color-secundario);
     color: var(--color-primario);
@@ -296,6 +385,8 @@
     transition: all 0.3s ease-in-out;
 }
 
+.btn-enviar-porra:hover,
+.btn-modificar-porra:hover,
 .btn-restablecer-porra:hover {
     transform: scale(1.05);
 }

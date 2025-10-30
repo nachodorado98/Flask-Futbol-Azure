@@ -64,3 +64,78 @@ def test_obtener_porra_partido(conexion_entorno):
 	porra_partido=conexion_entorno.obtenerPorraPartido("20200622", "nacho")
 
 	assert porra_partido==(1, 0)
+
+def test_obtener_porras_partido_no_existen(conexion):
+
+	assert not conexion.obtenerPorrasPartido("20200622")
+
+def test_obtener_porras_partido_no_existen_porras(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPorrasPartido("20200622")
+
+def test_obtener_porras_partido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+
+	porras_partido=conexion_entorno.obtenerPorrasPartido("20200622")
+
+	assert len(porras_partido)==1
+
+@pytest.mark.parametrize(["numero_porras"],
+	[(2,),(5,),(13,),(22,)]
+)
+def test_obtener_porras_partido_varias(conexion_entorno, numero_porras):
+
+	for numero in range(numero_porras):
+
+		conexion_entorno.insertarUsuario(f"nacho_{numero}", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+		conexion_entorno.insertarPorraPartido(f"nacho_{numero}", "20200622", 1, 0)
+
+	porras_partido=conexion_entorno.obtenerPorrasPartido("20200622")
+
+	assert len(porras_partido)==numero_porras
+
+def test_eliminar_porra_partido_no_existen(conexion):
+
+	assert not conexion.obtenerPorrasPartido("20200622")
+
+	conexion.eliminarPorraPartido("20200622", "nacho")
+
+	assert not conexion.obtenerPorrasPartido("20200622")
+
+def test_eliminar_porra_partido_asistido_no_existe_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPorrasPartido("20200622")
+
+	conexion_entorno.eliminarPorraPartido("20200622", "otro")
+
+	assert not conexion_entorno.obtenerPorrasPartido("20200622")
+
+def test_eliminar_porra_partido_no_existe_porra(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPorrasPartido("20200622")
+
+	conexion_entorno.eliminarPorraPartido("20200622", "nacho")
+
+	assert not conexion_entorno.obtenerPorrasPartido("20200622")
+
+def test_eliminar_porra_partido(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+
+	assert conexion_entorno.obtenerPorrasPartido("20200622")
+
+	conexion_entorno.eliminarPorraPartido("20200622", "nacho")
+
+	assert not conexion_entorno.obtenerPorrasPartido("20200622")

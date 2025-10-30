@@ -3444,7 +3444,7 @@ class Conexion:
 		self.confirmar()
 
 	# Metodo para obtener la porra de un partido
-	def obtenerPorraPartido(self, partido_id:str, usuario:str)->bool:
+	def obtenerPorraPartido(self, partido_id:str, usuario:str)->Optional[tuple]:
 
 		self.c.execute("""SELECT *
 						FROM porra_partidos
@@ -3455,3 +3455,36 @@ class Conexion:
 		porra_partido=self.c.fetchone()
 
 		return None if not porra_partido else (porra_partido["goles_local"], porra_partido["goles_visitante"])
+
+	# Metodo para obtener las porras de un partido
+	def obtenerPorrasPartido(self, partido_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT u.usuario, u.nombre,
+							CASE WHEN u.imagen_perfil IS NULL
+									THEN '-1'
+									ELSE u.imagen_perfil
+							END as imagen_usuario,
+							pp.goles_local, pp.goles_visitante
+						FROM porra_partidos pp
+						JOIN usuarios u
+						ON pp.usuario=u.usuario
+						WHERE pp.partido_id=%s""",
+						(partido_id,))
+
+		porras_partido=self.c.fetchall()
+
+		return list(map(lambda porra: (porra["usuario"],
+										porra["nombre"],
+										porra["imagen_usuario"],
+										porra["goles_local"],
+										porra["goles_visitante"]), porras_partido))
+
+	# Metodo para eliminar una porra de un partido
+	def eliminarPorraPartido(self, partido_id:str, usuario:str)->None:
+
+		self.c.execute("""DELETE FROM porra_partidos
+							WHERE Partido_Id=%s
+							AND Usuario=%s""",
+							(partido_id, usuario))
+
+		self.confirmar()

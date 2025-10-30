@@ -86,6 +86,10 @@ def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno
 		assert '<input type="number" id="goles_local" name="goles_local" value="1"' not in contenido
 		assert '<input type="number" id="goles_visitante" name="goles_visitante" value="0"' not in contenido
 		assert '<div id="goleadores-container"' in contenido
+		assert '<div class="contenedor-lateral contenedor-lateral-izq">' not in contenido
+		assert '<div class="tarjeta-mas-porras">' not in contenido
+		assert '<div class="tarjetas-mas-porras">' not in contenido
+		assert '<div class="tarjeta-porra-usuario">' not in contenido
 
 def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_usuario):
 
@@ -108,3 +112,31 @@ def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_
 		assert '<input type="number" id="goles_local" name="goles_local" value="1"' in contenido
 		assert '<input type="number" id="goles_visitante" name="goles_visitante" value="0"' in contenido
 		assert '<div id="goleadores-container"' not in contenido
+		assert '<div class="contenedor-lateral contenedor-lateral-izq">' not in contenido
+		assert '<div class="tarjeta-mas-porras">' not in contenido
+		assert '<div class="tarjetas-mas-porras">' not in contenido
+		assert '<div class="tarjeta-porra-usuario">' not in contenido
+
+def test_pagina_porra_proximo_partido_mas_porras(cliente, conexion_entorno_usuario, password_hash):
+
+	conexion_entorno_usuario.insertarUsuario("amanda", "amanda@gmail.com", password_hash, "amanda", "aranda", "1999-08-06", 103, "atletico-madrid")
+
+	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+
+	conexion_entorno_usuario.insertarPorraPartido("amanda", "20200622", 3, 0)
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20200622/porra")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="contenedor-lateral contenedor-lateral-izq">' in contenido
+		assert '<div class="tarjeta-mas-porras">' in contenido
+		assert '<div class="tarjetas-mas-porras">' in contenido
+		assert '<div class="tarjeta-porra-usuario">' in contenido
+		assert '<strong>amanda</strong>' in contenido
+		assert '<h4>3 - 0</h4>' in contenido
