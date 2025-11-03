@@ -3488,3 +3488,56 @@ class Conexion:
 							(partido_id, usuario))
 
 		self.confirmar()
+
+	# Metodo para obtener la clasificacion de las porras
+	def obtenerClasificacionPorras(self)->List[Optional[tuple]]:
+
+		self.c.execute("""WITH resultado_real AS (
+							  SELECT p.partido_id, SPLIT_PART(p.marcador, '-', 1)::INT AS goles_local_real, SPLIT_PART(p.marcador, '-', 2)::INT AS goles_visitante_real
+							  FROM partidos p),
+							tabla_final AS (
+							  SELECT u.usuario, u.nombre,
+							    CASE WHEN u.imagen_perfil IS NULL
+										THEN '-1'
+										ELSE u.imagen_perfil
+								END as imagen_usuario,
+							    pp.goles_local, pp.goles_visitante, r.goles_local_real, r.goles_visitante_real, p.marcador,
+							    CASE WHEN pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real
+								      THEN true
+								      ELSE false
+							    END AS es_exacto,
+							    CASE WHEN pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real
+									    THEN 10
+									    ELSE 0
+							    END AS puntos_resultado_exactos,
+							    CASE WHEN NOT (pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real)
+							       AND ((pp.goles_local - pp.goles_visitante) * (r.goles_local_real - r.goles_visitante_real) > 0
+							         OR (pp.goles_local = pp.goles_visitante AND r.goles_local_real = r.goles_visitante_real))
+								    THEN 4
+								    ELSE 0
+							    END AS puntos_ganador,
+							    CASE WHEN pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real
+								    THEN 10
+								    ELSE 
+								    	CASE WHEN NOT (pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real) 
+								    		AND ((pp.goles_local - pp.goles_visitante) * (r.goles_local_real - r.goles_visitante_real) > 0
+							            	OR (pp.goles_local = pp.goles_visitante AND r.goles_local_real = r.goles_visitante_real))
+									        	THEN 4
+									            ELSE 0
+							         	END
+							    END AS puntos_totales
+							  FROM porra_partidos pp
+							  JOIN partidos p ON pp.partido_id = p.partido_id
+							  JOIN usuarios u ON pp.usuario = u.usuario
+							  JOIN resultado_real r ON p.partido_id = r.partido_id)
+							SELECT usuario, nombre, imagen_usuario, sum(puntos_totales) as total
+							FROM tabla_final
+							GROUP BY usuario, nombre, imagen_usuario
+							ORDER BY total desc""")
+
+		claificacion_porras=self.c.fetchall()
+
+		return list(map(lambda porra: (porra["usuario"],
+										porra["nombre"],
+										porra["imagen_usuario"],
+										porra["total"]), claificacion_porras))

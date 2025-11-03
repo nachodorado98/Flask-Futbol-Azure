@@ -3,7 +3,7 @@
     flex-direction: column;
     display: flex;
     align-items: center;
-    margin: 10px auto 10px 5px;
+    margin: 10px auto 10px 4px;
     padding: 5px;
     border: 1px solid #bdc3c7;
     border-radius: 8px;
@@ -389,4 +389,93 @@
 .btn-modificar-porra:hover,
 .btn-restablecer-porra:hover {
     transform: scale(1.05);
+}
+
+.tarjeta-clasificacion-porras {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 10px -35px;
+    padding-left: 20px;
+    padding-right: 10px; 
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 290px;
+    position: fixed;
+    top: 71px;
+    bottom: 33px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-clasificacion-porras .titulo-clasificacion-porras {
+    font-size: 23px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-clasificacion-porras {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-clasificacion-porras::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-clasificacion-porras-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-clasificacion-porras-usuario {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.ranking-clasificacion-porras{
+    font-size: 18px;
+    color: var(--color-secundario);
+    margin-right: 5px;
+}
+
+.usuario-clasificacion-porras {
+    display: flex;
+    align-items: center;
+    margin: 2px;
+}
+
+.icono-usuario-clasificacion-porras,
+.icono-usuario-imagen-clasificacion-porras {
+    margin-right: 8px;
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.datos-clasificacion-porras{
+    font-size: 16px;
+    color: var(--color-secundario);
 }

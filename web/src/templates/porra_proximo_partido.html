@@ -199,4 +199,52 @@ window.urlImagenJugador = "{{ url_imagen_jugador }}";
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+{% if clasificacion_porras %}
+
+    <div class="contenedor-lateral contenedor-lateral-der">
+
+        <div class="tarjeta-clasificacion-porras">
+
+            <p class="titulo-clasificacion-porras">
+                <strong>Clasificación</strong>
+            </p>
+
+            <div class="tarjetas-clasificacion-porras">
+                <div class="tarjetas-clasificacion-porras-wrapper">
+
+                {% for clasificacion in clasificacion_porras %}
+
+                    <div class="tarjeta-clasificacion-porras-usuario">
+
+                        <div class="usuario-clasificacion-porras">
+
+                            <p class="ranking-clasificacion-porras"><strong>{{ loop.index }}º</strong></p>
+
+                            {% if clasificacion[2]=='-1' %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/usuario.png') }}" 
+                                     alt="Usuario Icon" class="icono-usuario-clasificacion-porras">
+                            {% else %}
+                                <img src="{{ url_imagen_usuario_perfil_general }}/{{ clasificacion[0] }}/perfil/{{ clasificacion[2] }}" 
+                                     alt="Usuario Icon" class="icono-usuario-imagen-clasificacion-porras">
+                            {% endif %}
+                            
+                            <p class="datos-clasificacion-porras"><strong>{{ clasificacion[1] }} - {{ clasificacion[3] }} pts</strong></p>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+{% endblock contenedor_lateral_der %}

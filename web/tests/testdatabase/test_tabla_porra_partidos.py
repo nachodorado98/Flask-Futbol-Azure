@@ -139,3 +139,56 @@ def test_eliminar_porra_partido(conexion_entorno):
 	conexion_entorno.eliminarPorraPartido("20200622", "nacho")
 
 	assert not conexion_entorno.obtenerPorrasPartido("20200622")
+
+def test_obtener_clasificacion_porras_no_existen(conexion):
+
+	assert not conexion.obtenerClasificacionPorras()
+
+def test_obtener_clasificacion_porras_no_existen_porras(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerClasificacionPorras()
+
+def test_obtener_clasificacion_porras_aun_no_jugado(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+
+	assert not conexion_entorno.obtenerClasificacionPorras()
+
+def test_obtener_clasificacion_porras_un_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPorraPartido("nacho", "20190622", 1, 0)
+
+	clasificacion=conexion_entorno.obtenerClasificacionPorras()
+
+	assert clasificacion[0][0]=="nacho"
+	assert clasificacion[0][3]==10
+
+@pytest.mark.parametrize(["datos"],
+	[
+		([("nacho", 1, 0, 10)],),
+		([("nacho", 1, 0, 10), ("amanda", 2, 0, 4)],),
+		([("nacho", 1, 0, 10), ("amanda", 2, 0, 4), ("cuca", 0, 0, 0)],),
+		([("nacho", 1, 0, 10), ("amanda", 2, 1, 4), ("baby", 0, 1, 0), ("cuca", 0, 0, 0)],),
+		([("amanda", 2, 1, 4), ("nacho", 5, 0, 4), ("baby", 0, 1, 0), ("cuca", 0, 0, 0)],)
+	]
+)
+def test_obtener_clasificacion_porras_varios_usuarios(conexion_entorno, datos):
+
+	for nombre, local, visitante, puntos in datos:
+
+		conexion_entorno.insertarUsuario(nombre, "micorreo@correo.es", "1234", nombre, "dorado", "1998-02-16", 103, "atletico-madrid")
+
+		conexion_entorno.insertarPorraPartido(nombre, "20190622", local, visitante)
+
+	clasificacion=conexion_entorno.obtenerClasificacionPorras()
+
+	for d, c in zip(datos, clasificacion):
+
+		assert d[0]==c[0]
+		assert d[-1]==c[-1]

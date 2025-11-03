@@ -90,6 +90,11 @@ def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno
 		assert '<div class="tarjeta-mas-porras">' not in contenido
 		assert '<div class="tarjetas-mas-porras">' not in contenido
 		assert '<div class="tarjeta-porra-usuario">' not in contenido
+		assert '<div class="contenedor-lateral contenedor-lateral-der">' not in contenido
+		assert '<div class="tarjeta-clasificacion-porras">' not in contenido
+		assert '<div class="tarjetas-clasificacion-porras">' not in contenido
+		assert '<div class="tarjeta-clasificacion-porras-usuario">' not in contenido
+		assert '<div class="usuario-clasificacion-porras">' not in contenido
 
 def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_usuario):
 
@@ -116,6 +121,11 @@ def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_
 		assert '<div class="tarjeta-mas-porras">' not in contenido
 		assert '<div class="tarjetas-mas-porras">' not in contenido
 		assert '<div class="tarjeta-porra-usuario">' not in contenido
+		assert '<div class="contenedor-lateral contenedor-lateral-der">' not in contenido
+		assert '<div class="tarjeta-clasificacion-porras">' not in contenido
+		assert '<div class="tarjetas-clasificacion-porras">' not in contenido
+		assert '<div class="tarjeta-clasificacion-porras-usuario">' not in contenido
+		assert '<div class="usuario-clasificacion-porras">' not in contenido
 
 def test_pagina_porra_proximo_partido_mas_porras(cliente, conexion_entorno_usuario, password_hash):
 
@@ -140,3 +150,28 @@ def test_pagina_porra_proximo_partido_mas_porras(cliente, conexion_entorno_usuar
 		assert '<div class="tarjeta-porra-usuario">' in contenido
 		assert '<strong>amanda</strong>' in contenido
 		assert '<h4>3 - 0</h4>' in contenido
+
+def test_pagina_porra_proximo_partido_clasificacion_partido_jugado(cliente, conexion_entorno_usuario, password_hash):
+
+	conexion_entorno_usuario.insertarUsuario("amanda", "amanda@gmail.com", password_hash, "amanda", "aranda", "1999-08-06", 103, "atletico-madrid")
+
+	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20190622", 1, 0)
+
+	conexion_entorno_usuario.insertarPorraPartido("amanda", "20190622", 3, 0)
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20200622/porra")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="contenedor-lateral contenedor-lateral-der">' in contenido
+		assert '<div class="tarjeta-clasificacion-porras">' in contenido
+		assert '<div class="tarjetas-clasificacion-porras">' in contenido
+		assert '<div class="tarjeta-clasificacion-porras-usuario">' in contenido
+		assert '<div class="usuario-clasificacion-porras">' in contenido
+		assert '<p class="datos-clasificacion-porras"><strong>nacho - 10 pts</strong></p>' in contenido
+		assert '<p class="datos-clasificacion-porras"><strong>amanda - 4 pts</strong></p>' in contenido

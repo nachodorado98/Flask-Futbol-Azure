@@ -366,6 +366,8 @@ def pagina_partido_porra(partido_id:str):
 
 	porras_usuarios=list(filter(lambda porra: porra[0]!=current_user.id, con.obtenerPorrasPartido(partido_id)))
 
+	clasificacion_porras=con.obtenerClasificacionPorras()
+
 	con.cerrarConexion()
 
 	return render_template("porra_proximo_partido.html",
@@ -380,6 +382,7 @@ def pagina_partido_porra(partido_id:str):
 							datos_porra=datos_porra,
 							porra_realizada=True if datos_porra else False,
 							porras_usuarios=porras_usuarios,
+							clasificacion_porras=clasificacion_porras,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,
 							url_imagen_usuario_imagenes=f"{URL_DATALAKE_USUARIOS}{current_user.id}/imagenes/",
