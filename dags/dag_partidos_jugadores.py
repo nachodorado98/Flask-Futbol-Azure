@@ -5,6 +5,7 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
+from airflow.models import Variable
 
 from utils import existe_entorno
 
@@ -13,12 +14,11 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 
 from pipelines import Pipeline_Partidos_Equipo_Total, Pipeline_Jugadores_Equipo_Total, Pipeline_Proximos_Partidos_Equipo
 
+equipo_id="{{ dag_run.conf.get('equipo_id', 1381) }}"
+equipo_id_real="{{ dag_run.conf.get('equipo_id_real', 'internazionale') }}"
 
-equipo_id=1381
-equipo_id_real="internazionale"
 
-
-with DAG("dag_partidos_jugadores_completo",
+with DAG("dag_partidos_jugadores",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de todos los partidos y jugadores de la web de futbol de un equipo",
 		schedule_interval=None,

@@ -1122,3 +1122,28 @@ class Conexion:
 		titulos=self.c.fetchall()
 
 		return list(map(lambda titulo: titulo["codigo_titulo"], titulos))
+
+	# Metodo para obtener los equipos de los proximos partidos de un equipo
+	def obtenerEquiposProximosPartidosEquipo(self, equipo_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT DISTINCT CASE WHEN e1.equipo_id=%s
+													THEN e2.equipo_id
+													ELSE e1.equipo_id
+											END AS equipo_id,
+											CASE WHEN e1.equipo_id=%s
+													THEN e2.escudo
+													ELSE e1.escudo
+											END AS escudo
+							FROM proximos_partidos pp
+							LEFT JOIN equipos e1
+							ON pp.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON pp.equipo_id_visitante=e2.equipo_id
+							WHERE pp.equipo_id_local=%s
+							OR pp.equipo_id_visitante=%s""",
+							(equipo_id, equipo_id, equipo_id, equipo_id))
+
+		equipos_proximos_partidos=self.c.fetchall()
+
+		return list(map(lambda equipo_proximo_partido: (equipo_proximo_partido["equipo_id"],
+														equipo_proximo_partido["escudo"]), equipos_proximos_partidos))

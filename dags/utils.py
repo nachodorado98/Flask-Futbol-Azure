@@ -1,7 +1,8 @@
 from datetime import datetime
 import os
+from typing import List, Optional, Dict
 
-from config import ENTORNO
+from config import ENTORNO, EQUIPO_ID_REAL
 
 from python.src.database.conexion import Conexion
 from python.src.utils import obtenerBoolCadena
@@ -104,3 +105,13 @@ def ejecutarDagBackUp()->None:
 def realizarBackUpBBDDPRO()->None:
 
 	realizarBackUpBBDD(ENTORNO)
+
+def obtenerEquiposProximosPartidos()->List[Optional[Dict]]:
+
+	con=Conexion(ENTORNO)
+
+	equipos_proximos_partidos=con.obtenerEquiposProximosPartidosEquipo(EQUIPO_ID_REAL)
+
+	con.cerrarConexion()
+
+	return list(map(lambda equipo: {"equipo_id":equipo[1], "equipo_id_real":equipo[0]}, equipos_proximos_partidos))
