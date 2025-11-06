@@ -10,6 +10,7 @@ from shapely.geometry import Point
 import pandas as pd
 from geopy.distance import geodesic
 import math
+from collections import Counter
 
 from src.database.conexion import Conexion
 
@@ -1011,3 +1012,9 @@ def validarGolesGoleadores(goles_local:int, goles_visitante:int, goleadores_loca
 		return False
 
 	return True
+
+def goleadoresLimpios(goleadores:List[str], local:bool)->List[tuple]:
+
+	goleadores_contados=Counter(goleadores)
+
+	return [(goleador, goleadores_contados[goleador], local) for goleador in dict.fromkeys(goleadores)]

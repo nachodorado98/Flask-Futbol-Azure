@@ -220,12 +220,20 @@ CREATE TABLE trayecto_partido_asistido (Trayecto_Id VARCHAR(255) PRIMARY KEY,
 										FOREIGN KEY (CodCiudad_Origen) REFERENCES ciudades (CodCiudad),
 										FOREIGN KEY (CodCiudad_Destino) REFERENCES ciudades (CodCiudad));
 
-CREATE TABLE porra_partidos (Usuario VARCHAR(255),
+CREATE TABLE porra_partidos (Porra_Id VARCHAR(255) PRIMARY KEY,
+							Usuario VARCHAR(255),
 							Partido_Id VARCHAR(255),
 							Goles_Local INTEGER,
 							Goles_Visitante INTEGER,
-							PRIMARY KEY (Usuario, Partido_Id),
 							FOREIGN KEY (Usuario) REFERENCES usuarios (Usuario) ON DELETE CASCADE);
+
+CREATE TABLE porra_goleadores (Porra_Id VARCHAR(255),
+								Jugador_Id VARCHAR(255),
+								Goles INTEGER,
+								Local BOOL,
+								PRIMARY KEY (Porra_Id, Jugador_Id),
+								FOREIGN KEY (Porra_Id) REFERENCES porra_partidos (Porra_Id) ON DELETE CASCADE,
+								FOREIGN KEY (Jugador_Id) REFERENCES jugadores (Jugador_Id) ON DELETE CASCADE);
 
 DELETE FROM paises WHERE pais IN ('Anguila', 'Antigua y Barbuda', 'Aruba', 'Bahamas', 'Barbados', 'Bermudas', 'Cabo Verde', 
     'Comoras', 'Dominica', 'Fiyi', 'Granada', 'Guadalupe', 'Guam', 'Guayana Francesa', 'Isla de Man', 'Isla de Navidad', 

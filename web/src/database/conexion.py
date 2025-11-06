@@ -3435,11 +3435,11 @@ class Conexion:
 		return False if not self.c.fetchone() else True
 
 	# Metodo para insertar la porra de un partido
-	def insertarPorraPartido(self, usuario:str, partido_id:str, goles_local:int, goles_visitante:int)->None:
+	def insertarPorraPartido(self, porra_id:str, usuario:str, partido_id:str, goles_local:int, goles_visitante:int)->None:
 
 		self.c.execute("""INSERT INTO porra_partidos
-							VALUES (%s, %s, %s, %s)""",
-							(usuario, partido_id, goles_local, goles_visitante))
+							VALUES (%s, %s, %s, %s, %s)""",
+							(porra_id, usuario, partido_id, goles_local, goles_visitante))
 
 		self.confirmar()
 
@@ -3541,3 +3541,12 @@ class Conexion:
 										porra["nombre"],
 										porra["imagen_usuario"],
 										porra["total"]), claificacion_porras))
+
+	# Metodo para insertar el goleador de una porra
+	def insertarGoleadorPorra(self, porra_id:str, jugador_id:str, goles:int, local:bool)->None:
+
+		self.c.execute("""INSERT INTO porra_goleadores
+							VALUES(%s, %s, %s, %s)""",
+							(porra_id, jugador_id, goles, local))
+
+		self.confirmar()

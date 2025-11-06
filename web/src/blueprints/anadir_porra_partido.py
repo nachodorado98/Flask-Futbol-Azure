@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from src.database.conexion import Conexion
 
-from src.utilidades.utils import validarGolesGoleadores
+from src.utilidades.utils import validarGolesGoleadores, goleadoresLimpios
 
 bp_anadir_porra_partido=Blueprint("anadir_porra_partido", __name__)
 
@@ -62,7 +62,21 @@ def pagina_insertar_porra_partido():
 
 	if not con.existe_porra_partido(partido_id, current_user.id):
 
-		con.insertarPorraPartido(current_user.id, partido_id, goles_local, goles_visitante)
+		porra_id=f"{current_user.id}-{partido_id}"
+
+		con.insertarPorraPartido(porra_id, current_user.id, partido_id, goles_local, goles_visitante)
+
+		goleadores_local_limpios=goleadoresLimpios(goleadores_local, True)
+
+		goleadores_visitante_limpios=goleadoresLimpios(goleadores_visitante, False)
+		
+		for goleador, goles, local in goleadores_local_limpios:
+
+			con.insertarGoleadorPorra(porra_id, goleador, goles, local)
+
+		for goleador, goles, local in goleadores_visitante_limpios:
+
+			con.insertarGoleadorPorra(porra_id, goleador, goles, local)
 
 	con.cerrarConexion()
 

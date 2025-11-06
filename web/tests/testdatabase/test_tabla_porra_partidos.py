@@ -13,7 +13,7 @@ def test_insertar_porra_partido_usuario(conexion_entorno, partido_id, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido(usuario, partido_id, 1, 0)
+	conexion_entorno.insertarPorraPartido(f"{usuario}-{partido_id}", usuario, partido_id, 1, 0)
 
 	conexion_entorno.c.execute("SELECT * FROM porra_partidos")
 
@@ -35,7 +35,7 @@ def test_existe_porra_partido(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+	conexion_entorno.insertarPorraPartido("nacho-20200622", "nacho", "20200622", 1, 0)
 
 	assert conexion_entorno.existe_porra_partido("20200622", "nacho")
 
@@ -59,7 +59,7 @@ def test_obtener_porra_partido(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+	conexion_entorno.insertarPorraPartido("nacho-20200622", "nacho", "20200622", 1, 0)
 
 	porra_partido=conexion_entorno.obtenerPorraPartido("20200622", "nacho")
 
@@ -79,7 +79,7 @@ def test_obtener_porras_partido(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+	conexion_entorno.insertarPorraPartido("nacho-20200622", "nacho", "20200622", 1, 0)
 
 	porras_partido=conexion_entorno.obtenerPorrasPartido("20200622")
 
@@ -94,7 +94,7 @@ def test_obtener_porras_partido_varias(conexion_entorno, numero_porras):
 
 		conexion_entorno.insertarUsuario(f"nacho_{numero}", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-		conexion_entorno.insertarPorraPartido(f"nacho_{numero}", "20200622", 1, 0)
+		conexion_entorno.insertarPorraPartido(f"nacho_{numero}-20200622", f"nacho_{numero}", "20200622", 1, 0)
 
 	porras_partido=conexion_entorno.obtenerPorrasPartido("20200622")
 
@@ -132,7 +132,7 @@ def test_eliminar_porra_partido(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+	conexion_entorno.insertarPorraPartido("nacho-20200622", "nacho", "20200622", 1, 0)
 
 	assert conexion_entorno.obtenerPorrasPartido("20200622")
 
@@ -154,7 +154,7 @@ def test_obtener_clasificacion_porras_aun_no_jugado(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido("nacho", "20200622", 1, 0)
+	conexion_entorno.insertarPorraPartido("nacho-20200622", "nacho", "20200622", 1, 0)
 
 	assert not conexion_entorno.obtenerClasificacionPorras()
 
@@ -162,7 +162,7 @@ def test_obtener_clasificacion_porras_un_usuario(conexion_entorno):
 
 	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
-	conexion_entorno.insertarPorraPartido("nacho", "20190622", 1, 0)
+	conexion_entorno.insertarPorraPartido("nacho-20200622", "nacho", "20190622", 1, 0)
 
 	clasificacion=conexion_entorno.obtenerClasificacionPorras()
 
@@ -184,7 +184,7 @@ def test_obtener_clasificacion_porras_varios_usuarios(conexion_entorno, datos):
 
 		conexion_entorno.insertarUsuario(nombre, "micorreo@correo.es", "1234", nombre, "dorado", "1998-02-16", 103, "atletico-madrid")
 
-		conexion_entorno.insertarPorraPartido(nombre, "20190622", local, visitante)
+		conexion_entorno.insertarPorraPartido(f"{nombre}-20200622", nombre, "20190622", local, visitante)
 
 	clasificacion=conexion_entorno.obtenerClasificacionPorras()
 

@@ -69,7 +69,9 @@ def test_pagina_eliminar_porra_partido_porra_no_disponible(cliente, conexion_ent
 
 def test_pagina_eliminar_porra_partido(cliente, conexion_entorno_usuario):
 
-	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
+
+	conexion_entorno_usuario.insertarGoleadorPorra("nacho98-20200622", "julian-alvarez", 1, True)
 
 	with cliente as cliente_abierto:
 
@@ -82,4 +84,11 @@ def test_pagina_eliminar_porra_partido(cliente, conexion_entorno_usuario):
 		respuesta.status_code==302
 		assert respuesta.location=="/partido/20200622/porra"
 		assert "Redirecting..." in contenido
-		assert not conexion_entorno_usuario.obtenerPorrasPartido("20200622")
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM porra_partidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==0
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM porra_goleadores")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==0

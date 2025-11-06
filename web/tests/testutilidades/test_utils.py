@@ -20,7 +20,7 @@ from src.utilidades.utils import obtenerNombreDivisionSeleccionado, obtenerDivis
 from src.utilidades.utils import obtenerCombinacionesParadas, obtenerDataframeTrayecto, obtenerDataframeConParadas, obtenerDataframeDireccion
 from src.utilidades.utils import obtenerDataframeDireccionParadas, validarDataFramesTrayectosCorrectos, validarDataFrameDuplicados
 from src.utilidades.utils import obtenerTrayectosConDistancia, obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias, anadirDiaActualCalendario
-from src.utilidades.utils import validarNumeroGoles, validarGoleadores, validarGolesGoleadores
+from src.utilidades.utils import validarNumeroGoles, validarGoleadores, validarGolesGoleadores, goleadoresLimpios
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2600,3 +2600,28 @@ def test_validar_goles_goleadores_goleadores(conexion_entorno, entorno, goles_lo
 	conexion_entorno.confirmar()
 
 	assert validarGolesGoleadores(goles_local, goles_visitante, goleadores_local, goleadores_visitante, entorno)
+
+def test_goleadores_limpios_vacio():
+
+	assert not goleadoresLimpios([], True)
+
+@pytest.mark.parametrize(["goleadores", "goles", "numero"],
+	[
+		(["koke", "antoine-griezmann"], (1, 1), 2),
+		(["koke", "antoine-griezmann", "julian-alvarez"], (1, 1, 1), 3),
+		(["koke", "antoine-griezmann", "koke"], (2, 1), 2),
+		(["koke", "antoine-griezmann", "antoine-griezmann", "koke"], (2, 2), 2),
+		(["koke", "koke", "koke", "koke"], (4,), 1),
+	]
+)
+def test_goleadores_limpios(goleadores, goles, numero):
+
+	goleadores_limpios=goleadoresLimpios(goleadores, True)
+
+	assert len(goleadores_limpios)==numero
+
+	for goleador, gol in zip(goleadores, goles):
+
+		goleador_limpio=list(filter(lambda valor: valor[0]==goleador, goleadores_limpios))
+
+		assert goleador_limpio[0][1]==gol

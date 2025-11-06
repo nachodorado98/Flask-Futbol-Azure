@@ -98,7 +98,7 @@ def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno
 
 def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
 
 	with cliente as cliente_abierto:
 
@@ -131,9 +131,9 @@ def test_pagina_porra_proximo_partido_mas_porras(cliente, conexion_entorno_usuar
 
 	conexion_entorno_usuario.insertarUsuario("amanda", "amanda@gmail.com", password_hash, "amanda", "aranda", "1999-08-06", 103, "atletico-madrid")
 
-	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
 
-	conexion_entorno_usuario.insertarPorraPartido("amanda", "20200622", 3, 0)
+	conexion_entorno_usuario.insertarPorraPartido("amanda-20200622", "amanda", "20200622", 3, 0)
 
 	with cliente as cliente_abierto:
 
@@ -155,9 +155,9 @@ def test_pagina_porra_proximo_partido_clasificacion_partido_jugado(cliente, cone
 
 	conexion_entorno_usuario.insertarUsuario("amanda", "amanda@gmail.com", password_hash, "amanda", "aranda", "1999-08-06", 103, "atletico-madrid")
 
-	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20190622", 1, 0)
+	conexion_entorno_usuario.insertarPorraPartido("nacho98-20190622", "nacho98", "20190622", 1, 0)
 
-	conexion_entorno_usuario.insertarPorraPartido("amanda", "20190622", 3, 0)
+	conexion_entorno_usuario.insertarPorraPartido("amanda-20190622", "amanda", "20190622", 3, 0)
 
 	with cliente as cliente_abierto:
 

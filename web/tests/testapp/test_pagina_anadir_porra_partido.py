@@ -177,15 +177,16 @@ def test_pagina_insertar_porra_partido_proximos_partidos_goleadores_no_existen(c
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-@pytest.mark.parametrize(["goles_local", "goles_visitante", "goleadores_local", "goleadores_visitante"],
+@pytest.mark.parametrize(["goles_local", "goles_visitante", "goleadores_local", "goleadores_visitante", "numero_goleadores"],
 	[
-		(1, 1, ["julian-alvarez"], ["antoine-griezmann"]),
-		(2, 0, ["koke", "antoine-griezmann"], []),
-		(3, 1, ["koke", "antoine-griezmann", "koke"], ["julian-alvarez"]),
-		(1, 2, ["antoine-griezmann"], ["koke", "julian-alvarez"])
+		(1, 1, ["julian-alvarez"], ["antoine-griezmann"], 2),
+		(2, 0, ["koke", "antoine-griezmann"], [], 2),
+		(3, 1, ["koke", "antoine-griezmann", "koke"], ["julian-alvarez"], 3),
+		(1, 2, ["antoine-griezmann"], ["koke", "julian-alvarez"], 3)
 	]
 )
-def test_pagina_insertar_porra_partido_proximos_partidos(cliente, conexion_entorno_usuario, goles_local, goles_visitante, goleadores_local, goleadores_visitante):
+def test_pagina_insertar_porra_partido_proximos_partidos(cliente, conexion_entorno_usuario, goles_local, goles_visitante,
+														goleadores_local, goleadores_visitante, numero_goleadores):
 
 	conexion_entorno_usuario.c.execute("""INSERT INTO jugadores
 										VALUES('antoine-griezmann', 'Grizzi', 'atletico-madrid', 'fr', '1324', 100, 100.0, 9, 'DC'),
@@ -227,15 +228,43 @@ def test_pagina_insertar_porra_partido_proximos_partidos(cliente, conexion_entor
 
 		assert len(conexion_entorno_usuario.c.fetchall())==1
 
+		conexion_entorno_usuario.c.execute("SELECT * FROM porra_goleadores")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==numero_goleadores
+
 def test_pagina_insertar_porra_partido_proximos_partidos_existente(cliente, conexion_entorno_usuario):
 
-	conexion_entorno_usuario.insertarPorraPartido("nacho98", "20200622", 1, 0)
+	conexion_entorno_usuario.c.execute("""INSERT INTO jugadores
+										VALUES('antoine-griezmann', 'Grizzi', 'atletico-madrid', 'fr', '1324', 100, 100.0, 9, 'DC'),
+										('koke', 'Koke', 'atletico-madrid', 'es', '1324', 100, 100.0, 9, 'DC')""")
+
+	conexion_entorno_usuario.confirmar()
+
+	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
+
+	conexion_entorno_usuario.insertarGoleadorPorra("nacho98-20200622", "julian-alvarez", 1, True)
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		data={"partido_id":"20200622", "goles_local":0, "goles_visitante":0}
+		data={"partido_id":"20200622", "goles_local":1, "goles_visitante":2}
+
+		goleadores=list(zip_longest(["antoine-griezmann"], ["koke", "julian-alvarez"], fillvalue=None))
+
+		for indice, goleadores_local_visitante in enumerate(goleadores):
+
+			local=goleadores_local_visitante[0]
+
+			visitante=goleadores_local_visitante[1]
+
+			if local:
+
+				data[f"local_goleador_{indice+1}"]=local
+
+			if visitante:
+
+				data[f"visitante_goleador_{indice+1}"]=visitante
 
 		respuesta=cliente_abierto.post("/insertar_porra_partido", data=data)
 
@@ -246,5 +275,9 @@ def test_pagina_insertar_porra_partido_proximos_partidos_existente(cliente, cone
 		assert "Redirecting..." in contenido
 
 		conexion_entorno_usuario.c.execute("SELECT * FROM porra_partidos")
+
+		assert len(conexion_entorno_usuario.c.fetchall())==1
+
+		conexion_entorno_usuario.c.execute("SELECT * FROM porra_goleadores")
 
 		assert len(conexion_entorno_usuario.c.fetchall())==1
