@@ -364,6 +364,8 @@ def pagina_partido_porra(partido_id:str):
 
 	datos_porra=con.obtenerPorraPartido(partido_id, current_user.id) if con.existe_porra_partido(partido_id, current_user.id) else ()
 
+	goleadores_porra=con.obtenerGoleadoresPorraPartido(partido_id, current_user.id)
+
 	porras_usuarios=list(filter(lambda porra: porra[0]!=current_user.id, con.obtenerPorrasPartido(partido_id)))
 
 	clasificacion_porras=con.obtenerClasificacionPorras()
@@ -381,6 +383,7 @@ def pagina_partido_porra(partido_id:str):
 							jugadores_visitante=[{"id":jugador[0], "nombre":jugador[1], "imagen":jugador[2]} for jugador in jugadores_visitante],
 							datos_porra=datos_porra,
 							porra_realizada=True if datos_porra else False,
+							goleadores_porra=goleadores_porra,
 							porras_usuarios=porras_usuarios,
 							clasificacion_porras=clasificacion_porras,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,

@@ -13,13 +13,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const jugadoresVisitante = window.jugadoresVisitante || [];
     const urlImagenJugador = window.urlImagenJugador || '/static/';
 
-    /**
-     * Genera los selects de goleadores dentro del contenedor .lista-goleadores
-     */
     function generarSelects(div, goles, jugadores, titulo) {
         const lista = div.querySelector(".lista-goleadores");
         if (!lista) return;
-        lista.innerHTML = ""; // Limpiamos solo la lista, no el título ni la imagen
+        lista.innerHTML = "";
 
         for (let i = 0; i < goles; i++) {
             const select = document.createElement("select");
@@ -60,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 opt.value = id;
                 opt.textContent = nombre;
 
-                // Imagen asociada a cada jugador
                 if (imagen === undefined || imagen === null || imagen === "-1") {
                     opt.dataset.img = "/static/imagenes/iconos/no_jugador.png";
                 } else {
@@ -84,9 +80,6 @@ document.addEventListener("DOMContentLoaded", function() {
         aplicarImagenesSelect();
     }
 
-    /**
-     * Aplica la imagen del jugador seleccionado al fondo del select
-     */
     function aplicarImagenesSelect() {
         document.querySelectorAll(".equipo-goleadores select.select-goleador").forEach(select => {
             const aplicarFondo = el => {
@@ -115,9 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    /**
-     * Actualiza los selects según los goles introducidos
-     */
     function actualizarGoleadores() {
         const gL = parseInt(golesLocal.value);
         const gV = parseInt(golesVisitante.value);
@@ -140,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function() {
     golesLocal.addEventListener("input", actualizarGoleadores);
     golesVisitante.addEventListener("input", actualizarGoleadores);
 
-    // Si ya hay valores cargados al entrar, genera los selects automáticamente
     if (golesLocal.value !== "" && golesVisitante.value !== "") {
         actualizarGoleadores();
     }

@@ -3550,3 +3550,29 @@ class Conexion:
 							(porra_id, jugador_id, goles, local))
 
 		self.confirmar()
+
+	# Metodo para obtener los goleadores de la porra de un partido
+	def obtenerGoleadoresPorraPartido(self, partido_id:str, usuario:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT j.jugador_id, j.nombre,
+								CASE WHEN j.codigo_jugador IS NULL
+										THEN '-1'
+										ELSE j.codigo_jugador
+								END as jugador,
+								pg.goles, pg.local
+						FROM porra_goleadores pg
+						LEFT JOIN porra_partidos pp
+						ON pg.porra_id=pp.porra_id
+						LEFT JOIN jugadores j
+						ON pg.jugador_id=j.jugador_id
+						WHERE pp.partido_id=%s
+						AND pp.usuario=%s""",
+						(partido_id, usuario))
+
+		goleadores=self.c.fetchall()
+			
+		return list(map(lambda goleador: (goleador["jugador_id"],
+											goleador["nombre"],
+											goleador["jugador"],
+											goleador["goles"],
+											goleador["local"]), goleadores))

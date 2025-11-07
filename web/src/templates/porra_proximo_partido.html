@@ -114,6 +114,83 @@
                     </div>
                 </div>
 
+
+                <div id="goleadores-container-porra-hecha" class="goleadores-container-porra-hecha">
+                    <div class="goleadores-grupo-porra-hecha">
+                        <div id="goleadores-local-porra-hecha" class="equipo-goleadores-porra-hecha">
+                            <div class="titulo-goleadores-porra-hecha">
+                                {% if proximo_partido[5]==-1 %}
+                                    <img class="escudo-porra-hecha" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo local">
+                                {% else %}
+                                    <img class="escudo-porra-hecha" src="{{ url_imagen_escudo }}{{ proximo_partido[5] }}.png" alt="Escudo local">
+                                {% endif %}
+                                <p>Goleadores del {{ proximo_partido[4] }}</p>
+                            </div>
+                            <div class="lista-goleadores-porra-hecha">
+
+                            {% for goleador in goleadores_porra %}
+
+                                {% if goleador[4]==True %}
+
+                                    <div class="goleador-item-porra-hecha">
+                                        {% if goleador[2]=='-1' %}
+                                            <img class="goleador-imagen-local" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
+                                        {% else %}
+                                            <img class="goleador-imagen-local" src="{{ url_imagen_jugador }}{{ goleador[2] }}.png" alt="Jugador Icon">
+                                        {% endif %}
+                                        
+                                        {% if goleador[3]>1 %}
+                                            <span>{{ goleador[1] }} X{{ goleador[3] }}</span>
+                                        {% else %}
+                                            <span>{{ goleador[1] }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+         
+                            </div>
+                        </div>
+
+                        <div id="goleadores-visitante-porra-hecha" class="equipo-goleadores-porra-hecha">
+                            <div class="titulo-goleadores-porra-hecha">
+                                {% if proximo_partido[8]==-1 %}
+                                    <img class="escudo-porra-hecha" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo visitante">
+                                {% else %}
+                                    <img class="escudo-porra-hecha" src="{{ url_imagen_escudo }}{{ proximo_partido[8] }}.png" alt="Escudo visitante">
+                                {% endif %}
+                                <p>Goleadores del {{ proximo_partido[7] }}</p>
+                            </div>
+                            <div class="lista-goleadores-porra-hecha">
+              
+                            {% for goleador in goleadores_porra %}
+
+                                {% if goleador[4]!=True %}
+
+                                    <div class="goleador-item-porra-hecha">
+                                        {% if goleador[2]=='-1' %}
+                                            <img class="goleador-imagen-local" src="{{ url_for('static', filename='imagenes/iconos/no_jugador.png') }}" alt="Jugador Icon">
+                                        {% else %}
+                                            <img class="goleador-imagen-local" src="{{ url_imagen_jugador }}{{ goleador[2] }}.png" alt="Jugador Icon">
+                                        {% endif %}
+
+                                        {% if goleador[3]>1 %}
+                                            <span>{{ goleador[1] }} X{{ goleador[3] }}</span>
+                                        {% else %}
+                                            <span>{{ goleador[1] }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="botones-porra">
                     <button type="button" class="btn-modificar-porra" onclick="window.location.href='/partido/{{ partido_id }}/porra/eliminar'">Modificar Porra</button>
                 </div>

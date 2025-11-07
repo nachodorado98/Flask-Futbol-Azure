@@ -1,3 +1,5 @@
+import pytest
+
 def test_pagina_porra_proximo_partido_sin_login(cliente):
 
 	respuesta=cliente.get("/partido/20200622/porra", follow_redirects=True)
@@ -95,10 +97,18 @@ def test_pagina_porra_proximo_partido_porra_disponible(cliente, conexion_entorno
 		assert '<div class="tarjetas-clasificacion-porras">' not in contenido
 		assert '<div class="tarjeta-clasificacion-porras-usuario">' not in contenido
 		assert '<div class="usuario-clasificacion-porras">' not in contenido
+		assert '<div id="goleadores-container-porra-hecha" class="goleadores-container-porra-hecha">' not in contenido
+		assert '<div class="goleadores-grupo-porra-hecha">' not in contenido
+		assert '<div id="goleadores-local-porra-hecha" class="equipo-goleadores-porra-hecha">' not in contenido
+		assert '<div id="goleadores-visitante-porra-hecha" class="equipo-goleadores-porra-hecha">' not in contenido
+		assert '<div class="lista-goleadores-porra-hecha">' not in contenido
+		assert '<div class="goleador-item-porra-hecha">' not in contenido
 
 def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_usuario):
 
 	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
+
+	conexion_entorno_usuario.insertarGoleadorPorra("nacho98-20200622", "julian-alvarez", 1, True)
 
 	with cliente as cliente_abierto:
 
@@ -126,6 +136,13 @@ def test_pagina_porra_proximo_partido_porra_existente(cliente, conexion_entorno_
 		assert '<div class="tarjetas-clasificacion-porras">' not in contenido
 		assert '<div class="tarjeta-clasificacion-porras-usuario">' not in contenido
 		assert '<div class="usuario-clasificacion-porras">' not in contenido
+		assert '<div id="goleadores-container-porra-hecha" class="goleadores-container-porra-hecha">' in contenido
+		assert '<div class="goleadores-grupo-porra-hecha">' in contenido
+		assert '<div id="goleadores-local-porra-hecha" class="equipo-goleadores-porra-hecha">' in contenido
+		assert '<div id="goleadores-visitante-porra-hecha" class="equipo-goleadores-porra-hecha">' in contenido
+		assert '<div class="lista-goleadores-porra-hecha">' in contenido
+		assert '<div class="goleador-item-porra-hecha">' in contenido
+		assert '<span>Julian</span>' in contenido
 
 def test_pagina_porra_proximo_partido_mas_porras(cliente, conexion_entorno_usuario, password_hash):
 
@@ -175,3 +192,29 @@ def test_pagina_porra_proximo_partido_clasificacion_partido_jugado(cliente, cone
 		assert '<div class="usuario-clasificacion-porras">' in contenido
 		assert '<p class="datos-clasificacion-porras"><strong>nacho - 10 pts</strong></p>' in contenido
 		assert '<p class="datos-clasificacion-porras"><strong>amanda - 4 pts</strong></p>' in contenido
+
+@pytest.mark.parametrize(["goles"],
+	[(2,),(5,),(22,),(13,)]
+)
+def test_pagina_porra_proximo_partido_goleador_mas_de_un_gol(cliente, conexion_entorno_usuario, goles):
+
+	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
+
+	conexion_entorno_usuario.insertarGoleadorPorra("nacho98-20200622", "julian-alvarez", goles, True)
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20200622/porra")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div id="goleadores-container-porra-hecha" class="goleadores-container-porra-hecha">' in contenido
+		assert '<div class="goleadores-grupo-porra-hecha">' in contenido
+		assert '<div id="goleadores-local-porra-hecha" class="equipo-goleadores-porra-hecha">' in contenido
+		assert '<div id="goleadores-visitante-porra-hecha" class="equipo-goleadores-porra-hecha">' in contenido
+		assert '<div class="lista-goleadores-porra-hecha">' in contenido
+		assert '<div class="goleador-item-porra-hecha">' in contenido
+		assert f'<span>Julian X{goles}</span>' in contenido

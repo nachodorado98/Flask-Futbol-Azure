@@ -365,6 +365,100 @@
     transition: all 0.2s ease-in-out;
 }
 
+.goleadores-container-porra-hecha {
+    width: 100%;
+    background-color: var(--color-secundario);
+    color: var(--color-primario);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-top: 10px;
+    animation: aparecer-porra-hecha 0.3s ease-in-out;
+}
+
+@keyframes aparecer-porra-hecha {
+    from {opacity: 0; transform: translateY(-10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.goleadores-grupo-porra-hecha {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 25px;
+    margin-top: 10px;
+    flex-wrap: nowrap;
+}
+
+.titulo-goleadores-porra-hecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.escudo-porra-hecha {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.equipo-goleadores-porra-hecha {
+    flex: 1;
+    background-color: var(--color-secundario);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: var(--color-primario);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.equipo-goleadores-porra-hecha p {
+    font-weight: bold;
+    color: var(--color-primario);
+    font-size: 20px;
+}
+
+.lista-goleadores-porra-hecha {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.goleador-item-porra-hecha {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 8px 8px 45px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border: 1px solid var(--color-secundario);
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    font-size: 1rem;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.goleador-item-porra-hecha img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.goleador-item-porra-hecha span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .botones-porra {
     display: flex;
     justify-content: center;
