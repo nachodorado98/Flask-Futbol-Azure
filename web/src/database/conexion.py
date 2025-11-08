@@ -3493,54 +3493,66 @@ class Conexion:
 	def obtenerClasificacionPorras(self)->List[Optional[tuple]]:
 
 		self.c.execute("""WITH resultado_real AS (
-							  SELECT p.partido_id, SPLIT_PART(p.marcador, '-', 1)::INT AS goles_local_real, SPLIT_PART(p.marcador, '-', 2)::INT AS goles_visitante_real
-							  FROM partidos p),
-							tabla_final AS (
-							  SELECT u.usuario, u.nombre,
-							    CASE WHEN u.imagen_perfil IS NULL
+						  SELECT p.partido_id,
+					  		SPLIT_PART(p.marcador,'-',1)::INT AS goles_local_real,
+					    	SPLIT_PART(p.marcador,'-',2)::INT AS goles_visitante_real
+						  FROM partidos p),
+
+						goleadores_reales AS (
+						  SELECT g.partido_id, g.jugador_id, g.local, COUNT(*) AS goles_reales
+						  FROM partido_goleador g
+						  GROUP BY g.partido_id, g.jugador_id, g.local),
+
+						porra_base AS (
+			  			  SELECT pp.porra_id, pp.partido_id, u.usuario, u.nombre,
+								CASE WHEN u.imagen_perfil IS NULL
 										THEN '-1'
 										ELSE u.imagen_perfil
 								END as imagen_usuario,
 							    pp.goles_local, pp.goles_visitante, r.goles_local_real, r.goles_visitante_real, p.marcador,
-							    CASE WHEN pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real
-								      THEN true
-								      ELSE false
-							    END AS es_exacto,
-							    CASE WHEN pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real
-									    THEN 10
-									    ELSE 0
-							    END AS puntos_resultado_exactos,
-							    CASE WHEN NOT (pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real)
-							       AND ((pp.goles_local - pp.goles_visitante) * (r.goles_local_real - r.goles_visitante_real) > 0
-							         OR (pp.goles_local = pp.goles_visitante AND r.goles_local_real = r.goles_visitante_real))
-								    THEN 4
-								    ELSE 0
-							    END AS puntos_ganador,
-							    CASE WHEN pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real
-								    THEN 10
-								    ELSE 
-								    	CASE WHEN NOT (pp.goles_local = r.goles_local_real AND pp.goles_visitante = r.goles_visitante_real) 
-								    		AND ((pp.goles_local - pp.goles_visitante) * (r.goles_local_real - r.goles_visitante_real) > 0
-							            	OR (pp.goles_local = pp.goles_visitante AND r.goles_local_real = r.goles_visitante_real))
-									        	THEN 4
-									            ELSE 0
-							         	END
-							    END AS puntos_totales
-							  FROM porra_partidos pp
-							  JOIN partidos p ON pp.partido_id = p.partido_id
-							  JOIN usuarios u ON pp.usuario = u.usuario
-							  JOIN resultado_real r ON p.partido_id = r.partido_id)
-							SELECT usuario, nombre, imagen_usuario, sum(puntos_totales) as total
-							FROM tabla_final
-							GROUP BY usuario, nombre, imagen_usuario
-							ORDER BY total desc""")
+							    CASE WHEN pp.goles_local=r.goles_local_real AND pp.goles_visitante=r.goles_visitante_real
+							    		THEN 10
+						      	WHEN (SIGN(pp.goles_local-pp.goles_visitante)=SIGN(r.goles_local_real-r.goles_visitante_real))
+						        AND ABS(pp.goles_local-pp.goles_visitante)=ABS(r.goles_local_real-r.goles_visitante_real)
+							        	THEN 5
+						      	WHEN SIGN(pp.goles_local-pp.goles_visitante)=SIGN(r.goles_local_real-r.goles_visitante_real)
+							        	THEN 3
+							      		ELSE 0
+							    END AS puntos_resultado
+						  FROM porra_partidos pp
+						  JOIN partidos p ON pp.partido_id=p.partido_id
+						  JOIN usuarios u ON pp.usuario=u.usuario
+						  JOIN resultado_real r ON p.partido_id=r.partido_id),
+
+						puntos_goleadores AS (
+						  SELECT pg.porra_id,
+						    SUM(CASE WHEN gr.jugador_id IS NOT NULL AND pg.local=gr.local
+						        		THEN 2*LEAST(pg.goles, gr.goles_reales)
+						        		ELSE 0
+					      	END) AS puntos_goleadores
+						  FROM porra_goleadores pg
+						  JOIN porra_partidos pp ON pp.porra_id=pg.porra_id
+						  JOIN goleadores_reales gr 
+						  ON gr.partido_id=pp.partido_id 
+						  AND gr.jugador_id=pg.jugador_id
+						  GROUP BY pg.porra_id)
+						SELECT b.usuario, b.nombre, b.imagen_usuario, SUM(b.puntos_resultado) AS puntos_resultado,
+						  		SUM(COALESCE(g.puntos_goleadores, 0)) AS puntos_goleadores,
+						  		SUM(b.puntos_resultado + COALESCE(g.puntos_goleadores, 0)) AS total_puntos
+						FROM porra_base b
+						LEFT JOIN puntos_goleadores g
+						ON b.porra_id=g.porra_id
+						GROUP BY b.usuario, b.nombre, b.imagen_usuario
+						ORDER BY total_puntos DESC""")
 
 		claificacion_porras=self.c.fetchall()
 
 		return list(map(lambda porra: (porra["usuario"],
 										porra["nombre"],
 										porra["imagen_usuario"],
-										porra["total"]), claificacion_porras))
+										int(porra["puntos_resultado"]),
+										int(porra["puntos_goleadores"]),
+										int(porra["total_puntos"])), claificacion_porras))
 
 	# Metodo para insertar el goleador de una porra
 	def insertarGoleadorPorra(self, porra_id:str, jugador_id:str, goles:int, local:bool)->None:

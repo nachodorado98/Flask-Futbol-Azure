@@ -150,7 +150,11 @@ def test_pagina_porra_proximo_partido_mas_porras(cliente, conexion_entorno_usuar
 
 	conexion_entorno_usuario.insertarPorraPartido("nacho98-20200622", "nacho98", "20200622", 1, 0)
 
+	conexion_entorno_usuario.insertarGoleadorPorra("nacho98-20200622", "julian-alvarez", 1, True)
+
 	conexion_entorno_usuario.insertarPorraPartido("amanda-20200622", "amanda", "20200622", 3, 0)
+
+	conexion_entorno_usuario.insertarGoleadorPorra("amanda-20200622", "julian-alvarez", 3, True)
 
 	with cliente as cliente_abierto:
 
@@ -174,7 +178,11 @@ def test_pagina_porra_proximo_partido_clasificacion_partido_jugado(cliente, cone
 
 	conexion_entorno_usuario.insertarPorraPartido("nacho98-20190622", "nacho98", "20190622", 1, 0)
 
+	conexion_entorno_usuario.insertarGoleadorPorra("nacho98-20190622", "julian-alvarez", 1, True)
+
 	conexion_entorno_usuario.insertarPorraPartido("amanda-20190622", "amanda", "20190622", 3, 0)
+
+	conexion_entorno_usuario.insertarGoleadorPorra("amanda-20190622", "julian-alvarez", 3, True)
 
 	with cliente as cliente_abierto:
 
@@ -190,8 +198,8 @@ def test_pagina_porra_proximo_partido_clasificacion_partido_jugado(cliente, cone
 		assert '<div class="tarjetas-clasificacion-porras">' in contenido
 		assert '<div class="tarjeta-clasificacion-porras-usuario">' in contenido
 		assert '<div class="usuario-clasificacion-porras">' in contenido
-		assert '<p class="datos-clasificacion-porras"><strong>nacho - 10 pts</strong></p>' in contenido
-		assert '<p class="datos-clasificacion-porras"><strong>amanda - 4 pts</strong></p>' in contenido
+		assert '<p class="datos-clasificacion-porras"><strong>nacho - 12 pts</strong></p>' in contenido
+		assert '<p class="datos-clasificacion-porras"><strong>amanda - 5 pts</strong></p>' in contenido
 
 @pytest.mark.parametrize(["goles"],
 	[(2,),(5,),(22,),(13,)]
