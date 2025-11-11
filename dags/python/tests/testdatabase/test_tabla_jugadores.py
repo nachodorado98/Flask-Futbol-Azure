@@ -129,3 +129,59 @@ def test_obtener_codigo_paises_jugadores(conexion, datos, numero_paises):
 	paises=conexion.obtenerCodigoPaisesJugadores()
 
 	assert len(paises)==numero_paises
+
+def test_obtener_jugadores_sin_nombre_no_hay(conexion):
+
+	assert not conexion.obtenerJugadoresNombreVacio()
+
+def test_obtener_equipos_sin_nombre(conexion):
+
+	conexion.insertarJugador("julian")
+
+	conexion.actualizarDatosJugador(["Julian", "atletico-madrid", "es", "1", 100, 100.0, 19, "DEL"], "julian")
+
+	for numero in range(1,11):
+
+		conexion.insertarJugador(f"julian-{numero}")
+
+	jugadores=conexion.obtenerJugadoresNombreVacio()
+
+	assert len(jugadores)==10
+
+def test_obtener_jugadores_sin_equipos_no_hay(conexion):
+
+	assert not conexion.obtenerJugadoresEquiposVacio()
+
+def test_obtener_equipos_sin_equipos(conexion):
+
+	conexion.insertarJugador("julian")
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarEquipoJugador(("julian", "atleti-madrid", 1, 1, 1))
+
+	for numero in range(1,11):
+
+		conexion.insertarJugador(f"julian-{numero}")
+
+	jugadores=conexion.obtenerJugadoresEquiposVacio()
+
+	assert len(jugadores)==10
+
+def test_obtener_jugadores_sin_seleccion_no_hay(conexion):
+
+	assert not conexion.obtenerJugadoresSeleccionVacio()
+
+def test_obtener_equipos_sin_seleccion(conexion):
+
+	conexion.insertarJugador("julian")
+
+	conexion.insertarSeleccionJugador(("julian", 13, 1, 1, 1))
+
+	for numero in range(1,11):
+
+		conexion.insertarJugador(f"julian-{numero}")
+
+	jugadores=conexion.obtenerJugadoresSeleccionVacio()
+
+	assert len(jugadores)==10

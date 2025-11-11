@@ -151,6 +151,20 @@ class Conexion:
 
 		return list(map(lambda equipo: equipo["equipo_id"], equipos))
 
+	# Metodo para obtener los equipos con palmares vacio
+	def obtenerEquiposPalmaresVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT e.Equipo_Id 
+						FROM equipos e
+						LEFT JOIN equipo_titulo et
+						ON et.equipo_id=e.equipo_id
+						WHERE Competicion_Id IS NULL
+						ORDER BY e.equipo_id;""")
+
+		equipos=self.c.fetchall()
+
+		return list(map(lambda equipo: equipo["equipo_id"], equipos))
+
 	# Metodo para actualizar el escudo de un equipo
 	def actualizarEscudoEquipo(self, datos_escudo:List[int], equipo_id:str)->None:
 
@@ -435,6 +449,32 @@ class Conexion:
 
 		return list(map(lambda competicion: competicion["competicion_id"], competiciones))
 
+	# Metodo para obtener las competiciones con nombre vacio
+	def obtenerCompeticionesNombreVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT Competicion_Id
+							FROM competiciones
+							WHERE Nombre IS NULL
+							ORDER BY Competicion_Id""")
+
+		competiciones=self.c.fetchall()
+
+		return list(map(lambda competicion: competicion["competicion_id"], competiciones))
+
+	# Metodo para obtener las competiciones con campeones vacio
+	def obtenerCompeticionesCampeonesVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT c.Competicion_Id
+							FROM competiciones c
+							LEFT JOIN competiciones_campeones cc
+							ON c.competicion_id=cc.competicion_id
+							WHERE cc.Equipo_Id IS NULL
+							ORDER BY c.Competicion_Id""")
+
+		competiciones=self.c.fetchall()
+
+		return list(map(lambda competicion: competicion["competicion_id"], competiciones))
+
 	# Metodo para obtener las competiciones unicas de los equipos
 	def obtenerCompeticionesEquipos(self)->List[tuple]:
 
@@ -594,6 +634,46 @@ class Conexion:
 		self.c.execute("""SELECT Jugador_Id
 						FROM jugadores
 						ORDER BY Jugador_Id""")
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: jugador["jugador_id"], jugadores))
+
+	# Metodo para obtener los jugadores con nombre vacio
+	def obtenerJugadoresNombreVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT Jugador_Id
+						FROM jugadores
+						WHERE Nombre IS NULL
+						ORDER BY Jugador_Id""")
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: jugador["jugador_id"], jugadores))
+
+	# Metodo para obtener los jugadores con equipos vacio
+	def obtenerJugadoresEquiposVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT j.Jugador_Id
+						FROM jugadores j
+						LEFT JOIN jugadores_equipo je
+						ON j.jugador_id=je.jugador_id
+						WHERE je.Equipo_Id IS NULL
+						ORDER BY j.jugador_id""")
+
+		jugadores=self.c.fetchall()
+
+		return list(map(lambda jugador: jugador["jugador_id"], jugadores))
+
+	# Metodo para obtener los jugadores con seleccion vacio
+	def obtenerJugadoresSeleccionVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT j.Jugador_Id
+						FROM jugadores j
+						LEFT JOIN jugadores_seleccion js
+						ON j.jugador_id=js.jugador_id
+						WHERE js.Codigo_Seleccion IS NULL
+						ORDER BY j.jugador_id""")
 
 		jugadores=self.c.fetchall()
 
@@ -800,7 +880,23 @@ class Conexion:
 
 		self.c.execute("""SELECT Entrenador_Id
 						FROM entrenadores
-						ORDER BY Entrenador_Id""")
+						WHERE Entrenador_Id NOT LIKE %s
+						ORDER BY Entrenador_Id""",
+						(r"%-",))
+
+		entrenadores=self.c.fetchall()
+
+		return list(map(lambda entrenador: entrenador["entrenador_id"], entrenadores))
+
+	# Metodo para obtener los entrenadores con nombre vacio
+	def obtenerEntrenadoresNombreVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT Entrenador_Id
+						FROM entrenadores
+						WHERE Nombre IS NULL
+						AND Entrenador_Id NOT LIKE %s
+						ORDER BY Entrenador_Id""",
+						(r"%-",))
 
 		entrenadores=self.c.fetchall()
 
@@ -812,7 +908,9 @@ class Conexion:
 		self.c.execute("""SELECT DISTINCT(Entrenador_URL) AS Entrenador
 							FROM equipos
 							WHERE Entrenador_URL IS NOT NULL
-							ORDER BY Entrenador_URL""")
+							AND Entrenador_URL NOT LIKE %s
+							ORDER BY Entrenador_URL""",
+							(r"%-",))
 
 		entrenadores=self.c.fetchall()
 

@@ -14,7 +14,7 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 from pipelines import Pipeline_Competiciones_Equipos, Pipeline_Competiciones, Pipeline_Campeones_Competiciones
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import data_lake_disponible_creado, subirCompeticionesDataLake, subirPaisesDataLake, subirTitulosCompeticionesDataLake
+from datalake import subirCompeticionesDataLake, subirPaisesDataLake, subirTitulosCompeticionesDataLake
 
 
 with DAG("dag_competiciones",

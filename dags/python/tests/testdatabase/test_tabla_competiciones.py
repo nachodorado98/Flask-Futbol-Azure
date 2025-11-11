@@ -207,3 +207,41 @@ def test_obtener_codigo_titulo_competiciones(conexion, datos, numero_titulos):
 	codigos_titulos=conexion.obtenerCodigoTituloCompeticiones()
 
 	assert len(codigos_titulos)==numero_titulos
+
+def test_obtener_competiciones_sin_nombre_no_hay(conexion):
+
+	assert not conexion.obtenerCompeticionesNombreVacio()
+
+def test_obtener_competiciones_sin_nombre(conexion):
+
+	conexion.insertarCompeticion("primera")
+
+	conexion.actualizarDatosCompeticion(["Primera", "ea", "es"], "primera")
+
+	for numero in range(1,11):
+
+		conexion.insertarCompeticion(f"primera-{numero}")
+
+	competiciones=conexion.obtenerCompeticionesNombreVacio()
+
+	assert len(competiciones)==10
+
+def test_obtener_competiciones_sin_campeones_no_hay(conexion):
+
+	assert not conexion.obtenerCompeticionesCampeonesVacio()
+
+def test_obtener_equipos_sin_equipos(conexion):
+
+	conexion.insertarCompeticion("primera")
+
+	datos=["primera", 2025, "atleti"]
+
+	conexion.insertarCampeonCompeticion(datos)
+
+	for numero in range(1,11):
+
+		conexion.insertarCompeticion(f"primera-{numero}")
+
+	competiciones=conexion.obtenerCompeticionesCampeonesVacio()
+
+	assert len(competiciones)==10

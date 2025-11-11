@@ -127,3 +127,21 @@ def test_obtener_codigo_paises_entrenadores(conexion, datos, numero_paises):
 	paises=conexion.obtenerCodigoPaisesEntrenadores()
 
 	assert len(paises)==numero_paises
+
+def test_obtener_entrenadores_sin_nombre_no_hay(conexion):
+
+	assert not conexion.obtenerEntrenadoresNombreVacio()
+
+def test_obtener_emtrenadores_sin_nombre(conexion):
+
+	conexion.insertarEntrenador("cholo")
+
+	conexion.actualizarDatosEntrenador(["Cholo", "atletico-madrid", "es", "1", 100], "cholo")
+
+	for numero in range(1,11):
+
+		conexion.insertarEntrenador(f"cholo-{numero}")
+
+	entrenadores=conexion.obtenerEntrenadoresNombreVacio()
+
+	assert len(entrenadores)==10

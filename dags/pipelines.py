@@ -87,7 +87,7 @@ def Pipeline_Estadio_Equipos(equipo):
 def Pipeline_Palmares_Equipos(equipo):
 	ETL_Palmares_Equipo(equipo, ENTORNO)
 
-def Pipeline_Equipos_Faltantes(obtener_funcion_equipos):
+def Pipeline_Base_Equipos_Faltantes(obtener_funcion_equipos):
 
 	def decorador(funcion):
 
@@ -119,21 +119,25 @@ def Pipeline_Equipos_Faltantes(obtener_funcion_equipos):
 
 	return decorador
 
-@Pipeline_Equipos_Faltantes(lambda con: con.obtenerEquiposNombreVacio())
+@Pipeline_Base_Equipos_Faltantes(lambda con: con.obtenerEquiposNombreVacio())
 def Pipeline_Detalle_Equipos_Faltantes(equipo):
     ETL_Detalle_Equipo(equipo, ENTORNO)
 
-@Pipeline_Equipos_Faltantes(lambda con: con.obtenerEquiposEscudoVacio())
+@Pipeline_Base_Equipos_Faltantes(lambda con: con.obtenerEquiposEscudoVacio())
 def Pipeline_Escudo_Equipos_Faltantes(equipo):
     ETL_Escudo_Equipo(equipo, ENTORNO)
 
-@Pipeline_Equipos_Faltantes(lambda con: con.obtenerEquiposEntrenadorVacio())
+@Pipeline_Base_Equipos_Faltantes(lambda con: con.obtenerEquiposEntrenadorVacio())
 def Pipeline_Entrenador_Equipos_Faltantes(equipo):
     ETL_Entrenador_Equipo(equipo, ENTORNO)
 
-@Pipeline_Equipos_Faltantes(lambda con: con.obtenerEquiposEstadioVacio())
+@Pipeline_Base_Equipos_Faltantes(lambda con: con.obtenerEquiposEstadioVacio())
 def Pipeline_Estadio_Equipos_Faltantes(equipo):
     ETL_Estadio_Equipo(equipo, ENTORNO)
+
+@Pipeline_Base_Equipos_Faltantes(lambda con: con.obtenerEquiposPalmaresVacio())
+def Pipeline_Palmares_Equipos_Faltantes(equipo):
+    ETL_Palmares_Equipo(equipo, ENTORNO)
 
 def ETL_Partidos_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQUIPO_ID)->None:
 
@@ -289,49 +293,81 @@ def Pipeline_Competiciones_Equipos()->None:
 
 	con.cerrarConexion()
 
-def Pipeline_Competiciones()->None:
+def Pipeline_Base_Competiciones(funcion):
 
-	con=Conexion(ENTORNO)
+	def wrapper():
 
-	competiciones=con.obtenerCompeticiones()
+		con=Conexion(ENTORNO)
 
-	for competicion in competiciones:
+		competiciones=con.obtenerCompeticiones()
 
-		try:
+		for competicion in competiciones:
+
+			try:
+
+				funcion(competicion)
+
+			except Exception as e:
+
+				mensaje=f"Competicion: {competicion} - Motivo: {e}"
 			
-			ETL_Competicion(competicion, ENTORNO)
+				print(f"Error en competicion {competicion}")
 
-		except Exception as e:
+				crearArchivoLog(mensaje)
 
-			mensaje=f"Competicion: {competicion} - Motivo: {e}"
-		
-			print(f"Error en competicion {competicion}")
+			time.sleep(0.25)
 
-			crearArchivoLog(mensaje)
+		con.cerrarConexion()
 
-	con.cerrarConexion()
+	return wrapper
 
-def Pipeline_Campeones_Competiciones()->None:
+@Pipeline_Base_Competiciones
+def Pipeline_Competiciones(competicion):
+	ETL_Competicion(competicion, ENTORNO)
 
-	con=Conexion(ENTORNO)
+@Pipeline_Base_Competiciones
+def Pipeline_Campeones_Competiciones(competicion):
+	ETL_Campeones_Competicion(competicion, ENTORNO)
 
-	competiciones=con.obtenerCompeticiones()
+def Pipeline_Base_Competiciones_Faltantes(obtener_funcion_competiciones):
 
-	for competicion in competiciones:
+	def decorador(funcion):
 
-		try:
-			
-			ETL_Campeones_Competicion(competicion, ENTORNO)
+		def wrapper():
 
-		except Exception as e:
+			con=Conexion(ENTORNO)
 
-			mensaje=f"Campeones Competicion: {competicion} - Motivo: {e}"
-		
-			print(f"Error en los campeones de la competicion {competicion}")
+			competiciones=obtener_funcion_competiciones(con)
 
-			crearArchivoLog(mensaje)
+			for competicion in competiciones:
 
-	con.cerrarConexion()
+				try:
+
+					funcion(competicion)
+
+				except Exception as e:
+
+					mensaje=f"Competicion: {competicion} - Motivo: {e}"
+				
+					print(f"Error en competicion {competicion}")
+
+					crearArchivoLog(mensaje)
+
+				time.sleep(0.25)
+
+			con.cerrarConexion()
+
+		return wrapper
+
+	return decorador
+
+@Pipeline_Base_Competiciones_Faltantes(lambda con: con.obtenerCompeticionesNombreVacio())
+def Pipeline_Competiciones_Faltantes(competicion):
+    ETL_Competicion(competicion, ENTORNO)
+
+@Pipeline_Base_Competiciones_Faltantes(lambda con: con.obtenerCompeticionesCampeonesVacio())
+def Pipeline_Campeones_Competiciones_Faltantes(competicion):
+    ETL_Campeones_Competicion(competicion, ENTORNO)
 
 def ETL_Jugadores_Temporadas_Equipo(temporada:int=TEMPORADA_INICIO, equipo:int=EQUIPO_ID)->None:
 
@@ -387,71 +423,89 @@ def Pipeline_Jugadores_Equipo_Total(equipo:int, temporada:int=TEMPORADA_INICIO)-
 
 	ETL_Jugadores_Temporadas_Equipo(temporada, equipo)
 
-def Pipeline_Jugadores()->None:
+def Pipeline_Base_Jugadores(funcion):
 
-	con=Conexion(ENTORNO)
+	def wrapper():
 
-	jugadores=con.obtenerJugadores()
+		con=Conexion(ENTORNO)
 
-	for jugador in jugadores:
+		jugadores=con.obtenerJugadores()
 
-		try:
+		for jugador in jugadores:
 
-			ETL_Jugador(jugador, ENTORNO)
+			try:
 
-		except Exception as e:
+				funcion(jugador)
 
-			mensaje=f"Jugador: {jugador} - Motivo: {e}"
+			except Exception as e:
 
-			print(f"Error en jugador {jugador}")
+				mensaje=f"Jugador: {jugador} - Motivo: {e}"
 
-			crearArchivoLog(mensaje)
+				print(f"Error en jugador {jugador}")
 
-	con.cerrarConexion()
+				crearArchivoLog(mensaje)
 
-def Pipeline_Jugadores_Equipos()->None:
+			time.sleep(0.25)
 
-	con=Conexion(ENTORNO)
+		con.cerrarConexion()
 
-	jugadores=con.obtenerJugadores()
+	return wrapper
 
-	for jugador in jugadores:
+@Pipeline_Base_Jugadores
+def Pipeline_Jugadores(jugador):
+	ETL_Jugador(jugador, ENTORNO)
 
-		try:
+@Pipeline_Base_Jugadores
+def Pipeline_Jugadores_Equipos(jugador):
+	ETL_Jugador_Equipos(jugador, ENTORNO)
 
-			ETL_Jugador_Equipos(jugador, ENTORNO)
+@Pipeline_Base_Jugadores
+def Pipeline_Jugadores_Seleccion(jugador):
+	ETL_Jugador_Seleccion(jugador, ENTORNO)
 
-		except Exception as e:
+def Pipeline_Base_Jugadores_Faltantes(obtener_funcion_jugadores):
 
-			mensaje=f"Jugador Equipos: {jugador} - Motivo: {e}"
+	def decorador(funcion):
 
-			print(f"Error en jugador {jugador}")
+		def wrapper():
 
-			crearArchivoLog(mensaje)
+			con=Conexion(ENTORNO)
 
-	con.cerrarConexion()
+			jugadores=obtener_funcion_jugadores(con)
 
-def Pipeline_Jugadores_Seleccion()->None:
+			for jugador in jugadores:
 
-	con=Conexion(ENTORNO)
+				try:
 
-	jugadores=con.obtenerJugadores()
+					funcion(jugador)
 
-	for jugador in jugadores:
+				except Exception as e:
 
-		try:
+					mensaje=f"Jugador: {jugador} - Motivo: {e}"
 
-			ETL_Jugador_Seleccion(jugador, ENTORNO)
+					print(f"Error en jugador {jugador}")
 
-		except Exception as e:
+					crearArchivoLog(mensaje)
 
-			mensaje=f"Jugador Seleccion: {jugador} - Motivo: {e}"
+				time.sleep(0.25)
 
-			print(f"Error en jugador {jugador}")
+			con.cerrarConexion()
 
-			crearArchivoLog(mensaje)
+		return wrapper
 
-	con.cerrarConexion()
+	return decorador
+
+@Pipeline_Base_Jugadores_Faltantes(lambda con: con.obtenerJugadoresNombreVacio())
+def Pipeline_Jugadores_Faltantes(jugador):
+    ETL_Jugador(jugador, ENTORNO)
+
+@Pipeline_Base_Jugadores_Faltantes(lambda con: con.obtenerJugadoresEquiposVacio())
+def Pipeline_Jugadores_Equipos_Faltantes(jugador):
+    ETL_Jugador_Equipos(jugador, ENTORNO)
+
+@Pipeline_Base_Jugadores_Faltantes(lambda con: con.obtenerJugadoresSeleccionVacio())
+def Pipeline_Jugadores_Seleccion_Faltantes(jugador):
+    ETL_Jugador_Seleccion(jugador, ENTORNO)
 
 def Pipeline_Estadios_Pais()->None:
 
@@ -594,24 +648,70 @@ def Pipeline_Entrenadores_Equipos()->None:
 
 	con.cerrarConexion()
 
-def Pipeline_Entrenadores()->None:
+def Pipeline_Base_Entrenadores(funcion):
 
-	con=Conexion(ENTORNO)
+	def wrapper():
 
-	entrenadores=con.obtenerEntrenadores()
+		con=Conexion(ENTORNO)
 
-	for entrenador in entrenadores:
+		entrenadores=con.obtenerEntrenadores()
 
-		try:
+		for entrenador in entrenadores:
 
-			ETL_Entrenador(entrenador, ENTORNO)
+			try:
 
-		except Exception as e:
+				funcion(entrenador)
 
-			mensaje=f"Entrenador: {entrenador} - Motivo: {e}"
+			except Exception as e:
 
-			print(f"Error en entrenador {entrenador}")
+				mensaje=f"Entrenador: {entrenador} - Motivo: {e}"
 
-			crearArchivoLog(mensaje)
+				print(f"Error en entrenador {entrenador}")
 
-	con.cerrarConexion()
+				crearArchivoLog(mensaje)
+
+			time.sleep(0.25)
+
+		con.cerrarConexion()
+
+	return wrapper
+
+@Pipeline_Base_Entrenadores
+def Pipeline_Entrenadores(entrenador):
+	ETL_Entrenador(entrenador, ENTORNO)
+
+def Pipeline_Base_Entrenadores_Faltantes(obtener_funcion_entrenadores):
+
+	def decorador(funcion):
+
+		def wrapper():
+
+			con=Conexion(ENTORNO)
+
+			entrenadores=obtener_funcion_entrenadores(con)
+
+			for entrenador in entrenadores:
+
+				try:
+
+					funcion(entrenador)
+
+				except Exception as e:
+
+					mensaje=f"Entrenador: {entrenador} - Motivo: {e}"
+
+					print(f"Error en entrenador {entrenador}")
+
+					crearArchivoLog(mensaje)
+
+				time.sleep(0.25)
+
+			con.cerrarConexion()
+
+		return wrapper
+
+	return decorador
+
+@Pipeline_Base_Entrenadores_Faltantes(lambda con: con.obtenerEntrenadoresNombreVacio())
+def Pipeline_Entrenadores_Faltantes(entrenador):
+    ETL_Entrenador(entrenador, ENTORNO)

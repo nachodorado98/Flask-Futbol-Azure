@@ -6,21 +6,21 @@ from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
 
-from utils import existe_entorno, ejecutarDagEntrenadores, actualizarVariable, crearArchivoLog
+from utils import existe_entorno, crearArchivoLog, actualizarVariable
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
-from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores
+from pipelines import Pipeline_Competiciones_Faltantes, Pipeline_Campeones_Competiciones_Faltantes
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import subirPaisesEntrenadoresDataLake, subirEntrenadoresDataLake
+from datalake import subirCompeticionesDataLake, subirPaisesDataLake, subirTitulosCompeticionesDataLake
 
 
-with DAG("dag_entrenadores",
+with DAG("dag_competiciones_faltantes",
 		start_date=days_ago(1),
-		description="DAG para obtener datos de los entrenadores de la web de futbol",
-		schedule_interval="@monthly",
+		description="DAG para obtener datos de las competiciones faltantes de la web de futbol que tienen datos vacios",
+		schedule_interval="@daily",
 		catchup=False) as dag:
 
 
@@ -59,14 +59,16 @@ with DAG("dag_entrenadores",
 		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises >> tarea_carpeta_jugadores >> tarea_carpeta_selecciones >> tarea_carpeta_titulos
 
 
-	with TaskGroup("pipelines_entrenadores") as tareas_pipelines_entrenadores:
+	with TaskGroup("pipelines_competiciones_faltantes") as tareas_pipelines_competiciones_faltantes:
 
-		tarea_pipeline_entrenadores_equipos=PythonOperator(task_id="pipeline_entrenadores_equipos", python_callable=Pipeline_Entrenadores_Equipos, trigger_rule="none_failed_min_one_success")
+		tarea_pipeline_competiciones_faltantes=PythonOperator(task_id="pipeline_competiciones_faltantes", python_callable=Pipeline_Competiciones_Faltantes, trigger_rule="none_failed_min_one_success")
 
-		tareas_pipeline_entrenadores_detalle=PythonOperator(task_id="pipeline_entrenadores", python_callable=Pipeline_Entrenadores)
+		tarea_pipeline_campeones_competiciones_faltantes=PythonOperator(task_id="pipeline_campeones_competiciones_faltantes", python_callable=Pipeline_Campeones_Competiciones_Faltantes)
 
 
-		tarea_pipeline_entrenadores_equipos >> tareas_pipeline_entrenadores_detalle
+		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
+
+		tarea_pipeline_competiciones_faltantes >> tarea_pipeline_campeones_competiciones_faltantes
 
 
 	with TaskGroup("datalake") as tareas_datalake:
@@ -83,25 +85,22 @@ with DAG("dag_entrenadores",
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
-		tarea_subir_paises_entrenadores_data_lake=PythonOperator(task_id="subir_paises_entrenadores_data_lake", python_callable=subirPaisesEntrenadoresDataLake, trigger_rule="none_failed_min_one_success")
-		
-		tarea_subir_entrenadores_data_lake=PythonOperator(task_id="subir_entrenadores_data_lake", python_callable=subirEntrenadoresDataLake, trigger_rule="none_failed_min_one_success")
+		tarea_subir_competiciones_data_lake=PythonOperator(task_id="subir_competiciones_data_lake", python_callable=subirCompeticionesDataLake, trigger_rule="none_failed_min_one_success")
+
+		tarea_subir_paises_data_lake=PythonOperator(task_id="subir_paises_data_lake", python_callable=subirPaisesDataLake)
+
+		tarea_subir_titulos_data_lake=PythonOperator(task_id="subir_titulos_data_lake", python_callable=subirTitulosCompeticionesDataLake)
 
 
-		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
+		tarea_subir_competiciones_data_lake >> tarea_subir_paises_data_lake >> tarea_subir_titulos_data_lake
 
-		tarea_subir_paises_entrenadores_data_lake >> tarea_subir_entrenadores_data_lake
-
-
-	tarea_ejecutar_dag_entrenadores=PythonOperator(task_id="ejecutar_dag_entrenadores", python_callable=ejecutarDagEntrenadores)
 
 	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=data_lake_disponible)
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
 
-	tarea_dag_entrenadores_completado=PythonOperator(task_id="dag_entrenadores_completado", python_callable=lambda: actualizarVariable("DAG_ENTRENADORES_EJECUTADO", "True"))
 
 
-tarea_ejecutar_dag_entrenadores >> tareas_entorno >> tareas_pipelines_entrenadores >>tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
+tareas_entorno >> tareas_pipelines_competiciones_faltantes >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
 
-tareas_datalake >> tareas_subir_data_lake >> tarea_dag_entrenadores_completado
+tareas_datalake >> tareas_subir_data_lake

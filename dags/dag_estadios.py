@@ -16,6 +16,7 @@ from pipelines import Pipeline_Estadios_Pais, Pipeline_Estadios_Coordenadas, Pip
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake, subirEstadiosDataLake
 
+
 with DAG("dag_estadios",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los estadios de la web de futbol",

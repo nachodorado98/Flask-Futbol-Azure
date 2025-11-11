@@ -340,3 +340,23 @@ def test_obtener_equipos_sin_estadio(conexion):
 	equipos=conexion.obtenerEquiposEstadioVacio()
 
 	assert len(equipos)==10
+
+def test_obtener_equipos_sin_palmares_no_hay(conexion):
+
+	assert not conexion.obtenerEquiposPalmaresVacio()
+
+def test_obtener_equipos_sin_palmares(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarCompeticion("primera")
+
+	conexion.insertarTituloEquipo(("atleti-madrid", "primera", "Primera", 10, "2019"))
+
+	for numero in range(1,11):
+
+		conexion.insertarEquipo(f"atleti-madrid-{numero}")
+
+	equipos=conexion.obtenerEquiposPalmaresVacio()
+
+	assert len(equipos)==10

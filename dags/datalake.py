@@ -53,6 +53,8 @@ def subirEscudosDataLake()->None:
 
 	ruta_escudos=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ESCUDOS)
 
+	vaciarCarpeta(ruta_escudos)
+
 	for codigo in codigo_escudos_descargar:
 
 		print(f"Descargando escudo {codigo}...")
@@ -105,6 +107,8 @@ def subirEntrenadoresDataLake()->None:
 
 	ruta_entrenadores=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ENTRENADORES)
 
+	vaciarCarpeta(ruta_entrenadores)
+
 	for codigo in codigo_entrenadores_descargar:
 
 		print(f"Descargando entrenador {codigo}...")
@@ -149,6 +153,8 @@ def subirPresidentesDataLake()->None:
 
 	ruta_presidentes=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PRESIDENTES)
 
+	vaciarCarpeta(ruta_presidentes)
+
 	for codigo in codigo_presidentes_descargar:
 
 		print(f"Descargando presidente {codigo}...")
@@ -192,6 +198,8 @@ def subirEstadiosDataLake()->None:
 	con.cerrarConexion()
 
 	ruta_estadios=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", ESTADIOS)
+
+	vaciarCarpeta(ruta_estadios)
 
 	for codigo in codigo_estadios_descargar:
 
@@ -251,6 +259,8 @@ def subirCompeticionesDataLake():
 
 	ruta_logos_competiciones=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", COMPETICIONES)
 
+	vaciarCarpeta(ruta_logos_competiciones)
+
 	for codigo in codigo_logos_competiciones_descargar:
 
 		print(f"Descargando logo competicion {codigo}...")
@@ -294,6 +304,8 @@ def subirPaisesDataLake():
 	con.cerrarConexion()
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	vaciarCarpeta(ruta_paises)
 
 	for codigo in codigo_paises_descargar:
 
@@ -339,6 +351,8 @@ def subirJugadoresDataLake():
 
 	ruta_jugadores=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", JUGADORES)
 
+	vaciarCarpeta(ruta_jugadores)
+
 	for codigo in codigo_jugadores_descargar:
 
 		print(f"Descargando jugador {codigo}...")
@@ -382,6 +396,8 @@ def subirPaisesJugadoresDataLake():
 	con.cerrarConexion()
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	vaciarCarpeta(ruta_paises)
 
 	for codigo in codigo_paises_descargar:
 
@@ -427,6 +443,8 @@ def subirPaisesEstadiosDataLake():
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
 
+	vaciarCarpeta(ruta_paises)
+
 	for codigo in codigo_paises_descargar:
 
 		print(f"Descargando pais {codigo}...")
@@ -470,6 +488,8 @@ def subirPaisesEquiposDataLake():
 	con.cerrarConexion()
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
+
+	vaciarCarpeta(ruta_paises)
 
 	for codigo in codigo_paises_descargar:
 
@@ -515,6 +535,8 @@ def subirPaisesEntrenadoresDataLake():
 
 	ruta_paises=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", PAISES)
 
+	vaciarCarpeta(ruta_paises)
+
 	for codigo in codigo_paises_descargar:
 
 		print(f"Descargando pais {codigo}...")
@@ -559,6 +581,8 @@ def subirSeleccionesJugadoresDataLake():
 
 	ruta_selecciones=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", SELECCIONES)
 
+	vaciarCarpeta(ruta_selecciones)
+
 	for codigo in codigo_selecciones_descargar:
 
 		print(f"Descargando seleccion {codigo}...")
@@ -602,6 +626,8 @@ def subirTitulosCompeticionesDataLake():
 	con.cerrarConexion()
 
 	ruta_titulos=os.path.join(os.getcwd(), "dags", "entorno", "imagenes", TITULOS)
+
+	vaciarCarpeta(ruta_titulos)
 
 	for codigo in codigo_titulos_descargar:
 
