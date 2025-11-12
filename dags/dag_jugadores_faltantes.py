@@ -20,7 +20,7 @@ from datalake import subirJugadoresDataLake, subirPaisesJugadoresDataLake, subir
 with DAG("dag_jugadores_faltantes",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los jugadores faltantes de la web de futbol que tienen datos vacios",
-		schedule_interval="@daily",
+		schedule_interval="30 1 * * *",
 		catchup=False) as dag:
 
 

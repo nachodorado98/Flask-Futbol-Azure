@@ -34,7 +34,8 @@ def test_extraer_data_equipo_entrenador(equipo):
 	assert len(data)==1
 
 @pytest.mark.parametrize(["equipo"],
-	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),("fc-porto",)]
+	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
+	("fc-porto",),("stuttgart",),("tromso",)]
 )
 def test_limpiar_data_equipo_entrenador(equipo):
 
@@ -73,7 +74,7 @@ def test_cargar_data_equipo_entrenador_datos_error(conexion, entorno):
 
 @pytest.mark.parametrize(["nombre_equipo"],
 	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
-	("atalanta",),("manchester-city-fc",)]
+	("atalanta",),("manchester-city-fc",),("stuttgart",),("tromso",)]
 )
 def test_cargar_data_equipo_entrenador_datos_correctos(conexion, entorno, nombre_equipo):
 

@@ -176,6 +176,13 @@ VALUES ('DAG_EQUIPOS_EJECUTADO', 'False'),
 		('DAG_ESTADIOS_EJECUTADO', 'False'),
 		('DAG_ENTRENADORES_EJECUTADO', 'False');
 
+CREATE TABLE errores (Entidad VARCHAR(255),
+					    Categoria VARCHAR(255),
+					    Valor VARCHAR(255),
+					    Numero_Errores INTEGER DEFAULT 1,
+					    Ultimo_Error TIMESTAMP DEFAULT NOW(),
+					    PRIMARY KEY (entidad, categoria, valor));
+
 CREATE TABLE usuarios (Usuario VARCHAR(255) PRIMARY KEY,
 						Correo VARCHAR(255),
 						Contrasena VARCHAR(255),

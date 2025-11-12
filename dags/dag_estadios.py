@@ -20,7 +20,7 @@ from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake, s
 with DAG("dag_estadios",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los estadios de la web de futbol",
-		schedule_interval="@monthly",
+		schedule_interval="0 1 1 * *",
 		catchup=False) as dag:
 
 

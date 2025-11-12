@@ -1245,3 +1245,51 @@ class Conexion:
 
 		return list(map(lambda equipo_proximo_partido: (equipo_proximo_partido["equipo_id"],
 														equipo_proximo_partido["escudo"]), equipos_proximos_partidos))
+
+	#Metodo para insertar un error
+	def insertarError(self, entidad:str, categoria:str, valor:str)->None:
+
+		self.c.execute("""INSERT INTO errores (Entidad, Categoria, Valor)
+							VALUES(%s, %s, %s)""",
+							(entidad, categoria, valor))
+
+		self.confirmar()
+
+	#Metodo para saber si existe el error
+	def existe_error(self, entidad:str, categoria:str, valor:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM errores
+							WHERE Entidad=%s
+							AND Categoria=%s
+							AND Valor=%s""",
+							(entidad, categoria, valor))
+
+		return False if self.c.fetchone() is None else True
+
+	#Metodo para obtener el numero de errores
+	def obtenerNumeroErrores(self, entidad:str, categoria:str, valor:str)->int:
+
+		self.c.execute("""SELECT numero_errores
+							FROM errores
+							WHERE Entidad=%s
+							AND Categoria=%s
+							AND Valor=%s""",
+							(entidad, categoria, valor))
+
+		numero_errores=self.c.fetchone()
+
+		return 0 if not numero_errores else int(numero_errores["numero_errores"])
+
+	#Metodo para actualizar el numero de errores
+	def actualizarNumeroErrores(self, entidad:str, categoria:str, valor:str)->None:
+
+		self.c.execute("""UPDATE errores
+							SET numero_errores=numero_errores+1,
+							Ultimo_Error=NOW()
+							WHERE Entidad=%s
+							AND Categoria=%s
+							AND Valor=%s""",
+							(entidad, categoria, valor))
+		
+		self.confirmar()

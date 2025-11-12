@@ -21,7 +21,7 @@ from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresi
 with DAG("dag_equipos_faltantes",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los equipos faltantes de la web de futbol que tienen datos vacios",
-		schedule_interval="@daily",
+		schedule_interval="0 1 * * *",
 		catchup=False) as dag:
 
 

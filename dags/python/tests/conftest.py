@@ -93,6 +93,8 @@ def conexion(entorno):
 
 	con.c.execute("DELETE FROM proximos_partidos")
 
+	con.c.execute("DELETE FROM errores")
+
 	con.confirmar()
 
 	return con
@@ -184,6 +186,10 @@ def pytest_sessionfinish(session, exitstatus):
 	con.c.execute("DELETE FROM entrenadores")
 
 	con.c.execute("DELETE FROM temporada_jugadores")
+
+	con.c.execute("DELETE FROM proximos_partidos")
+
+	con.c.execute("DELETE FROM errores")
 
 	con.confirmar()
 

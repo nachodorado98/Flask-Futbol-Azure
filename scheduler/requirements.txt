@@ -7,3 +7,4 @@ geopy==2.4.1
 wget==3.2
 azure-identity==1.16.0
 azure-storage-file-datalake==12.14.0
+Unidecode==1.4.0

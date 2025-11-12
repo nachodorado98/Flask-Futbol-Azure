@@ -15,5 +15,5 @@ HEADERS={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                           "Chrome/140.0.0.0 Safari/537.36",
             "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
-TIEMPO_BASE=1
-MULTIPLICADOR=2.1
+TIEMPO_BASE=1.5
+MULTIPLICADOR=2.5

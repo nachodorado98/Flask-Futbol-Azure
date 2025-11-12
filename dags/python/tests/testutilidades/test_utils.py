@@ -10,7 +10,7 @@ from src.utils import descargarImagen, entorno_creado, crearEntornoDataLake, sub
 from src.utils import limpiarFechaInicio, ganador_goles, obtenerResultado, generarTemporadas
 from src.utils import obtenerBoolCadena, limpiarMinuto, obtenerArchivosNoExistenDataLake
 from src.utils import obtenerCiudadMasCercana, obtenerPosiblesCiudadesCaracteres, filtrarCiudadesPalabrasIrrelevantes
-from src.utils import filtrarCiudadDireccion, obtenerCiudadMasAcertada, realizarBackUpBBDD
+from src.utils import filtrarCiudadDireccion, obtenerCiudadMasAcertada, realizarBackUpBBDD, procesar
 
 from src.database.conexion import Conexion
 
@@ -941,3 +941,33 @@ def test_realizar_backup_bbdd_existente(conexion, entorno):
 	conexion_clonar.eliminarBBDD("bbdd_futbol_data_backup")
 
 	conexion_clonar.cerrarConexion()
+
+def test_procesar_no_existe(conexion, entorno):
+
+	assert procesar("jugador", "detalle", "juli", 3, entorno)
+
+def test_procesar_errores_inferior(conexion, entorno):
+
+	conexion.insertarError("jugador", "detalle", "juli")
+
+	assert procesar("jugador", "detalle", "juli", 3, entorno)
+
+def test_procesar_errores_igual(conexion, entorno):
+
+	conexion.insertarError("jugador", "detalle", "juli")
+
+	conexion.c.execute("UPDATE errores SET Numero_Errores=3")
+
+	conexion.confirmar()
+
+	assert not procesar("jugador", "detalle", "juli", 3, entorno)
+
+def test_procesar_errores_superior(conexion, entorno):
+
+	conexion.insertarError("jugador", "detalle", "juli")
+
+	conexion.c.execute("UPDATE errores SET Numero_Errores=4")
+
+	conexion.confirmar()
+
+	assert not procesar("jugador", "detalle", "juli", 3, entorno)

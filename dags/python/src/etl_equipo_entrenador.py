@@ -1,5 +1,6 @@
 import pandas as pd
 from typing import Optional
+from unidecode import unidecode
 
 from .scrapers.scraper_equipo_entrenador import ScraperEquipoEntrenador
 
@@ -23,6 +24,8 @@ def limpiarDataEquipoEntrenador(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla["Nombre_URL"]=tabla["Nombre_Normalizado"]+"-"+tabla["Codigo_Entrenador_String"]
 
+	tabla["Nombre_URL_Unicode"]=tabla["Nombre_URL"].apply(unidecode)
+
 	tabla["Fecha"]=tabla["Fecha"].apply(limpiarFecha)
 
 	tabla["Edad"]=tabla["Edad"].apply(limpiarTiempo)
@@ -31,7 +34,7 @@ def limpiarDataEquipoEntrenador(tabla:pd.DataFrame)->pd.DataFrame:
 
 		tabla[tipo]=tabla[tipo].apply(lambda valor: int(valor))
 
-	columnas=["Nombre", "Nombre_URL", "Codigo_Entrenador", "Partidos"]
+	columnas=["Nombre", "Nombre_URL_Unicode", "Codigo_Entrenador", "Partidos"]
 
 	return tabla[columnas]
 

@@ -43,6 +43,7 @@ def test_conexion_pro():
 	assert "variables" in tablas
 	assert "paises" in tablas
 	assert "ciudades" in tablas
+	assert "errores" in tablas
 
 def test_conexion_dev(conexion):
 
@@ -74,6 +75,7 @@ def test_conexion_dev(conexion):
 	assert "variables" in tablas
 	assert "paises" in tablas
 	assert "ciudades" in tablas
+	assert "errores" in tablas
 
 def test_conexion_postgres():
 
@@ -107,6 +109,7 @@ def test_conexion_postgres():
 	assert "variables" not in tablas
 	assert "paises" not in tablas
 	assert "ciudades" not in tablas
+	assert "errores" not in tablas
 
 def test_cerrar_conexion(conexion):
 
@@ -130,7 +133,7 @@ def test_tabla_vacia_llena(conexion):
 	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("proximos_partidos",),
 	("partido_estadio",),("competiciones",),("competiciones_campeones",),("partido_competicion",),
 	("jugadores",),("jugadores_equipo",),("jugadores_seleccion",),("partido_goleador",),("entrenadores",),
-	("temporada_jugadores",),("equipo_titulo",)]
+	("temporada_jugadores",),("equipo_titulo",),("errores",)]
 )
 def test_tabla_vacia(conexion, tabla):
 

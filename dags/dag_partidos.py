@@ -19,7 +19,7 @@ from pipelines import Pipeline_Partidos_Goleadores, Pipeline_Proximos_Partidos_E
 with DAG("dag_partidos",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los partidos de la web de futbol",
-		schedule_interval="@daily",
+		schedule_interval="0 0 * * *",
 		catchup=False) as dag:
 
 

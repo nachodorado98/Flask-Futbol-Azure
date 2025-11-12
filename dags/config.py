@@ -24,6 +24,7 @@ URL_JUGADOR="https://cdn.resfu.com/img_data/players/medium/"
 URL_TITULO="https://cdn.resfu.com/img_data/competiciones/copa/"
 
 ENTORNO=os.environ.get("AZURE_NAME_CONTAINER")
+MAX_ERRORES=3
 
 # Contenedor y carpetas para el datalake
 CONTENEDOR=ENTORNO
