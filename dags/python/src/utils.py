@@ -411,13 +411,3 @@ def realizarBackUpBBDD(entorno:str)->None:
 		raise Exception(f"Error al crear el back up de {entorno}")
 
 	con.cerrarConexion()
-
-def procesar(entidad:str, categoria:str, valor:str, max_errores:int, entorno:str)->bool:
-
-	conexion=Conexion(entorno)
-
-	numero_errores=conexion.obtenerNumeroErrores(entidad, categoria, valor)
-
-	conexion.cerrarConexion()
-
-	return False if numero_errores>=max_errores else True

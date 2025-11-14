@@ -14,13 +14,13 @@ from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCI
 from pipelines import Pipeline_Estadios_Pais, Pipeline_Estadios_Coordenadas, Pipeline_Estadios_Ciudades
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import data_lake_disponible_creado, subirPaisesEstadiosDataLake, subirEstadiosDataLake
+from datalake import subirPaisesEstadiosDataLake, subirEstadiosDataLake
 
 
 with DAG("dag_estadios",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los estadios de la web de futbol",
-		schedule_interval="0 1 1 * *",
+		schedule_interval=None,
 		catchup=False) as dag:
 
 

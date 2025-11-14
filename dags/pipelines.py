@@ -14,7 +14,7 @@ from python.src.etls import ETL_Palmares_Equipo
 
 from python.src.database.conexion import Conexion
 
-from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio, obtenerCiudadMasAcertada, procesar
+from python.src.utils import generarTemporadas, obtenerCoordenadasEstadio, obtenerCiudadMasAcertada
 
 
 def Pipeline_Base(obtener_funcion_procesar, entidad, categoria):
@@ -29,7 +29,11 @@ def Pipeline_Base(obtener_funcion_procesar, entidad, categoria):
 
 			for valor in valores:
 
-				if procesar(entidad, categoria, valor, MAX_ERRORES, ENTORNO):
+				numero_errores=con.obtenerNumeroErrores(entidad, categoria, valor)
+
+				if numero_errores<MAX_ERRORES:
+
+					print("-"*70)
 
 					try:
 
@@ -39,17 +43,19 @@ def Pipeline_Base(obtener_funcion_procesar, entidad, categoria):
 
 						mensaje=f"{entidad}: {valor} - Motivo: {e}"
 
-						print(f"Error en {entidad} {valor}")
-
 						crearArchivoLog(mensaje)
 
 						if not con.existe_error(entidad, categoria, valor):
 
 							con.insertarError(entidad, categoria, valor)
 
+							print(f"Error NUEVO en la tabla de errores - {entidad} {categoria}")
+
 						else:
 
 							con.actualizarNumeroErrores(entidad, categoria, valor)
+
+							print(f"Error ACTUALIZADO en la tabla de errores - {entidad} {categoria}")
 
 					time.sleep(0.25)
 
@@ -157,29 +163,49 @@ def Pipeline_Partidos_Estadio()->None:
 
 	for partido_id, equipo_local, equipo_visitante in partidos:
 
-		try:
-			
-			ETL_Partido_Estadio(equipo_local, equipo_visitante, partido_id, ENTORNO)
+		entidad="Partido"
 
-		except Exception as e:
+		categoria="Estadio"
 
-			if con.existe_estadio_equipo(equipo_local):
+		numero_errores=con.obtenerNumeroErrores(entidad, categoria, partido_id)
 
-				estadio_equipo_local=con.obtenerEstadioEquipo(equipo_local)
+		if numero_errores<MAX_ERRORES:
 
-				con.insertarPartidoEstadio((partido_id, estadio_equipo_local))
+			print("-"*70)
 
-				print(f"Estadio {estadio_equipo_local} del partido {partido_id} del equipo local {equipo_local} agregado correctamente")
+			try:
+				
+				ETL_Partido_Estadio(equipo_local, equipo_visitante, partido_id, ENTORNO)
 
-			else:
+			except Exception as e:
 
-				mensaje=f"Estadio Partido_Id: {partido_id} - Motivo: {e}"
+				if con.existe_estadio_equipo(equipo_local):
 
-				print(f"Error en estadio del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+					estadio_equipo_local=con.obtenerEstadioEquipo(equipo_local)
 
-				crearArchivoLog(mensaje)
+					con.insertarPartidoEstadio((partido_id, estadio_equipo_local))
 
-		time.sleep(0.25)
+					print(f"Estadio {estadio_equipo_local} del partido {partido_id} del equipo local {equipo_local} agregado correctamente")
+
+				else:
+
+					mensaje=f"Estadio Partido_Id: {partido_id} - Motivo: {e}"
+
+					crearArchivoLog(mensaje)
+
+					if not con.existe_error(entidad, categoria, partido_id):
+
+						con.insertarError(entidad, categoria, partido_id)
+
+						print(f"Error NUEVO en la tabla de errores - {entidad} {categoria}")
+
+					else:
+
+						con.actualizarNumeroErrores(entidad, categoria, partido_id)
+
+						print(f"Error ACTUALIZADO en la tabla de errores - {entidad} {categoria}")
+
+			time.sleep(0.25)
 
 	con.cerrarConexion()
 
@@ -191,19 +217,39 @@ def Pipeline_Partidos_Competicion()->None:
 
 	for partido_id, equipo_local, equipo_visitante in partidos:
 
-		try:
-			
-			ETL_Partido_Competicion(equipo_local, equipo_visitante, partido_id, ENTORNO)
+		entidad="Partido"
 
-		except Exception as e:
+		categoria="Competicion"
 
-			mensaje=f"Competicion Partido_Id: {partido_id} - Motivo: {e}"
+		numero_errores=con.obtenerNumeroErrores(entidad, categoria, partido_id)
 
-			print(f"Error en competicion del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+		if numero_errores<MAX_ERRORES:
 
-			crearArchivoLog(mensaje)
+			print("-"*70)
 
-		time.sleep(0.25)
+			try:
+				
+				ETL_Partido_Competicion(equipo_local, equipo_visitante, partido_id, ENTORNO)
+
+			except Exception as e:
+
+				mensaje=f"Competicion Partido_Id: {partido_id} - Motivo: {e}"
+
+				crearArchivoLog(mensaje)
+
+				if not con.existe_error(entidad, categoria, partido_id):
+
+					con.insertarError(entidad, categoria, partido_id)
+
+					print(f"Error NUEVO en la tabla de errores - {entidad} {categoria}")
+
+				else:
+
+					con.actualizarNumeroErrores(entidad, categoria, partido_id)
+
+					print(f"Error ACTUALIZADO en la tabla de errores - {entidad} {categoria}")
+
+			time.sleep(0.25)
 
 	con.cerrarConexion()
 
@@ -215,19 +261,39 @@ def Pipeline_Partidos_Goleadores()->None:
 
 	for partido_id, equipo_local, equipo_visitante in partidos:
 
-		try:
-			
-			ETL_Partido_Goleadores(equipo_local, equipo_visitante, partido_id, ENTORNO)
+		entidad="Partido"
 
-		except Exception as e:
+		categoria="Goleadores"
 
-			mensaje=f"Goleadores Partido_Id: {partido_id} - Motivo: {e}"
+		numero_errores=con.obtenerNumeroErrores(entidad, categoria, partido_id)
 
-			print(f"Error en los goleadores del partido {partido_id} - {equipo_local} vs {equipo_visitante}")
+		if numero_errores<MAX_ERRORES:
 
-			crearArchivoLog(mensaje)
+			print("-"*70)
 
-		time.sleep(0.25)
+			try:
+				
+				ETL_Partido_Goleadores(equipo_local, equipo_visitante, partido_id, ENTORNO)
+
+			except Exception as e:
+
+				mensaje=f"Goleadores Partido_Id: {partido_id} - Motivo: {e}"
+
+				crearArchivoLog(mensaje)
+
+				if not con.existe_error(entidad, categoria, partido_id):
+
+					con.insertarError(entidad, categoria, partido_id)
+
+					print(f"Error NUEVO en la tabla de errores - {entidad} {categoria}")
+
+				else:
+
+					con.actualizarNumeroErrores(entidad, categoria, partido_id)
+
+					print(f"Error ACTUALIZADO en la tabla de errores - {entidad} {categoria}")
+
+			time.sleep(0.25)
 
 	con.cerrarConexion()
 
@@ -351,25 +417,13 @@ def Pipeline_Jugadores_Equipos_Faltantes(jugador):
 def Pipeline_Jugadores_Seleccion_Faltantes(jugador):
     ETL_Jugador_Seleccion(jugador, ENTORNO)
 
-def Pipeline_Estadios_Pais()->None:
+@Pipeline_Base(lambda con: con.obtenerEstadios(), "Estadio", "Pais")
+def Pipeline_Estadios_Pais(estadio):
+    ETL_Estadio(estadio, ENTORNO)
 
-	con=Conexion(ENTORNO)
-
-	estadios=con.obtenerEstadios()
-
-	for estadio in estadios:
-
-		try:
-
-			ETL_Estadio(estadio, ENTORNO)
-
-		except Exception as e:
-
-			mensaje=f"Pais Estadio: {estadio} - Motivo: {e}"
-
-			print(f"Error en pais del estadio {estadio}")
-
-			crearArchivoLog(mensaje)
+@Pipeline_Base(lambda con: con.obtenerEstadiosPaisVacio(), "Estadio", "Pais")
+def Pipeline_Estadios_Pais_Faltantes(estadio):
+    ETL_Estadio(estadio, ENTORNO)
 
 def Pipeline_Estadios_Coordenadas()->None:
 

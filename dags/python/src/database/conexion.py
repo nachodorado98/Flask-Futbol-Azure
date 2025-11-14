@@ -765,6 +765,18 @@ class Conexion:
 
 		return list(map(lambda estadio: estadio["estadio_id"], estadios))
 
+	# Metodo para obtener los estadios con pais vacio
+	def obtenerEstadiosPaisVacio(self)->List[str]:
+
+		self.c.execute("""SELECT Estadio_Id
+						FROM estadios
+						WHERE Codigo_Pais IS NULL
+						ORDER BY Estadio_Id""")
+
+		estadios=self.c.fetchall()
+
+		return list(map(lambda estadio: estadio["estadio_id"], estadios))
+
 	# Metodo para obtener los codigos de los paises de los estadios
 	def obtenerCodigoPaisesEstadios(self)->List[str]:
 

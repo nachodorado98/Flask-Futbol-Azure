@@ -6,21 +6,21 @@ from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
 
-from utils import existe_entorno, ejecutarDagJugadores, actualizarVariable, crearArchivoLog
+from utils import existe_entorno, crearArchivoLog, actualizarVariable
 
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
-from pipelines import Pipeline_Jugadores_Equipo, Pipeline_Jugadores, Pipeline_Jugadores_Equipos, Pipeline_Jugadores_Seleccion
+from pipelines import Pipeline_Estadios_Pais_Faltantes
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
-from datalake import subirJugadoresDataLake, subirPaisesJugadoresDataLake, subirSeleccionesJugadoresDataLake
+from datalake import subirPaisesEstadiosDataLake, subirEstadiosDataLake
 
 
-with DAG("dag_jugadores",
+with DAG("dag_estadios_faltantes",
 		start_date=days_ago(1),
-		description="DAG para obtener datos de los jugadores de la web de futbol",
-		schedule_interval=None,
+		description="DAG para obtener datos de los estadios faltantes de la web de futbol que tienen datos vacios",
+		schedule_interval="0 2 * * *",
 		catchup=False) as dag:
 
 
@@ -59,19 +59,15 @@ with DAG("dag_jugadores",
 		tarea_carpeta_estadios >> tarea_carpeta_competiciones >> tarea_carpeta_paises >> tarea_carpeta_jugadores >> tarea_carpeta_selecciones >> tarea_carpeta_titulos
 
 
-	with TaskGroup("pipelines_jugadores") as tareas_pipelines_jugadores:
+	with TaskGroup("pipelines_estadios_faltantes") as tareas_pipelines_estadios_faltantes:
 
-		tarea_pipeline_jugadores_equipo=PythonOperator(task_id="pipeline_jugadores_equipo", python_callable=Pipeline_Jugadores_Equipo, trigger_rule="none_failed_min_one_success")
-
-		tareas_pipeline_jugadores_detalle=PythonOperator(task_id="pipeline_jugadores", python_callable=Pipeline_Jugadores)
-
-		tareas_pipeline_jugadores_equipos=PythonOperator(task_id="pipeline_jugadores_equipos", python_callable=Pipeline_Jugadores_Equipos)
-
-		tareas_pipeline_jugadores_seleccion=PythonOperator(task_id="pipeline_jugadores_seleccion", python_callable=Pipeline_Jugadores_Seleccion)
+		tarea_pipeline_estadios_faltantes=PythonOperator(task_id="pipeline_estadios_faltantes", python_callable=Pipeline_Estadios_Pais_Faltantes, trigger_rule="none_failed_min_one_success")
 
 
-		tarea_pipeline_jugadores_equipo >> tareas_pipeline_jugadores_detalle >> tareas_pipeline_jugadores_equipos >> tareas_pipeline_jugadores_seleccion
-		
+		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
+
+		tarea_pipeline_estadios_faltantes
+
 
 	with TaskGroup("datalake") as tareas_datalake:
 
@@ -87,25 +83,21 @@ with DAG("dag_jugadores",
 
 	with TaskGroup("subir_data_lake") as tareas_subir_data_lake:
 
-		tarea_subir_jugadores_data_lake=PythonOperator(task_id="subir_jugadores_data_lake", python_callable=subirJugadoresDataLake, trigger_rule="none_failed_min_one_success")
-
-		tarea_subir_paises_jugadores_data_lake=PythonOperator(task_id="subir_paises_jugadores_data_lake", python_callable=subirPaisesJugadoresDataLake)
-
-		tarea_subir_selecciones_jugadores_data_lake=PythonOperator(task_id="subir_selecciones_jugadores_data_lake", python_callable=subirSeleccionesJugadoresDataLake)
+		tarea_subir_paises_estadios_data_lake=PythonOperator(task_id="subir_paises_estadios_data_lake", python_callable=subirPaisesEstadiosDataLake, trigger_rule="none_failed_min_one_success")
+		
+		tarea_subir_estadios_data_lake=PythonOperator(task_id="subir_estadios_data_lake", python_callable=subirEstadiosDataLake, trigger_rule="none_failed_min_one_success")
 
 
-		tarea_subir_jugadores_data_lake >> tarea_subir_paises_jugadores_data_lake >> tarea_subir_selecciones_jugadores_data_lake
+		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
+		tarea_subir_paises_estadios_data_lake >> tarea_subir_estadios_data_lake
 
-	tarea_ejecutar_dag_jugadores=PythonOperator(task_id="ejecutar_dag_jugadores", python_callable=ejecutarDagJugadores)
 
 	tarea_data_lake_disponible=BranchPythonOperator(task_id="data_lake_disponible", python_callable=data_lake_disponible)
 
 	tarea_log_data_lake=PythonOperator(task_id="log_data_lake", python_callable=crearArchivoLog, op_kwargs={"motivo": "Error en la conexion con el Data Lake"})
 
-	tarea_dag_jugadores_completado=PythonOperator(task_id="dag_jugadores_completado", python_callable=lambda: actualizarVariable("DAG_JUGADORES_EJECUTADO", "True"))
 
+tareas_entorno >> tareas_pipelines_estadios_faltantes >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
 
-tarea_ejecutar_dag_jugadores >> tareas_entorno >> tareas_pipelines_jugadores >> tarea_data_lake_disponible >> [tareas_datalake, tarea_log_data_lake]
-
-tareas_datalake >> tareas_subir_data_lake >> tarea_dag_jugadores_completado
+tareas_datalake >> tareas_subir_data_lake

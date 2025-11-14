@@ -20,7 +20,7 @@ from datalake import subirCompeticionesDataLake, subirPaisesDataLake, subirTitul
 with DAG("dag_competiciones",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de las competiciones de la web de futbol",
-		schedule_interval="0 0 1 * *",
+		schedule_interval=None,
 		catchup=False) as dag:
 
 

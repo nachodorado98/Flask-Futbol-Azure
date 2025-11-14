@@ -25,6 +25,7 @@ from src.scrapers.scraper_entrenador import ScraperEntrenador
 from src.scrapers.scraper_jugador_equipos import ScraperJugadorEquipos
 from src.scrapers.scraper_jugador_seleccion import ScraperJugadorSeleccion
 from src.scrapers.scraper_equipo_palmares import ScraperEquipoPalmares
+from src.scrapers.scraper_entrenador_equipos import ScraperEntrenadorEquipos
 
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
@@ -168,6 +169,11 @@ def scraper_jugador_equipos():
 def scraper_jugador_seleccion():
 
 	return ScraperJugadorSeleccion("j-alvarez-772644")
+
+@pytest.fixture
+def scraper_entrenador_equipos():
+
+	return ScraperEntrenadorEquipos("diego-simeone-13")
 
 def pytest_sessionfinish(session, exitstatus):
 

@@ -259,3 +259,27 @@ def test_actualizar_ciudad_estadio(conexion, ciudad):
 	datos_actualizados=conexion.c.fetchone()
 
 	assert datos_actualizados["ciudad"]==ciudad
+
+def test_obtener_estadios_sin_pais_no_hay(conexion):
+
+	assert not conexion.obtenerEstadiosPaisVacio()
+
+def test_obtener_estadios_sin_pais(conexion):
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.actualizarDatosEstadio(["España", "es"], "vicente-calderon")
+
+	for numero in range(1,11):
+
+		estadio=[f"vicente-calderon-{numero}", 1, "Calderon", "Paseo de los Melancolicos",
+					40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+		conexion.insertarEstadio(estadio)
+
+	estadios=conexion.obtenerEstadiosPaisVacio()
+
+	assert len(estadios)==10

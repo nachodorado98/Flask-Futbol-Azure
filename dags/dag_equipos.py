@@ -22,7 +22,7 @@ from datalake import subirEscudosDataLake, subirEntrenadoresDataLake, subirPresi
 with DAG("dag_equipos",
 		start_date=days_ago(1),
 		description="DAG para obtener datos de los equipos de la web de futbol",
-		schedule_interval="0 6 1 * *",
+		schedule_interval=None,
 		catchup=False) as dag:
 
 

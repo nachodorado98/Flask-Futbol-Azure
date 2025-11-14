@@ -25,13 +25,16 @@ class PartidosEquipoError(Exception):
 class PartidoEstadioError(Exception):
     pass
 
+class PartidoCompeticionError(Exception):
+    pass
+
+class PartidoGoleadoresError(Exception):
+    pass
+
 class CompeticionError(Exception):
     pass
 
 class CompeticionCampeonesError(Exception):
-    pass
-
-class PartidoCompeticionError(Exception):
     pass
 
 class JugadoresEquipoError(Exception):
@@ -40,7 +43,10 @@ class JugadoresEquipoError(Exception):
 class JugadorError(Exception):
     pass
 
-class PartidoGoleadoresError(Exception):
+class JugadorEquiposError(Exception):
+    pass
+
+class JugadorSeleccionError(Exception):
     pass
 
 class EstadioError(Exception):
@@ -49,8 +55,5 @@ class EstadioError(Exception):
 class EntrenadorError(Exception):
     pass
 
-class JugadorEquiposError(Exception):
-    pass
-
-class JugadorSeleccionError(Exception):
+class EntrenadorEquiposError(Exception):
     pass
