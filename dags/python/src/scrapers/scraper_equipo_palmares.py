@@ -72,7 +72,7 @@ class ScraperEquipoPalmares(Scraper):
 
         return pd.DataFrame(fila_datos, columns=columnas)
 
-    def obtenerEstadioPalmares(self)->Optional[pd.DataFrame]:
+    def obtenerEquipoPalmares(self)->Optional[pd.DataFrame]:
 
         try:
 

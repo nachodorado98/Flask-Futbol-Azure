@@ -94,7 +94,7 @@ def test_scraper_equipo_palmares_obtener_palmares_equipo_error(endpoint):
 
 	with pytest.raises(EquipoPalmaresError):
 
-		scraper.obtenerEstadioPalmares()
+		scraper.obtenerEquipoPalmares()
 
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",)]
@@ -103,6 +103,6 @@ def test_scraper_equipo_palmares_obtener_palmares_equipo(equipo):
 
 	scraper=ScraperEquipoPalmares(equipo)
 
-	df_palmares=scraper.obtenerEstadioPalmares()
+	df_palmares=scraper.obtenerEquipoPalmares()
 
 	assert isinstance(df_palmares, pd.DataFrame)

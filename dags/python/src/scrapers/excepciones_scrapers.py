@@ -57,3 +57,6 @@ class EntrenadorError(Exception):
 
 class EntrenadorEquiposError(Exception):
     pass
+
+class EntrenadorPalmaresError(Exception):
+    pass

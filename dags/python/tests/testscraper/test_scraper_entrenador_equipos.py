@@ -9,7 +9,7 @@ def test_crear_objeto_scraper_entrenador_equipos():
 
 	scraper=ScraperEntrenadorEquipos("entrenador")
 
-# def test_scraper_jugador_entrenador_realizar_peticion_error_redirecciona(scraper):
+# def test_scraper_entrenador_equipos_realizar_peticion_error_redirecciona(scraper):
 
 # 	scraper=ScraperEntrenadorEquipos("redireccion_entrenador")
 
