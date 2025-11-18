@@ -230,7 +230,7 @@ def test_obtener_competiciones_sin_campeones_no_hay(conexion):
 
 	assert not conexion.obtenerCompeticionesCampeonesVacio()
 
-def test_obtener_equipos_sin_equipos(conexion):
+def test_obtener_competiciones_sin_campeones(conexion):
 
 	conexion.insertarCompeticion("primera")
 

@@ -154,6 +154,18 @@ CREATE TABLE entrenadores (Entrenador_Id VARCHAR(255) PRIMARY KEY,
 							Codigo_Entrenador VARCHAR(15) DEFAULT NULL,
 							Puntuacion INTEGER DEFAULT NULL);
 
+CREATE TABLE entrenadores_equipo (Entrenador_Id VARCHAR(255),
+									Equipo_Id VARCHAR(255),
+									Partidos_Totales INTEGER,
+									Duracion VARCHAR(255),
+									Ganados INTEGER,
+									Empatados INTEGER,
+									Perdidos INTEGER,
+									Tactica VARCHAR(255),
+									PRIMARY KEY (Entrenador_Id, Equipo_Id),
+									FOREIGN KEY (Entrenador_Id) REFERENCES entrenadores (Entrenador_Id) ON DELETE CASCADE,
+									FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE);
+
 CREATE TABLE equipo_titulo (Equipo_Id VARCHAR(255),
 							Competicion_Id VARCHAR(255),
 							Nombre VARCHAR(255),

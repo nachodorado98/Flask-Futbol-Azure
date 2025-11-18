@@ -38,6 +38,7 @@ def test_conexion_pro():
 	assert "jugadores_seleccion" in tablas
 	assert "partido_goleador" in tablas
 	assert "entrenadores" in tablas
+	assert "entrenadores_equipo" in tablas
 	assert "temporada_jugadores" in tablas
 	assert "equipo_titulo" in tablas
 	assert "variables" in tablas
@@ -70,6 +71,7 @@ def test_conexion_dev(conexion):
 	assert "jugadores_seleccion" in tablas
 	assert "partido_goleador" in tablas
 	assert "entrenadores" in tablas
+	assert "entrenadores_equipo" in tablas
 	assert "temporada_jugadores" in tablas
 	assert "equipo_titulo" in tablas
 	assert "variables" in tablas
@@ -104,6 +106,7 @@ def test_conexion_postgres():
 	assert "jugadores_seleccion" not in tablas
 	assert "partido_goleador" not in tablas
 	assert "entrenadores" not in tablas
+	assert "entrenadores_equipo" not in tablas
 	assert "temporada_jugadores" not in tablas
 	assert "equipo_titulo" not in tablas
 	assert "variables" not in tablas
@@ -133,7 +136,7 @@ def test_tabla_vacia_llena(conexion):
 	[("equipos",),("estadios",),("equipo_estadio",),("partidos",),("proximos_partidos",),
 	("partido_estadio",),("competiciones",),("competiciones_campeones",),("partido_competicion",),
 	("jugadores",),("jugadores_equipo",),("jugadores_seleccion",),("partido_goleador",),("entrenadores",),
-	("temporada_jugadores",),("equipo_titulo",),("errores",)]
+	("entrenadores_equipo",),("temporada_jugadores",),("equipo_titulo",),("errores",)]
 )
 def test_tabla_vacia(conexion, tabla):
 

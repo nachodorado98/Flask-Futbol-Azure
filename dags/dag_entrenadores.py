@@ -11,7 +11,7 @@ from utils import existe_entorno, ejecutarDagEntrenadores, actualizarVariable, c
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
-from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores
+from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores, Pipeline_Entrenadores_Equipo
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import subirPaisesEntrenadoresDataLake, subirEntrenadoresDataLake
@@ -61,12 +61,14 @@ with DAG("dag_entrenadores",
 
 	with TaskGroup("pipelines_entrenadores") as tareas_pipelines_entrenadores:
 
-		tarea_pipeline_entrenadores_equipos=PythonOperator(task_id="pipeline_entrenadores_equipos", python_callable=Pipeline_Entrenadores_Equipos, trigger_rule="none_failed_min_one_success")
+		tarea_pipeline_entrenadores_equipo=PythonOperator(task_id="pipeline_entrenadores_equipo", python_callable=Pipeline_Entrenadores_Equipos, trigger_rule="none_failed_min_one_success")
 
 		tareas_pipeline_entrenadores_detalle=PythonOperator(task_id="pipeline_entrenadores", python_callable=Pipeline_Entrenadores)
 
+		tareas_pipeline_entrenadores_equipos=PythonOperator(task_id="pipeline_entrenadores_equipos", python_callable=Pipeline_Entrenadores_Equipo)
 
-		tarea_pipeline_entrenadores_equipos >> tareas_pipeline_entrenadores_detalle
+
+		tarea_pipeline_entrenadores_equipo >> tareas_pipeline_entrenadores_detalle >> tareas_pipeline_entrenadores_equipos
 
 
 	with TaskGroup("datalake") as tareas_datalake:

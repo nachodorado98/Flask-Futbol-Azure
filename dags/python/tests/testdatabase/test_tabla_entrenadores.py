@@ -145,3 +145,23 @@ def test_obtener_emtrenadores_sin_nombre(conexion):
 	entrenadores=conexion.obtenerEntrenadoresNombreVacio()
 
 	assert len(entrenadores)==10
+
+def test_obtener_entrenadores_sin_equipos_no_hay(conexion):
+
+	assert not conexion.obtenerEntrenadoresEquiposVacio()
+
+def test_obtener_entrenadores_sin_equipos(conexion):
+
+	conexion.insertarEntrenador("cholo")
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarEquipoEntrenador(("cholo", "atleti-madrid", 100, "2012-2027", 50, 30, 20, "4-4-2"))
+
+	for numero in range(1,11):
+
+		conexion.insertarEntrenador(f"cholo-{numero}")
+
+	entrenadores=conexion.obtenerEntrenadoresEquiposVacio()
+
+	assert len(entrenadores)==10

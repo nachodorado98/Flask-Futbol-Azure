@@ -152,7 +152,7 @@ def test_obtener_jugadores_sin_equipos_no_hay(conexion):
 
 	assert not conexion.obtenerJugadoresEquiposVacio()
 
-def test_obtener_equipos_sin_equipos(conexion):
+def test_obtener_jugadores_sin_equipos(conexion):
 
 	conexion.insertarJugador("julian")
 
@@ -172,7 +172,7 @@ def test_obtener_jugadores_sin_seleccion_no_hay(conexion):
 
 	assert not conexion.obtenerJugadoresSeleccionVacio()
 
-def test_obtener_equipos_sin_seleccion(conexion):
+def test_obtener_jugadores_sin_seleccion(conexion):
 
 	conexion.insertarJugador("julian")
 

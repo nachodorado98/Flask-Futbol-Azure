@@ -914,6 +914,20 @@ class Conexion:
 
 		return list(map(lambda entrenador: entrenador["entrenador_id"], entrenadores))
 
+	# Metodo para obtener los entrenadores con equipos vacio
+	def obtenerEntrenadoresEquiposVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT e.Entrenador_Id
+						FROM entrenadores e
+						LEFT JOIN entrenadores_equipo ee
+						ON e.entrenador_id=ee.entrenador_id
+						WHERE ee.Equipo_Id IS NULL
+						ORDER BY e.entrenador_id""")
+
+		entrenadores=self.c.fetchall()
+
+		return list(map(lambda entrenador: entrenador["entrenador_id"], entrenadores))
+
 	# Metodo para obtener los entrenadores unicos de los equipos
 	def obtenerEntrenadoresEquipos(self)->List[tuple]:
 
@@ -1304,4 +1318,39 @@ class Conexion:
 							AND Valor=%s""",
 							(entidad, categoria, valor))
 		
+		self.confirmar()
+
+	# Metodo para insertar un equipo de un entrenador
+	def insertarEquipoEntrenador(self, equipo_entrenador:tuple)->None:
+
+		self.c.execute("""INSERT INTO entrenadores_equipo
+							VALUES(%s, %s, %s, %s, %s, %s, %s, %s)""",
+							equipo_entrenador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el equipo de un entrenador
+	def existe_equipo_entrenador(self, entrenador_id:str, equipo_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM entrenadores_equipo
+							WHERE Entrenador_Id=%s
+							AND Equipo_Id=%s""",
+							(entrenador_id, equipo_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos del equipo de un entrenador
+	def actualizarDatosEquipoEntrenador(self, datos_equipo_entrenador:List[str], entrenador_id:str, equipo_id:str)->None:
+
+		datos_equipo_entrenador.append(entrenador_id)
+
+		datos_equipo_entrenador.append(equipo_id)
+
+		self.c.execute("""UPDATE entrenadores_equipo
+							SET Partidos_Totales=%s, Duracion=%s, Ganados=%s,
+							Empatados=%s, Perdidos=%s, Tactica=%s
+							WHERE Entrenador_Id=%s
+							AND Equipo_Id=%s""",
+							tuple(datos_equipo_entrenador))
 		self.confirmar()
