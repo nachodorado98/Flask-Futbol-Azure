@@ -165,3 +165,23 @@ def test_obtener_entrenadores_sin_equipos(conexion):
 	entrenadores=conexion.obtenerEntrenadoresEquiposVacio()
 
 	assert len(entrenadores)==10
+
+def test_obtener_entrenadores_sin_palmares_no_hay(conexion):
+
+	assert not conexion.obtenerEntrenadoresPalmaresVacio()
+
+def test_obtener_entrenadores_sin_palmares(conexion):
+
+	conexion.insertarEntrenador("cholo")
+
+	conexion.insertarCompeticion("primera")
+
+	conexion.insertarTituloEntrenador(("cholo", "primera", "Primera", 10, "2019"))
+
+	for numero in range(1,11):
+
+		conexion.insertarEntrenador(f"cholo-{numero}")
+
+	entrenadores=conexion.obtenerEntrenadoresPalmaresVacio()
+
+	assert len(entrenadores)==10

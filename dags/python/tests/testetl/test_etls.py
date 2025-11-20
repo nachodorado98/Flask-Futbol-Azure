@@ -7,7 +7,7 @@ from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadi
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
 from src.etls import ETL_Jugador, ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion, ETL_Palmares_Equipo
-from src.etls import ETL_Entrenador_Equipos
+from src.etls import ETL_Entrenador_Equipos, ETL_Palmares_Entrenador
 
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
@@ -15,7 +15,7 @@ from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionEr
 from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError, JugadorError
 from src.scrapers.excepciones_scrapers import PartidoGoleadoresError, EstadioError, EntrenadorError
 from src.scrapers.excepciones_scrapers import JugadorEquiposError, JugadorSeleccionError, EquipoPalmaresError
-from src.scrapers.excepciones_scrapers import EntrenadorEquiposError
+from src.scrapers.excepciones_scrapers import EntrenadorEquiposError, EntrenadorPalmaresError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -1524,3 +1524,99 @@ def test_etl_entrenador_equipos_existentes(conexion, entorno, entrenador):
 
 	assert numero_registros_equipos==numero_registros_equipos_nuevos
 	assert numero_registros_equipos_entrenador==numero_registros_equipos_entrenador_nuevos
+
+@pytest.mark.parametrize(["endpoint"],
+	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa",)]
+)
+def test_etl_entrenador_palmares_error(entorno, endpoint):
+
+	with pytest.raises(EntrenadorPalmaresError):
+
+		ETL_Palmares_Entrenador(endpoint, entorno)
+
+def test_etl_entrenador_palmares_no_existe_error(entorno):
+
+	with pytest.raises(Exception):
+
+		ETL_Palmares_Entrenador("diego-simeone-13", entorno)
+
+@pytest.mark.parametrize(["entrenador"],
+	[("diego-simeone-13",),("hansi-flick-8143",)]
+)
+def test_etl_entrenador_palmares_no_competiciones(conexion, entorno, entrenador):
+
+	conexion.insertarEntrenador(entrenador)
+
+	ETL_Palmares_Entrenador(entrenador, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	assert not conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM entrenador_titulo")
+
+	assert not conexion.c.fetchall()
+
+@pytest.mark.parametrize(["entrenador"],
+	[("diego-simeone-13",),("hansi-flick-8143",)]
+)
+def test_etl_entrenador_palmares(conexion, entorno, entrenador):
+
+	conexion.insertarEntrenador(entrenador)
+
+	conexion.insertarCompeticion("primera")
+
+	ETL_Palmares_Entrenador(entrenador, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	assert conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM entrenador_titulo")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["entrenador"],
+	[("diego-simeone-13",),("hansi-flick-8143",)]
+)
+def test_etl_entrenador_palmares_existente(conexion, entorno, entrenador):
+
+	conexion.insertarEntrenador(entrenador)
+
+	conexion.insertarCompeticion("primera")
+
+	ETL_Palmares_Entrenador(entrenador, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	numero_registros_competiciones=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	codigo_titulo=conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM entrenador_titulo")
+
+	numero_registros_entrenador_titulo=conexion.c.fetchall()
+
+	ETL_Palmares_Entrenador(entrenador, entorno)
+
+	conexion.c.execute("SELECT * FROM competiciones")
+
+	numero_registros_competiciones_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT Codigo_Titulo FROM competiciones")
+
+	codigo_titulo_nuevo=conexion.c.fetchone()["codigo_titulo"]
+
+	conexion.c.execute("SELECT * FROM entrenador_titulo")
+
+	numero_registros_entrenador_titulo_nuevos=conexion.c.fetchall()
+
+	assert numero_registros_competiciones==numero_registros_competiciones_nuevos
+	assert codigo_titulo==codigo_titulo_nuevo
+	assert numero_registros_entrenador_titulo==numero_registros_entrenador_titulo_nuevos

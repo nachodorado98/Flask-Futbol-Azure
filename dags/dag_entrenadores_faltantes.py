@@ -11,7 +11,7 @@ from utils import existe_entorno, crearArchivoLog, actualizarVariable
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
-from pipelines import Pipeline_Entrenadores_Faltantes, Pipeline_Entrenadores_Equipo_Faltantes
+from pipelines import Pipeline_Entrenadores_Faltantes, Pipeline_Entrenadores_Equipo_Faltantes, Pipeline_Palmares_Entrenadores_Faltantes
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import subirPaisesEntrenadoresDataLake, subirEntrenadoresDataLake
@@ -65,10 +65,12 @@ with DAG("dag_entrenadores_faltantes",
 
 		tarea_pipeline_entrenadores_equipo_faltantes=PythonOperator(task_id="pipeline_entrenadores_equipo_faltantes", python_callable=Pipeline_Entrenadores_Equipo_Faltantes)
 
+		tarea_pipeline_entrenadores_palmares_faltantes=PythonOperator(task_id="pipeline_entrenadores_palmares_faltantes", python_callable=Pipeline_Palmares_Entrenadores_Faltantes)
+
 
 		# Si tu maquina no tiene buenos recursos es preferible ejecutar en serie en vez de en paralelo
 
-		tarea_pipeline_entrenadores_faltantes >> tarea_pipeline_entrenadores_equipo_faltantes
+		tarea_pipeline_entrenadores_faltantes >> tarea_pipeline_entrenadores_equipo_faltantes >> tarea_pipeline_entrenadores_palmares_faltantes
 
 
 	with TaskGroup("datalake") as tareas_datalake:

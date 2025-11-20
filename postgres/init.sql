@@ -175,6 +175,15 @@ CREATE TABLE equipo_titulo (Equipo_Id VARCHAR(255),
 							FOREIGN KEY (Equipo_Id) REFERENCES equipos (Equipo_Id) ON DELETE CASCADE,
 							FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
 
+CREATE TABLE entrenador_titulo (Entrenador_Id VARCHAR(255),
+								Competicion_Id VARCHAR(255),
+								Nombre VARCHAR(255),
+								Numero INTEGER,
+								Annos VARCHAR(500),
+								PRIMARY KEY (Entrenador_Id, Competicion_Id),
+								FOREIGN KEY (Entrenador_Id) REFERENCES entrenadores (Entrenador_Id) ON DELETE CASCADE,
+								FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
+
 CREATE TABLE temporada_jugadores (Temporada INTEGER);
 
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,

@@ -10,7 +10,7 @@ from python.src.etls import ETL_Partido_Estadio, ETL_Competicion, ETL_Campeones_
 from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_Jugador
 from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion
-from python.src.etls import ETL_Palmares_Equipo, ETL_Entrenador_Equipos
+from python.src.etls import ETL_Palmares_Equipo, ETL_Entrenador_Equipos, ETL_Palmares_Entrenador
 
 from python.src.database.conexion import Conexion
 
@@ -554,6 +554,10 @@ def Pipeline_Entrenadores(entrenador):
 def Pipeline_Entrenadores_Equipo(entrenador):
 	ETL_Entrenador_Equipos(entrenador, ENTORNO)
 
+@Pipeline_Base(lambda con: con.obtenerEntrenadores(), "Entrenador", "Palmares")
+def Pipeline_Palmares_Entrenadores(entrenador):
+	ETL_Palmares_Entrenador(entrenador, ENTORNO)
+
 @Pipeline_Base(lambda con: con.obtenerEntrenadoresNombreVacio(), "Entrenador", "Detalle")
 def Pipeline_Entrenadores_Faltantes(entrenador):
     ETL_Entrenador(entrenador, ENTORNO)
@@ -561,3 +565,7 @@ def Pipeline_Entrenadores_Faltantes(entrenador):
 @Pipeline_Base(lambda con: con.obtenerEntrenadoresEquiposVacio(), "Entrenador", "Equipos")
 def Pipeline_Entrenadores_Equipo_Faltantes(entrenador):
     ETL_Entrenador_Equipos(entrenador, ENTORNO)
+
+@Pipeline_Base(lambda con: con.obtenerEntrenadoresPalmaresVacio(), "Entrenador", "Palmares")
+def Pipeline_Palmares_Entrenadores_Faltantes(entrenador):
+	ETL_Palmares_Entrenador(entrenador, ENTORNO)

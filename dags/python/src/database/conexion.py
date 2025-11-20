@@ -928,6 +928,20 @@ class Conexion:
 
 		return list(map(lambda entrenador: entrenador["entrenador_id"], entrenadores))
 
+	# Metodo para obtener los entrenadores con palmares vacio
+	def obtenerEntrenadoresPalmaresVacio(self)->List[tuple]:
+
+		self.c.execute("""SELECT e.Entrenador_Id 
+						FROM entrenadores e
+						LEFT JOIN entrenador_titulo et
+						ON et.entrenador_id=e.entrenador_id
+						WHERE Competicion_Id IS NULL
+						ORDER BY e.entrenador_id;""")
+
+		entrenadores=self.c.fetchall()
+
+		return list(map(lambda entrenador: entrenador["entrenador_id"], entrenadores))
+
 	# Metodo para obtener los entrenadores unicos de los equipos
 	def obtenerEntrenadoresEquipos(self)->List[tuple]:
 
@@ -1232,6 +1246,40 @@ class Conexion:
 							WHERE Competicion_Id=%s
 							AND Equipo_Id=%s""",
 							tuple(datos_titulo_equipo))
+		self.confirmar()
+
+	# Metodo para insertar un titulo de un entrenador
+	def insertarTituloEntrenador(self, titulo_entrenador:tuple)->None:
+
+		self.c.execute("""INSERT INTO entrenador_titulo
+							VALUES(%s, %s, %s, %s, %s)""",
+							titulo_entrenador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el titulo de un entrenador
+	def existe_titulo_entrenador(self, competicion_id:str, entrenador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM entrenador_titulo
+							WHERE Competicion_Id=%s
+							AND Entrenador_Id=%s""",
+							(competicion_id, entrenador_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para actualizar los datos del titulo de un entrenador
+	def actualizarDatosTituloEntrenador(self, datos_titulo_entrenador:List[str], competicion_id:str, entrenador_id:str)->None:
+
+		datos_titulo_entrenador.append(competicion_id)
+
+		datos_titulo_entrenador.append(entrenador_id)
+
+		self.c.execute("""UPDATE entrenador_titulo
+							SET Nombre=%s, Numero=%s, Annos=%s
+							WHERE Competicion_Id=%s
+							AND Entrenador_Id=%s""",
+							tuple(datos_titulo_entrenador))
 		self.confirmar()
 
 	# Metodo para obtener los codigos del titulo de las competiciones

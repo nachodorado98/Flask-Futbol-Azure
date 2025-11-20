@@ -11,7 +11,7 @@ def extraerDataEquipoPalmares(equipo:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperEquipoPalmares(equipo)
 
-	return scraper.obtenerEstadioPalmares()
+	return scraper.obtenerEquipoPalmares()
 
 def limpiarDataEquipoPalmares(tabla:pd.DataFrame)->pd.DataFrame:
 

@@ -11,7 +11,7 @@ from utils import existe_entorno, ejecutarDagEntrenadores, actualizarVariable, c
 from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES, BASH_ESTADIOS
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
-from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores, Pipeline_Entrenadores_Equipo
+from pipelines import Pipeline_Entrenadores_Equipos, Pipeline_Entrenadores, Pipeline_Entrenadores_Equipo, Pipeline_Palmares_Entrenadores
 
 from datalake import data_lake_disponible, entorno_data_lake_creado, creacion_entorno_data_lake
 from datalake import subirPaisesEntrenadoresDataLake, subirEntrenadoresDataLake
@@ -67,8 +67,10 @@ with DAG("dag_entrenadores",
 
 		tareas_pipeline_entrenadores_equipos=PythonOperator(task_id="pipeline_entrenadores_equipos", python_callable=Pipeline_Entrenadores_Equipo)
 
+		tareas_pipeline_entrenadores_palmares=PythonOperator(task_id="pipeline_entrenadores_palmares", python_callable=Pipeline_Palmares_Entrenadores)
 
-		tarea_pipeline_entrenadores_equipo >> tareas_pipeline_entrenadores_detalle >> tareas_pipeline_entrenadores_equipos
+
+		tarea_pipeline_entrenadores_equipo >> tareas_pipeline_entrenadores_detalle >> tareas_pipeline_entrenadores_equipos >> tareas_pipeline_entrenadores_palmares
 
 
 	with TaskGroup("datalake") as tareas_datalake:
