@@ -31,6 +31,15 @@ class PartidoCompeticionError(Exception):
 class PartidoGoleadoresError(Exception):
     pass
 
+class PartidoAlineacionesAlineacionError(Exception):
+    pass
+
+class PartidoAlineacionesSuplentesError(Exception):
+    pass
+
+class PartidoAlineacionesError(Exception):
+    pass
+
 class CompeticionError(Exception):
     pass
 

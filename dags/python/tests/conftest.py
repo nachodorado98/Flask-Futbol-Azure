@@ -27,6 +27,7 @@ from src.scrapers.scraper_jugador_seleccion import ScraperJugadorSeleccion
 from src.scrapers.scraper_equipo_palmares import ScraperEquipoPalmares
 from src.scrapers.scraper_entrenador_equipos import ScraperEntrenadorEquipos
 from src.scrapers.scraper_entrenador_palmares import ScraperEntrenadorPalmares
+from src.scrapers.scraper_partido_alineaciones import ScraperPartidoAlineaciones
 
 from src.scrapers.configscrapers import ENDPOINT_COMPETICION
 
@@ -38,41 +39,6 @@ from src.datalake.conexion_data_lake import ConexionDataLake
 def entorno():
 
 	return "DEV"
-
-@pytest.fixture
-def scraper():
-
-	return Scraper(f"{ENDPOINT_COMPETICION}/primera/2024")
-
-@pytest.fixture
-def scraper_equipos_liga():
-
-	return ScraperEquiposLiga("primera/2024")
-
-@pytest.fixture
-def scraper_equipo():
-
-	return ScraperEquipo("atletico-madrid")
-
-@pytest.fixture
-def scraper_equipo_estadio():
-
-	return ScraperEquipoEstadio("atletico-madrid")
-
-@pytest.fixture
-def scraper_equipo_entrenador():
-
-	return ScraperEquipoEntrenador("atletico-madrid")
-
-@pytest.fixture
-def scraper_equipo_escudo():
-
-	return ScraperEquipoEscudo("atletico-madrid")
-
-@pytest.fixture
-def scraper_equipo_palmares():
-
-	return ScraperEquipoPalmares("atletico-madrid")
 
 @pytest.fixture()
 def conexion(entorno):
@@ -112,6 +78,41 @@ def datalake():
     return ConexionDataLake()
 
 @pytest.fixture
+def scraper():
+
+	return Scraper(f"{ENDPOINT_COMPETICION}/primera/2024")
+
+@pytest.fixture
+def scraper_equipos_liga():
+
+	return ScraperEquiposLiga("primera/2024")
+
+@pytest.fixture
+def scraper_equipo():
+
+	return ScraperEquipo("atletico-madrid")
+
+@pytest.fixture
+def scraper_equipo_estadio():
+
+	return ScraperEquipoEstadio("atletico-madrid")
+
+@pytest.fixture
+def scraper_equipo_entrenador():
+
+	return ScraperEquipoEntrenador("atletico-madrid")
+
+@pytest.fixture
+def scraper_equipo_escudo():
+
+	return ScraperEquipoEscudo("atletico-madrid")
+
+@pytest.fixture
+def scraper_equipo_palmares():
+
+	return ScraperEquipoPalmares("atletico-madrid")
+
+@pytest.fixture
 def scraper_partidos():
 
 	return ScraperPartidos(369, 2019)
@@ -130,6 +131,11 @@ def scraper_partido_competicion():
 def scraper_partido_goleadores():
 
 	return ScraperPartidoGoleadores("atletico-madrid", "real-madrid", "2024664923")
+
+@pytest.fixture
+def scraper_partido_alineaciones():
+
+	return ScraperPartidoAlineaciones("atletico-madrid", "real-madrid", "2024664923")
 
 @pytest.fixture
 def scraper_competicion():
