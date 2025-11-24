@@ -13,7 +13,7 @@ def extraerDataCampeonesCompeticion(competicion:str)->Optional[pd.DataFrame]:
 
 def limpiarDataCampeonesCompeticion(tabla:pd.DataFrame)->pd.DataFrame:
 
-	tabla_filtrada=tabla[~(tabla["Ano"].isna())|tabla["Equipo_URL"].isna()]
+	tabla_filtrada=tabla[~((tabla["Ano"].isna())|(tabla["Equipo_URL"].isna()))]
 
 	if tabla_filtrada.empty:
 
