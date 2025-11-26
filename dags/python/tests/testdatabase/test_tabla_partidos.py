@@ -317,3 +317,61 @@ def test_obtener_partidos_sin_goleadores_ninguno_existe_sin_goles(conexion, nume
 		conexion.insertarPartido(partido)
 
 	assert not conexion.obtenerPartidosSinGoleadores()
+
+def test_obtener_partidos_sin_alineaciones_tabla_vacia(conexion):
+
+	assert not conexion.obtenerPartidosSinAlineaciones()
+
+def test_obtener_partidos_sin_alineaciones_todos_existen(conexion):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 21)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+		conexion.insertarPartidoJugador((partido[0], "nacho", 13, 6.8, True, True, 1))
+
+	assert not conexion.obtenerPartidosSinAlineaciones()
+
+@pytest.mark.parametrize(["numero_partidos"],
+	[(3,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_alineaciones_ninguno_existe(conexion, numero_partidos):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, numero_partidos+1)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	assert len(conexion.obtenerPartidosSinAlineaciones())==numero_partidos
+
+@pytest.mark.parametrize(["faltantes"],
+	[(1,),(5,),(77,),(3,),(99,),(6,),(10,),(90,),(150,),(200,)]
+)
+def test_obtener_partidos_sin_alineaciones_faltantes(conexion, faltantes):
+
+	conexion.insertarEquipo("atleti-madrid")
+
+	conexion.insertarJugador("nacho")
+
+	partidos=[[f"{numero}", "atleti-madrid", "atleti-madrid", "2019-06-22", "20:00", "Liga", "1-0", "Victoria"] for numero in range(1, 201)]
+
+	for partido in partidos:
+
+		conexion.insertarPartido(partido)
+
+	for partido in partidos[:-faltantes]:
+
+		conexion.insertarPartidoJugador((partido[0], "nacho", 13, 6.8, True, True, 1))
+
+	assert len(conexion.obtenerPartidosSinAlineaciones())==faltantes

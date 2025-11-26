@@ -35,7 +35,7 @@ def cargarDataPartidoGoleadores(tabla:pd.DataFrame, partido_id:str, entorno:str)
 
 		con.cerrarConexion()
 
-		raise Exception(f"Error al cargar la competicion del partido {partido_id}. No existe")
+		raise Exception(f"Error al cargar los goleadores del partido {partido_id}. No existe")
 
 	try:
 

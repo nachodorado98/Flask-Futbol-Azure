@@ -184,6 +184,25 @@ CREATE TABLE entrenador_titulo (Entrenador_Id VARCHAR(255),
 								FOREIGN KEY (Entrenador_Id) REFERENCES entrenadores (Entrenador_Id) ON DELETE CASCADE,
 								FOREIGN KEY (Competicion_Id) REFERENCES competiciones (Competicion_Id) ON DELETE CASCADE);
 
+CREATE TABLE partido_entrenador (Partido_Id VARCHAR(255),
+									Entrenador_Id VARCHAR(255),
+									Tactica VARCHAR(255),
+									Local BOOL,
+									PRIMARY KEY (Partido_Id, Entrenador_Id),
+									FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
+									FOREIGN KEY (Entrenador_Id) REFERENCES entrenadores (Entrenador_Id) ON DELETE CASCADE);
+
+CREATE TABLE partido_jugador (Partido_Id VARCHAR(255),
+								Jugador_Id VARCHAR(255),
+								Numero INTEGER,
+								Puntuacion DOUBLE PRECISION,
+								Titular BOOL,
+								Local BOOL,
+								Posicion INTEGER,
+								PRIMARY KEY (Partido_Id, Jugador_Id),
+								FOREIGN KEY (Partido_Id) REFERENCES partidos (Partido_Id) ON DELETE CASCADE,
+								FOREIGN KEY (Jugador_Id) REFERENCES jugadores (Jugador_Id) ON DELETE CASCADE);
+
 CREATE TABLE temporada_jugadores (Temporada INTEGER);
 
 CREATE TABLE variables (Nombre VARCHAR(255) PRIMARY KEY,

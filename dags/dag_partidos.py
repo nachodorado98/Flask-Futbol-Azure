@@ -12,7 +12,7 @@ from config import BASH_LOGS, BASH_ESCUDOS, BASH_ENTRENADORES, BASH_PRESIDENTES,
 from config import BASH_COMPETICIONES, BASH_PAISES, BASH_JUGADORES, BASH_SELECCIONES, BASH_TITULOS
 
 from pipelines import Pipeline_Partidos_Equipo, Pipeline_Partidos_Estadio, Pipeline_Partidos_Competicion
-from pipelines import Pipeline_Partidos_Goleadores, Pipeline_Proximos_Partidos_Equipo
+from pipelines import Pipeline_Partidos_Goleadores, Pipeline_Proximos_Partidos_Equipo, Pipeline_Partidos_Alineaciones
 
 
 
@@ -68,8 +68,10 @@ with DAG("dag_partidos",
 
 		tarea_pipeline_partidos_goleadores=PythonOperator(task_id="pipeline_partidos_goleadores", python_callable=Pipeline_Partidos_Goleadores)
 
+		tarea_pipeline_partidos_alineaciones=PythonOperator(task_id="pipeline_partidos_alineaciones", python_callable=Pipeline_Partidos_Alineaciones)
 
-		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion >> tarea_pipeline_partidos_goleadores
+
+		tarea_pipeline_partidos_equipo >> tarea_pipeline_partidos_estadio >> tarea_pipeline_partidos_competicion >> tarea_pipeline_partidos_goleadores >> tarea_pipeline_partidos_alineaciones
 
 
 	with TaskGroup("pipelines_proximos_partidos") as tareas_pipelines_proximos_partidos:

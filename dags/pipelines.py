@@ -11,6 +11,7 @@ from python.src.etls import ETL_Partido_Competicion, ETL_Jugadores_Equipo, ETL_J
 from python.src.etls import ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from python.src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion
 from python.src.etls import ETL_Palmares_Equipo, ETL_Entrenador_Equipos, ETL_Palmares_Entrenador
+from python.src.etls import ETL_Partido_Alineaciones
 
 from python.src.database.conexion import Conexion
 
@@ -278,6 +279,50 @@ def Pipeline_Partidos_Goleadores()->None:
 			except Exception as e:
 
 				mensaje=f"Goleadores Partido_Id: {partido_id} - Motivo: {e}"
+
+				crearArchivoLog(mensaje)
+
+				if not con.existe_error(entidad, categoria, partido_id):
+
+					con.insertarError(entidad, categoria, partido_id)
+
+					print(f"Error NUEVO en la tabla de errores - {entidad} {categoria}")
+
+				else:
+
+					con.actualizarNumeroErrores(entidad, categoria, partido_id)
+
+					print(f"Error ACTUALIZADO en la tabla de errores - {entidad} {categoria}")
+
+			time.sleep(0.25)
+
+	con.cerrarConexion()
+
+def Pipeline_Partidos_Alineaciones()->None:
+
+	con=Conexion(ENTORNO)
+
+	partidos=con.obtenerPartidosSinAlineaciones()
+
+	for partido_id, equipo_local, equipo_visitante in partidos:
+
+		entidad="Partido"
+
+		categoria="Alineaciones"
+
+		numero_errores=con.obtenerNumeroErrores(entidad, categoria, partido_id)
+
+		if numero_errores<MAX_ERRORES:
+
+			print("-"*70)
+
+			try:
+				
+				ETL_Partido_Alineaciones(equipo_local, equipo_visitante, partido_id, ENTORNO)
+
+			except Exception as e:
+
+				mensaje=f"Alineaciones Partido_Id: {partido_id} - Motivo: {e}"
 
 				crearArchivoLog(mensaje)
 

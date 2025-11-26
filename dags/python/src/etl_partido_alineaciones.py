@@ -5,6 +5,8 @@ from .scrapers.scraper_partido_alineaciones import ScraperPartidoAlineaciones
 
 from .utils import limpiarCodigoImagen
 
+from .database.conexion import Conexion
+
 def extraerDataPartidoAlineaciones(equipo_local:str, equipo_visitante:str, partido_id:str)->Optional[pd.DataFrame]:
 
 	scraper=ScraperPartidoAlineaciones(equipo_local, equipo_visitante, partido_id)
@@ -13,7 +15,7 @@ def extraerDataPartidoAlineaciones(equipo_local:str, equipo_visitante:str, parti
 
 def limpiarDataPartidoAlineaciones(tabla:pd.DataFrame)->pd.DataFrame:
 
-	tabla_filtrada=tabla[~((tabla["Puntos"].isna())|(tabla["Tactica"].isna()))]
+	tabla_filtrada=tabla[~((tabla["Puntos"].isna())|(tabla["Tactica"].isna())|(tabla["Entrenador_URL"].isna()))]
 
 	if tabla_filtrada.empty:
 
@@ -56,3 +58,51 @@ def limpiarDataPartidoAlineaciones(tabla:pd.DataFrame)->pd.DataFrame:
 	columnas=["Codigo_Jugador", "Numero", "Puntos", "Titular", "Local", "Posicion", "Codigo_Entrenador", "Tactica"]
 
 	return tabla_filtrada[columnas]
+
+def cargarDataPartidoAlineaciones(tabla:pd.DataFrame, partido_id:str, entorno:str)->None:
+
+	tabla_entrenadores_partido=tabla[["Codigo_Entrenador", "Tactica", "Local"]].drop_duplicates()
+
+	datos_entrenadores_partido=tabla_entrenadores_partido.values.tolist()
+
+	tabla_alineaciones_partido=tabla[["Codigo_Jugador", "Numero", "Puntos", "Titular", "Local", "Posicion"]]
+
+	datos_alineaciones_partido=tabla_alineaciones_partido.values.tolist()
+
+	con=Conexion(entorno)
+
+	if not con.existe_partido(partido_id):
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar las alineaciones del partido {partido_id}. No existe")
+
+	try:
+
+		for entrenador, tactica, local in datos_entrenadores_partido:
+
+			if not con.existe_entrenador(entrenador):
+
+				con.insertarEntrenador(entrenador)
+
+			if not con.existe_partido_entrenador(partido_id, entrenador):
+
+				con.insertarPartidoEntrenador((partido_id, entrenador, tactica, local))
+
+		for jugador, numero, puntuacion, titular, local, posicion in datos_alineaciones_partido:
+
+			if not con.existe_jugador(jugador):
+
+				con.insertarJugador(jugador)
+
+			if not con.existe_partido_jugador(partido_id, jugador):
+
+				con.insertarPartidoJugador((partido_id, jugador, numero, puntuacion, titular, local, posicion))
+
+		con.cerrarConexion()
+
+	except Exception:
+
+		con.cerrarConexion()
+
+		raise Exception(f"Error al cargar las alineaciones del partido {partido_id}")

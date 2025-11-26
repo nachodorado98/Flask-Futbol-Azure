@@ -19,6 +19,7 @@ from .etl_jugador_equipos import extraerDataJugadorEquipos, limpiarDataJugadorEq
 from .etl_jugador_seleccion import extraerDataJugadorSeleccion, limpiarDataJugadorSeleccion, cargarDataJugadorSeleccion
 from .etl_entrenador_equipos import extraerDataEntrenadorEquipos, limpiarDataEntrenadorEquipos, cargarDataEntrenadorEquipos
 from .etl_entrenador_palmares import extraerDataEntrenadorPalmares, limpiarDataEntrenadorPalmares, cargarDataEntrenadorPalmares
+from .etl_partido_alineaciones import extraerDataPartidoAlineaciones, limpiarDataPartidoAlineaciones, cargarDataPartidoAlineaciones
 
 def ETL_Equipos_Liga(liga:str, entorno:str)->None:
 
@@ -139,6 +140,16 @@ def ETL_Partido_Goleadores(equipo_local:str, equipo_visitante:str, partido_id:st
 	data_limpia=limpiarDataPartidoGoleadores(data)
 
 	cargarDataPartidoGoleadores(data_limpia, partido_id, entorno)
+
+def ETL_Partido_Alineaciones(equipo_local:str, equipo_visitante:str, partido_id:str, entorno:str)->None:
+
+	print(f"ETL Partido Alineaciones {equipo_local} vs {equipo_visitante} - {partido_id}")
+
+	data=extraerDataPartidoAlineaciones(equipo_local, equipo_visitante, partido_id)
+
+	data_limpia=limpiarDataPartidoAlineaciones(data)
+
+	cargarDataPartidoAlineaciones(data_limpia, partido_id, entorno)
 
 def ETL_Jugadores_Equipo(equipo_id:int, temporada:int, entorno:str)->None:
 

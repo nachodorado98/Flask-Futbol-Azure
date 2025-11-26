@@ -1402,3 +1402,59 @@ class Conexion:
 							AND Equipo_Id=%s""",
 							tuple(datos_equipo_entrenador))
 		self.confirmar()
+
+	# Metodo para insertar un partido entrenador
+	def insertarPartidoEntrenador(self, partido_entrenador:tuple)->None:
+
+		self.c.execute("""INSERT INTO partido_entrenador
+							VALUES(%s, %s, %s, %s)""",
+							partido_entrenador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el partido entrenador
+	def existe_partido_entrenador(self, partido_id:str, entrenador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partido_entrenador
+							WHERE Partido_Id=%s
+							AND Entrenador_Id=%s""",
+							(partido_id, entrenador_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para insertar un partido jugador
+	def insertarPartidoJugador(self, partido_jugador:tuple)->None:
+
+		self.c.execute("""INSERT INTO partido_jugador
+							VALUES(%s, %s, %s, %s, %s, %s, %s)""",
+							partido_jugador)
+
+		self.confirmar()
+
+	# Metodo para saber si existe el partido jugador
+	def existe_partido_jugador(self, partido_id:str, jugador_id:str)->bool:
+
+		self.c.execute("""SELECT *
+							FROM partido_jugador
+							WHERE Partido_Id=%s
+							AND Jugador_Id=%s""",
+							(partido_id, jugador_id))
+
+		return False if self.c.fetchone() is None else True
+
+	# Metodo para obtener los partidos que no tienen alineaciones
+	def obtenerPartidosSinAlineaciones(self)->List[tuple]:
+
+		self.c.execute("""SELECT p.Partido_Id, p.Equipo_Id_Local, p.Equipo_Id_Visitante
+						FROM partidos p
+						LEFT JOIN partido_jugador pj
+						USING (Partido_Id)
+						WHERE pj.Partido_Id IS NULL
+						ORDER BY p.Fecha""")
+
+		partidos=self.c.fetchall()
+
+		return list(map(lambda partido: (partido["partido_id"],
+										partido["equipo_id_local"],
+										partido["equipo_id_visitante"]), partidos))

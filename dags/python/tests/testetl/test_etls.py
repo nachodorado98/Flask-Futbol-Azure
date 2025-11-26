@@ -7,7 +7,7 @@ from src.etls import ETL_Estadio_Equipo, ETL_Partidos_Equipo, ETL_Partido_Estadi
 from src.etls import ETL_Campeones_Competicion, ETL_Partido_Competicion, ETL_Jugadores_Equipo
 from src.etls import ETL_Jugador, ETL_Partido_Goleadores, ETL_Estadio, ETL_Proximos_Partidos_Equipo
 from src.etls import ETL_Entrenador, ETL_Jugador_Equipos, ETL_Jugador_Seleccion, ETL_Palmares_Equipo
-from src.etls import ETL_Entrenador_Equipos, ETL_Palmares_Entrenador
+from src.etls import ETL_Entrenador_Equipos, ETL_Palmares_Entrenador, ETL_Partido_Alineaciones
 
 from src.scrapers.excepciones_scrapers import EquiposLigaError, EquipoError, EquipoEscudoError
 from src.scrapers.excepciones_scrapers import EquipoEntrenadorError, EquipoEstadioError, PartidosEquipoError
@@ -15,7 +15,7 @@ from src.scrapers.excepciones_scrapers import PartidoEstadioError, CompeticionEr
 from src.scrapers.excepciones_scrapers import PartidoCompeticionError, JugadoresEquipoError, JugadorError
 from src.scrapers.excepciones_scrapers import PartidoGoleadoresError, EstadioError, EntrenadorError
 from src.scrapers.excepciones_scrapers import JugadorEquiposError, JugadorSeleccionError, EquipoPalmaresError
-from src.scrapers.excepciones_scrapers import EntrenadorEquiposError, EntrenadorPalmaresError
+from src.scrapers.excepciones_scrapers import EntrenadorEquiposError, EntrenadorPalmaresError, PartidoAlineacionesError
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("usa-liga",)]
@@ -1131,6 +1131,117 @@ def test_etl_partido_goleadores_existentes(conexion, entorno, local, visitante, 
 
 	assert numero_registros_jugadores==numero_registros_jugadores_nuevos
 	assert numero_registros_goleadores==numero_registros_goleadores_nuevos
+
+def test_etl_partido_alineaciones_error(entorno):
+
+	with pytest.raises(PartidoAlineacionesError):
+
+		ETL_Partido_Alineaciones("equipo1", "equipo2", "partido_id", entorno)
+
+def test_etl_partido_alineaciones_error_no_existe(entorno):
+
+	with pytest.raises(PartidoAlineacionesError):
+
+		ETL_Partido_Alineaciones("atletico-madrid", "liverpool", "198923660", entorno)
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "2024664923"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("atletico-madrid", "internazionale", "2024645009"),
+		("atletico-madrid", "almeria", "2021113990")
+	]
+)
+def test_etl_partido_alineaciones_datos_correctos(conexion, entorno, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Alineaciones(local, visitante, partido_id, entorno)
+
+	conexion.c.execute("SELECT * FROM entrenadores")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_entrenador")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	assert conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_jugador")
+
+	assert conexion.c.fetchall()
+
+@pytest.mark.parametrize(["local", "visitante", "partido_id"],
+	[
+		("atletico-madrid", "real-madrid", "2024664923"),
+		("rayo-vallecano", "atletico-madrid", "202430031"),
+		("celtic-fc", "atletico-madrid", "2024555815"),
+		("feyenoord", "atletico-madrid", "2024555825"),
+		("atletico-madrid", "internazionale", "2024645009"),
+		("atletico-madrid", "almeria", "2021113990")
+	]
+)
+def test_etl_partido_alineaciones_existentes(conexion, entorno, local, visitante, partido_id):
+
+	conexion.insertarEquipo(local)
+
+	conexion.insertarEquipo(visitante)
+
+	partido=[partido_id, local, visitante, "2019-06-22", "20:00", "Liga", "1-0", "Victoria"]
+
+	conexion.insertarPartido(partido)
+
+	ETL_Partido_Alineaciones(local, visitante, partido_id, entorno)
+
+	conexion.c.execute("SELECT * FROM entrenadores")
+
+	numero_registros_entrenadores=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_entrenador")
+
+	numero_registros_partido_entrenadores=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	numero_registros_jugadores=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_jugador")
+
+	numero_registros_partido_jugadores=conexion.c.fetchall()
+
+	ETL_Partido_Alineaciones(local, visitante, partido_id, entorno)
+
+	conexion.c.execute("SELECT * FROM entrenadores")
+
+	numero_registros_entrenadores_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_entrenador")
+
+	numero_registros_partido_entrenadores_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM jugadores")
+
+	numero_registros_jugadores_nuevos=conexion.c.fetchall()
+
+	conexion.c.execute("SELECT * FROM partido_jugador")
+
+	numero_registros_partido_jugadores_nuevos=conexion.c.fetchall()
+
+	assert numero_registros_entrenadores==numero_registros_entrenadores_nuevos
+	assert numero_registros_partido_entrenadores==numero_registros_partido_entrenadores_nuevos
+	assert numero_registros_jugadores==numero_registros_jugadores_nuevos
+	assert numero_registros_partido_jugadores==numero_registros_partido_jugadores_nuevos
 
 @pytest.mark.parametrize(["endpoint"],
 	[("url",),("endpoint",),("en/players",),("bundeslig",),("primera-division",),("premier-league",)]
