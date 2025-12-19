@@ -51,9 +51,9 @@ def limpiarDataPartidoAlineaciones(tabla:pd.DataFrame)->pd.DataFrame:
 
 	tabla_filtrada["Titular"]=tabla_filtrada["Alineacion"].apply(lambda alineacion: True if alineacion=="T" else False)
 
-	tabla_filtrada["Numero"]=tabla_filtrada["Numero"].apply(lambda numero: int(numero) if numero!="" and numero else None)
+	tabla_filtrada["Numero"]=tabla_filtrada["Numero"].apply(lambda numero: int(numero) if numero!="" and numero else 0)
 
-	tabla_filtrada["Puntos"]=tabla_filtrada["Puntos"].apply(lambda numero: float(numero) if numero!="" and numero else None)
+	tabla_filtrada["Puntos"]=tabla_filtrada["Puntos"].apply(lambda numero: float(numero) if numero!="" and numero else 0.0)
 
 	columnas=["Codigo_Jugador", "Numero", "Puntos", "Titular", "Local", "Posicion", "Codigo_Entrenador", "Tactica"]
 

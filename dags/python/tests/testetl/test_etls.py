@@ -304,8 +304,9 @@ def test_etl_estadio_equipo_no_existe_error(entorno):
 		ETL_Estadio_Equipo("atletico-madrid", entorno)
 
 @pytest.mark.parametrize(["nombre_equipo"],
-	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
-	("atalanta",),("manchester-city-fc",)]
+	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
+	("salzburgo",),("manchester-united-fc",),("losc-lille",)]
 )
 def test_etl_estadio_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 
@@ -322,8 +323,9 @@ def test_etl_estadio_equipo_datos_correctos(conexion, entorno, nombre_equipo):
 	assert conexion.c.fetchall()
 
 @pytest.mark.parametrize(["nombre_equipo"],
-	[("atletico-madrid",),("liverpool",),("albacete",), ("racing",),
-	("atalanta",),("manchester-city-fc",)]
+	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
+	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
+	("salzburgo",),("manchester-united-fc",),("losc-lille",)]
 )
 def test_etl_estadio_equipo_estadio_existente(conexion, entorno, nombre_equipo):
 
@@ -382,7 +384,46 @@ def test_etl_estadio_equipo_estadio_nuevo(conexion, entorno):
 	numero_registros_equipo_estadio_nuevo=len(conexion.c.fetchall())
 
 	assert numero_registros_estadio_nuevo==numero_registros_estadio+1
-	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio+1
+	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio
+
+def test_etl_estadio_equipo_estadio_mas_de_uno(conexion, entorno):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	estadio=['riyadh-air-metropolitano-23', 23, 'Metropolitano', 'Av Luis Aragones',
+			40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.insertarEquipoEstadio(("atletico-madrid", "riyadh-air-metropolitano-23"))
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.insertarEquipoEstadio(("atletico-madrid", "vicente-calderon"))
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio=len(conexion.c.fetchall())
+
+	ETL_Estadio_Equipo("atletico-madrid", entorno)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevo=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio_nuevo=len(conexion.c.fetchall())
+
+	assert numero_registros_estadio_nuevo==numero_registros_estadio
+	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio-1
 
 @pytest.mark.parametrize(["equipo1", "equipo2"],
 	[
@@ -1151,7 +1192,9 @@ def test_etl_partido_alineaciones_error_no_existe(entorno):
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
 		("atletico-madrid", "internazionale", "2024645009"),
-		("atletico-madrid", "almeria", "2021113990")
+		("atletico-madrid", "almeria", "2021113990"),
+		("atletico-madrid", "paok", "199818752"),
+		("atletico-madrid", "internazionale", "2026180098")
 	]
 )
 def test_etl_partido_alineaciones_datos_correctos(conexion, entorno, local, visitante, partido_id):
@@ -1189,7 +1232,9 @@ def test_etl_partido_alineaciones_datos_correctos(conexion, entorno, local, visi
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
 		("atletico-madrid", "internazionale", "2024645009"),
-		("atletico-madrid", "almeria", "2021113990")
+		("atletico-madrid", "almeria", "2021113990"),
+		("atletico-madrid", "paok", "199818752"),
+		("atletico-madrid", "internazionale", "2026180098")
 	]
 )
 def test_etl_partido_alineaciones_existentes(conexion, entorno, local, visitante, partido_id):

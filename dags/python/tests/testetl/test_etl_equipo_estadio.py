@@ -36,7 +36,7 @@ def test_extraer_data_equipo_estadio(equipo):
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
 	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
-	("salzburgo",), ("lillestrom",)]
+	("salzburgo",),("manchester-united-fc",),("losc-lille",)]
 )
 def test_limpiar_data_equipo_estadio(equipo):
 
@@ -76,7 +76,7 @@ def test_cargar_data_equipo_estadio_datos_error(conexion, entorno):
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
 	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
-	("salzburgo",), ("lillestrom",)]
+	("salzburgo",),("manchester-united-fc",),("losc-lille",)]
 )
 def test_cargar_data_equipo_estadio(conexion, entorno, equipo):
 
@@ -99,7 +99,7 @@ def test_cargar_data_equipo_estadio(conexion, entorno, equipo):
 @pytest.mark.parametrize(["equipo"],
 	[("atletico-madrid",),("liverpool",),("barcelona",),("sporting-gijon",),
 	("seleccion-santa-amalia",),("fc-porto",),("malaga",),("racing",),
-	("salzburgo",), ("lillestrom",)]
+	("salzburgo",),("manchester-united-fc",),("losc-lille",)]
 )
 def test_cargar_data_equipo_estadio_existente(conexion, entorno, equipo):
 
@@ -170,7 +170,50 @@ def test_cargar_data_equipo_estadio_nuevo(conexion, entorno):
 	numero_registros_equipo_estadio_nuevo=len(conexion.c.fetchall())
 
 	assert numero_registros_estadio_nuevo==numero_registros_estadio+1
-	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio+1
+	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio
+
+def test_cargar_data_equipo_estadio_mas_de_uno(conexion, entorno):
+
+	conexion.insertarEquipo("atletico-madrid")
+
+	estadio=['riyadh-air-metropolitano-23', 23, 'Metropolitano', 'Av Luis Aragones',
+			40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.insertarEquipoEstadio(("atletico-madrid", "riyadh-air-metropolitano-23"))
+
+	estadio=["vicente-calderon", 1, "Calderon", "Paseo de los Melancolicos",
+				40, -3, "Madrid", 55, 1957, 100, 50, "Telefono", "Cesped"]
+
+	conexion.insertarEstadio(estadio)
+
+	conexion.insertarEquipoEstadio(("atletico-madrid", "vicente-calderon"))
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio=len(conexion.c.fetchall())
+
+	data=extraerDataEquipoEstadio("atletico-madrid")
+
+	data_limpia=limpiarDataEquipoEstadio(data)
+
+	cargarDataEquipoEstadio(data_limpia, "atletico-madrid", entorno)
+
+	conexion.c.execute("SELECT * FROM estadios")
+
+	numero_registros_estadio_nuevo=len(conexion.c.fetchall())
+
+	conexion.c.execute("SELECT * FROM equipo_estadio")
+
+	numero_registros_equipo_estadio_nuevo=len(conexion.c.fetchall())
+
+	assert numero_registros_estadio_nuevo==numero_registros_estadio
+	assert numero_registros_equipo_estadio_nuevo==numero_registros_equipo_estadio-1
 
 @pytest.mark.parametrize(["equipo1", "equipo2"],
 	[

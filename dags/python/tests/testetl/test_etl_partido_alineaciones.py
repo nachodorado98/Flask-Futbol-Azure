@@ -55,6 +55,14 @@ def test_limpiar_data_partidos_alineaciones_tactica_nulos():
 
 		limpiarDataPartidoAlineaciones(data)
 
+def test_limpiar_data_partidos_alineaciones_entrenador_nulos():
+
+	data=extraerDataPartidoAlineaciones("atletico-madrid", "real-union-club-irun", "1921954")
+
+	with pytest.raises(Exception):
+
+		limpiarDataPartidoAlineaciones(data)
+
 def test_limpiar_data_partidos_alineaciones_titulares_faltantes_ambos():
 
 	data=extraerDataPartidoAlineaciones("valladolid", "atletico-madrid", "20256422")
@@ -134,7 +142,9 @@ def test_cargar_data_partido_alineaciones_error_no_existe(conexion, entorno):
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
 		("atletico-madrid", "internazionale", "2024645009"),
-		("atletico-madrid", "almeria", "2021113990")
+		("atletico-madrid", "almeria", "2021113990"),
+		("atletico-madrid", "paok", "199818752"),
+		("atletico-madrid", "internazionale", "2026180098")
 	]
 )
 def test_cargar_data_partido_alineaciones(conexion, entorno, local, visitante, partido_id):
@@ -176,7 +186,9 @@ def test_cargar_data_partido_alineaciones(conexion, entorno, local, visitante, p
 		("celtic-fc", "atletico-madrid", "2024555815"),
 		("feyenoord", "atletico-madrid", "2024555825"),
 		("atletico-madrid", "internazionale", "2024645009"),
-		("atletico-madrid", "almeria", "2021113990")
+		("atletico-madrid", "almeria", "2021113990"),
+		("atletico-madrid", "paok", "199818752"),
+		("atletico-madrid", "internazionale", "2026180098")
 	]
 )
 def test_cargar_data_partido_alineaciones_existentes(conexion, entorno, local, visitante, partido_id):

@@ -60,10 +60,36 @@ def cargarDataEquipoEstadio(tabla:pd.DataFrame, equipo_id:str, entorno:str)->Non
 
 			con.insertarEstadio(datos_estadio)
 
-		if not con.existe_equipo_estadio(equipo_id, datos_estadio[0]):
+		estadio_equipo=con.obtenerEstadioEquipo(equipo_id)
 
-			con.insertarEquipoEstadio((equipo_id, datos_estadio[0]))
+		if not estadio_equipo:
 
+			if not con.existe_equipo_estadio(equipo_id, datos_estadio[0]):
+
+				con.insertarEquipoEstadio((equipo_id, datos_estadio[0]))
+
+		else:
+			
+			if estadio_equipo!=datos_estadio[0]:
+
+				con.eliminarEstadiosEquipo(equipo_id)
+
+				print(f"Estadio actualizado del equipo {equipo_id}")
+
+				con.insertarEquipoEstadio((equipo_id, datos_estadio[0]))
+
+			else:
+
+				numero_estadios=con.obtenerNumeroEstadiosEquipo(equipo_id)
+
+				if numero_estadios>1:
+
+					con.eliminarEstadiosEquipo(equipo_id)
+
+					print(f"Estadios antiguos eliminados del equipo {equipo_id}")
+
+					con.insertarEquipoEstadio((equipo_id, datos_estadio[0]))
+			
 		con.cerrarConexion()
 
 	except Exception:

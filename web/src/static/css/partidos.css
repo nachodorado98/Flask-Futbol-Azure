@@ -41,7 +41,7 @@ body {
 
 .contenedor-lateral-izq {
     left: 0;
-    padding-top: 20px;
+    padding-top: 10px;
     z-index: 1002;
 }
 
@@ -96,7 +96,7 @@ body {
 
 .contenedor-lateral-der {
     right: 0;
-    padding-top: 20px;
+    padding-top: 10px;
     z-index: 1002;
 }
 

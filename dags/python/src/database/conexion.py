@@ -229,6 +229,28 @@ class Conexion:
 
 		return False if self.c.fetchone() is None else True
 
+	# Metodo para eliminar estadios de un equipo
+	def eliminarEstadiosEquipo(self, equipo_id:str)->None:
+
+		self.c.execute("""DELETE FROM equipo_estadio
+							WHERE Equipo_Id=%s""",
+							(equipo_id,))
+
+		self.confirmar()
+
+	# Metodo para obtener numero de estadios de un equipo
+	def obtenerNumeroEstadiosEquipo(self, equipo_id:str)->None:
+
+		self.c.execute("""SELECT COUNT(1) as numero_estadios
+							FROM equipo_estadio
+							GROUP BY equipo_id
+							HAVING equipo_id=%s""",
+							(equipo_id,))
+
+		numero_estadios=self.c.fetchone()
+
+		return 0 if numero_estadios is None else numero_estadios["numero_estadios"]
+
 	# Metodo para obtener los codigos de los escudos
 	def obtenerCodigoEscudos(self)->List[int]:
 
