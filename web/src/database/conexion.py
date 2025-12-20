@@ -3588,3 +3588,54 @@ class Conexion:
 											goleador["jugador"],
 											goleador["goles"],
 											goleador["local"]), goleadores))
+
+	# Metodo para obtener los equipos de un entrenador
+	def obtenerEquiposEntrenador(self, entrenador_id:str)->List[tuple]:
+
+		self.c.execute("""SELECT e.equipo_id, e.nombre,
+							CASE WHEN e.escudo IS NULL
+									THEN -1
+									ELSE e.escudo
+							END as escudo_equipo,
+							ee.partidos_totales, ee.duracion, ee.ganados,
+							ee.perdidos, ee.empatados, ee.tactica
+							FROM entrenadores_equipo ee
+							LEFT JOIN equipos e
+							ON ee.equipo_id=e.equipo_id
+							WHERE ee.entrenador_id=%s
+							ORDER BY ee.partidos_totales DESC""",
+							(entrenador_id,))
+
+		equipos_entrenador=self.c.fetchall()
+
+		return list(map(lambda equipo: (equipo["equipo_id"],
+										equipo["nombre"],
+										equipo["escudo_equipo"],
+										equipo["partidos_totales"],
+										equipo["duracion"],
+										equipo["ganados"],
+										equipo["perdidos"],
+										equipo["empatados"],
+										equipo["tactica"]), equipos_entrenador))
+
+	# Metodo para obtener los titulos de un entrenador
+	def obtenerTitulosEntrenador(self, entrenador_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT et.competicion_id as competicion_titulo, et.nombre as nombre_titulo, et.numero,
+							CASE WHEN c.codigo_titulo IS NULL OR c.codigo_titulo LIKE %s
+									THEN '-1'
+									ELSE c.codigo_titulo
+							END as titulo
+						FROM entrenador_titulo et
+						JOIN competiciones c
+						ON et.competicion_id=c.competicion_id
+						WHERE et.entrenador_id=%s
+						ORDER BY et.numero DESC""",
+						(r'%nofoto%', entrenador_id))
+
+		titulos=self.c.fetchall()
+
+		return list(map(lambda titulo: (titulo["competicion_titulo"],
+										titulo["nombre_titulo"],
+										titulo["numero"],
+										titulo["titulo"]), titulos))

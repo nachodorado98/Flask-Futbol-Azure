@@ -39,6 +39,11 @@ def test_pagina_entrenador_entrenador(cliente, conexion_entorno_usuario):
 		assert '<div class="info-entrenador-imagenes">' in contenido
 		assert '<div class="info-entrenador-equipo"' in contenido
 		assert '<div class="info-entrenador-puntuacion">' in contenido
+		assert '<div class="tarjeta-equipos-entrenador">' in contenido
+		assert '<div class="tarjetas-equipos-entrenador-wrapper">' in contenido
+		assert '<div class="tarjeta-palmares-entrenador">' in contenido
+		assert '<p class="titulo-palmares-entrenador">' in contenido
+		assert '<div class="tarjetas-palmares-entrenador">' in contenido
 
 def test_pagina_entrenador_entrenador_sin_equipo(cliente, conexion_entorno_usuario):
 
@@ -75,3 +80,22 @@ def test_pagina_entrenador_entrenador_sin_puntuacion(cliente, conexion_entorno_u
 		respuesta.status_code==200
 		assert '<div class="info-entrenador-imagenes">' in contenido
 		assert '<div class="info-entrenador-puntuacion">' not in contenido
+
+def test_pagina_entrenador_entrenador_sin_titulos(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("""DELETE FROM entrenador_titulo""")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/entrenador/diego-pablo")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-palmares-entrenador">' not in contenido
+		assert '<p class="titulo-palmares-entrenador">' not in contenido
+		assert '<div class="tarjetas-palmares-entrenador">' not in contenido

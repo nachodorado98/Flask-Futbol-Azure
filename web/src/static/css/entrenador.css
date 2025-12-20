@@ -1,4 +1,99 @@
 /*----------------------------------------------------------ENTRENADOR-------------------------------------------------------*/
+.tarjeta-equipos-entrenador {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 0px 10px;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 265px;
+    position: fixed;
+    top: 71px;
+    bottom: 320px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-equipos-entrenador .titulo-equipos-entrenador {
+    font-size: 23px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-equipos-entrenador {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-equipos-entrenador::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-equipos-entrenador-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-equipo-entrenador {
+    width: 100%;
+    max-width: 800px;
+    margin: 5px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.tarjeta-equipo-entrenador img {
+    margin-top: 2px;
+    width: 40px;
+    height: 40px;
+}
+
+.tarjeta-equipo-entrenador h4 {
+    font-size: 18px;
+    margin: 2px;
+    color: var(--color-secundario) 
+}
+
+.info-equipo-entrenador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-equipo-entrenador p {
+    font-size: 16px;
+    margin-top: 5px;
+    margin-right: 15px;
+    margin-left: 4px;
+    color: var(--color-secundario) 
+}
+
+.info-equipo-entrenador img {
+    width: 25px;
+    height: 25px;
+    margin-bottom: 6px;
+    margin-right: 2px;
+}
+
 .tarjeta-entrenador {
     width: 100%;
     max-width: 1000px;
@@ -75,4 +170,89 @@
     width: 130px;
     height: 130px;
     cursor: pointer;
+}
+
+.tarjeta-palmares-entrenador {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 10px 4px;
+    padding-left: 20px;
+    padding-right: 10px; 
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 245px;
+    position: fixed;
+    top: 71px;
+    bottom: 33px;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+.tarjeta-palmares-entrenador .titulo-palmares-entrenador {
+    font-size: 23px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 7px;
+}
+
+.tarjetas-palmares-entrenador {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+}
+
+.tarjetas-palmares-entrenador::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-palmares-entrenador-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-titulo-entrenador {
+    width: 100%;
+    max-width: 180px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 7px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-fondo);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.tarjeta-titulo-entrenador .imagen-titulo-entrenador {
+    margin-top: 10px;
+    width: 64.5px;
+    height: 95px;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+.tarjeta-titulo-entrenador p {
+    font-size: 15px;
+    color: var(--color-secundario);
+    margin: 0 0px;
+    text-align: center;
+    padding: 3px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 100px;
 }

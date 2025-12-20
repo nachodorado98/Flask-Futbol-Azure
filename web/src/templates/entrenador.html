@@ -4,7 +4,53 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/entrenador.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="tarjeta-equipos-entrenador">
+
+    <p class="titulo-equipos-entrenador"><strong>Equipos</strong></p>
+
+    <div class="tarjetas-equipos-entrenador">
+        <div class="tarjetas-equipos-entrenador-wrapper">
+
+        {% for equipo in equipos_entrenador %}
+
+            <div class="tarjeta-equipo-entrenador" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+
+                {% if equipo[2]==-1 %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
+                {% else %}
+                    <img src="{{ url_imagen_escudo }}{{ equipo[2] }}.png" alt="Escudo Icon">
+                {% endif %}
+
+                <h4><strong>{{ equipo[1] }}</strong></h4>
+
+                <div class="info-equipo-entrenador">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/partidos.png') }}" alt="Entrenados Icon">
+                    <p>{{ equipo[3] }} partidos</p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/tactica.png') }}" alt="Tactica Icon">
+                    <p>{{ equipo[8] }}</p>
+                </div>
+
+                <div class="info-equipo-entrenador">
+                    <img src="{{ url_for('static', filename='imagenes/iconos/verde.png') }}" alt="Ganados Icon">
+                    <p>{{ equipo[5] }}</p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/naranja.png') }}" alt="Empatados Icon">
+                    <p>{{ equipo[7] }}</p>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/rojo.png') }}" alt="Perdidos Icon">
+                    <p>{{ equipo[6] }}</p>
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+         </div>
+    </div>
+
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 
@@ -59,4 +105,44 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+{% if titulos_entrenador %}
+
+    <div class="contenedor-lateral contenedor-lateral-der">
+
+        <div class="tarjeta-palmares-entrenador">
+
+            <p class="titulo-palmares-entrenador">
+                <strong>Palmares</strong>
+            </p>
+
+            <div class="tarjetas-palmares-entrenador">
+                <div class="tarjetas-palmares-entrenador-wrapper">
+
+                {% for titulo in titulos_entrenador %}
+
+                    <div class="tarjeta-titulo-entrenador" onclick="window.location.href='/competicion/{{ titulo[0] }}'">
+
+                        <p><strong>{{ titulo[1] }} - {{ titulo[2] }}</strong></p>
+
+                        {% if titulo[3]=='-1' %}
+                            <img class="imagen-titulo-entrenador" src="{{ url_for('static', filename='imagenes/iconos/no_titulo.png') }}" alt="Titulo Icon">
+                        {% else %}
+                            <img class="imagen-titulo-entrenador" src="{{ url_imagen_titulos }}{{ titulo[3] }}.png" alt="Titulo Icon">
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+{% endblock contenedor_lateral_der %}

@@ -43,6 +43,10 @@ def test_conexion_pro():
 	assert "trayecto_partido_asistido" in tablas
 	assert "porra_partidos" in tablas
 	assert "porra_goleadores" in tablas
+	assert "entrenadores_equipo" in tablas
+	assert "entrenador_titulo" in tablas
+	assert "partido_entrenador" in tablas
+	assert "partido_jugador" in tablas
 
 def test_conexion_dev(conexion):
 
@@ -74,6 +78,10 @@ def test_conexion_dev(conexion):
 	assert "trayecto_partido_asistido" in tablas
 	assert "porra_partidos" in tablas
 	assert "porra_goleadores" in tablas
+	assert "entrenadores_equipo" in tablas
+	assert "entrenador_titulo" in tablas
+	assert "partido_entrenador" in tablas
+	assert "partido_jugador" in tablas
 	
 def test_cerrar_conexion(conexion):
 
@@ -98,7 +106,7 @@ def test_vaciar_bbdd(conexion_entorno_usuario):
 	tablas=["equipos", "partidos", "estadios", "equipo_estadio", "competiciones", "competiciones_campeones",
 			"partido_competicion", "jugadores", "jugadores_equipo", "jugadores_seleccion", "entrenadores",
 			"partido_goleador", "usuarios", "partidos_asistidos", "partido_asistido_favorito", "trayecto_partido_asistido",
-			"porra_partidos", "porra_goleadores"]
+			"porra_partidos", "porra_goleadores", "entrenadores_equipo", "entrenador_titulo", "partido_entrenador", "partido_jugador"]
 
 	for tabla in tablas:
 
