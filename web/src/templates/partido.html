@@ -215,4 +215,42 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+<div class="contenedor-lateral contenedor-lateral-der">
+
+    <div class="tarjeta-alineaciones-partido">
+
+        <div class="tarjeta-escudos-partido">
+            <img class="escudo-alineacion activo" data-equipo="local"
+            src="{{ url_imagen_escudo }}{{ partido[6] }}.png"onclick="cambiarEquipo('local')">
+            <img class="escudo-alineacion" data-equipo="visitante"
+            src="{{ url_imagen_escudo }}{{ partido[9] }}.png" onclick="cambiarEquipo('visitante')">
+        </div>
+
+        <div class="tarjeta-entrenador-partido" id="entrenador"></div>
+
+        <div class="tarjeta-jugadores-partido">
+            <div class="tarjetas-jugadores-partido">
+                <div class="tarjetas-jugadores-partido-wrapper" id="jugadores"></div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const entrenadores = {{ entrenadores_partido | tojson }};
+const jugadores = {local: {{ jugadores_local_partido | tojson }}, visitante: {{ jugadores_visitante_partido | tojson }}};
+const urlEscudo = "{{ url_imagen_escudo }}";
+const urlEntrenador = "{{ url_imagen_entrenador }}";
+const urlJugador = "{{ url_imagen_jugador }}";
+let equipoActual = "local";
+
+</script>
+
+<script src="{{ url_for('static', filename='js/once_partido.js') }}"></script>
+
+{% endblock contenedor_lateral_der %}

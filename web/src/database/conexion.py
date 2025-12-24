@@ -3639,3 +3639,78 @@ class Conexion:
 										titulo["nombre_titulo"],
 										titulo["numero"],
 										titulo["titulo"]), titulos))
+
+	# Metodo para obtener los entrenadores de un partido
+	def obtenerEntrenadoresPartido(self, partido_id:str)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT pe.entrenador_id, en.nombre, en.codigo_entrenador, pe.tactica,
+							CASE WHEN pe.local
+								THEN equipo_id_local
+								ELSE equipo_id_visitante
+							END AS equipo,
+							CASE
+								WHEN pe.local AND e1.escudo IS NULL THEN -1
+								WHEN pe.local AND e1.escudo IS NOT NULL THEN e1.escudo
+								WHEN NOT pe.local AND e2.escudo IS NULL THEN -1
+								WHEN NOT pe.local AND e2.escudo IS NOT NULL THEN e2.escudo
+							END as escudo
+						FROM partido_entrenador pe
+						LEFT JOIN partidos p
+						ON pe.partido_id=p.partido_id
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN entrenadores en
+						ON pe.entrenador_id=en.entrenador_id
+						WHERE pe.partido_id=%s
+						ORDER BY pe.local DESC""",
+						(partido_id,))
+
+		entrenadores_partido=self.c.fetchall()
+
+		return list(map(lambda entrenador: (entrenador["entrenador_id"],
+											entrenador["nombre"],
+											entrenador["codigo_entrenador"],
+											entrenador["tactica"],
+											entrenador["equipo"],
+											entrenador["escudo"]), entrenadores_partido))
+
+	# Metodo para obtener los jugadores de un equipo de un partido
+	def obtenerJugadoresEquipoPartido(self, partido_id:str, local:bool)->List[Optional[tuple]]:
+
+		self.c.execute("""SELECT pj.jugador_id, j.nombre, j.codigo_jugador, pj.numero, pj.posicion,
+							CASE WHEN pj.local
+								THEN equipo_id_local
+								ELSE equipo_id_visitante
+							END AS equipo,
+							CASE
+								WHEN pj.local AND e1.escudo IS NULL THEN -1
+								WHEN pj.local AND e1.escudo IS NOT NULL THEN e1.escudo
+								WHEN NOT pj.local AND e2.escudo IS NULL THEN -1
+								WHEN NOT pj.local AND e2.escudo IS NOT NULL THEN e2.escudo
+							END as escudo
+						FROM partido_jugador pj
+						LEFT JOIN partidos p
+						ON pj.partido_id=p.partido_id
+						LEFT JOIN equipos e1
+						ON p.equipo_id_local=e1.equipo_id
+						LEFT JOIN equipos e2
+						ON p.equipo_id_visitante=e2.equipo_id
+						LEFT JOIN jugadores j
+						ON pj.jugador_id=j.jugador_id
+						WHERE pj.partido_id=%s
+						AND pj.local=%s
+						AND pj.titular=True
+						ORDER BY pj.titular DESC, pj.posicion""",
+						(partido_id, local))
+
+		jugadores_partido=self.c.fetchall()
+
+		return list(map(lambda jugador: (jugador["jugador_id"],
+										jugador["nombre"],
+										jugador["codigo_jugador"],
+										jugador["equipo"],
+										jugador["escudo"],
+										jugador["numero"],
+										jugador["posicion"]), jugadores_partido))

@@ -240,15 +240,15 @@
 }
 
 .info-historial-entre-equipos .escudo-local-historial{
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
     margin-right: 85px;
     display: inline-block;
 }
 
 .info-historial-entre-equipos .escudo-visitante-historial{
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
     margin-left: 85px;
     display: inline-block;
 }
@@ -320,5 +320,186 @@
     font-size: 30px;
     color: #fff;
     margin: 2px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-alineaciones-partido {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 10px auto 10px -27px;
+    padding-left: 20px;
+    padding-right: 10px; 
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    width: 280px;
+    position: fixed;
+    top: 71px;
+    bottom: 33px;
+    padding-top: 10px;
+    overflow-y: hidden;
+}
+
+.tarjeta-escudos-partido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.tarjeta-escudos-partido .escudo-alineacion {
+    margin-right: 15px;
+    margin-left: 20px;
+    margin-bottom: 2px;
+    margin-top: 6px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.tarjeta-escudos-partido .escudo-alineacion.activo {
+    opacity: 1;
+}
+
+.tarjeta-entrenador-partido {
+    width: 100%;
+    max-width: 800px;
+    margin: 4px auto;
+    padding: 7px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.info-entrenador-partido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-entrenador-partido .equipo-entrenador-partido {
+    margin-right: 5px;
+    margin-left: 2px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    width: 26px;
+    height: 26px;
+}
+
+.info-entrenador-partido .entrenador-partido {
+    margin-right: 4px;
+    margin-left: 5px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    width: 22px;
+    height: 22px;
+}
+
+.info-entrenador-partido .tactica-imagen {
+    margin-right: 3px;
+    margin-left: 5px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    width: 22px;
+    height: 22px;
+}
+
+.info-entrenador-partido h4 {
+    font-size: 15px;
+    margin: 0px;
+    color: var(--color-secundario) 
+}
+
+.tarjeta-jugadores-partido {
+    width: 100%;
+    max-width: 800px;
+    margin: 8px auto;
+    padding: 7px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    box-sizing: border-box;
+}
+
+.tarjetas-jugadores-partido {
+    max-height: calc(805vh - 100px);
+    overflow-y: auto;
+    padding: 0px;
+    padding-right: 5px;
+    margin-bottom: -10px;
+}
+
+.tarjetas-jugadores-partido::-webkit-scrollbar {
+    width: 0px;
+}
+
+.tarjetas-jugadores-partido-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tarjeta-jugador-partido {
+    width: 100%;
+    max-width: 800px;
+    margin: 3px auto;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: var(--color-secundario) 
+}
+
+.info-jugador-partido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-jugador-partido .equipo-jugador-partido {
+    margin-right: 5px;
+    margin-left: 2px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    width: 23px;
+    height: 23px;
+}
+
+.info-jugador-partido .jugador-partido {
+    margin-right: 4px;
+    margin-left: 5px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    width: 23px;
+    height: 23px;
+}
+
+.info-jugador-partido .camiseta-icon {
+    margin-right: 4px;
+    margin-left: 5px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    width: 23px;
+    height: 23px;
+}
+
+.info-jugador-partido h4 {
+    font-size: 15px;
+    margin: 0px;
     color: var(--color-secundario) 
 }

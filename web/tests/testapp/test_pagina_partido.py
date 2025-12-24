@@ -400,3 +400,43 @@ def test_pagina_partido_equipo_no_pertenece(cliente, conexion_entorno, password_
 		assert '/anadir_partido_asistido.png' not in contenido
 		assert 'alt="Partido No Asistido Icon"' not in contenido
 		assert 'alt="Partido Asistido Icon"' not in contenido
+
+def test_pagina_partido_sin_entrenador_partido(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("DELETE FROM partido_entrenador")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-alineaciones-partido">' in contenido
+		assert '<div class="tarjeta-escudos-partido">' in contenido
+		assert '<div class="tarjeta-entrenador-partido" id="entrenador"></div>' in contenido
+		assert '<div class="tarjeta-jugadores-partido">' in contenido
+
+def test_pagina_partido_sin_jugador_partido(cliente, conexion_entorno_usuario):
+
+	conexion_entorno_usuario.c.execute("DELETE FROM partido_jugador")
+
+	conexion_entorno_usuario.confirmar()
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		respuesta=cliente_abierto.get("/partido/20190622")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<div class="tarjeta-alineaciones-partido">' in contenido
+		assert '<div class="tarjeta-escudos-partido">' in contenido
+		assert '<div class="tarjeta-entrenador-partido" id="entrenador"></div>' in contenido
+		assert '<div class="tarjeta-jugadores-partido">' in contenido

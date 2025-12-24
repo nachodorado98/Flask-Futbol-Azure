@@ -5,6 +5,7 @@ import os
 from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_JUGADORES, URL_DATALAKE_USUARIOS
+from src.config import URL_DATALAKE_ENTRENADORES
 
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, crearMapaTrayecto, crearMapaTrayectosIdaVuelta, obtenerTrayectosConDistancia
 from src.utilidades.utils import obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias
@@ -51,6 +52,12 @@ def pagina_partido(partido_id:str):
 
 	partido_asistido=con.existe_partido_asistido(partido_id, current_user.id)
 
+	entrenadores_partido=con.obtenerEntrenadoresPartido(partido_id)
+
+	jugadores_local_partido=con.obtenerJugadoresEquipoPartido(partido_id, True)
+
+	jugadores_visitante_partido=con.obtenerJugadoresEquipoPartido(partido_id, False)
+
 	con.cerrarConexion()
 
 	return render_template("partido.html",
@@ -67,9 +74,13 @@ def pagina_partido(partido_id:str):
 							historial_entre_equipos=historial_entre_equipos,
 							partido_asistido=partido_asistido,
 							equipo_partido=equipo_partido,
+							entrenadores_partido=entrenadores_partido,
+							jugadores_local_partido=jugadores_local_partido,
+							jugadores_visitante_partido=jugadores_visitante_partido,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_jugador=URL_DATALAKE_JUGADORES,
+							url_imagen_entrenador=URL_DATALAKE_ENTRENADORES,
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/")
 
 @bp_partido.route("/partido/<partido_id>/asistido")
