@@ -1,0 +1,73 @@
+/*----------------------------------------------------------WRAPPED-------------------------------------------------*/
+.tarjeta-wrapped {
+    width: 100%;
+    max-width: 870px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    margin: 5px auto;
+    padding: 5px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    cursor: default;
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+}
+
+.titulo-pagina-wrapped {
+    font-size: 45px;
+    margin: 5px;
+    color: var(--color-secundario);
+    margin-bottom: 25px;
+}
+
+.fila-datos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    padding: 20px;
+}
+
+.tarjeta-dato {
+    aspect-ratio: 1/1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #bdc3c7;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    cursor: pointer;
+}
+
+.tarjeta-dato p {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--color-secundario) 
+}
+
+.valor-dato {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tarjeta-dato h4 {
+    font-size: 32px;
+    margin: 0;
+}
+
+.tarjeta-dato img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 8px;
+    margin-right: 10px;
+}

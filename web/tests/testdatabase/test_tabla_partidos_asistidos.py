@@ -3783,3 +3783,39 @@ def test_obtener_partido_asistido_fecha_varios_mismo_dia(conexion_entorno):
 
 	assert hoy.year-2022==partido_fecha[-1]
 	assert partido_fecha[0]=="20220622"
+
+def test_obtener_partidos_asistidos_usuario_annio_no_existe_usuario(conexion):
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioAnnio("nacho", 2019)
+
+def test_obtener_partidos_asistidos_usuario_annio_no_existen_partidos(conexion):
+
+	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid')""")
+
+	conexion.confirmar()
+
+	conexion.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion.obtenerPartidosAsistidosUsuarioAnnio("nacho", 2019)
+
+def test_obtener_partidos_asistidos_usuario_annio_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioAnnio("nacho", 2019)
+
+def test_obtener_partidos_asistidos_usuario_annio_no_hay(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerPartidosAsistidosUsuarioAnnio("nacho", 2025)
+
+def test_obtener_partidos_asistidos_usuario_annio(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert conexion_entorno.obtenerPartidosAsistidosUsuarioAnnio("nacho", 2019)

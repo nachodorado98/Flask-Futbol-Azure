@@ -51,8 +51,6 @@ def test_pagina_settings_con_imagen_perfil(cliente, conexion_entorno_usuario, da
 
 		contenido=respuesta.data.decode()
 
-		print(contenido)
-
 		assert respuesta.status_code==200
 		assert '<div class="tarjeta-configuracion">' in contenido
 		assert '<p class="titulo-pagina-configuracion">' in contenido

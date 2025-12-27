@@ -1,0 +1,67 @@
+{% extends "partidos.html" %}
+
+{% block link_especifico_pagina %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wrapped.css') }}">
+{% endblock link_especifico_pagina %}
+
+{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+
+{% block partidos %}{% endblock partidos %}
+
+{% block principal %}
+
+<div class="tarjeta-wrapped">
+
+    <p class="titulo-pagina-wrapped"><strong>Wrapped {{ annio }}</strong></p>
+
+    <div class="fila-datos">
+
+        <div class="tarjeta-dato">
+
+            <p><strong>Partidos</strong></p>
+
+            <div class="valor-dato">
+                <h4>{{ numero_partidos_asistidos_annio }}</h4>
+            </div>
+
+        </div>
+
+        <div class="tarjeta-dato">
+
+            <p><strong>Estadios</strong></p>
+
+            <div class="valor-dato">
+                <h4>{{ numero_estadios_asistidos_annio }}</h4>
+            </div>
+
+        </div>
+        
+        <div class="tarjeta-dato">
+
+            <p><strong>Equipo Mas Visto</strong></p>
+
+            <div class="valor-dato">
+
+                {% if equipo_mas_visto_annio %}
+
+                    {% if equipo_mas_visto_annio[1]==-1 %}
+                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                    {% else %}
+                        <img src="{{ url_imagen_escudo }}{{ equipo_mas_visto_annio[1] }}.png" alt="Local Icon">
+                    {% endif %}
+
+                    <h4>{{ equipo_mas_visto_annio[2] }}</h4>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+    
+</div>
+
+{% endblock principal %}
+
+{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}

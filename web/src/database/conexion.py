@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import Optional, List
 import pandas as pd
+from datetime import datetime
 
 from .confconexion import *
 
@@ -1325,8 +1326,8 @@ class Conexion:
 							ON p.partido_id=pe.partido_id
 							ORDER BY p.fecha DESC""",
 							(r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
-								r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
-								r'%Empate%', usuario))
+							r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
+							r'%Empate%', usuario))
 
 		asistidos=self.c.fetchall()
 
@@ -3714,3 +3715,73 @@ class Conexion:
 										jugador["escudo"],
 										jugador["numero"],
 										jugador["posicion"]), jugadores_partido))
+
+	def obtenerPartidosAsistidosUsuarioAnnio(self, usuario:str, annio:int)->List[Optional[tuple]]:
+
+		equipo_id=self.obtenerEquipo(usuario)
+
+		self.c.execute("""SELECT pa.partido_id, p.marcador, p.fecha, p.competicion,
+								CASE WHEN e1.escudo IS NULL
+										THEN -1
+										ELSE e1.escudo
+								END as escudo_local,
+								CASE WHEN e2.escudo IS NULL
+										THEN -1
+										ELSE e2.escudo
+								END as escudo_visitante,
+								e1.equipo_id as local, e1.nombre as nombre_local,
+								e2.equipo_id as visitante, e2.nombre as nombre_visitante,
+								pe.estadio_id, e.nombre,
+								CASE WHEN e.codigo_estadio IS NULL
+										THEN -1
+										ELSE e.codigo_estadio
+								END as imagen_estadio,
+								CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_ganado,
+						       CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
+						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
+							            THEN 1
+							            ELSE 0
+						       END as partido_perdido,
+   						       CASE WHEN p.resultado LIKE %s
+							            THEN 1
+							            ELSE 0
+						       END as partido_empatado
+							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
+		                    LEFT JOIN partidos p
+		                    ON pa.partido_id=p.partido_id
+		                    LEFT JOIN equipos e1
+							ON p.equipo_id_local=e1.equipo_id
+							LEFT JOIN equipos e2
+							ON p.equipo_id_visitante=e2.equipo_id
+							LEFT JOIN partido_estadio pe
+							ON p.partido_id=pe.partido_id
+							LEFT JOIN estadios e
+							ON pe.estadio_id=e.estadio_id
+							WHERE EXTRACT(YEAR FROM p.fecha)=%s
+							ORDER BY p.fecha DESC""",
+							(r'%Local%', equipo_id, r'%Visitante%', equipo_id, 
+							r'%Visitante%', equipo_id, r'%Local%', equipo_id, 
+							r'%Empate%', usuario, annio))
+
+		asistidos=self.c.fetchall()
+
+		return list(map(lambda asistido: (asistido["partido_id"],
+											asistido["marcador"],
+											asistido["fecha"].strftime("%d/%m/%Y"),
+											asistido["competicion"],
+											asistido["escudo_local"],
+											asistido["escudo_visitante"],
+											asistido["nombre_local"],
+											asistido["nombre_visitante"],
+											asistido["local"],
+											asistido["visitante"],
+											asistido["estadio_id"],
+											asistido["nombre"],
+											asistido["imagen_estadio"],
+											asistido["partido_ganado"],
+											asistido["partido_perdido"],
+											asistido["partido_empatado"]), asistidos))

@@ -1018,3 +1018,15 @@ def goleadoresLimpios(goleadores:List[str], local:bool)->List[tuple]:
 	goleadores_contados=Counter(goleadores)
 
 	return [(goleador, goleadores_contados[goleador], local) for goleador in dict.fromkeys(goleadores)]
+
+def estadiosVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
+
+	return sorted(list(set([(partido[10], partido[11], partido[12]) for partido in partidos_asistidos])))
+
+def equiposVistosWrappedLimpio(partidos_asistidos:List[Optional[tuple]], equipo:str)->List[Optional[tuple]]:
+
+	equipos_vistos=[(partido[8], partido[4]) if partido[8]!=equipo else (partido[9], partido[5]) for partido in partidos_asistidos]
+
+	equipos_vistos_contados=Counter(equipos_vistos)
+
+	return sorted([(equipo_visto[0], equipo_visto[1], veces) for equipo_visto, veces in equipos_vistos_contados.items()], key=lambda x: x[2], reverse=True)
