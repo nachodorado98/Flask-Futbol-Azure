@@ -2633,15 +2633,15 @@ def test_estadios_visitados_wrapped_limpio_vacio():
 
 def test_estadios_visitados_wrapped_limpio():
 
-	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 2978),
-			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 29),
-			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'epet-arena-321', 'epet ARENA', 321),
-			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'benito-villamarin-33', 'Benito Villamarín', 33),
-			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'estadio-da-luz-55', 'Estádio da Luz', 55),
-			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'estadio-coliseum-26', 'Estadio Coliseum', 26),
-			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'mendizorroza-25', 'Mendizorroza', 25),
-			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'giuseppe-meazza-40', 'Giuseppe Meazza', 40),
-			('202430481', '1-0', '11/02/2024', 'Primera', 1102, 369, 'Sevilla', 'Atlético', 'sevilla', 'atletico-madrid', 'ramon-sanchez-pizjuan-36', 'Ramón Sánchez-Pizjuán', 36)]
+	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'es', 'es', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 'es', 2978),
+			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'es', 'es', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 'es', 29),
+			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'ch', 'es', 'epet-arena-321', 'epet ARENA', 'ch', 321),
+			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'es', 'es', 'benito-villamarin-33', 'Benito Villamarín', 'es', 33),
+			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'pt', 'es', 'estadio-da-luz-55', 'Estádio da Luz', 'pt', 55),
+			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'es', 'es', 'estadio-coliseum-26', 'Estadio Coliseum', 'es', 26),
+			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'es', 'es', 'mendizorroza-25', 'Mendizorroza', 'es', 25),
+			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 40),
+			('202430481', '1-0', '11/02/2024', 'Primera', 1102, 369, 'Sevilla', 'Atlético', 'sevilla', 'atletico-madrid', 'es', 'es', 'ramon-sanchez-pizjuan-36', 'Ramón Sánchez-Pizjuán', 'es', 36)]
 
 	estadios_visitados=estadiosVisitadosWrappedLimpio(partidos)
 
@@ -2649,19 +2649,19 @@ def test_estadios_visitados_wrapped_limpio():
 
 	for estadio in estadios_visitados:
 
-		assert len(estadio)==3
+		assert len(estadio)==4
 
 def test_estadios_visitados_wrapped_limpio_duplicado():
 
-	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 2978),
-			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 29),
-			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'epet-arena-321', 'epet ARENA', 321),
-			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'benito-villamarin-33', 'Benito Villamarín', 33),
-			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'estadio-da-luz-55', 'Estádio da Luz', 55),
-			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'estadio-coliseum-26', 'Estadio Coliseum', 26),
-			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'mendizorroza-25', 'Mendizorroza', 25),
-			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'giuseppe-meazza-40', 'Giuseppe Meazza', 40),
-			('202430481', '1-0', '11/02/2024', 'Amistoso', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'giuseppe-meazza-40', 'Giuseppe Meazza', 40)]
+	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'es', 'es', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 'es', 2978),
+			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'es', 'es', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 'es', 29),
+			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'ch', 'es', 'epet-arena-321', 'epet ARENA', 'ch', 321),
+			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'es', 'es', 'benito-villamarin-33', 'Benito Villamarín', 'es', 33),
+			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'pt', 'es', 'estadio-da-luz-55', 'Estádio da Luz', 'pt', 55),
+			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'es', 'es', 'estadio-coliseum-26', 'Estadio Coliseum', 'es', 26),
+			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'es', 'es', 'mendizorroza-25', 'Mendizorroza', 'es', 25),
+			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 40),
+			('202430481', '1-0', '11/02/2024', 'Amistoso', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 40)]
 
 	estadios_visitados=estadiosVisitadosWrappedLimpio(partidos)
 
@@ -2669,7 +2669,7 @@ def test_estadios_visitados_wrapped_limpio_duplicado():
 
 	for estadio in estadios_visitados:
 
-		assert len(estadio)==3
+		assert len(estadio)==4
 
 def test_equipos_vistos_wrapped_limpio_vacio():
 
@@ -2677,15 +2677,15 @@ def test_equipos_vistos_wrapped_limpio_vacio():
 
 def test_equipos_vistos_wrapped_limpio():
 
-	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 2978),
-			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 29),
-			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'epet-arena-321', 'epet ARENA', 321),
-			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'benito-villamarin-33', 'Benito Villamarín', 33),
-			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'estadio-da-luz-55', 'Estádio da Luz', 55),
-			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'estadio-coliseum-26', 'Estadio Coliseum', 26),
-			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'mendizorroza-25', 'Mendizorroza', 25),
-			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'giuseppe-meazza-40', 'Giuseppe Meazza', 40),
-			('202430481', '1-0', '11/02/2024', 'Primera', 1102, 369, 'Sevilla', 'Atlético', 'sevilla', 'atletico-madrid', 'ramon-sanchez-pizjuan-36', 'Ramón Sánchez-Pizjuán', 36)]
+	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'es', 'es', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 'es', 2978),
+			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'es', 'es', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 'es', 29),
+			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'ch', 'es', 'epet-arena-321', 'epet ARENA', 'ch', 321),
+			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'es', 'es', 'benito-villamarin-33', 'Benito Villamarín', 'es', 33),
+			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'pt', 'es', 'estadio-da-luz-55', 'Estádio da Luz', 'pt', 55),
+			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'es', 'es', 'estadio-coliseum-26', 'Estadio Coliseum', 'es', 26),
+			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'es', 'es', 'mendizorroza-25', 'Mendizorroza', 'es', 25),
+			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 40),
+			('202430481', '1-0', '11/02/2024', 'Primera', 1102, 369, 'Sevilla', 'Atlético', 'sevilla', 'atletico-madrid', 'es', 'es', 'ramon-sanchez-pizjuan-36', 'Ramón Sánchez-Pizjuán', 'es', 36)]
 
 	equipos_vistos=equiposVistosWrappedLimpio(partidos, "atletico-madrid")
 
@@ -2693,28 +2693,28 @@ def test_equipos_vistos_wrapped_limpio():
 
 	for equipo in equipos_vistos:
 
-		assert len(equipo)==3
+		assert len(equipo)==5
 		assert equipo[-1]==1
 
 def test_equipos_vistos_wrapped_limpio_duplicado():
 
-	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 2978),
-			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 29),
-			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'epet-arena-321', 'epet ARENA', 321),
-			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'benito-villamarin-33', 'Benito Villamarín', 33),
-			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'estadio-da-luz-55', 'Estádio da Luz', 55),
-			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'estadio-coliseum-26', 'Estadio Coliseum', 26),
-			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'mendizorroza-25', 'Mendizorroza', 25),
-			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'giuseppe-meazza-40', 'Giuseppe Meazza', 40),
-			('202430481', '1-0', '11/02/2024', 'Amistoso', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'giuseppe-meazza-40', 'Giuseppe Meazza', 40)]
+	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'es', 'es', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 'es', 2978),
+			('20256422', '0-5', '30/11/2024', 'Primera', 2654, 369, 'Real Valladolid', 'Atlético', 'valladolid', 'atletico-madrid', 'es', 'es', 'estadio-jose-zorrilla-29', 'Estadio José Zorrilla', 'es', 29),
+			('2025162171', '0-6', '26/11/2024', 'Champions', 10050, 369, 'Sparta Praha', 'Atlético', 'sparta-praha', 'atletico-madrid', 'ch', 'es', 'epet-arena-321', 'epet ARENA', 'ch', 321),
+			('20256334', '1-0', '27/10/2024', 'Primera', 486, 369, 'Real Betis', 'Atlético', 'betis', 'atletico-madrid', 'es', 'es', 'benito-villamarin-33', 'Benito Villamarín', 'es', 33),
+			('2025162078', '4-0', '02/10/2024', 'Champions', 466, 369, 'Benfica', 'Atlético', 'benfica', 'atletico-madrid', 'pt', 'es', 'estadio-da-luz-55', 'Estádio da Luz', 'pt', 55),
+			('202430593', '0-3', '15/05/2024', 'Primera', 1217, 369, 'Getafe', 'Atlético', 'getafe', 'atletico-madrid', 'es', 'es', 'estadio-coliseum-26', 'Estadio Coliseum', 'es', 26),
+			('202430555', '2-0', '21/04/2024', 'Primera', 137, 369, 'Deportivo Alavés', 'Atlético', 'alaves', 'atletico-madrid', 'es', 'es', 'mendizorroza-25', 'Mendizorroza', 'es', 25),
+			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 40),
+			('202430481', '1-0', '11/02/2024', 'Amistoso', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 40)]
 
 	equipos_vistos=equiposVistosWrappedLimpio(partidos, "atletico-madrid")
 
 	assert len(equipos_vistos)==len(partidos)-1
-	assert len(equipos_vistos[0])==3
+	assert len(equipos_vistos[0])==5
 	assert equipos_vistos[0][-1]==2
 
 	for equipo in equipos_vistos[1:]:
 
-		assert len(equipo)==3
+		assert len(equipo)==5
 		assert equipo[-1]==1

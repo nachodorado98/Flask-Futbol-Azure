@@ -3731,7 +3731,19 @@ class Conexion:
 								END as escudo_visitante,
 								e1.equipo_id as local, e1.nombre as nombre_local,
 								e2.equipo_id as visitante, e2.nombre as nombre_visitante,
+								CASE WHEN e1.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e1.codigo_pais
+								END as equipo_pais_local,
+								CASE WHEN e2.codigo_pais IS NULL
+										THEN '-1'
+										ELSE e2.codigo_pais
+								END as equipo_pais_visitante,
 								pe.estadio_id, e.nombre,
+								CASE WHEN e.codigo_pais IS NULL
+						                THEN '-1'
+						                ELSE e.codigo_pais
+					           	END as estadio_pais,
 								CASE WHEN e.codigo_estadio IS NULL
 										THEN -1
 										ELSE e.codigo_estadio
@@ -3749,7 +3761,15 @@ class Conexion:
    						       CASE WHEN p.resultado LIKE %s
 							            THEN 1
 							            ELSE 0
-						       END as partido_empatado
+						       END as partido_empatado,
+						       CASE WHEN NOT EXISTS (SELECT 1 FROM partidos_asistidos pa2
+											        JOIN partidos p2 ON pa2.partido_id=p2.partido_id
+											        JOIN partido_estadio pe2 ON p2.partido_id=pe2.partido_id
+											        WHERE pa2.usuario=pa.usuario AND pe2.estadio_id=pe.estadio_id
+											        AND p2.fecha<p.fecha)
+									    THEN True
+									    ELSE False
+							   END AS estadio_nuevo
 							FROM (SELECT * FROM partidos_asistidos WHERE usuario=%s) pa
 		                    LEFT JOIN partidos p
 		                    ON pa.partido_id=p.partido_id
@@ -3779,9 +3799,13 @@ class Conexion:
 											asistido["nombre_visitante"],
 											asistido["local"],
 											asistido["visitante"],
+											asistido["equipo_pais_local"],
+											asistido["equipo_pais_visitante"],
 											asistido["estadio_id"],
 											asistido["nombre"],
+											asistido["estadio_pais"],
 											asistido["imagen_estadio"],
+											asistido["estadio_nuevo"],
 											asistido["partido_ganado"],
 											asistido["partido_perdido"],
 											asistido["partido_empatado"]), asistidos))

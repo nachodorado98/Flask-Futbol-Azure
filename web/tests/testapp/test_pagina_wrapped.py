@@ -43,7 +43,20 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		respuesta.status_code==200
 		assert '<div class="tarjeta-wrapped">' in contenido
 		assert '<p class="titulo-pagina-wrapped"><strong>Wrapped 2019</strong></p>' in contenido
-		assert '<div class="tarjeta-dato">' in contenido
+		assert '<div class="tarjeta-dato"' in contenido
+		assert "abrirVentana('ventana-emergente-partidos')" in contenido
 		assert '<p><strong>Partidos</strong></p>' in contenido
+		assert "abrirVentana('ventana-emergente-estadios')" in contenido
 		assert '<p><strong>Estadios</strong></p>' in contenido
+		assert "abrirVentana('ventana-emergente-estadios-nuevos')" in contenido
+		assert '<p><strong>Estadios Nuevos</strong></p>' in contenido
+		assert "abrirVentana('ventana-emergente-equipos')" in contenido
 		assert '<p><strong>Equipo Mas Visto</strong></p>' in contenido
+		assert '<div id="ventana-emergente-partidos" class="ventana-emergente">' in contenido
+		assert '<div class="tarjetas-partidos-asistidos">' in contenido
+		assert '<div id="ventana-emergente-estadios" class="ventana-emergente">' in contenido
+		assert '<div class="tarjetas-estadios-asistidos">' in contenido
+		assert '<div id="ventana-emergente-estadios-nuevos" class="ventana-emergente">' in contenido
+		assert '<div class="tarjetas-estadios-asistidos">' in contenido
+		assert '<div id="ventana-emergente-equipos" class="ventana-emergente">' in contenido
+		assert '<div class="tarjetas-equipos-vistos">' in contenido
