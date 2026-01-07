@@ -4,7 +4,46 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/wrapped.css') }}">
 {% endblock link_especifico_pagina %}
 
-{% block contenedor_lateral_izq %}{% endblock contenedor_lateral_izq %}
+{% block contenedor_lateral_izq %}
+
+<div class="contenedor-lateral contenedor-lateral-izq">
+    <div class="circulo-partido-mas-goles">
+        <div class="tarjeta-partido-mas-goles" onclick="window.location.href='/partido/{{ partido_mas_goles[0] }}'">
+
+            <p class="titulo-circulo-partido-mas-goles"><strong>Partido Mas Goles</strong></p>
+
+            <p><strong>{{ partido_mas_goles[3] }}</strong></p>
+
+            <div class="info-partido-mas-goles">
+
+                {% if partido_mas_goles[4]==-1 %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                {% else %}
+                    <img src="{{ url_imagen_escudo }}{{ partido_mas_goles[4] }}.png" alt="Local Icon">
+                {% endif %}
+
+                <h4>{{ partido_mas_goles[1] }}</h4>
+
+                {% if partido_mas_goles[5]==-1 %}
+                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                {% else %}
+                    <img src="{{ url_imagen_escudo }}{{ partido_mas_goles[5] }}.png" alt="Visitante Icon">
+                {% endif %}
+
+            </div>
+
+             <p><strong>{{ partido_mas_goles[2] }}</strong></p>
+
+        </div>
+    </div>
+    <div class="circulo-estadisticas-partidos-asistidos">
+        <canvas id="grafico_tarta"></canvas>
+        <script>var datos_grafica_tarta={{ resultados_partidos_asistidos_annio | tojson | safe }};</script>
+        <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
+    </div>
+</div>
+
+{% endblock contenedor_lateral_izq %}
 
 {% block partidos %}{% endblock partidos %}
 
@@ -70,173 +109,12 @@
 
     </div>
 
-    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-    <div id="ventana-emergente-partidos" class="ventana-emergente">
-        <div class="contenido-ventana-emergente">
-            <span class="cerrar" onclick="cerrarVentana('ventana-emergente-partidos')">&times;</span>
-
-            <p class="titulo-ventana"><strong>Partidos Asistidos {{ annio }}</strong></p>
-
-            <div class="contenedor-tarjetas-partidos-asistidos">
-
-                <div class="tarjetas-partidos-asistidos">
-                    <div class="tarjetas-partidos-asistidos-wrapper">
-
-                    {% for partido in partidos_asistidos_annio %}
-
-                        <div class="tarjeta-partido-asistidos" onclick="window.location.href='/partido/{{ partido[0] }}/asistido'">
-                            <p><strong>{{ partido[2] }} - {{ partido[3] }}</strong></p>
-                            <div class="info-partido-asistidos">
-
-                                {% if partido[4]==-1 %}
-                                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
-                                {% else %}
-                                    <img src="{{ url_imagen_escudo }}{{ partido[4] }}.png" alt="Local Icon">
-                                {% endif %}
-
-                                <h4>{{ partido[6] }} {{ partido[1] }} {{ partido[7] }}</h4>
-
-                                {% if partido[5]==-1 %}
-                                    <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
-                                {% else %}
-                                    <img src="{{ url_imagen_escudo }}{{ partido[5] }}.png" alt="Visitante Icon">
-                                {% endif %}
-
-                            </div>
-                        </div>
-
-                    {% endfor %}
-
-                     </div>
-                </div>
-
-            </div>
-            
-        </div>
-    </div>
-
-    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-    <div id="ventana-emergente-estadios" class="ventana-emergente">
-        <div class="contenido-ventana-emergente">
-            <span class="cerrar" onclick="cerrarVentana('ventana-emergente-estadios')">&times;</span>
-
-            <p class="titulo-ventana"><strong>Estadios Visitados {{ annio }}</strong></p>
-
-            <div class="tarjetas-estadios-asistidos">
-                <div class="tarjetas-estadios-asistidos-wrapper">
-
-                {% for estadio in estadios_asistidos_annio %}
-
-                <div class="tarjeta-estadio-asistido" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ estadio[0] | replace("\"", "\\\"") }}")'>
-
-                    <div class="info-estadio-asistido">
-
-                        {% if estadio[3]==-1 %}
-                            <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
-                        {% else %}
-                            <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[3] }}.png" alt="Estadio Icon">
-                        {% endif %}
-
-                        <h4>{{ estadio[1] }}</h4>
-
-                        {% if estadio[2]=='-1' %}
-                            <img class="pais-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
-                        {% else %}
-                            <img class="pais-estadio-asistido" src="{{ url_imagen_pais }}{{ estadio[2] }}.png" alt="Pais Icon">
-                        {% endif %}
-
-                    </div>
-                </div>
-
-                {% endfor %}
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-    <div id="ventana-emergente-estadios-nuevos" class="ventana-emergente">
-        <div class="contenido-ventana-emergente">
-            <span class="cerrar" onclick="cerrarVentana('ventana-emergente-estadios-nuevos')">&times;</span>
-
-            <p class="titulo-ventana"><strong>Estadios Nuevos {{ annio }}</strong></p>
-
-            <div class="tarjetas-estadios-asistidos">
-                <div class="tarjetas-estadios-asistidos-wrapper">
-
-                {% for estadio in estadios_nuevos_annio %}
-
-                <div class="tarjeta-estadio-asistido" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ estadio[0] | replace("\"", "\\\"") }}")'>
-
-                    <div class="info-estadio-asistido">
-
-                        {% if estadio[3]==-1 %}
-                            <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
-                        {% else %}
-                            <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[3] }}.png" alt="Estadio Icon">
-                        {% endif %}
-
-                        <h4>{{ estadio[1] }}</h4>
-
-                        {% if estadio[2]=='-1' %}
-                            <img class="pais-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
-                        {% else %}
-                            <img class="pais-estadio-asistido" src="{{ url_imagen_pais }}{{ estadio[2] }}.png" alt="Pais Icon">
-                        {% endif %}
-
-                    </div>
-                </div>
-
-                {% endfor %}
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
-    <div id="ventana-emergente-equipos" class="ventana-emergente">
-        <div class="contenido-ventana-emergente">
-            <span class="cerrar" onclick="cerrarVentana('ventana-emergente-equipos')">&times;</span>
-
-            <p class="titulo-ventana"><strong>Equipos Vistos {{ annio }}</strong></p>
-
-            <div class="tarjetas-equipos-vistos">
-                <div class="tarjetas-equipos-vistos-wrapper">
-
-                {% for equipo in equipos_vistos_annio %}
-
-                <div class="tarjeta-equipo-visto" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
-
-                    <div class="info-equipo-visto">
-
-                        {% if equipo[1]==-1 %}
-                            <img class="escudo-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
-                        {% else %}
-                            <img class="escudo-equipo-visto" src="{{ url_imagen_escudo }}{{ equipo[1] }}.png" alt="Escudo Icon">
-                        {% endif %}
-
-                        <h4>{{ equipo[2] }}</h4>
-
-                        {% if equipo[3]=='-1' %}
-                            <img class="pais-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
-                        {% else %}
-                            <img class="pais-equipo-visto" src="{{ url_imagen_pais }}{{ equipo[3] }}.png" alt="Pais Icon">
-                        {% endif %}
-
-                        <h4>{{ equipo[4] }} veces</h4>
-
-                    </div>
-                </div>
-
-                {% endfor %}
-
-                </div>
-            </div>
-
+    <div class="fila-datos">
+        <div class="tarjeta-dato-grafica">
+            <p><strong>Partidos Por Mes</strong></p>
+            <canvas id="grafico_barras"></canvas>
+            <script>var datos_grafica_barras={{ datos_grafica_barras | tojson | safe }};</script>
+            <script src="{{ url_for('static', filename='js/grafico_barras_wrapped.js') }}"></script>
         </div>
     </div>
     
@@ -246,4 +124,176 @@
 
 {% endblock principal %}
 
-{% block contenedor_lateral_der %}{% endblock contenedor_lateral_der %}
+{% block contenedor_lateral_der %}
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-partidos" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-partidos')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Partidos Asistidos {{ annio }}</strong></p>
+
+        <div class="contenedor-tarjetas-partidos-asistidos">
+
+            <div class="tarjetas-partidos-asistidos">
+                <div class="tarjetas-partidos-asistidos-wrapper">
+
+                {% for partido in partidos_asistidos_annio %}
+
+                    <div class="tarjeta-partido-asistidos" onclick="window.location.href='/partido/{{ partido[0] }}/asistido'">
+                        <p><strong>{{ partido[2] }} - {{ partido[3] }}</strong></p>
+                        <div class="info-partido-asistidos">
+
+                            {% if partido[4]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                            {% else %}
+                                <img src="{{ url_imagen_escudo }}{{ partido[4] }}.png" alt="Local Icon">
+                            {% endif %}
+
+                            <h4>{{ partido[6] }} {{ partido[1] }} {{ partido[7] }}</h4>
+
+                            {% if partido[5]==-1 %}
+                                <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                            {% else %}
+                                <img src="{{ url_imagen_escudo }}{{ partido[5] }}.png" alt="Visitante Icon">
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+                 </div>
+            </div>
+
+        </div>
+        
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-estadios" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-estadios')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Estadios Visitados {{ annio }}</strong></p>
+
+        <div class="tarjetas-estadios-asistidos">
+            <div class="tarjetas-estadios-asistidos-wrapper">
+
+            {% for estadio in estadios_asistidos_annio %}
+
+            <div class="tarjeta-estadio-asistido" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ estadio[0] | replace("\"", "\\\"") }}")'>
+
+                <div class="info-estadio-asistido">
+
+                    {% if estadio[3]==-1 %}
+                        <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                    {% else %}
+                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[3] }}.png" alt="Estadio Icon">
+                    {% endif %}
+
+                    <h4>{{ estadio[1] }}</h4>
+
+                    {% if estadio[2]=='-1' %}
+                        <img class="pais-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                    {% else %}
+                        <img class="pais-estadio-asistido" src="{{ url_imagen_pais }}{{ estadio[2] }}.png" alt="Pais Icon">
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-estadios-nuevos" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-estadios-nuevos')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Estadios Nuevos {{ annio }}</strong></p>
+
+        <div class="tarjetas-estadios-asistidos">
+            <div class="tarjetas-estadios-asistidos-wrapper">
+
+            {% for estadio in estadios_nuevos_annio %}
+
+            <div class="tarjeta-estadio-asistido" onclick='window.location.href="/estadio/"+encodeURIComponent("{{ estadio[0] | replace("\"", "\\\"") }}")'>
+
+                <div class="info-estadio-asistido">
+
+                    {% if estadio[3]==-1 %}
+                        <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
+                    {% else %}
+                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[3] }}.png" alt="Estadio Icon">
+                    {% endif %}
+
+                    <h4>{{ estadio[1] }}</h4>
+
+                    {% if estadio[2]=='-1' %}
+                        <img class="pais-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                    {% else %}
+                        <img class="pais-estadio-asistido" src="{{ url_imagen_pais }}{{ estadio[2] }}.png" alt="Pais Icon">
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-equipos" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-equipos')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Equipos Vistos {{ annio }}</strong></p>
+
+        <div class="tarjetas-equipos-vistos">
+            <div class="tarjetas-equipos-vistos-wrapper">
+
+            {% for equipo in equipos_vistos_annio %}
+
+            <div class="tarjeta-equipo-visto" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+
+                <div class="info-equipo-visto">
+
+                    {% if equipo[1]==-1 %}
+                        <img class="escudo-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
+                    {% else %}
+                        <img class="escudo-equipo-visto" src="{{ url_imagen_escudo }}{{ equipo[1] }}.png" alt="Escudo Icon">
+                    {% endif %}
+
+                    <h4>{{ equipo[2] }}</h4>
+
+                    {% if equipo[3]=='-1' %}
+                        <img class="pais-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                    {% else %}
+                        <img class="pais-equipo-visto" src="{{ url_imagen_pais }}{{ equipo[3] }}.png" alt="Pais Icon">
+                    {% endif %}
+
+                    <h4>{{ equipo[4] }} veces</h4>
+
+                </div>
+            </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock contenedor_lateral_der %}

@@ -1030,3 +1030,48 @@ def equiposVistosWrappedLimpio(partidos_asistidos:List[Optional[tuple]], equipo:
 	equipos_vistos_contados=Counter(equipos_vistos)
 
 	return sorted([(equipo_visto[0], equipo_visto[1], equipo_visto[2], equipo_visto[3], veces) for equipo_visto, veces in equipos_vistos_contados.items()], key=lambda x: (-x[4], x[2]))
+
+def obtenerGolesResultado(resultado:str)->tuple:
+
+	goles=resultado.split("-")
+
+	goles_local=goles[0].split("(")[0].strip()
+
+	try:
+
+		goles_visitante=goles[1].split(")")[1].strip()
+
+	except Exception:
+
+		goles_visitante=goles[1].strip()
+
+	return int(goles_local), int(goles_visitante)
+
+def partidoMasGolesWrapped(partidos_asistidos:List[Optional[tuple]])->Optional[tuple]:
+
+	resultados=[(partido[0], obtenerGolesResultado(partido[1])) for partido in partidos_asistidos]
+
+	if not resultados:
+
+		return None
+
+	mas_goles=max(resultados, key=lambda goles: sum(goles[1]))
+
+	return list(filter(lambda partido: mas_goles[0]==partido[0], partidos_asistidos))[0]
+
+def partidosMesWrapped(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
+
+	meses=["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
+			"Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+
+	conteo=[0]*12
+
+	for partido in partidos_asistidos:
+
+	    fecha=partido[2]
+
+	    _, mes, _=fecha.split('/')
+
+	    conteo[int(mes)-1]+=1
+
+	return {"meses": meses, "num_partidos": conteo}

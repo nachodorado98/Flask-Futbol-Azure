@@ -7,7 +7,8 @@ from src.database.conexion import Conexion
 
 from src.config import URL_DATALAKE_USUARIOS, URL_DATALAKE_ESCUDOS, URL_DATALAKE_ESTADIOS, URL_DATALAKE_PAISES
 
-from src.utilidades.utils import estadiosVisitadosWrappedLimpio, equiposVistosWrappedLimpio
+from src.utilidades.utils import estadiosVisitadosWrappedLimpio, equiposVistosWrappedLimpio, limpiarResultadosPartidos
+from src.utilidades.utils import partidoMasGolesWrapped, partidosMesWrapped
 
 
 bp_wrapped=Blueprint("wrapped", __name__)
@@ -49,6 +50,12 @@ def wrapped(annio:int):
 
 	estadios_nuevos_annio=estadiosVisitadosWrappedLimpio(partidos_estadios_nuevo_annio)
 
+	resultados_partidos_asistidos_annio=limpiarResultadosPartidos(partidos_asistidos_annio)
+
+	partido_mas_goles=partidoMasGolesWrapped(partidos_asistidos_annio)
+
+	datos_grafica_barras=partidosMesWrapped(partidos_asistidos_annio)
+
 	con.cerrarConexion()
 
 	return render_template("wrapped.html",
@@ -65,6 +72,9 @@ def wrapped(annio:int):
 							equipo_mas_visto_annio=equipos_vistos_annio[0] if equipos_vistos_annio else None,
 							estadios_nuevos_annio=estadios_nuevos_annio,
 							numero_estadios_nuevos_annio=len(estadios_nuevos_annio),
+							resultados_partidos_asistidos_annio=resultados_partidos_asistidos_annio,
+							partido_mas_goles=partido_mas_goles,
+							datos_grafica_barras=datos_grafica_barras,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,

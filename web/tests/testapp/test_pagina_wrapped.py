@@ -60,3 +60,8 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjetas-estadios-asistidos">' in contenido
 		assert '<div id="ventana-emergente-equipos" class="ventana-emergente">' in contenido
 		assert '<div class="tarjetas-equipos-vistos">' in contenido
+		assert '<div class="contenedor-lateral contenedor-lateral-izq">' in contenido
+		assert '<div class="circulo-partido-mas-goles">' in contenido
+		assert '<div class="tarjeta-partido-mas-goles"' in contenido
+		assert '<div class="circulo-estadisticas-partidos-asistidos">' in contenido
+		assert '<div class="tarjeta-dato-grafica">' in contenido
