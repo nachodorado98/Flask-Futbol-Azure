@@ -65,3 +65,5 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjeta-partido-mas-goles"' in contenido
 		assert '<div class="circulo-estadisticas-partidos-asistidos">' in contenido
 		assert '<div class="tarjeta-dato-grafica">' in contenido
+		assert '<div id="ventana-emergente-mes" class="ventana-emergente">' in contenido
+		assert '<p class="titulo-ventana" id="titulo-ventana-mes"><strong>Partidos del mes</strong></p>' in contenido

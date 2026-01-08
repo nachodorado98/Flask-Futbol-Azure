@@ -1066,12 +1066,14 @@ def partidosMesWrapped(partidos_asistidos:List[Optional[tuple]])->List[Optional[
 
 	conteo=[0]*12
 
+	partidos_mes={mes:[] for mes in meses}
+
 	for partido in partidos_asistidos:
 
-	    fecha=partido[2]
-
-	    _, mes, _=fecha.split('/')
+	    _,mes,_=partido[2].split('/')
 
 	    conteo[int(mes)-1]+=1
 
-	return {"meses": meses, "num_partidos": conteo}
+	    partidos_mes[meses[int(mes)-1]].append(partido)
+
+	return {"meses":meses, "num_partidos":conteo, "partidos":partidos_mes}

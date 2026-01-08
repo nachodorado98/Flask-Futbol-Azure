@@ -2772,6 +2772,10 @@ def test_partidos_mes_wrapped_vacio():
 	assert len(partidos_mes["meses"])==12
 	assert sum(partidos_mes["num_partidos"])==0
 
+	for numero, mes in enumerate(partidos_mes["meses"]):
+
+		assert len(partidos_mes["partidos"][mes])==partidos_mes["num_partidos"][numero]
+
 def test_partidos_mes_wrapped():
 
 	partidos=[('20256478', '1-2', '21/12/2024', 'Primera', 429, 369, 'Barcelona', 'Atlético', 'barcelona', 'atletico-madrid', 'es', 'es', 'estadio-olimpico-lluis-companys-2978', 'Estadio Olímpico Lluís Companys', 'es', 2978),
@@ -2788,3 +2792,7 @@ def test_partidos_mes_wrapped():
 
 	assert len(partidos_mes["meses"])==12
 	assert sum(partidos_mes["num_partidos"])==len(partidos)
+
+	for numero, mes in enumerate(partidos_mes["meses"]):
+
+		assert len(partidos_mes["partidos"][mes])==partidos_mes["num_partidos"][numero]

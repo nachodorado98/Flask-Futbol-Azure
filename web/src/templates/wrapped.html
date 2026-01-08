@@ -115,6 +115,7 @@
             <canvas id="grafico_barras"></canvas>
             <script>var datos_grafica_barras={{ datos_grafica_barras | tojson | safe }};</script>
             <script src="{{ url_for('static', filename='js/grafico_barras_wrapped.js') }}"></script>
+            <script>var url_imagen_escudo = "{{ url_imagen_escudo }}";</script>
         </div>
     </div>
     
@@ -290,6 +291,23 @@
 
             {% endfor %}
 
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-mes" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-mes')">&times;</span>
+
+        <p class="titulo-ventana" id="titulo-ventana-mes"><strong>Partidos del mes</strong></p>
+
+        <div class="contenedor-tarjetas-partidos-asistidos">
+            <div class="tarjetas-partidos-asistidos">
+                <div class="tarjetas-partidos-asistidos-wrapper" id="lista-partidos-por-mes">
+                </div>
             </div>
         </div>
 
