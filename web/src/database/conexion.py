@@ -3743,11 +3743,13 @@ class Conexion:
 								CASE WHEN e.codigo_pais IS NULL
 						                THEN '-1'
 						                ELSE e.codigo_pais
-					           	END as estadio_pais,
+					           	END as codigo_pais,
+					           	e.pais as estadio_pais,
 								CASE WHEN e.codigo_estadio IS NULL
 										THEN -1
 										ELSE e.codigo_estadio
 								END as imagen_estadio,
+								e.longitud, e.latitud,
 								CASE WHEN (p.resultado LIKE %s AND p.equipo_id_local=%s) 
 						              OR (p.resultado LIKE %s AND p.equipo_id_visitante=%s) 
 							            THEN 1
@@ -3803,9 +3805,12 @@ class Conexion:
 											asistido["equipo_pais_visitante"],
 											asistido["estadio_id"],
 											asistido["nombre"],
+											asistido["codigo_pais"],
 											asistido["estadio_pais"],
 											asistido["imagen_estadio"],
 											asistido["estadio_nuevo"],
+											asistido["latitud"],
+											asistido["longitud"],
 											asistido["partido_ganado"],
 											asistido["partido_perdido"],
 											asistido["partido_empatado"]), asistidos))

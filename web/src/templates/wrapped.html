@@ -36,12 +36,28 @@
 
         </div>
     </div>
+
     <div class="circulo-estadisticas-partidos-asistidos">
         <canvas id="grafico_tarta"></canvas>
         <script>var datos_grafica_tarta={{ resultados_partidos_asistidos_annio | tojson | safe }};</script>
         <script src="{{ url_for('static', filename='js/grafico_tarta.js') }}"></script>
     </div>
+
+    <div class="circulo-mapa-estadios-asistidos-wrapped">
+        {% if mapas_correcto %}
+            <div class="tarjeta-mapa-estadios-asistidos-wrapped" onclick="abrirVentanaEmergente()">
+                <div class="contenedor-mapa-estadios-asistidos-wrapped">
+                    <iframe src="/wrapped/mapa/{{ nombre_mapa_small }}"></iframe>
+                </div>
+            </div>
+        {% else %}
+            <img class="no-mapa" src="{{ url_for('static', filename='imagenes/iconos/no_mapa.png') }}" alt="No Mapa Icon" height="120px">
+        {% endif %}
+    </div>
+
 </div>
+
+<script src="{{ url_for('static', filename='js/ventana_emergente.js') }}"></script>
 
 {% endblock contenedor_lateral_izq %}
 
@@ -61,6 +77,15 @@
 
             <div class="valor-dato">
                 <h4>{{ numero_partidos_asistidos_annio }}</h4>
+
+                {% if numero_partidos_asistidos_annio>numero_partidos_asistidos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+                {% elif  numero_partidos_asistidos_annio==numero_partidos_asistidos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+                {% else %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+                {% endif %}
+
             </div>
 
         </div>
@@ -71,6 +96,15 @@
 
             <div class="valor-dato">
                 <h4>{{ numero_estadios_asistidos_annio }}</h4>
+
+                {% if numero_estadios_asistidos_annio>numero_estadios_asistidos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+                {% elif  numero_estadios_asistidos_annio==numero_estadios_asistidos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+                {% else %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+                {% endif %}
+                
             </div>
 
         </div>
@@ -81,6 +115,34 @@
 
             <div class="valor-dato">
                 <h4>{{ numero_estadios_nuevos_annio }}</h4>
+                
+                {% if numero_estadios_nuevos_annio>numero_estadios_nuevos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+                {% elif  numero_estadios_nuevos_annio==numero_estadios_nuevos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+                {% else %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="tarjeta-dato" onclick="abrirVentana('ventana-emergente-paises')">
+
+            <p><strong>Paises</strong></p>
+
+            <div class="valor-dato">
+                <h4>{{ numero_paises_asistidos_annio }}</h4>
+                
+                {% if numero_paises_asistidos_annio>numero_paises_asistidos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+                {% elif  numero_paises_asistidos_annio==numero_paises_asistidos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+                {% else %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+                {% endif %}
+
             </div>
 
         </div>
@@ -94,9 +156,9 @@
                 {% if equipo_mas_visto_annio %}
 
                     {% if equipo_mas_visto_annio[1]==-1 %}
-                        <img src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        <img class="escudo-mas-visto" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
                     {% else %}
-                        <img src="{{ url_imagen_escudo }}{{ equipo_mas_visto_annio[1] }}.png" alt="Local Icon">
+                        <img class="escudo-mas-visto" src="{{ url_imagen_escudo }}{{ equipo_mas_visto_annio[1] }}.png" alt="Escudo Icon">
                     {% endif %}
 
                     <h4>{{ equipo_mas_visto_annio[4] }}</h4>
@@ -188,10 +250,10 @@
 
                 <div class="info-estadio-asistido">
 
-                    {% if estadio[3]==-1 %}
+                    {% if estadio[4]==-1 %}
                         <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
                     {% else %}
-                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[3] }}.png" alt="Estadio Icon">
+                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[4] }}.png" alt="Estadio Icon">
                     {% endif %}
 
                     <h4>{{ estadio[1] }}</h4>
@@ -229,10 +291,10 @@
 
                 <div class="info-estadio-asistido">
 
-                    {% if estadio[3]==-1 %}
+                    {% if estadio[4]==-1 %}
                         <img class="estadio-estadio-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_estadio.png') }}" alt="Estadio Icon">
                     {% else %}
-                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[3] }}.png" alt="Estadio Icon">
+                        <img class="estadio-estadio-asistido" src="{{ url_imagen_estadio }}{{ estadio[4] }}.png" alt="Estadio Icon">
                     {% endif %}
 
                     <h4>{{ estadio[1] }}</h4>
@@ -242,6 +304,43 @@
                     {% else %}
                         <img class="pais-estadio-asistido" src="{{ url_imagen_pais }}{{ estadio[2] }}.png" alt="Pais Icon">
                     {% endif %}
+
+                </div>
+            </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-paises" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-paises')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Paises Visitados {{ annio }}</strong></p>
+
+        <div class="tarjetas-paises-asistidos">
+            <div class="tarjetas-paises-asistidos-wrapper">
+
+            {% for pais in paises_asistidos_annio %}
+
+            <div class="tarjeta-pais-asistido">
+
+                <div class="info-pais-asistido">
+
+                    <h4>{{ pais[1] }}</h4>
+
+                    {% if pais[0]=='-1' %}
+                        <img class="pais-asistido" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                    {% else %}
+                        <img class="pais-asistido" src="{{ url_imagen_pais }}{{ pais[0] }}.png" alt="Pais Icon">
+                    {% endif %}
+
+                    <h4>{{ pais[2] }} veces</h4>
 
                 </div>
             </div>
@@ -313,5 +412,29 @@
 
     </div>
 </div>
+
+{% if mapas_correcto %}
+    <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solamamiento con los contenedores laterales -->
+    <div id="ventana-emergente" class="ventana-emergente">
+        <div class="contenido-ventana-emergente-mapa-wrapped">
+            <span class="cerrar" onclick="cerrarVentanaEmergente()">&times;</span>
+            <div class="botones-mapa-detalle">
+                <button onclick="cambiarMapa('/wrapped/mapa/{{ nombre_mapa_detalle }}', this)" class="boton-estadios-mapa active">
+                    <span class="boton-estadios-mapa-text">Estadios</span>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/estadio_mapa.png') }}" alt="Estadio Mapa Icon" class="icono-estadio-mapa">
+                </button>
+                <button onclick="cambiarMapa('/wrapped/mapa/{{ nombre_mapa_detalle_paises }}', this)" class="boton-paises-mapa">
+                    <span class="boton-paises-mapa-text">Paises</span>
+                    <img src="{{ url_for('static', filename='imagenes/iconos/pais_mapa.png') }}" alt="Pais Mapa Icon" class="icono-pais-mapa">
+                </button>
+            </div>
+            <div class="contenedor-mapa-estadios-asistidos-wrapped-detalle">
+                <iframe src="/wrapped/mapa/{{ nombre_mapa_detalle }}" id="iframe-mapa"></iframe>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/cambio_mapa_estadios_paises.js') }}"></script>
 
 {% endblock contenedor_lateral_der %}

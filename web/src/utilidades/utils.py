@@ -1021,7 +1021,7 @@ def goleadoresLimpios(goleadores:List[str], local:bool)->List[tuple]:
 
 def estadiosVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
 
-	return sorted(list(set([(partido[12], partido[13], partido[14], partido[15]) for partido in partidos_asistidos])))
+	return sorted(list(set([(partido[12], partido[13], partido[14], partido[15], partido[16]) for partido in partidos_asistidos])))
 
 def equiposVistosWrappedLimpio(partidos_asistidos:List[Optional[tuple]], equipo:str)->List[Optional[tuple]]:
 
@@ -1077,3 +1077,15 @@ def partidosMesWrapped(partidos_asistidos:List[Optional[tuple]])->List[Optional[
 	    partidos_mes[meses[int(mes)-1]].append(partido)
 
 	return {"meses":meses, "num_partidos":conteo, "partidos":partidos_mes}
+
+def paisesVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
+
+	paises_asistidos=[(partido[14], partido[15]) for partido in partidos_asistidos]
+
+	paises_asistidos_contados=Counter(paises_asistidos)
+
+	return sorted([(pais_asistido[0], pais_asistido[1], veces) for pais_asistido, veces in paises_asistidos_contados.items()], key=lambda x: (-x[2], x[1]))
+
+def coordenadasEstadiosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
+
+	return sorted(list(set([(partido[13], partido[18], partido[19], partido[16], partido[14]) for partido in partidos_asistidos if partido[18] and partido[19]])))
