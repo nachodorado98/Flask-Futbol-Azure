@@ -10,7 +10,8 @@ from src.config import URL_DATALAKE_USUARIOS, URL_DATALAKE_ESCUDOS, URL_DATALAKE
 from src.utilidades.utils import estadiosVisitadosWrappedLimpio, equiposVistosWrappedLimpio, limpiarResultadosPartidos
 from src.utilidades.utils import partidoMasGolesWrapped, partidosMesWrapped, paisesVisitadosWrappedLimpio, coordenadasEstadiosWrappedLimpio
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
-from src.utilidades.utils import crearMapaMisEstadiosDetallePaises
+from src.utilidades.utils import crearMapaMisEstadiosDetallePaises, obtenerTrayectos, obtenerDistanciaTotalTrayectosWrapped
+from src.utilidades.utils import anadirPuntos
 
 
 bp_wrapped=Blueprint("wrapped", __name__)
@@ -101,6 +102,18 @@ def wrapped(annio:int):
 		print(e)
 		mapas_correcto=False
 
+	trayectos_partidos_asistidos_annio=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, annio)
+
+	partidos_asistidos_trayectos_annio=obtenerTrayectos(trayectos_partidos_asistidos_annio)
+
+	distancia_total_trayectos_annio=obtenerDistanciaTotalTrayectosWrapped(partidos_asistidos_trayectos_annio)
+
+	trayectos_partidos_asistidos_annio_anterior=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, int(annio)-1)
+
+	partidos_asistidos_trayectos_annio_anterior=obtenerTrayectos(trayectos_partidos_asistidos_annio_anterior)
+
+	distancia_total_trayectos_annio_anterior=obtenerDistanciaTotalTrayectosWrapped(partidos_asistidos_trayectos_annio_anterior)
+
 	con.cerrarConexion()
 
 	return render_template("wrapped.html",
@@ -130,6 +143,10 @@ def wrapped(annio:int):
 							nombre_mapa_detalle=nombre_mapa_detalle,
 							nombre_mapa_detalle_paises=nombre_mapa_detalle_paises,
 							mapas_correcto=mapas_correcto,
+							anadirPuntos=anadirPuntos,
+							partidos_asistidos_trayectos_annio=partidos_asistidos_trayectos_annio,
+							distancia_total_trayectos_annio=distancia_total_trayectos_annio,
+							distancia_total_trayectos_annio_anterior=distancia_total_trayectos_annio_anterior,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,

@@ -1070,11 +1070,11 @@ def partidosMesWrapped(partidos_asistidos:List[Optional[tuple]])->List[Optional[
 
 	for partido in partidos_asistidos:
 
-	    _,mes,_=partido[2].split('/')
+		_,mes,_=partido[2].split('/')
 
-	    conteo[int(mes)-1]+=1
+		conteo[int(mes)-1]+=1
 
-	    partidos_mes[meses[int(mes)-1]].append(partido)
+		partidos_mes[meses[int(mes)-1]].append(partido)
 
 	return {"meses":meses, "num_partidos":conteo, "partidos":partidos_mes}
 
@@ -1089,3 +1089,49 @@ def paisesVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List
 def coordenadasEstadiosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
 
 	return sorted(list(set([(partido[13], partido[18], partido[19], partido[16], partido[14]) for partido in partidos_asistidos if partido[18] and partido[19]])))
+
+def agruparTrayectos(trayectos:List[Optional[tuple]])->Dict:
+
+	grupos={}
+
+	for trayecto in trayectos:
+
+		partido=trayecto[0].split('_')[1]
+
+		if partido not in grupos:
+
+			grupos[partido]={"I": [], "V": []}
+
+		grupos[partido][trayecto[1]].append(trayecto)
+
+	return grupos
+
+def obtenerTrayectos(trayectos:List[Optional[tuple]])->Dict:
+
+	trayectos_agrupados=agruparTrayectos(trayectos)
+
+	for partido_id in trayectos_agrupados.keys():
+
+		for tipo in ["I", "V"]:
+
+			trayectos_tipo=trayectos_agrupados[partido_id][tipo]
+
+			trayectos_tipo_distancia=obtenerTrayectosConDistancia(trayectos_tipo)
+
+			trayectos_agrupados[partido_id][tipo]=trayectos_tipo_distancia
+
+			trayectos_agrupados[partido_id][f"Distancia_{tipo}"]=obtenerDistanciaTotalTrayecto(trayectos_tipo_distancia)
+
+		trayectos_agrupados[partido_id]["Distancia_Total"]=trayectos_agrupados[partido_id]["Distancia_I"]+trayectos_agrupados[partido_id]["Distancia_V"]
+
+	return trayectos_agrupados
+
+def obtenerDistanciaTotalTrayectosWrapped(partidos_trayectos:Dict)->int:
+
+	distancia_total=0
+
+	for trayectos in partidos_trayectos.values():
+
+		distancia_total+=trayectos["Distancia_Total"]
+
+	return int(distancia_total)

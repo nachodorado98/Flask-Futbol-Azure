@@ -22,7 +22,7 @@ from src.utilidades.utils import obtenerDataframeDireccionParadas, validarDataFr
 from src.utilidades.utils import obtenerTrayectosConDistancia, obtenerDistanciaTotalTrayecto, es_numero, obtenerNumeroDias, anadirDiaActualCalendario
 from src.utilidades.utils import validarNumeroGoles, validarGoleadores, validarGolesGoleadores, goleadoresLimpios, estadiosVisitadosWrappedLimpio
 from src.utilidades.utils import equiposVistosWrappedLimpio, obtenerGolesResultado, partidoMasGolesWrapped, partidosMesWrapped, paisesVisitadosWrappedLimpio
-from src.utilidades.utils import coordenadasEstadiosWrappedLimpio
+from src.utilidades.utils import coordenadasEstadiosWrappedLimpio, agruparTrayectos, obtenerTrayectos, obtenerDistanciaTotalTrayectosWrapped
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -2418,16 +2418,16 @@ def test_obtener_numero_dias_inicio_superior(fecha_inicio, fecha_fin):
 	assert obtenerNumeroDias(fecha_inicio, fecha_fin)==0
 
 @pytest.mark.parametrize(["fecha_inicio", "fecha_fin", "dias"],
-    [
-        ("01-01-2020", "01-01-2020", 1),
-        ("01-01-2020", "02-01-2020", 2),
-        ("31-12-2019", "01-01-2020", 2),
-        ("01-01-2020", "31-12-2020", 366),
-        ("28-02-2021", "01-03-2021", 2),
-        ("01-01-2022", "31-12-2022", 365),
-        ("01-01-2000", "01-01-2100", 36526),
-        ((datetime.today()-timedelta(days=1)).strftime("%d-%m-%Y"), datetime.today().strftime("%d-%m-%Y"), 2)
-    ]
+	[
+		("01-01-2020", "01-01-2020", 1),
+		("01-01-2020", "02-01-2020", 2),
+		("31-12-2019", "01-01-2020", 2),
+		("01-01-2020", "31-12-2020", 366),
+		("28-02-2021", "01-03-2021", 2),
+		("01-01-2022", "31-12-2022", 365),
+		("01-01-2000", "01-01-2100", 36526),
+		((datetime.today()-timedelta(days=1)).strftime("%d-%m-%Y"), datetime.today().strftime("%d-%m-%Y"), 2)
+	]
 )
 def test_obtener_numero_dias(fecha_inicio, fecha_fin, dias):
 
@@ -2871,3 +2871,158 @@ def test_coordenadas_estadios_wrapped_limpio():
 	for coordenadas in coordenadas_estadios:
 
 		assert len(coordenadas)==5
+
+def test_agrupar_trayectos_vacio():
+
+	assert not agruparTrayectos([])
+
+def test_agrupar_trayectos():
+
+	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida'),
+				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida'),
+				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida'),
+				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida'),
+				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida'),
+				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta'),
+				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta'),
+				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta'),
+				('id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida'),
+				('id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida'),
+				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida'),
+				('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida'),
+				('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida'),
+				('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta'),
+				('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta'),
+				('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta')]
+
+	trayectos_agrupados=agruparTrayectos(trayectos)
+
+	assert len(trayectos_agrupados.keys())!=len(trayectos)
+	assert len(trayectos_agrupados.keys())==6
+
+	for partido_id in trayectos_agrupados.keys():
+
+		assert len(trayectos_agrupados[partido_id].keys())==2
+
+		for tipo in ["I", "V"]:
+
+			trayectos=trayectos_agrupados[partido_id][tipo]
+
+			assert len(trayectos)>=1
+
+			if len(trayectos)==1:
+
+				assert trayectos[0][0]==f"id_{partido_id}_golden_{tipo}_0"
+
+			else:
+
+				for trayecto in trayectos:
+
+					assert trayecto[0] in [f"id_{partido_id}_golden_{tipo}_{numero}" for numero in range(1, len(trayecto)+1)]
+
+def test_obtener_trayectos_vacio():
+
+	assert not obtenerTrayectos([])
+
+def test_obtener_trayectos():
+
+	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida'),
+				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida'),
+				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida'),
+				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida'),
+				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida'),
+				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta'),
+				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta'),
+				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta'),
+				('id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida'),
+				('id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida'),
+				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta'),
+				('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida'),
+				('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida'),
+				('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida'),
+				('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta'),
+				('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta'),
+				('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta')]
+
+	trayectos_con_distancia=obtenerTrayectos(trayectos)
+
+	assert len(trayectos_con_distancia.keys())!=len(trayectos)
+	assert len(trayectos_con_distancia.keys())==6
+
+	for partido_id in trayectos_con_distancia.keys():
+
+		assert len(trayectos_con_distancia[partido_id].keys())==5
+
+		for tipo in ["I", "V"]:
+
+			trayectos=trayectos_con_distancia[partido_id][tipo]
+
+			assert len(trayectos)>=1
+
+			if len(trayectos)==1:
+
+				assert trayectos[0][0]==f"id_{partido_id}_golden_{tipo}_0"
+				assert trayectos_con_distancia[partido_id]["Distancia_I"]==trayectos_con_distancia[partido_id]["Distancia_V"]
+
+			else:
+
+				distancia=0
+
+				for trayecto in trayectos:
+
+					assert trayecto[0] in [f"id_{partido_id}_golden_{tipo}_{numero}" for numero in range(1, len(trayecto)+1)]
+
+					distancia+=trayecto[-1]
+
+				assert trayectos_con_distancia[partido_id][f"Distancia_{tipo}"]==int(distancia)
+
+		assert trayectos_con_distancia[partido_id]["Distancia_Total"]==trayectos_con_distancia[partido_id]["Distancia_I"]+trayectos_con_distancia[partido_id]["Distancia_V"]
+
+def test_obtener_distancia_total_trayectos_wrapped_vacio():
+
+	assert obtenerDistanciaTotalTrayectosWrapped({})==0
+
+@pytest.mark.parametrize(["distancia_parcial", "distancia"],
+	[(4, 4082),(12, 4090), (200, 4278), (2504, 6582)]
+)
+def test_obtener_distancia_total_trayectos_wrapped(distancia_parcial, distancia):
+
+	partidos_trayectos={2025246563:
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 354.45]],
+						'Distancia_I': 354,
+						'Distancia_V': 354,
+						'Distancia_Total': 708},
+						20256495:
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 13.6]],
+						'Distancia_I': 14,
+						'Distancia_V': 14,
+						'Distancia_Total': 28},
+						2025162158:
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 503.66]],
+						'Distancia_I': 1671,
+						'Distancia_V': 1671,
+						'Distancia_Total': 3342},
+						20256280:
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 1.81]],
+						'Distancia_I': 2,
+						'Distancia_V': 2,
+						'Distancia_Total': distancia_parcial}}
+
+	distancia_total=obtenerDistanciaTotalTrayectosWrapped(partidos_trayectos)
+
+	assert distancia==distancia_total

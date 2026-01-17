@@ -3017,7 +3017,7 @@ class Conexion:
 
 			self.insertarTrayectoPartidoAsistido(trayecto[0], trayecto[1], trayecto[2], trayecto[3], trayecto[4], trayecto[5], trayecto[6])
 
-	# Metodo para obtener los trayectos de de un partido asistido
+	# Metodo para obtener los trayectos de un partido asistido
 	def obtenerTrayectosPartidoAsistido(self, partido_id:str, usuario:str, tipo_trayecto:str)->Optional[tuple]:
 
 		self.c.execute(r"""WITH trayectos_numerados AS (
@@ -3716,6 +3716,7 @@ class Conexion:
 										jugador["numero"],
 										jugador["posicion"]), jugadores_partido))
 
+	# Metodo para obtener los partidos asistidos de un usuario en un año
 	def obtenerPartidosAsistidosUsuarioAnnio(self, usuario:str, annio:int)->List[Optional[tuple]]:
 
 		equipo_id=self.obtenerEquipo(usuario)
@@ -3814,3 +3815,119 @@ class Conexion:
 											asistido["partido_ganado"],
 											asistido["partido_perdido"],
 											asistido["partido_empatado"]), asistidos))
+
+	# Metodo para obtener los trayectos de los partidos asistidos en un año
+	def obtenerTrayectosPartidosAsistidosAnnio(self, usuario:str, annio:int)->Optional[tuple]:
+
+		self.c.execute(r"""WITH trayectos_numerados AS (
+							SELECT t.*, c1.Ciudad AS Ciudad_Origen_Ciudad, c2.Ciudad AS Ciudad_Destino_Ciudad,
+									c1.Pais AS Pais_Origen_Ciudad, c2.Pais AS Pais_Destino_Ciudad,
+									e.Nombre AS Estadio_Nombre, e.Pais AS Pais_Estadio, c1.Latitud AS Ciudad_Origen_Lat, c1.Longitud AS Ciudad_Origen_Lon,
+									c2.Latitud AS Ciudad_Destino_Lat, c2.Longitud AS Ciudad_Destino_Lon, e.Latitud AS Estadio_Lat,
+									e.Longitud AS Estadio_Lon, e.Codigo_Estadio,
+									REPLACE(LOWER(t.Transporte), ' ', '_') AS Transporte_Normalizado,
+									COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT),0) AS num_trayecto,
+									MAX(COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT), 0)) OVER (PARTITION BY t.partido_id, t.tipo_trayecto) AS max_num_trayecto,
+									MIN(COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT), 0)) OVER (PARTITION BY t.partido_id, t.tipo_trayecto) AS min_num_trayecto,
+									CASE WHEN COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT),0)=MAX(COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT), 0)) OVER (PARTITION BY t.partido_id, t.tipo_trayecto)
+										THEN TRUE
+										ELSE FALSE
+									END AS es_maximo,
+									CASE WHEN COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT),0)=MIN(COALESCE(CAST(REGEXP_REPLACE(t.Trayecto_Id, '.*_(\d+)$', '\1') AS INT), 0)) OVER (PARTITION BY t.partido_id, t.tipo_trayecto)
+										THEN TRUE
+										ELSE FALSE
+									END AS es_minimo,
+									CASE WHEN t.Tipo_Trayecto='I'
+										THEN 'Ida'
+										ELSE 'Vuelta'
+									END AS Tipo_Trayecto_Str,
+									p.fecha
+							FROM trayecto_partido_asistido t
+							JOIN ciudades c1
+							ON t.CodCiudad_Origen=c1.CodCiudad
+							JOIN ciudades c2
+							ON t.CodCiudad_Destino=c2.CodCiudad
+							JOIN partidos p
+							ON t.partido_id=p.partido_id
+							JOIN partido_estadio pe
+							ON p.partido_id=pe.partido_id
+							JOIN estadios e
+							ON pe.estadio_id=e.estadio_id
+							WHERE t.Usuario=%s
+							AND EXTRACT(YEAR FROM p.fecha)=%s)
+
+		SELECT t.Trayecto_Id, t.Tipo_Trayecto, t.Transporte, t.num_trayecto, t.es_maximo, t.es_minimo, t.Tipo_Trayecto_Str,
+			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN t.Estadio_Nombre
+					ELSE t.Ciudad_Origen_Ciudad
+			    END AS Ciudad_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN t.Pais_Estadio
+					ELSE t.Pais_Origen_Ciudad
+			    END AS Pais_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN CAST(t.Estadio_Lat AS FLOAT)
+					ELSE CAST(t.Ciudad_Origen_Lat AS FLOAT)
+			    END AS Latitud_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN CAST(t.Estadio_Lon AS FLOAT)
+			        ELSE CAST(t.Ciudad_Origen_Lon AS FLOAT)
+			    END AS Longitud_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+					THEN t.Estadio_Nombre
+			        ELSE t.Ciudad_Destino_Ciudad
+			    END AS Ciudad_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+					THEN t.Pais_Estadio
+			        ELSE t.Pais_Destino_Ciudad
+			    END AS Pais_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+					THEN CAST(t.Estadio_Lat AS FLOAT)
+			        ELSE CAST(t.Ciudad_Destino_Lat AS FLOAT)
+			    END AS Latitud_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+					THEN CAST(t.Estadio_Lon AS FLOAT)
+			        ELSE CAST(t.Ciudad_Destino_Lon AS FLOAT)
+			    END AS Longitud_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN CAST(t.Codigo_Estadio AS VARCHAR)
+			        ELSE t.Transporte_Normalizado
+			    END AS Imagen_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+					THEN CAST(t.Codigo_Estadio AS VARCHAR)
+			        ELSE t.Transporte_Normalizado
+			    END AS Imagen_Destino,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_minimo=True
+					THEN 'origen'
+				WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
+					THEN 'estadio_mapa'
+					ELSE 'destino'
+			    END AS Imagen_Tramo_Origen,
+			    CASE WHEN t.Tipo_Trayecto = 'I' AND t.es_maximo=True
+			    	THEN 'estadio_mapa'
+			    WHEN t.Tipo_Trayecto = 'V' AND t.es_maximo=True
+					THEN 'origen'
+					else 'destino'
+			    END AS Imagen_Tramo_Destino
+		FROM trayectos_numerados t
+		ORDER BY fecha DESC, t.Trayecto_Id""",
+		(usuario, annio))
+
+		trayectos=self.c.fetchall()
+
+		return list(map(lambda trayecto: (trayecto["trayecto_id"],
+											trayecto["tipo_trayecto"],
+											trayecto["transporte"],
+											trayecto["ciudad_origen"],
+											trayecto["pais_origen"],
+											trayecto["latitud_origen"],
+											trayecto["longitud_origen"],
+											trayecto["ciudad_destino"],
+											trayecto["pais_destino"],
+											trayecto["latitud_destino"],
+											trayecto["longitud_destino"],
+											trayecto["imagen_origen"],
+											trayecto["imagen_destino"],
+											trayecto["imagen_tramo_origen"],
+											trayecto["imagen_tramo_destino"],
+											trayecto["tipo_trayecto_str"]), trayectos))

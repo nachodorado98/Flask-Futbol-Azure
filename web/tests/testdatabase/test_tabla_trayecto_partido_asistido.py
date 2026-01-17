@@ -212,15 +212,6 @@ def test_insertar_trayectos_partido_asistido(conexion_entorno, numero_trayectos)
 
 	assert len(trayectos_partido_asistido)==numero_trayectos
 
-
-
-
-
-
-
-
-
-
 def test_obtener_trayectos_partido_asistido_no_existen_partidos(conexion):
 
 	assert not conexion.obtenerTrayectosPartidoAsistido("20190622", "nacho", "I")
@@ -392,3 +383,85 @@ def test_obtener_trayectos_partido_asistido_vueltas(conexion_entorno):
 
 		assert trayecto[13]=="destino"
 		assert trayecto[14]=="destino"
+
+def test_obtener_trayectos_partidos_asistidos_annio_no_existen_partidos(conexion):
+
+	assert not conexion.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2019)
+
+def test_obtener_trayectos_partidos_asistidos_annio_no_existe_usuario(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2019)
+
+def test_obtener_trayectos_partidos_asistidos_annio_no_existen_partidos_asistidos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	assert not conexion_entorno.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2019)
+
+def test_obtener_trayectos_partidos_asistidos_annio_no_existen_trayectos(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	assert not conexion_entorno.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2019)
+
+def test_obtener_trayectos_partidos_asistidos_annio_no_existe_annio(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_I_0", "20190622", "nacho", "I", 103, "Transporte", 103)
+
+	assert not conexion_entorno.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2020)
+
+def test_obtener_trayectos_partidos_asistidos_annio_un_trayecto(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.insertarTrayectoPartidoAsistido("trayecto_id_I_0", "20190622", "nacho", "I", 103, "Transporte", 103)
+
+	trayectos=conexion_entorno.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2019)
+
+	assert len(trayectos)==1
+
+	trayecto=trayectos[0]
+
+	assert trayecto[0]=="trayecto_id_I_0"
+	assert trayecto[1]=="I"
+	assert trayecto[2]=="Transporte"
+	assert trayecto[3]=="Madrid"
+	assert trayecto[4]=="España"
+	assert trayecto[5]!=trayecto[9]
+	assert trayecto[6]!=trayecto[10]
+	assert trayecto[7]=="Metropolitano"
+	assert trayecto[8]=="España"
+	assert trayecto[11]=="transporte"
+	assert trayecto[12]=="23"
+	assert trayecto[13]=="origen"
+	assert trayecto[14]=="estadio_mapa"
+
+def test_obtener_trayectos_partido_asistido_varios(conexion_entorno):
+
+	conexion_entorno.insertarUsuario("nacho", "micorreo@correo.es", "1234", "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
+
+	conexion_entorno.insertarPartidoAsistido("20190622", "nacho", "comentario")
+
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_I_1", "20190622", "nacho", "I", 160, "Avion", 3025)
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_I_2", "20190622", "nacho", "I", 3025, "Cercanias", 2947)
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_I_3", "20190622", "nacho", "I", 2947, "Metro", 103)
+
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_V_1", "20190622", "nacho", "V", 103, "Avion", 34)
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_V_2", "20190622", "nacho", "V", 34, "Cercanias", 211)
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_V_3", "20190622", "nacho", "V", 211, "Metro", 35)
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_V_4", "20190622", "nacho", "V", 35, "Tren", 1876)
+	conexion_entorno.insertarTrayectoPartidoAsistido("id_20190622_nacho_V_5", "20190622", "nacho", "V", 1876, "Pie", 160)
+
+	trayectos=conexion_entorno.obtenerTrayectosPartidosAsistidosAnnio("nacho", 2019)
+
+	assert len(trayectos)==8
