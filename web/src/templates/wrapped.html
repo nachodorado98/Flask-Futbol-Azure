@@ -178,11 +178,30 @@
             <p><strong>Distancia Recorrida</strong></p>
 
             <div class="valor-dato">
-                <h4>{{ anadirPuntos(distancia_total_trayectos_annio | string) }} kms</h4>
+                <h4 class="dato-estilo">{{ anadirPuntos(distancia_total_trayectos_annio | string) }} kms</h4>
 
                 {% if distancia_total_trayectos_annio>distancia_total_trayectos_annio_anterior %}
                     <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
                 {% elif  distancia_total_trayectos_annio==distancia_total_trayectos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+                {% else %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="tarjeta-dato" onclick="abrirVentana('ventana-emergente-trayecto-lejano')">
+
+            <p><strong>Mas Lejano</strong></p>
+
+            <div class="valor-dato">
+                <h4 class="dato-estilo">{{ anadirPuntos(partido_asistido_trayecto_mas_lejano_annio[1]["Distancia_Total"] | string) }} kms</h4>
+
+                {% if partido_asistido_trayecto_mas_lejano_annio[1]["Distancia_Total"]>partido_asistido_trayecto_mas_lejano_annio_anterior[1]["Distancia_Total"] %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+                {% elif  partido_asistido_trayecto_mas_lejano_annio[1]["Distancia_Total"]==partido_asistido_trayecto_mas_lejano_annio_anterior[1]["Distancia_Total"] %}
                     <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
                 {% else %}
                     <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
@@ -473,6 +492,24 @@
                 <div class="tarjeta-trayecto-realizado" onclick="window.location.href='/partido/{{ partido_id }}/asistido'">
 
                     <div class="contenedor-datos-trayecto-realizado">
+
+                        <img class="icono-partido-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/partido.png') }}" alt="Partido Icon">
+                        <p class="partido-trayecto-realizado"><strong>Partido Asistido:</strong></p>
+
+                        {% if datos_trayectos["Datos_Partido"][1]==-1 %}
+                            <img class="icono-local-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        {% else %}
+                            <img class="icono-local-trayecto-realizado" src="{{ url_imagen_escudo }}{{ datos_trayectos['Datos_Partido'][1] }}.png" alt="Local Icon">
+                        {% endif %}
+
+                        <h4>{{ datos_trayectos["Datos_Partido"][0] }}</h4>
+
+                        {% if datos_trayectos["Datos_Partido"][2]==-1 %}
+                            <img class="icono-visitante-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                        {% else %}
+                            <img class="icono-visitante-trayecto-realizado" src="{{ url_imagen_escudo }}{{ datos_trayectos['Datos_Partido'][2] }}.png" alt="Visitante Icon">
+                        {% endif %}
+
                         <img class="icono-distancia-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
                         <p class="distancia-trayecto-realizado"><strong>Distancia Total: {{ datos_trayectos["Distancia_Total"] }} kilometros</strong></p>
                     </div>
@@ -526,6 +563,94 @@
 
             </div>
         </div>
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-trayecto-lejano" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-trayecto-lejano')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Trayectos Mas Lejano {{ annio }}</strong></p>
+
+        {% if partido_asistido_trayecto_mas_lejano_annio[0] %}
+
+            <div class="tarjetas-trayectos-realizados">
+                <div class="tarjetas-trayectos-realizados-wrapper">
+
+                <div class="tarjeta-trayecto-realizado" onclick="window.location.href='/partido/{{ partido_asistido_trayecto_mas_lejano_annio[0] }}/asistido'">
+
+                    <div class="contenedor-datos-trayecto-realizado">
+
+                        <img class="icono-partido-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/partido.png') }}" alt="Partido Icon">
+                        <p class="partido-trayecto-realizado"><strong>Partido Asistido:</strong></p>
+
+                        {% if partido_asistido_trayecto_mas_lejano_annio[1]["Datos_Partido"][1]==-1 %}
+                            <img class="icono-local-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Local Icon">
+                        {% else %}
+                            <img class="icono-local-trayecto-realizado" src="{{ url_imagen_escudo }}{{ partido_asistido_trayecto_mas_lejano_annio[1]['Datos_Partido'][1] }}.png" alt="Local Icon">
+                        {% endif %}
+
+                        <h4>{{ partido_asistido_trayecto_mas_lejano_annio[1]["Datos_Partido"][0] }}</h4>
+
+                        {% if partido_asistido_trayecto_mas_lejano_annio[1]["Datos_Partido"][2]==-1 %}
+                            <img class="icono-visitante-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Visitante Icon">
+                        {% else %}
+                            <img class="icono-visitante-trayecto-realizado" src="{{ url_imagen_escudo }}{{ partido_asistido_trayecto_mas_lejano_annio[1]['Datos_Partido'][2] }}.png" alt="Visitante Icon">
+                        {% endif %}
+
+                        <img class="icono-distancia-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
+                        <p class="distancia-trayecto-realizado"><strong>Distancia Total: {{ partido_asistido_trayecto_mas_lejano_annio[1]["Distancia_Total"] }} kilometros</strong></p>
+                    </div>
+
+                    {% for tipo, nombre in [("I", "Ida"), ("V", "Vuelta")] %}
+
+                        <hr class="linea">
+
+                        <div class="contenedor-datos-trayecto-realizado">
+                            <img class="icono-distancia-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/cuentakilometros.png') }}" alt="Distancia Icon">
+                            <p class="distancia-trayecto-realizado"><strong>Distancia {{ nombre }}: {{ partido_asistido_trayecto_mas_lejano_annio[1]["Distancia_" ~ tipo] }} kilometros</strong></p>
+                            <img class="icono-escala-trayecto-realizado" src="{{ url_for('static', filename='imagenes/iconos/destino.png') }}" alt="Escala Icon">
+                            <p class="escala-trayecto-realizado"><strong>Escalas: {{ (partido_asistido_trayecto_mas_lejano_annio[1][tipo]|length)-1 }}</strong></p>
+                        </div>
+
+                        {% for trayecto in partido_asistido_trayecto_mas_lejano_annio[1][tipo] %}
+
+                            <div class="contenedor-origen-destino" onclick="abrirDesdeAtributo(this)" data-trayecto='{{ trayecto | tojson | safe }}'>
+
+                                <div class="contenedor-pais-ciudad-partido">
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[13]+'.png') }}" alt="Tramo Icon" class="icono-tramo-trayecto">
+
+                                    <p class="texto-origen-destino"><strong>{{ trayecto[3] }}</strong></p>
+                                
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/linea_horizontal.png') }}" alt="Linea Icon" class="icono-flecha-derecha">
+
+                                    {% if (trayecto[12] | es_numero) %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[11]+'.png') }}" alt="Transporte Icon" class="icono-transporte">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[12]+'.png') }}" alt="Transporte Icon" class="icono-transporte">
+                                    {% endif %}
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/flecha_horizontal_derecha.png') }}" alt="Flecha Derecha Icon" class="icono-flecha-derecha">
+
+                                    <img src="{{ url_for('static', filename='imagenes/iconos/'+trayecto[14]+'.png') }}" alt="Tramo Icon" class="icono-tramo-trayecto">
+
+                                    <p class="texto-origen-destino"><strong>{{ trayecto[7] }}</strong></p>
+
+                                </div>
+
+                            </div>
+                            
+                        {% endfor %}
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        {% endif %}
 
     </div>
 </div>

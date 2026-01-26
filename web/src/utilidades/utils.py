@@ -1025,7 +1025,7 @@ def estadiosVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->Li
 
 def equiposVistosWrappedLimpio(partidos_asistidos:List[Optional[tuple]], equipo:str)->List[Optional[tuple]]:
 
-	equipos_vistos=[(partido[8], partido[4], partido[6], partido[11]) if partido[8]!=equipo else (partido[9], partido[5], partido[7], partido[12]) for partido in partidos_asistidos]
+	equipos_vistos=[(partido[8], partido[4], partido[6], partido[10]) if partido[8]!=equipo else (partido[9], partido[5], partido[7], partido[11]) for partido in partidos_asistidos]
 
 	equipos_vistos_contados=Counter(equipos_vistos)
 
@@ -1126,6 +1126,24 @@ def obtenerTrayectos(trayectos:List[Optional[tuple]])->Dict:
 
 	return trayectos_agrupados
 
+def obtenerTrayectosDatosPartidosAsistidos(trayectos:List[Optional[tuple]], partidos_asistidos:List[Optional[tuple]])->Dict:
+
+	trayectos_partidos=obtenerTrayectos(trayectos)
+
+	for partido_id, _ in trayectos_partidos.items():
+
+		try:
+
+			datos_partido=list(filter(lambda partido: partido[0]==partido_id, partidos_asistidos))[0]
+
+			trayectos_partidos[partido_id]["Datos_Partido"]=(datos_partido[1], datos_partido[4], datos_partido[5])
+
+		except Exception:
+
+			trayectos_partidos[partido_id]["Datos_Partido"]=(None, None, None)
+
+	return trayectos_partidos
+
 def obtenerDistanciaTotalTrayectosWrapped(partidos_trayectos:Dict)->int:
 
 	distancia_total=0
@@ -1135,3 +1153,15 @@ def obtenerDistanciaTotalTrayectosWrapped(partidos_trayectos:Dict)->int:
 		distancia_total+=trayectos["Distancia_Total"]
 
 	return int(distancia_total)
+
+def obtenerTrayectoMasLejanoWrapped(partidos_trayectos:Dict)->Optional[tuple]:
+
+	try:
+
+		clave_mayor=max(partidos_trayectos, key=lambda k: partidos_trayectos[k]["Distancia_Total"])
+
+		return (clave_mayor, partidos_trayectos[clave_mayor])
+
+	except Exception:
+
+		return (None, {"Distancia_Total":0})

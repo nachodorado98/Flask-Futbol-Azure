@@ -57,7 +57,10 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		assert '<p><strong>Paises</strong></p>' in contenido
 		assert "abrirVentana('ventana-emergente-trayectos')" in contenido
 		assert '<p><strong>Distancia Recorrida</strong></p>' in contenido
-		assert '<h4>0 kms</h4>' in contenido
+		assert '<h4 class="dato-estilo">0 kms</h4>' in contenido
+		assert "abrirVentana('ventana-emergente-trayecto-lejano')" in contenido
+		assert '<p><strong>Mas Lejano</strong></p>' in contenido
+		assert '<h4 class="dato-estilo">0 kms</h4>' in contenido
 		assert '<div id="ventana-emergente-partidos" class="ventana-emergente">' in contenido
 		assert '<div class="tarjetas-partidos-asistidos">' in contenido
 		assert '<div id="ventana-emergente-estadios" class="ventana-emergente">' in contenido
@@ -67,9 +70,11 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		assert '<div id="ventana-emergente-equipos" class="ventana-emergente">' in contenido
 		assert '<div class="tarjetas-equipos-vistos">' in contenido
 		assert '<div id="ventana-emergente-paises" class="ventana-emergente">' in contenido
+		assert '<div class="tarjetas-paises-asistidos">' in contenido
 		assert '<div id="ventana-emergente-trayectos" class="ventana-emergente">' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
-		assert '<div class="tarjetas-paises-asistidos">' in contenido
+		assert '<div id="ventana-emergente-trayecto-lejano" class="ventana-emergente">' in contenido
+		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
 		assert '<div class="contenedor-lateral contenedor-lateral-izq">' in contenido
 		assert '<div class="circulo-partido-mas-goles">' in contenido
 		assert '<div class="tarjeta-partido-mas-goles"' in contenido
@@ -702,8 +707,13 @@ def test_pagina_wrapped_trayecto_simple(cliente, conexion_entorno_usuario, ciuda
 		assert "abrirVentana('ventana-emergente-trayectos')" in contenido
 		assert '<p><strong>Distancia Recorrida</strong></p>' in contenido
 		assert '<h4>0 kms</h4>' not in contenido
+		assert "abrirVentana('ventana-emergente-trayecto-lejano')" in contenido
+		assert '<p><strong>Mas Lejano</strong></p>' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' in contenido
 		assert '<div class="contenedor-datos-trayecto-realizado">' in contenido
+		assert '<p class="partido-trayecto-realizado"><strong>Partido Asistido:</strong></p>' in contenido
+		assert '<img class="icono-local-trayecto-realizado"' in contenido
+		assert '<img class="icono-visitante-trayecto-realizado"' in contenido
 		assert '<p class="distancia-trayecto-realizado"><strong>Distancia Total:' in contenido
 		assert '<p class="distancia-trayecto-realizado"><strong>Distancia Ida:' in contenido
 		assert '<p class="distancia-trayecto-realizado"><strong>Distancia Vuelta:' in contenido
@@ -748,8 +758,13 @@ def test_pagina_wrapped_trayecto_complejo(cliente, conexion_entorno_usuario, ciu
 		assert "abrirVentana('ventana-emergente-trayectos')" in contenido
 		assert '<p><strong>Distancia Recorrida</strong></p>' in contenido
 		assert '<h4>0 kms</h4>' not in contenido
+		assert "abrirVentana('ventana-emergente-trayecto-lejano')" in contenido
+		assert '<p><strong>Mas Lejano</strong></p>' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' in contenido
 		assert '<div class="contenedor-datos-trayecto-realizado">' in contenido
+		assert '<p class="partido-trayecto-realizado"><strong>Partido Asistido:</strong></p>' in contenido
+		assert '<img class="icono-local-trayecto-realizado"' in contenido
+		assert '<img class="icono-visitante-trayecto-realizado"' in contenido
 		assert '<p class="distancia-trayecto-realizado"><strong>Distancia Total:' in contenido
 		assert '<p class="distancia-trayecto-realizado"><strong>Distancia Ida:' in contenido
 		assert '<p class="distancia-trayecto-realizado"><strong>Distancia Vuelta:' in contenido

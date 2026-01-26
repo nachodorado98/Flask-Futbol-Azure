@@ -271,6 +271,11 @@
     margin: 0;
 }
 
+.valor-dato .dato-estilo {
+    font-size: 22px;
+    margin: 0;
+}
+
 .tarjeta-dato .escudo-mas-visto {
     width: 60px;
     height: 60px;
@@ -652,14 +657,24 @@
     margin-bottom: 10px;
 }
 
+.icono-local-trayecto-realizado,
+.icono-visitante-trayecto-realizado {
+    height: 35px;
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: default;
+}
+
+.icono-partido-trayecto-realizado,
 .icono-distancia-trayecto-realizado,
 .icono-escala-trayecto-realizado {
     height: 30px;
-    margin-right: 5px;
+    margin-right: 10px;
     margin-left: 20px;
     cursor: default;
 }
 
+.partido-trayecto-realizado,
 .distancia-trayecto-realizado,
 .escala-trayecto-realizado {
     color: var(--color-secundario);
