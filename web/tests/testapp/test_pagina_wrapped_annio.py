@@ -1,9 +1,9 @@
 import pytest
 import os
 
-def test_pagina_wrapped_sin_login(cliente):
+def test_pagina_wrapped_annio_sin_login(cliente):
 
-	respuesta=cliente.get("/wrapped/2019", follow_redirects=True)
+	respuesta=cliente.get("/wrapped/annio/2019", follow_redirects=True)
 
 	contenido=respuesta.data.decode()
 
@@ -13,13 +13,13 @@ def test_pagina_wrapped_sin_login(cliente):
 @pytest.mark.parametrize(["annio"],
 	[(0,),(2025,),("2021",),("annio",),("hola",),(2020,)]
 )
-def test_pagina_wrapped_no_hay_asistidos(cliente, conexion_entorno_usuario, annio):
+def test_pagina_wrapped_annio_no_hay_asistidos(cliente, conexion_entorno_usuario, annio):
 
 	with cliente as cliente_abierto:
 
 		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
 
-		respuesta=cliente_abierto.get(f"/wrapped/{annio}")
+		respuesta=cliente_abierto.get(f"/wrapped/annio/{annio}")
 
 		contenido=respuesta.data.decode()
 
@@ -27,7 +27,7 @@ def test_pagina_wrapped_no_hay_asistidos(cliente, conexion_entorno_usuario, anni
 		assert respuesta.location=="/partidos"
 		assert "Redirecting..." in contenido
 
-def test_pagina_wrapped(cliente, conexion_entorno_usuario):
+def test_pagina_wrapped_annio(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -37,7 +37,7 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
@@ -75,6 +75,8 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
 		assert '<div id="ventana-emergente-trayecto-lejano" class="ventana-emergente">' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
+		assert '<div id="ventana-emergente-trayecto-locura" class="ventana-emergente">' in contenido
+		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
 		assert '<div class="contenedor-lateral contenedor-lateral-izq">' in contenido
 		assert '<div class="circulo-partido-mas-goles">' in contenido
 		assert '<div class="tarjeta-partido-mas-goles"' in contenido
@@ -83,14 +85,14 @@ def test_pagina_wrapped(cliente, conexion_entorno_usuario):
 		assert '<div id="ventana-emergente-mes" class="ventana-emergente">' in contenido
 		assert '<p class="titulo-ventana" id="titulo-ventana-mes"><strong>Partidos del mes</strong></p>' in contenido
 		assert "iframe" in contenido
-		assert "/wrapped/mapa/mapa_small_wrapped_2019_user_" in contenido
+		assert "/wrapped/mapa/mapa_small_wrapped_annio_2019_user_" in contenido
 		assert '<img class="no-mapa"' not in contenido
 		assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 		assert '<div class="botones-mapa-detalle">' in contenido
-		assert "/wrapped/mapa/mapa_detalle_wrapped_2019_user_" in contenido
-		assert "/wrapped/mapa/mapa_detalle_paises_wrapped_2019_user_" in contenido
+		assert "/wrapped/mapa/mapa_detalle_wrapped_annio_2019_user_" in contenido
+		assert "/wrapped/mapa/mapa_detalle_paises_wrapped_annio_2019_user_" in contenido
 
-def test_pagina_wrapped_error_mapa(cliente, conexion_entorno_usuario):
+def test_pagina_wrapped_annio_error_mapa(cliente, conexion_entorno_usuario):
 
 	conexion_entorno_usuario.c.execute("""UPDATE estadios SET Latitud=NULL, Longitud=NULL""")
 
@@ -104,16 +106,16 @@ def test_pagina_wrapped_error_mapa(cliente, conexion_entorno_usuario):
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert "iframe" not in contenido
-		assert "/estadios/mis_estadios/mapa/mapa_small_wrapped_2019_user_nacho98.html" not in contenido
+		assert "/estadios/mis_estadios/mapa/mapa_small_wrapped_annio_2019_user_nacho98.html" not in contenido
 		assert '<img class="no-mapa"' in contenido
 
-def test_pagina_wrapped_mapa_small(cliente, conexion_entorno_usuario):
+def test_pagina_wrapped_annio_mapa_small(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -123,17 +125,17 @@ def test_pagina_wrapped_mapa_small(cliente, conexion_entorno_usuario):
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert "iframe" in contenido
-		assert "/wrapped/mapa/mapa_small_wrapped_2019_user_nacho98.html" in contenido
+		assert "/wrapped/mapa/mapa_small_wrapped_annio_2019_user_nacho98.html" in contenido
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_wrapped_2019_user_nacho98.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_wrapped_annio_2019_user_nacho98.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -155,7 +157,7 @@ def test_pagina_wrapped_mapa_small(cliente, conexion_entorno_usuario):
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_wrapped_mapa_small_usuarios(cliente, conexion_entorno, password_hash, usuario):
+def test_pagina_wrapped_annio_mapa_small_usuarios(cliente, conexion_entorno, password_hash, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
@@ -167,17 +169,17 @@ def test_pagina_wrapped_mapa_small_usuarios(cliente, conexion_entorno, password_
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert "iframe" in contenido
-		assert f"/wrapped/mapa/mapa_small_wrapped_2019_user_{usuario}.html" in contenido
+		assert f"/wrapped/mapa/mapa_small_wrapped_annio_2019_user_{usuario}.html" in contenido
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_small_wrapped_2019_user_{usuario}.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_small_wrapped_annio_2019_user_{usuario}.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -196,7 +198,7 @@ def test_pagina_wrapped_mapa_small_usuarios(cliente, conexion_entorno, password_
 			assert "es.png" not in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_wrapped_mapa_small_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
+def test_pagina_wrapped_annio_mapa_small_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
 	conexion_entorno_usuario.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
@@ -208,11 +210,11 @@ def test_pagina_wrapped_mapa_small_otro_usuario(cliente, conexion_entorno_usuari
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_wrapped_2019_user_otro.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_small_wrapped_annio_2019_user_otro.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -247,9 +249,9 @@ def test_pagina_wrapped_mapa_small_otro_usuario(cliente, conexion_entorno_usuari
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
-		ruta_mapa2=os.path.join(ruta_carpeta_mapas, "mapa_small_wrapped_2019_user_nacho98.html")
+		ruta_mapa2=os.path.join(ruta_carpeta_mapas, "mapa_small_wrapped_annio_2019_user_nacho98.html")
 
 		assert os.path.exists(ruta_mapa2)
 
@@ -268,7 +270,7 @@ def test_pagina_wrapped_mapa_small_otro_usuario(cliente, conexion_entorno_usuari
 			assert "pais.png" not in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_wrapped_mapa_detalle(cliente, conexion_entorno_usuario):
+def test_pagina_wrapped_annio_mapa_detalle(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -278,17 +280,17 @@ def test_pagina_wrapped_mapa_detalle(cliente, conexion_entorno_usuario):
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert "iframe" in contenido
-		assert "/wrapped/mapa/mapa_detalle_wrapped_2019_user_nacho98.html" in contenido
+		assert "/wrapped/mapa/mapa_detalle_wrapped_annio_2019_user_nacho98.html" in contenido
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_wrapped_2019_user_nacho98.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_wrapped_annio_2019_user_nacho98.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -310,7 +312,7 @@ def test_pagina_wrapped_mapa_detalle(cliente, conexion_entorno_usuario):
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_wrapped_mapa_detalle_usuarios(cliente, conexion_entorno, password_hash, usuario):
+def test_pagina_wrapped_annio_mapa_detalle_usuarios(cliente, conexion_entorno, password_hash, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
@@ -322,17 +324,17 @@ def test_pagina_wrapped_mapa_detalle_usuarios(cliente, conexion_entorno, passwor
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert "iframe" in contenido
-		assert f"/wrapped/mapa/mapa_detalle_wrapped_2019_user_{usuario}.html" in contenido
+		assert f"/wrapped/mapa/mapa_detalle_wrapped_annio_2019_user_{usuario}.html" in contenido
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_detalle_wrapped_2019_user_{usuario}.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_detalle_wrapped_annio_2019_user_{usuario}.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -351,7 +353,7 @@ def test_pagina_wrapped_mapa_detalle_usuarios(cliente, conexion_entorno, passwor
 			assert "es.png" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_wrapped_mapa_detalle_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
+def test_pagina_wrapped_annio_mapa_detalle_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
 	conexion_entorno_usuario.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
@@ -363,11 +365,11 @@ def test_pagina_wrapped_mapa_detalle_otro_usuario(cliente, conexion_entorno_usua
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_wrapped_2019_user_otro.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_wrapped_annio_2019_user_otro.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -402,9 +404,9 @@ def test_pagina_wrapped_mapa_detalle_otro_usuario(cliente, conexion_entorno_usua
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
-		ruta_mapa2=os.path.join(ruta_carpeta_mapas, "mapa_detalle_wrapped_2019_user_nacho98.html")
+		ruta_mapa2=os.path.join(ruta_carpeta_mapas, "mapa_detalle_wrapped_annio_2019_user_nacho98.html")
 
 		assert os.path.exists(ruta_mapa2)
 
@@ -423,7 +425,7 @@ def test_pagina_wrapped_mapa_detalle_otro_usuario(cliente, conexion_entorno_usua
 			assert "pais.png" in contenido
 			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_wrapped_mapa_detalle_paises(cliente, conexion_entorno_usuario):
+def test_pagina_wrapped_annio_mapa_detalle_paises(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -433,18 +435,18 @@ def test_pagina_wrapped_mapa_detalle_paises(cliente, conexion_entorno_usuario):
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert '<div class="botones-mapa-detalle">' in contenido
 		assert "iframe" in contenido
-		assert "/wrapped/mapa/mapa_detalle_paises_wrapped_2019_user_nacho98.html" in contenido
+		assert "/wrapped/mapa/mapa_detalle_paises_wrapped_annio_2019_user_nacho98.html" in contenido
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_wrapped_2019_user_nacho98.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_wrapped_annio_2019_user_nacho98.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -465,7 +467,7 @@ def test_pagina_wrapped_mapa_detalle_paises(cliente, conexion_entorno_usuario):
 @pytest.mark.parametrize(["usuario"],
 	[("nacho99",),("golden",),("amanda",),("amanda99",),("nacho98",)]
 )
-def test_pagina_wrapped_mapa_detalle_paises_usuarios(cliente, conexion_entorno, password_hash, usuario):
+def test_pagina_wrapped_annio_mapa_detalle_paises_usuarios(cliente, conexion_entorno, password_hash, usuario):
 
 	conexion_entorno.insertarUsuario(usuario, "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
@@ -477,18 +479,18 @@ def test_pagina_wrapped_mapa_detalle_paises_usuarios(cliente, conexion_entorno, 
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
 		respuesta.status_code==200
 		assert '<div class="botones-mapa-detalle">' in contenido
 		assert "iframe" in contenido
-		assert f"/wrapped/mapa/mapa_detalle_paises_wrapped_2019_user_{usuario}.html" in contenido
+		assert f"/wrapped/mapa/mapa_detalle_paises_wrapped_annio_2019_user_{usuario}.html" in contenido
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_detalle_paises_wrapped_2019_user_{usuario}.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, f"mapa_detalle_paises_wrapped_annio_2019_user_{usuario}.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -506,7 +508,7 @@ def test_pagina_wrapped_mapa_detalle_paises_usuarios(cliente, conexion_entorno, 
 			assert '"type": "FeatureCollection"' in contenido
 			assert '{"name": "Spain"}' in contenido
 
-def test_pagina_wrapped_mapa_detalle_paises_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
+def test_pagina_wrapped_annio_mapa_detalle_paises_otro_usuario(cliente, conexion_entorno_usuario, password_hash):
 
 	conexion_entorno_usuario.insertarUsuario("otro", "nacho@gmail.com", password_hash, "nacho", "dorado", "1998-02-16", 103, "atletico-madrid")
 
@@ -518,11 +520,11 @@ def test_pagina_wrapped_mapa_detalle_paises_otro_usuario(cliente, conexion_entor
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
 		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "estadios")
 
-		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_wrapped_2019_user_otro.html")
+		ruta_mapa=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_wrapped_annio_2019_user_otro.html")
 
 		assert os.path.exists(ruta_mapa)
 
@@ -556,9 +558,9 @@ def test_pagina_wrapped_mapa_detalle_paises_otro_usuario(cliente, conexion_entor
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
-		ruta_mapa2=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_wrapped_2019_user_nacho98.html")
+		ruta_mapa2=os.path.join(ruta_carpeta_mapas, "mapa_detalle_paises_wrapped_annio_2019_user_nacho98.html")
 
 		assert os.path.exists(ruta_mapa2)
 
@@ -576,7 +578,7 @@ def test_pagina_wrapped_mapa_detalle_paises_otro_usuario(cliente, conexion_entor
 			assert '"type": "FeatureCollection"' in contenido
 			assert '{"name": "Italy"}' in contenido
 
-def test_pagina_mapa_wrapped_sin_login(cliente):
+def test_pagina_mapa_wrapped_annio_sin_login(cliente):
 
 	respuesta=cliente.get("/wrapped/mapa/nombre_mapa", follow_redirects=True)
 
@@ -585,7 +587,7 @@ def test_pagina_mapa_wrapped_sin_login(cliente):
 	assert respuesta.status_code==200
 	assert "<h1>Iniciar Sesión</h1>" in contenido
 
-def test_pagina_mapa_wrapped_mapa_no_existe(cliente, conexion_entorno_usuario):
+def test_pagina_mapa_wrapped_annio_mapa_no_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -595,7 +597,7 @@ def test_pagina_mapa_wrapped_mapa_no_existe(cliente, conexion_entorno_usuario):
 
 			cliente_abierto.get("/wrapped/mapa/nombre_mapa.html")
 
-def test_pagina_mapa_wrapped_mapa_small_existe(cliente, conexion_entorno_usuario):
+def test_pagina_mapa_wrapped_annio_mapa_small_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -605,9 +607,9 @@ def test_pagina_mapa_wrapped_mapa_small_existe(cliente, conexion_entorno_usuario
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
-		respuesta=cliente_abierto.get("/wrapped/mapa/mapa_small_wrapped_2019_user_nacho98.html")
+		respuesta=cliente_abierto.get("/wrapped/mapa/mapa_small_wrapped_annio_2019_user_nacho98.html")
 
 		contenido=respuesta.data.decode()
 
@@ -623,7 +625,7 @@ def test_pagina_mapa_wrapped_mapa_small_existe(cliente, conexion_entorno_usuario
 		assert "es.png" not in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" not in contenido
 
-def test_pagina_mapa_wrapped_mapa_detalle_existe(cliente, conexion_entorno_usuario):
+def test_pagina_mapa_wrapped_annio_mapa_detalle_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -633,9 +635,9 @@ def test_pagina_mapa_wrapped_mapa_detalle_existe(cliente, conexion_entorno_usuar
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
-		respuesta=cliente_abierto.get("/wrapped/mapa/mapa_detalle_wrapped_2019_user_nacho98.html")
+		respuesta=cliente_abierto.get("/wrapped/mapa/mapa_detalle_wrapped_annio_2019_user_nacho98.html")
 
 		contenido=respuesta.data.decode()
 
@@ -651,7 +653,7 @@ def test_pagina_mapa_wrapped_mapa_detalle_existe(cliente, conexion_entorno_usuar
 		assert "es.png" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
 
-def test_pagina_mapa_wrapped_mapa_detalle_paises_existe(cliente, conexion_entorno_usuario):
+def test_pagina_mapa_wrapped_annio_mapa_detalle_paises_existe(cliente, conexion_entorno_usuario):
 
 	with cliente as cliente_abierto:
 
@@ -661,9 +663,9 @@ def test_pagina_mapa_wrapped_mapa_detalle_paises_existe(cliente, conexion_entorn
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		cliente_abierto.get("/wrapped/2019")
+		cliente_abierto.get("/wrapped/annio/2019")
 
-		respuesta=cliente_abierto.get("/wrapped/mapa/mapa_detalle_paises_wrapped_2019_user_nacho98.html")
+		respuesta=cliente_abierto.get("/wrapped/mapa/mapa_detalle_paises_wrapped_annio_2019_user_nacho98.html")
 
 		contenido=respuesta.data.decode()
 
@@ -687,7 +689,7 @@ def test_pagina_mapa_wrapped_mapa_detalle_paises_existe(cliente, conexion_entorn
 		("Madrid", "Metro", "Sevilla", "Tren")
 	]
 )
-def test_pagina_wrapped_trayecto_simple(cliente, conexion_entorno_usuario, ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta):
+def test_pagina_wrapped_annio_trayecto_simple(cliente, conexion_entorno_usuario, ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta):
 
 	with cliente as cliente_abierto:
 
@@ -699,7 +701,7 @@ def test_pagina_wrapped_trayecto_simple(cliente, conexion_entorno_usuario, ciuda
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 
@@ -736,8 +738,8 @@ def test_pagina_wrapped_trayecto_simple(cliente, conexion_entorno_usuario, ciuda
 		("Barcelona", "Avion", "Valencia", "Tren", ["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], ["Coche"], ["España"], ["Alicante"])
 	]
 )
-def test_pagina_wrapped_trayecto_complejo(cliente, conexion_entorno_usuario, ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta, transportes_ida, 
-																	paises_ida, ciudades_ida, transportes_vuelta, paises_vuelta, ciudades_vuelta):
+def test_pagina_wrapped_annio_trayecto_complejo(cliente, conexion_entorno_usuario, ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta, transportes_ida, 
+												paises_ida, ciudades_ida, transportes_vuelta, paises_vuelta, ciudades_vuelta):
 
 	with cliente as cliente_abierto:
 
@@ -750,7 +752,7 @@ def test_pagina_wrapped_trayecto_complejo(cliente, conexion_entorno_usuario, ciu
 
 		cliente_abierto.post("/insertar_partido_asistido", data=data)
 
-		respuesta=cliente_abierto.get("/wrapped/2019")
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
 
 		contenido=respuesta.data.decode()
 

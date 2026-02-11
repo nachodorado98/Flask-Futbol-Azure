@@ -12,14 +12,15 @@ from src.utilidades.utils import partidoMasGolesWrapped, partidosMesWrapped, pai
 from src.utilidades.utils import vaciarCarpetaMapasUsuario, obtenerCentroide, crearMapaMisEstadios, crearMapaMisEstadiosDetalle
 from src.utilidades.utils import crearMapaMisEstadiosDetallePaises, obtenerTrayectos, obtenerTrayectosDatosPartidosAsistidos
 from src.utilidades.utils import obtenerDistanciaTotalTrayectosWrapped, obtenerTrayectoMasLejanoWrapped, anadirPuntos
+from src.utilidades.utils import obtenerKPISPartidosWrapped, obtenerKPISTrayectosWrapped
 
 
 bp_wrapped=Blueprint("wrapped", __name__)
 
 
-@bp_wrapped.route("/wrapped/<annio>")
+@bp_wrapped.route("/wrapped/annio/<annio>")
 @login_required
-def wrapped(annio:int):
+def wrapped_annio(annio:int):
 
 	entorno=current_app.config["ENVIROMENT"]
 
@@ -45,25 +46,11 @@ def wrapped(annio:int):
 
 		return redirect("/partidos")
 
-	estadios_asistidos_annio=estadiosVisitadosWrappedLimpio(partidos_asistidos_annio)
-
-	equipos_vistos_annio=equiposVistosWrappedLimpio(partidos_asistidos_annio, equipo)
-
-	partidos_estadios_nuevo_annio=list(filter(lambda partido: partido[17], partidos_asistidos_annio))
-
-	estadios_nuevos_annio=estadiosVisitadosWrappedLimpio(partidos_estadios_nuevo_annio)
-
-	paises_asistidos_annio=paisesVisitadosWrappedLimpio(partidos_asistidos_annio)
+	estadios_asistidos_annio, estadios_nuevos_annio, paises_asistidos_annio, equipos_vistos_annio=obtenerKPISPartidosWrapped(partidos_asistidos_annio, equipo)
 
 	partidos_asistidos_annio_anterior=con.obtenerPartidosAsistidosUsuarioAnnio(current_user.id, int(annio)-1)
 
-	estadios_asistidos_annio_anterior=estadiosVisitadosWrappedLimpio(partidos_asistidos_annio_anterior)
-
-	partidos_estadios_nuevo_annio_anterior=list(filter(lambda partido: partido[17], partidos_asistidos_annio_anterior))
-
-	estadios_nuevos_annio_anterior=estadiosVisitadosWrappedLimpio(partidos_estadios_nuevo_annio_anterior)
-
-	paises_asistidos_annio_anterior=paisesVisitadosWrappedLimpio(partidos_asistidos_annio_anterior)
+	estadios_asistidos_annio_anterior, estadios_nuevos_annio_anterior, paises_asistidos_annio_anterior, equipos_vistos_annio_anterior=obtenerKPISPartidosWrapped(partidos_asistidos_annio_anterior, equipo)
 
 	resultados_partidos_asistidos_annio=limpiarResultadosPartidos(partidos_asistidos_annio)
 
@@ -77,11 +64,11 @@ def wrapped(annio:int):
 
 	datos_coordenadas=coordenadasEstadiosWrappedLimpio(partidos_asistidos_annio)
 
-	nombre_mapa_small=f"mapa_small_wrapped_{annio}_user_{current_user.id}.html"
+	nombre_mapa_small=f"mapa_small_wrapped_annio_{annio}_user_{current_user.id}.html"
 
-	nombre_mapa_detalle=f"mapa_detalle_wrapped_{annio}_user_{current_user.id}.html"
+	nombre_mapa_detalle=f"mapa_detalle_wrapped_annio_{annio}_user_{current_user.id}.html"
 
-	nombre_mapa_detalle_paises=f"mapa_detalle_paises_wrapped_{annio}_user_{current_user.id}.html"
+	nombre_mapa_detalle_paises=f"mapa_detalle_paises_wrapped_annio_{annio}_user_{current_user.id}.html"
 
 	mapas_correcto=True
 
@@ -104,23 +91,15 @@ def wrapped(annio:int):
 
 	trayectos_partidos_asistidos_annio=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, annio)
 
-	partidos_asistidos_trayectos_annio=obtenerTrayectosDatosPartidosAsistidos(trayectos_partidos_asistidos_annio, partidos_asistidos_annio)
-
-	distancia_total_trayectos_annio=obtenerDistanciaTotalTrayectosWrapped(partidos_asistidos_trayectos_annio)
-
-	partido_asistido_trayecto_mas_lejano_annio=obtenerTrayectoMasLejanoWrapped(partidos_asistidos_trayectos_annio)
+	partidos_asistidos_trayectos_annio, distancia_total_trayectos_annio, partido_asistido_trayecto_mas_lejano_annio, partido_asistido_trayecto_mas_locura_annio=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio, partidos_asistidos_annio)
 
 	trayectos_partidos_asistidos_annio_anterior=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, int(annio)-1)
 
-	partidos_asistidos_trayectos_annio_anterior=obtenerTrayectos(trayectos_partidos_asistidos_annio_anterior)
-
-	distancia_total_trayectos_annio_anterior=obtenerDistanciaTotalTrayectosWrapped(partidos_asistidos_trayectos_annio_anterior)
-
-	partido_asistido_trayecto_mas_lejano_annio_anterior=obtenerTrayectoMasLejanoWrapped(partidos_asistidos_trayectos_annio_anterior)
+	partidos_asistidos_trayectos_annio_anterior, distancia_total_trayectos_annio_anterior, partido_asistido_trayecto_mas_lejano_annio_anterior, partido_asistido_trayecto_mas_locura_annio_anterior=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio_anterior, partidos_asistidos_annio_anterior)
 
 	con.cerrarConexion()
 
-	return render_template("wrapped.html",
+	return render_template("wrapped_annio.html",
 							usuario=current_user.id,
 							imagen_perfil=current_user.imagen_perfil,
 							equipo=equipo,
@@ -153,6 +132,7 @@ def wrapped(annio:int):
 							distancia_total_trayectos_annio_anterior=distancia_total_trayectos_annio_anterior,
 							partido_asistido_trayecto_mas_lejano_annio=partido_asistido_trayecto_mas_lejano_annio,
 							partido_asistido_trayecto_mas_lejano_annio_anterior=partido_asistido_trayecto_mas_lejano_annio_anterior,
+							partido_asistido_trayecto_mas_locura_annio=partido_asistido_trayecto_mas_locura_annio,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,

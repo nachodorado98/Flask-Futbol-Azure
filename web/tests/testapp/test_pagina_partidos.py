@@ -28,6 +28,7 @@ def test_pagina_partidos_sin_partidos(cliente, conexion_entorno_usuario):
 	assert '<div id="ventana-emergente" class="ventana-emergente">' not in contenido
 	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' not in contenido
 	assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' not in contenido
+	assert '<div id="ventana-emergente-wrapped-annio-login" class="ventana-emergente-wrapped-annio-login">' not in contenido
 
 def test_pagina_partidos_con_partido(cliente, conexion_entorno_usuario):
 
@@ -52,6 +53,7 @@ def test_pagina_partidos_con_partido(cliente, conexion_entorno_usuario):
 	assert '<div id="ventana-emergente" class="ventana-emergente">' in contenido
 	assert '<a href="/partidos/calendario/2019-06" class="tipo-partidos-calendario">' in contenido
 	assert '<div id="ventana-emergente-partido-login" class="ventana-emergente-partido-login">' not in contenido
+	assert '<div id="ventana-emergente-wrapped-annio-login" class="ventana-emergente-wrapped-annio-login">' not in contenido
 
 @pytest.mark.parametrize(["nombre_completo"],
 	[("atleti",),("atm",),("Club Atletico de Madrid",)]
@@ -1518,12 +1520,12 @@ def test_pagina_partidos_resultados_varios(cliente, conexion, password_hash, mar
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
 	conexion.c.execute("""INSERT INTO partidos
- 						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
- 								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
- 								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
- 								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
- 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
- 								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
 
 	conexion.confirmar()
 
@@ -1709,12 +1711,12 @@ def test_pagina_partidos_temporada_resultados_no_hay(cliente, conexion, password
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
 	conexion.c.execute("""INSERT INTO partidos
- 						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
- 								('20200623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
- 								('20160624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
- 								('20150625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
- 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
- 								('19980627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+								('20200623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+								('20160624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+								('20150625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+								('19980627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
 
 	conexion.confirmar()
 
@@ -1755,12 +1757,12 @@ def test_pagina_partidos_temporada_resultados(cliente, conexion, password_hash, 
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
 	conexion.c.execute("""INSERT INTO partidos
- 						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
- 								('20200623', 'rival', 'atletico-madrid', '2020-06-22', '22:00', 'Primera', '2-0', 'Victoria Local'),
- 								('20160624', 'atletico-madrid', 'rival', '2016-06-22', '22:00', 'Copa', '2-1', 'Victoria Local'),
- 								('20150625', 'rival', 'atletico-madrid', '2015-06-22', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
- 								('20240626', 'atletico-madrid', 'rival', '2024-06-22', '22:00', 'Mundial', '1-1', 'Empate'),
- 								('19980627', 'rival', 'atletico-madrid', '1998-06-22', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+						VALUES ('20190622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+								('20200623', 'rival', 'atletico-madrid', '2020-06-22', '22:00', 'Primera', '2-0', 'Victoria Local'),
+								('20160624', 'atletico-madrid', 'rival', '2016-06-22', '22:00', 'Copa', '2-1', 'Victoria Local'),
+								('20150625', 'rival', 'atletico-madrid', '2015-06-22', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+								('20240626', 'atletico-madrid', 'rival', '2024-06-22', '22:00', 'Mundial', '1-1', 'Empate'),
+								('19980627', 'rival', 'atletico-madrid', '1998-06-22', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
 
 	conexion.confirmar()
 
@@ -1810,12 +1812,12 @@ def test_pagina_partidos_competicion_resultados_no_hay(cliente, conexion, passwo
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
 	conexion.c.execute("""INSERT INTO partidos
- 						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
- 								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
- 								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
- 								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
- 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
- 								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
 
 	conexion.confirmar()
 
@@ -1856,12 +1858,12 @@ def test_pagina_partidos_competicion_resultados(cliente, conexion, password_hash
 	conexion.c.execute("""INSERT INTO equipos (Equipo_Id) VALUES('atletico-madrid'),('rival')""")
 
 	conexion.c.execute("""INSERT INTO partidos
- 						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
- 								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
- 								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
- 								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
- 								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
- 								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
+						VALUES ('20240622', 'atletico-madrid', 'rival', '2019-06-22', '22:00', 'Liga', '1-0', 'Victoria Local'),
+								('20240623', 'rival', 'atletico-madrid', '2020-06-23', '22:00', 'Primera', '2-0', 'Victoria Local'),
+								('20240624', 'atletico-madrid', 'rival', '2016-06-24', '22:00', 'Copa', '2-1', 'Victoria Local'),
+								('20240625', 'rival', 'atletico-madrid', '2015-06-25', '22:00', 'Champions', '0-2', 'Victoria Visitante'),
+								('20240626', 'atletico-madrid', 'rival', '2024-06-26', '22:00', 'Mundial', '1-1', 'Empate'),
+								('20240627', 'rival', 'atletico-madrid', '1998-06-27', '22:00', 'Supercopa', '1-2', 'Victoria Visitante')""")
 
 	conexion.confirmar()
 
@@ -2204,3 +2206,54 @@ def test_pagina_partidos_partidos_asistido_fecha_con_imagen(cliente, conexion_en
 	ruta_carpeta_imagenes=os.path.join(os.path.abspath(".."), "src", "templates", "imagenes", "nacho98")
 
 	vaciarCarpeta(ruta_carpeta_imagenes)
+
+def test_pagina_partidos_wrapped_annio_no_disponible(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-wrapped-annio-login" class="ventana-emergente-wrapped-annio-login">' not in contenido
+		assert '<div class="contenido-ventana-emergente-wrapped-annio-login">' not in contenido
+		assert '<h1>¡WRAPPED 2019 DISPONIBLE!</h1>' not in contenido
+
+def test_pagina_partidos_wrapped_annio_disponible(cliente, conexion_entorno_usuario, monkeypatch):
+
+	import src.blueprints.partidos as partidos_mod
+
+	fake_date=datetime(2019, 12, 31)
+
+	class FakeDatetime(datetime):
+		@classmethod
+		def now(cls, tz=None):
+			return fake_date
+
+	monkeypatch.setattr(partidos_mod, "datetime", FakeDatetime)
+
+	monkeypatch.setattr(partidos_mod, "generarWrappedAnnio", lambda hoy: True)
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partidos?login=True")
+
+		contenido=respuesta.data.decode()
+
+		assert respuesta.status_code==200
+		assert '<div id="ventana-emergente-wrapped-annio-login" class="ventana-emergente-wrapped-annio-login">' in contenido
+		assert '<div class="contenido-ventana-emergente-wrapped-annio-login">' in contenido
+		assert '<h1>¡WRAPPED 2019 DISPONIBLE!</h1>' in contenido

@@ -1086,6 +1086,20 @@ def paisesVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List
 
 	return sorted([(pais_asistido[0], pais_asistido[1], veces) for pais_asistido, veces in paises_asistidos_contados.items()], key=lambda x: (-x[2], x[1]))
 
+def obtenerKPISPartidosWrapped(partidos_asistidos:List[Optional[tuple]], equipo:str)->tuple:
+
+	estadios_asistidos=estadiosVisitadosWrappedLimpio(partidos_asistidos)
+
+	equipos_vistos=equiposVistosWrappedLimpio(partidos_asistidos, equipo)
+
+	partidos_estadios_nuevo=list(filter(lambda partido: partido[17], partidos_asistidos))
+
+	estadios_nuevos=estadiosVisitadosWrappedLimpio(partidos_estadios_nuevo)
+
+	paises_asistidos=paisesVisitadosWrappedLimpio(partidos_asistidos)
+
+	return estadios_asistidos, estadios_nuevos, paises_asistidos, equipos_vistos
+
 def coordenadasEstadiosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
 
 	return sorted(list(set([(partido[13], partido[18], partido[19], partido[16], partido[14]) for partido in partidos_asistidos if partido[18] and partido[19]])))
@@ -1165,3 +1179,37 @@ def obtenerTrayectoMasLejanoWrapped(partidos_trayectos:Dict)->Optional[tuple]:
 	except Exception:
 
 		return (None, {"Distancia_Total":0})
+
+def obtenerTrayectoMasLocuraWrapped(partidos_trayectos:Dict)->Optional[tuple]:
+
+	try:
+
+		datos_tramos_trayectos=[(partido_id, len(datos_partido["I"]), len(datos_partido["V"]), datos_partido["Distancia_Total"]) for partido_id, datos_partido in partidos_trayectos.items()]
+
+		clave_mayor=max(datos_tramos_trayectos, key=lambda k: (k[1]+k[2], k[3]))[0]
+
+		return (clave_mayor, partidos_trayectos[clave_mayor])
+
+	except Exception:
+
+		return ()
+
+def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asistidos:List[Optional[tuple]])->tuple:
+
+	partidos_asistidos_trayectos=obtenerTrayectosDatosPartidosAsistidos(trayectos, partidos_asistidos)
+
+	distancia_total_trayectos=obtenerDistanciaTotalTrayectosWrapped(partidos_asistidos_trayectos)
+
+	partido_asistido_trayecto_mas_lejano=obtenerTrayectoMasLejanoWrapped(partidos_asistidos_trayectos)
+
+	partido_asistido_trayecto_mas_locura=obtenerTrayectoMasLocuraWrapped(partidos_asistidos_trayectos)
+
+	return partidos_asistidos_trayectos, distancia_total_trayectos, partido_asistido_trayecto_mas_lejano, partido_asistido_trayecto_mas_locura
+
+def generarWrappedAnnio(hoy:datetime)->bool:
+
+    limite_inferior=datetime(hoy.year, 12, 15)
+
+    limite_superior=datetime(hoy.year, 12, 31)
+
+    return limite_inferior<=hoy<=limite_superior

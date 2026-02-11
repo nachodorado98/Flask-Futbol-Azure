@@ -217,6 +217,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     margin-top: 0px;
+    margin-bottom: 50px;
     cursor: default;
     background-color: var(--color-primario);
     color: var(--color-secundario);
@@ -722,6 +723,16 @@
     width: 57px;
     margin-right: 4px;
     margin-left: 4px;
+}
+
+.tarjeta-dato .escudo-mas-locura-local,
+.tarjeta-dato .escudo-mas-locura-visitante {
+    width: 35px;
+    height: 35px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 .tarjeta-dato-grafica {

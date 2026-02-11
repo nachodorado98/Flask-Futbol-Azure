@@ -5,6 +5,7 @@ from datetime import datetime
 from src.utilidades.utils import limpiarResultadosPartidos, obtenerCompeticionesPartidosUnicas, obtenerPrimerUltimoDiaAnoMes
 from src.utilidades.utils import obtenerAnoMesFechas, generarCalendario, mapearAnoMes, cruzarPartidosCalendario
 from src.utilidades.utils import ano_mes_anterior, ano_mes_siguiente, limpiarResultadosPartidosCalendario, anadirDiaActualCalendario
+from src.utilidades.utils import generarWrappedAnnio
 
 from src.database.conexion import Conexion
 
@@ -25,11 +26,15 @@ def pagina_partidos():
 	resultados=request.args.get("resultados", default=None, type=str)
 	login=request.args.get("login", default=False, type=bool)
 
-	fecha_hoy=datetime.now().strftime("%Y-%m-%d")
+	hoy=datetime.now()
+
+	fecha_hoy=hoy.strftime("%Y-%m-%d")
 
 	con=Conexion(entorno)
 
 	partido_asistido_dia=con.obtenerPartidoAsistidoFecha(fecha_hoy, current_user.id) if login else None
+
+	wrapped_annio=hoy.year if login and generarWrappedAnnio(hoy) else None
 
 	equipo=con.obtenerEquipo(current_user.id)
 
@@ -185,6 +190,7 @@ def pagina_partidos():
 							local=local,
 							ano_mes_calendario=ano_mes_calendario,
 							partido_asistido_dia=partido_asistido_dia,
+							wrapped_annio=wrapped_annio,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_usuario_perfil=f"{URL_DATALAKE_USUARIOS}{current_user.id}/perfil/",

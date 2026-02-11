@@ -430,6 +430,20 @@
                 </div>
             {% endif %}
 
+            {% if wrapped_annio %}
+                <div id="ventana-emergente-wrapped-annio-login" class="ventana-emergente-wrapped-annio-login">
+                    <div class="contenido-ventana-emergente-wrapped-annio-login">
+                        <span class="cerrar" onclick="cerrarVentanaEmergenteWrappedAnnioLogin()">&times;</span>
+                        <h1>¡WRAPPED {{ wrapped_annio }} DISPONIBLE!</h1>
+                        <div class="contenedor-boton-ver-wrapped-annio">
+                            <button type="button" class="boton-ver-wrapped-annio" onclick="window.location.href='/wrapped/annio/{{ wrapped_annio }}'">
+                                Ver Wrapped
+                            </button>
+                        </div>  
+                    </div>    
+                </div>
+            {% endif %}
+
         </div>
 
         {% endblock contenedor_lateral_der %}
@@ -445,6 +459,7 @@
     <script src="{{ url_for('static', filename='js/resultados.js') }}"></script>
     <script src="{{ url_for('static', filename='js/limpiar_login_param.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ventana_emergente_partido_login.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ventana_emergente_wrapped_annio_login.js') }}"></script>
 
     <footer>
          <p>&copy; 2024 Futbol App. Todos los derechos reservados.</p>
