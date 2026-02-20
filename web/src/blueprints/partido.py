@@ -119,31 +119,6 @@ def pagina_partido_asistido(partido_id:str):
 
 	vaciarCarpetaMapasUsuario(os.path.join(ruta, "templates", "mapas", "trayectos"), current_user.id)
 
-	trayecto_ida=con.obtenerTrayectoPartidoAsistido(partido_id, current_user.id, "I")
-
-	trayecto_vuelta=con.obtenerTrayectoPartidoAsistido(partido_id, current_user.id, "V")
-
-	nombre_mapa_ida=f"mapa_trayecto_ida_user_{current_user.id}.html"
-
-	nombre_mapa_vuelta=f"mapa_trayecto_vuelta_user_{current_user.id}.html"
-
-	nombre_mapa_ida_vuelta=f"mapa_trayecto_ida_vuelta_user_{current_user.id}.html"
-
-	mapas_correcto=True
-
-	try:
-
-		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayecto_ida, nombre_mapa_ida)
-
-		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayecto_vuelta, nombre_mapa_vuelta)
-
-		crearMapaTrayectosIdaVuelta(os.path.join(ruta, "templates", "mapas", "trayectos"), [trayecto_ida, trayecto_vuelta], nombre_mapa_ida_vuelta)
-
-	except Exception as e:
-
-		print(f"Error en los mapas del trayecto: {e}")
-		mapas_correcto=False
-
 	partido_id_asistido_anterior=con.obtenerPartidoAsistidoUsuarioAnterior(current_user.id, partido_id)
 
 	partido_id_asistido_siguiente=con.obtenerPartidoAsistidoUsuarioSiguiente(current_user.id, partido_id)
@@ -163,6 +138,27 @@ def pagina_partido_asistido(partido_id:str):
 	distancia_total_ida=obtenerDistanciaTotalTrayecto(trayectos_ida)
 
 	distancia_total_vuelta=obtenerDistanciaTotalTrayecto(trayectos_vuelta)
+
+	nombre_mapa_ida=f"mapa_trayecto_ida_user_{current_user.id}.html"
+
+	nombre_mapa_vuelta=f"mapa_trayecto_vuelta_user_{current_user.id}.html"
+
+	nombre_mapa_ida_vuelta=f"mapa_trayecto_ida_vuelta_user_{current_user.id}.html"
+
+	mapas_correcto=True
+
+	try:
+
+		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayectos_ida_base, nombre_mapa_ida)
+
+		crearMapaTrayecto(os.path.join(ruta, "templates", "mapas", "trayectos"), trayectos_vuelta_base, nombre_mapa_vuelta)
+
+		crearMapaTrayectosIdaVuelta(os.path.join(ruta, "templates", "mapas", "trayectos"), [trayectos_ida_base, trayectos_vuelta_base], nombre_mapa_ida_vuelta)
+
+	except Exception as e:
+
+		print(f"Error en los mapas del trayecto: {e}")
+		mapas_correcto=False
 
 	con.cerrarConexion()
 

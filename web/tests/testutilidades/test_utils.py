@@ -1365,7 +1365,7 @@ def test_crear_mapa_trayecto_sin_punto_error():
 
 	with pytest.raises(Exception):
 
-		crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', None, None, 'Metropolitano', None, None, "coche", "13"), "nacho_mapa_trayecto.html")
+		crearMapaTrayecto(ruta_carpeta, [('id_2026260364_golden_I_0', 'I', 'Autobus', 'Madrid', 'España', None, None, 'Estadio de La Cartuja', 'España', None, None, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')], "nacho_mapa_trayecto.html")
 
 	assert not os.path.exists(ruta_html)
 
@@ -1385,7 +1385,7 @@ def test_crear_mapa_trayecto_tipo_error():
 
 	with pytest.raises(Exception):
 
-		crearMapaTrayecto(ruta_carpeta, ('N', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45, "coche", "13"), "nacho_mapa_trayecto.html")
+		crearMapaTrayecto(ruta_carpeta, [('id_2026260364_golden_I_0', 'N', 'Autobus', 'Madrid', 'España', 40.443, -3.6732, 'Estadio de La Cartuja', 'España', 37.4172, -6.0046, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')], "nacho_mapa_trayecto.html")
 
 	assert not os.path.exists(ruta_html)
 
@@ -1394,12 +1394,13 @@ def test_crear_mapa_trayecto_tipo_error():
 @pytest.mark.parametrize(["latitud_origen", "longitud_origen", "latitud_destino", "longitud_destino", "ida_vuelta", "tipo"],
 	[
 		(40.01, -3.45, 30.11, -21.45, False, "I"),
+		(40.443, -3.6732, 37.4172, -6.0046, False, "I"),
 		(30.11, -21.45, 1.01, 9.86, True, "IV"),
 		(1.01, 9.86, 30.11, -21.45, True, "IV"),
 		(-2.34, 40.04, 40.01, -3.45, False, "I")
 	]
 )
-def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, longitud_destino, ida_vuelta, tipo):
+def test_crear_mapa_trayecto_un_tramo(latitud_origen, longitud_origen, latitud_destino, longitud_destino, ida_vuelta, tipo):
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1411,7 +1412,9 @@ def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, l
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "pie", "23"), "nacho_mapa_trayecto.html", ida_vuelta)
+	trayectos=[('id_2026260364_golden_I_0', tipo, 'Autobus', 'Madrid', 'España', latitud_origen, longitud_origen, 'Estadio de La Cartuja', 'España', latitud_destino, longitud_destino, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')]
+
+	crearMapaTrayecto(ruta_carpeta, trayectos, "nacho_mapa_trayecto.html", ida_vuelta)
 
 	latitud_media, longitud_media=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
 
@@ -1433,7 +1436,7 @@ def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, l
 		assert "Madrid" in contenido
 		assert f"[{latitud_destino}, {longitud_destino}]" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
-		assert "Metropolitano" in contenido
+		assert "Estadio de La Cartuja" in contenido
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert f"[[{latitud_origen}, {longitud_origen}], [{latitud_destino}, {longitud_destino}]]" in contenido
@@ -1441,16 +1444,16 @@ def test_crear_mapa_trayecto(latitud_origen, longitud_origen, latitud_destino, l
 		assert "L.RegularPolygonMarker" in contenido
 		assert f"[{latitud_media}, {longitud_media}]" in contenido
 		assert f'"rotation": {angulo},' in contenido
-		assert "/static/imagenes/iconos/pie.png" in contenido
+		assert "/static/imagenes/iconos/autobus.png" in contenido
 		assert f'alt="Estadio_Transporte_{tipo}" style="width:50px;"' in contenido
-		assert "/pro/estadios/23.png" in contenido
+		assert "/pro/estadios/3536.png" in contenido
 		assert f'alt="Estadio_Transporte_{tipo}" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayecto_detalles_ida():
+def test_crear_mapa_trayecto_un_tramo_ida():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1462,7 +1465,7 @@ def test_crear_mapa_trayecto_detalles_ida():
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('I', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "pie", "23"), "nacho_mapa_trayecto.html")
+	crearMapaTrayecto(ruta_carpeta, [('id_2026260364_golden_I_0', 'I', 'Autobus', 'Madrid', 'España', 40.443, -3.6732, 'Estadio de La Cartuja', 'España', 37.4172, -6.0046, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')], "nacho_mapa_trayecto.html")
 
 	assert os.path.exists(ruta_html)
 
@@ -1486,16 +1489,16 @@ def test_crear_mapa_trayecto_detalles_ida():
 		assert "background-color: #ffcccc" in contenido
 		assert "background-color: #95ebf7" not in contenido
 		assert "background-color: #ffdd73" not in contenido
-		assert "/static/imagenes/iconos/pie.png" in contenido
+		assert "/static/imagenes/iconos/autobus.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:50px;"' in contenido
-		assert "/pro/estadios/23.png" in contenido
+		assert "/pro/estadios/3536.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayecto_detalles_vuelta():
+def test_crear_mapa_trayecto_un_tramo_vuelta():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1507,7 +1510,7 @@ def test_crear_mapa_trayecto_detalles_vuelta():
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('V', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "1", "autobus"), "nacho_mapa_trayecto.html")
+	crearMapaTrayecto(ruta_carpeta, [('id_2026260364_golden_V_0', 'V', 'Autobus', 'Estadio de La Cartuja', 'España', 37.4172352, -6.0046134, 'Madrid', 'España', 40.443, -3.6732, '3536', 'autobus', 'estadio_mapa', 'origen', 'Vuelta')], "nacho_mapa_trayecto.html")
 
 	assert os.path.exists(ruta_html)
 
@@ -1531,7 +1534,7 @@ def test_crear_mapa_trayecto_detalles_vuelta():
 		assert "background-color: #ffcccc" not in contenido
 		assert "background-color: #95ebf7" in contenido
 		assert "background-color: #ffdd73" not in contenido
-		assert "/pro/estadios/1.png" in contenido
+		assert "/pro/estadios/3536.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:200px;"' in contenido
 		assert "/static/imagenes/iconos/autobus.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:50px;"' in contenido
@@ -1540,7 +1543,16 @@ def test_crear_mapa_trayecto_detalles_vuelta():
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayecto_detalles_ida_vuelta():
+@pytest.mark.parametrize(["trayectos"],
+	[
+		([('id_2026180139_golden_I_1', 'I', 'Avion', 'Madrid', 'España', 40.443, -3.6732, 'Amsterdam', 'Netherlands', 52.3667, 4.8833, 'avion', 'avion', 'origen', 'destino', 'Ida'),
+			('id_2026180139_golden_I_2', 'I', 'Autobus', 'Amsterdam', 'Netherlands', 52.3667, 4.8833, 'Philips Stadion', 'Países Bajos', 51.4417076, 5.4674257, 'autobus', '59', 'destino', 'estadio_mapa', 'Ida')],),
+		([('id_2026180139_golden_V_1', 'V', 'Avion', 'Philips Stadion', 'Países Bajos', 51.4417076, 5.4674257, 'Faro', 'Portugal', 37.0161, -7.935, '59', 'avion', 'estadio_mapa', 'destino', 'Vuelta'),
+			('id_2026180139_golden_V_2', 'V', 'Autobus', 'Faro', 'Portugal', 37.0161, -7.935, 'Sevilla', 'España', 37.39, -5.99, 'autobus', 'autobus', 'destino', 'destino', 'Vuelta'),
+			('id_2026180139_golden_V_3', 'V', 'Tren', 'Sevilla', 'España', 37.39, -5.99, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta')],)
+	]
+)
+def test_crear_mapa_trayecto_multitramo(trayectos):
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1552,7 +1564,107 @@ def test_crear_mapa_trayecto_detalles_ida_vuelta():
 
 	assert not os.path.exists(ruta_html)
 
-	crearMapaTrayecto(ruta_carpeta, ('V', 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "avion", "22"), "nacho_mapa_trayecto.html", True)
+	crearMapaTrayecto(ruta_carpeta, trayectos, "nacho_mapa_trayecto.html", False)
+
+	coordenadas_trayectos=[par for datos_trayecto in trayectos for par in [(datos_trayecto[5], datos_trayecto[6]), (datos_trayecto[9], datos_trayecto[10])]]
+
+	latitud_media, longitud_media=obtenerCentroideCoordenadas(coordenadas_trayectos)
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+
+		for latitud, longitud in coordenadas_trayectos:
+
+			assert f"[{latitud}, {longitud}]" in contenido
+
+		assert "/static/imagenes/iconos/inicio.png" in contenido
+		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+		assert "Philips Stadion" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+
+		for tramo in trayectos:
+
+			assert f"[[{tramo[5]}, {tramo[6]}], [{tramo[9]}, {tramo[10]}]]" in contenido
+
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
+		assert f"[{latitud_media}, {longitud_media}]" in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_trayecto_un_tramo_ida_vuelta():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_trayecto.html")
+
+	assert not os.path.exists(ruta_html)
+
+	crearMapaTrayecto(ruta_carpeta, [('id_2026260364_golden_I_0', 'I', 'Autobus', 'Madrid', 'España', 40.443, -3.6732, 'Estadio de La Cartuja', 'España', 37.4172, -6.0046, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')], "nacho_mapa_trayecto.html", True)
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+		assert "solid red" not in contenido
+		assert "solid blue" not in contenido
+		assert "solid orange" in contenido
+		assert '"color": "red"' not in contenido
+		assert '"color": "blue"' not in contenido
+		assert '"color": "orange"' in contenido
+		assert "background-color: #ffcccc" not in contenido
+		assert "background-color: #95ebf7" not in contenido
+		assert "background-color: #ffdd73" in contenido
+		assert "/static/imagenes/iconos/autobus.png" in contenido
+		assert 'alt="Estadio_Transporte_IV" style="width:50px;"' in contenido
+		assert "/pro/estadios/3536.png" in contenido
+		assert 'alt="Estadio_Transporte_IV" style="width:200px;"' in contenido
+
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_trayecto_multitramo_ida_vuelta():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_trayecto.html")
+
+	assert not os.path.exists(ruta_html)
+
+	trayectos=[('id_2026180139_golden_I_1', 'I', 'Avion', 'Madrid', 'España', 40.443, -3.6732, 'Amsterdam', 'Netherlands', 52.3667, 4.8833, 'avion', 'avion', 'origen', 'destino', 'Ida'),
+				('id_2026180139_golden_I_2', 'I', 'Autobus', 'Amsterdam', 'Netherlands', 52.3667, 4.8833, 'Philips Stadion', 'Países Bajos', 51.4417076, 5.4674257, 'autobus', '59', 'destino', 'estadio_mapa', 'Ida')]
+
+	crearMapaTrayecto(ruta_carpeta, trayectos, "nacho_mapa_trayecto.html", True)
 
 	assert os.path.exists(ruta_html)
 
@@ -1577,8 +1689,9 @@ def test_crear_mapa_trayecto_detalles_ida_vuelta():
 		assert "background-color: #95ebf7" not in contenido
 		assert "background-color: #ffdd73" in contenido
 		assert "/static/imagenes/iconos/avion.png" in contenido
+		assert "/static/imagenes/iconos/autobus.png" in contenido
 		assert 'alt="Estadio_Transporte_IV" style="width:50px;"' in contenido
-		assert "/pro/estadios/22.png" in contenido
+		assert "/pro/estadios/59.png" in contenido
 		assert 'alt="Estadio_Transporte_IV" style="width:200px;"' in contenido
 
 	vaciarCarpeta(ruta_carpeta)
@@ -1622,8 +1735,10 @@ def test_crear_mapa_trayectos_sin_puntos_error(latitud_origen, longitud_origen, 
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13"),
-							('V', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13")]
+		trayectos=[('id_2026260364_golden_I_0', tipo, 'Autobus', 'Madrid', 'España', latitud_origen, longitud_origen, 'Estadio de La Cartuja', 'España', latitud_destino, longitud_destino, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')]
+
+		datos_trayectos=[('I', 'Transporte', 'Madrid', 'España', latitud_origen, longitud_origen, 'Estadio de La Cartuja', 'España', latitud_destino, longitud_destino, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida'),
+							('V', 'Transporte', 'Madrid', 'España', latitud_origen, longitud_origen, 'Estadio de La Cartuja', 'España', latitud_destino, longitud_destino, 'autobus', '3536', 'origen', 'estadio_mapa', 'Vuelta')]
 
 		crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1648,8 +1763,8 @@ def test_crear_mapa_trayectos_tipos_error(tipo_ida, tipo_vuelta):
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45, "coche", "13"),
-							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 40.01, -3.45, "coche", "13")]
+		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 40.01, -3.45, 'Estadio de La Cartuja', 'España', 40.01, -3.45, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida'),
+							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Estadio de La Cartuja', 'España', 40.01, -3.45, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')]
 
 		crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1657,7 +1772,7 @@ def test_crear_mapa_trayectos_tipos_error(tipo_ida, tipo_vuelta):
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayectos():
+def test_crear_mapa_trayectos_un_tramo():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1669,8 +1784,8 @@ def test_crear_mapa_trayectos():
 
 	assert not os.path.exists(ruta_html)
 
-	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "coche", "13"),
-						("V", 'Transporte', 'Cuenca', -2.34, 40.04, 'Do Dragao', 1.01, 9.86, "22", "transporte")]
+	datos_trayectos=[[('id_2026180141_golden_I_0', 'I', 'Avion', 'Madrid', 'España', 40.01, -3.45, 'Rams Park', 'Turquía', 30.11, -21.45, 'coche', '70', 'origen', 'estadio_mapa', 'Ida')],
+					[('id_2026180141_golden_V_0', 'V', 'Avion', 'Rams Park', 'Turquía', -2.34, 40.04, 'Madrid', 'España', 1.01, 9.86, '70', 'avion', 'estadio_mapa', 'origen', 'Vuelta')]]
 
 	crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1698,7 +1813,7 @@ def test_crear_mapa_trayectos():
 		assert "Madrid" in contenido
 		assert "[30.11, -21.45]" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
-		assert "Metropolitano" in contenido
+		assert "Rams Park" in contenido
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert "[[40.01, -3.45], [30.11, -21.45]]" in contenido
@@ -1708,18 +1823,16 @@ def test_crear_mapa_trayectos():
 		assert f'"rotation": {angulo_ida},' in contenido
 		assert "/static/imagenes/iconos/coche.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:50px;"' in contenido
-		assert "/pro/estadios/13.png" in contenido
+		assert "/pro/estadios/70.png" in contenido
 		assert 'alt="Estadio_Transporte_I" style="width:200px;"' in contenido
 		assert "[-2.34, 40.04]" in contenido
-		assert "Cuenca" in contenido
 		assert "[1.01, 9.86]" in contenido
-		assert "Do Dragao" in contenido
 		assert "[[-2.34, 40.04], [1.01, 9.86]]" in contenido
 		assert f"[{latitud_media_vuelta}, {longitud_media_vuelta}]" in contenido
 		assert f'"rotation": {angulo_vuelta},' in contenido
-		assert "/pro/estadios/22.png" in contenido
+		assert "/pro/estadios/70.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:200px;"' in contenido
-		assert "/static/imagenes/iconos/transporte.png" in contenido
+		assert "/static/imagenes/iconos/avion.png" in contenido
 		assert 'alt="Estadio_Transporte_V" style="width:50px;"' in contenido
 		assert "solid red" in contenido
 		assert "solid blue" in contenido
@@ -1731,6 +1844,66 @@ def test_crear_mapa_trayectos():
 		assert "background-color: #95ebf7" in contenido
 		assert "background-color: #ffdd73" not in contenido
 		
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_trayectos_multitramo():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_trayecto.html")
+
+	assert not os.path.exists(ruta_html)
+
+	datos_trayectos=[[('id_2026180139_golden_I_1', 'I', 'Avion', 'Madrid', 'España', 40.443, -3.6732, 'Amsterdam', 'Netherlands', 52.3667, 4.8833, 'avion', 'avion', 'origen', 'destino', 'Ida'),
+						('id_2026180139_golden_I_2', 'I', 'Autobus', 'Amsterdam', 'Netherlands', 52.3667, 4.8833, 'Philips Stadion', 'Países Bajos', 51.4417076, 5.4674257, 'autobus', '59', 'destino', 'estadio_mapa', 'Ida')],
+						[('id_2026180139_golden_V_1', 'V', 'Avion', 'Philips Stadion', 'Países Bajos', 51.4417076, 5.4674257, 'Faro', 'Portugal', 37.0161, -7.935, '59', 'avion', 'estadio_mapa', 'destino', 'Vuelta'),
+						('id_2026180139_golden_V_2', 'V', 'Autobus', 'Faro', 'Portugal', 37.0161, -7.935, 'Sevilla', 'España', 37.39, -5.99, 'autobus', 'autobus', 'destino', 'destino', 'Vuelta'),
+						('id_2026180139_golden_V_3', 'V', 'Tren', 'Sevilla', 'España', 37.39, -5.99, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta')]]
+
+	crearMapaTrayectos(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
+
+	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[0][5], datos_trayecto[0][6]), (datos_trayecto[0][9], datos_trayecto[0][10])]]
+
+	latitud_media, longitud_media=obtenerCentroideCoordenadas(coordenadas_trayectos)
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+
+		for latitud, longitud in coordenadas_trayectos:
+
+			assert f"[{latitud}, {longitud}]" in contenido
+
+		assert "/static/imagenes/iconos/inicio.png" in contenido
+		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+		assert "Philips Stadion" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+
+		for dato_trayecto in datos_trayectos:
+
+			for tramo in dato_trayecto:
+
+				assert f"[[{tramo[5]}, {tramo[6]}], [{tramo[9]}, {tramo[10]}]]" in contenido
+
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
+		assert f"[{latitud_media}, {longitud_media}]" in contenido
+
 	vaciarCarpeta(ruta_carpeta)
 
 	borrarCarpeta(ruta_carpeta)
@@ -1772,8 +1945,8 @@ def test_crear_mapa_trayectos_ida_vuelta_sin_puntos_error(latitud_origen, longit
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[('I', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13"),
-							('V', 'Transporte', 'Madrid', latitud_origen, longitud_origen, 'Metropolitano', latitud_destino, longitud_destino, "coche", "13")]
+		datos_trayectos=datos_trayectos=[('I', 'Transporte', 'Madrid', 'España', latitud_origen, longitud_origen, 'Estadio de La Cartuja', 'España', latitud_destino, longitud_destino, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida'),
+										('V', 'Transporte', 'Madrid', 'España', latitud_origen, longitud_origen, 'Estadio de La Cartuja', 'España', latitud_destino, longitud_destino, 'autobus', '3536', 'origen', 'estadio_mapa', 'Vuelta')]
 
 		crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1798,8 +1971,8 @@ def test_crear_mapa_trayectos_ida_vuelta_tipos_error(tipo_ida, tipo_vuelta):
 
 	with pytest.raises(Exception):
 
-		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 41.01, -5.45, 'Metropolitano', 43.01, -3.45, "coche", "13"),
-							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.01, -3.45, "coche", "13")]
+		datos_trayectos=[(tipo_ida, 'Transporte', 'Madrid', 40.01, -3.45, 'Estadio de La Cartuja', 'España', 40.01, -3.45, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida'),
+							(tipo_vuelta, 'Transporte', 'Madrid', 40.01, -3.45, 'Estadio de La Cartuja', 'España', 40.01, -3.45, 'autobus', '3536', 'origen', 'estadio_mapa', 'Ida')]
 
 		crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1807,7 +1980,7 @@ def test_crear_mapa_trayectos_ida_vuelta_tipos_error(tipo_ida, tipo_vuelta):
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayectos_ida_vuelta_igual():
+def test_crear_mapa_trayectos_ida_vuelta_igual_un_tramo():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1819,8 +1992,8 @@ def test_crear_mapa_trayectos_ida_vuelta_igual():
 
 	assert not os.path.exists(ruta_html)
 
-	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "coche", "13"),
-						("V", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "22", "pie")]
+	datos_trayectos=[[('id_2026180141_golden_I_0', 'I', 'Avion', 'Madrid', 'España', 40.01, -3.45, 'Rams Park', 'Turquía', 30.11, -21.45, 'avion', '70', 'origen', 'estadio_mapa', 'Ida')],
+					[('id_2026180141_golden_V_0', 'V', 'Avion', 'Rams Park', 'Turquía', 30.11, -21.45, 'Madrid', 'España', 40.01, -3.45, '70', 'avion', 'estadio_mapa', 'origen', 'Vuelta')]]
 
 	crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1840,7 +2013,7 @@ def test_crear_mapa_trayectos_ida_vuelta_igual():
 		assert "Madrid" in contenido
 		assert "[30.11, -21.45]" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
-		assert "Metropolitano" in contenido
+		assert "Rams Park" in contenido
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert "[[40.01, -3.45], [30.11, -21.45]]" in contenido
@@ -1860,7 +2033,7 @@ def test_crear_mapa_trayectos_ida_vuelta_igual():
 
 	borrarCarpeta(ruta_carpeta)
 
-def test_crear_mapa_trayectos_ida_vuelta_diferente():
+def test_crear_mapa_trayectos_ida_vuelta_diferente_un_tramo():
 
 	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
 
@@ -1872,8 +2045,8 @@ def test_crear_mapa_trayectos_ida_vuelta_diferente():
 
 	assert not os.path.exists(ruta_html)
 
-	datos_trayectos=[("I", 'Transporte', 'Madrid', 40.01, -3.45, 'Metropolitano', 30.11, -21.45, "coche", "13"),
-						("V", 'Transporte', 'Cuenca', 45.01, -6.45, 'Metropolitano', 30.11, -21.45, "22", "avion")]
+	datos_trayectos=[[('id_2026180141_golden_I_0', 'I', 'Avion', 'Madrid', 'España', 40.01, -3.45, 'Rams Park', 'Turquía', 30.11, -21.45, 'coche', '70', 'origen', 'estadio_mapa', 'Ida')],
+					[('id_2026180141_golden_V_0', 'V', 'Avion', 'Cuenca', 'España', -2.34, 40.04, 'Madrid', 'España', 1.01, 9.86, '70', 'avion', 'estadio_mapa', 'origen', 'Vuelta')]]
 
 	crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
 
@@ -1893,16 +2066,154 @@ def test_crear_mapa_trayectos_ida_vuelta_diferente():
 		assert "Madrid" in contenido
 		assert "[30.11, -21.45]" in contenido
 		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
-		assert "Metropolitano" in contenido
+		assert "Rams Park" in contenido
 		assert "var poly_line_" in contenido
 		assert "L.polyline" in contenido
 		assert "[[40.01, -3.45], [30.11, -21.45]]" in contenido
 		assert "var regular_polygon_marker_" in contenido
 		assert "L.RegularPolygonMarker" in contenido
-		assert "[45.01, -6.45]" in contenido
+		assert "[-2.34, 40.04]" in contenido
 		assert "Cuenca" in contenido
-		assert "[30.11, -21.45]" in contenido
-		assert "[[45.01, -6.45], [30.11, -21.45]]" in contenido
+		assert "[1.01, 9.86]" in contenido
+		assert "[[-2.34, 40.04], [1.01, 9.86]]" in contenido
+		assert "solid red" in contenido
+		assert "solid blue" in contenido
+		assert "solid orange" not in contenido
+		assert '"color": "red"' in contenido
+		assert '"color": "blue"' in contenido
+		assert '"color": "orange"' not in contenido
+		assert "background-color: #ffcccc" in contenido
+		assert "background-color: #95ebf7" in contenido
+		assert "background-color: #ffdd73" not in contenido
+		
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_trayectos_ida_vuelta_igual_multitramo():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_trayecto.html")
+
+	assert not os.path.exists(ruta_html)
+
+	datos_trayectos=[[('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida'),
+						('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida'),
+						('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida')],
+					[('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta'),
+						('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta'),
+						('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta')]]
+
+	crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
+
+	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos[0] for par in [(datos_trayecto[5], datos_trayecto[6]), (datos_trayecto[9], datos_trayecto[10])]]
+
+	latitud_media, longitud_media=obtenerCentroideCoordenadas(coordenadas_trayectos)
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+
+		for latitud, longitud in coordenadas_trayectos:
+
+			assert f"[{latitud}, {longitud}]" in contenido
+
+		assert "/static/imagenes/iconos/inicio.png" in contenido
+		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+		assert "Red Bull Arena (Salzburgo)" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+
+		for tramo in datos_trayectos[0]:
+
+			assert f"[[{tramo[5]}, {tramo[6]}], [{tramo[9]}, {tramo[10]}]]" in contenido
+
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
+		assert f"[{latitud_media}, {longitud_media}]" in contenido
+		assert "solid red" not in contenido
+		assert "solid blue" not in contenido
+		assert "solid orange" in contenido
+		assert '"color": "red"' not in contenido
+		assert '"color": "blue"' not in contenido
+		assert '"color": "orange"' in contenido
+		assert "background-color: #ffcccc" not in contenido
+		assert "background-color: #95ebf7" not in contenido
+		assert "background-color: #ffdd73" in contenido
+		
+	vaciarCarpeta(ruta_carpeta)
+
+	borrarCarpeta(ruta_carpeta)
+
+def test_crear_mapa_trayectos_ida_vuelta_diferente_multitramo():
+
+	ruta_carpeta=os.path.join(os.getcwd(), "testutilidades", "Prueba")
+
+	crearCarpeta(ruta_carpeta)
+
+	vaciarCarpeta(ruta_carpeta)
+
+	ruta_html=os.path.join(ruta_carpeta, "nacho_mapa_trayecto.html")
+
+	assert not os.path.exists(ruta_html)
+
+	datos_trayectos=[[('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida'),
+						('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida'),
+						('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida')],
+					[('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta'),
+						('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta'),
+						('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta')]]
+
+	crearMapaTrayectosIdaVuelta(ruta_carpeta, datos_trayectos, "nacho_mapa_trayecto.html")
+
+	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[0][5], datos_trayecto[0][6]), (datos_trayecto[0][9], datos_trayecto[0][10])]]
+
+	latitud_media, longitud_media=obtenerCentroideCoordenadas(coordenadas_trayectos)
+
+	assert os.path.exists(ruta_html)
+
+	with open(ruta_html, "r") as html:
+
+		contenido=html.read()
+
+		assert '<div class="folium-map" id="map_' in contenido
+		assert "var map_" in contenido
+		assert "L.map" in contenido
+		assert "var marker_" in contenido
+		assert "L.marker" in contenido
+
+		for latitud, longitud in coordenadas_trayectos:
+
+			assert f"[{latitud}, {longitud}]" in contenido
+
+		assert "/static/imagenes/iconos/inicio.png" in contenido
+		assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+		assert "Anfield" in contenido
+		assert "var poly_line_" in contenido
+		assert "L.polyline" in contenido
+
+		for dato_trayecto in datos_trayectos:
+
+			for tramo in dato_trayecto:
+
+				assert f"[[{tramo[5]}, {tramo[6]}], [{tramo[9]}, {tramo[10]}]]" in contenido
+
+		assert "var regular_polygon_marker_" in contenido
+		assert "L.RegularPolygonMarker" in contenido
+		assert f"[{latitud_media}, {longitud_media}]" in contenido
 		assert "solid red" in contenido
 		assert "solid blue" in contenido
 		assert "solid orange" not in contenido

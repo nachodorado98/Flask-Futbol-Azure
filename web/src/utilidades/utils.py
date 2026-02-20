@@ -591,86 +591,15 @@ def obtenerAngulo(coordenadas:List[tuple])->float:
  
 	return (angulo_deg-90)%360
 
-def crearMapaTrayecto(ruta:str, datos_trayecto:tuple, nombre_mapa:str, ida_vuelta:bool=False, zoom:float=5)->None:
+def crearMapaTrayecto(ruta:str, datos_trayectos:tuple, nombre_mapa:str, ida_vuelta:bool=False, zoom:float=5)->None:
 
-	tipo, transporte=datos_trayecto[0], datos_trayecto[1]
-	ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[2], datos_trayecto[3], datos_trayecto[4]
-	ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[5], datos_trayecto[6], datos_trayecto[7]
-	imagen_origen, imagen_destino=datos_trayecto[8], datos_trayecto[9]
-
-	centroide=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
-
-	constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200"],
-								"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50"],
-								"IV":["ffdd73", "orange", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200"]}
-
-	try:
-
-		zoom=calcularZoomMapa([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
-
-		tipo_trayecto=tipo if not ida_vuelta else "IV"
-
-		constante_tipo_trayecto=constantes_tipo_trayecto[tipo_trayecto]
-
-		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
-
-		popup_origen_html=f"""
-							<div style="text-align: center;">
-								<h4>{ciudad_origen}</h4>
-								<img src="{constante_tipo_trayecto[4]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo_trayecto}" style="width:{constante_tipo_trayecto[6]}px;">
-							</div>
-							"""
-
-		icono_origen_html=f"""
-							<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-								<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-							</div>
-							"""
-
-		folium.Marker(location=[latitud_origen, longitud_origen],
-						popup=folium.Popup(popup_origen_html, max_width=400),
-						icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
-
-		popup_destino_html=f"""
-							<div style="text-align: center;">
-								<h4>{ciudad_destino}</h4>
-								<img src="{constante_tipo_trayecto[5]}{imagen_destino}.png" alt="Estadio_Transporte_{tipo_trayecto}" style="width:{constante_tipo_trayecto[7]}px;">
-							</div>
-							"""
-
-		icono_destino_html=f"""
-							<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-								<img src="/static/imagenes/iconos/{constante_tipo_trayecto[3]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-							</div>
-							"""
-
-		folium.Marker(location=[latitud_destino, longitud_destino],
-						popup=folium.Popup(popup_destino_html, max_width=400),
-						icon=folium.DivIcon(html=icono_destino_html)).add_to(mapa)
-
-		folium.PolyLine(locations=[[latitud_origen, longitud_origen], [latitud_destino, longitud_destino]], color=constante_tipo_trayecto[1], weight=2.5, opacity=1).add_to(mapa)
-
-		angulo=obtenerAngulo([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
-
-		folium.RegularPolygonMarker(location=(centroide[0], centroide[1]),
-									fill_color=constante_tipo_trayecto[1],
-									color=constante_tipo_trayecto[1],
-									fill_opacity=1,
-									number_of_sides=3,
-									radius=10,
-									rotation=angulo).add_to(mapa)
-		
-		mapa.save(os.path.join(ruta, nombre_mapa))
-
-	except Exception as e:
-
-		raise Exception("Error al crear el mapa")
-
-def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->None:
-
-	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[3], datos_trayecto[4]), (datos_trayecto[6], datos_trayecto[7])]]
+	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[5], datos_trayecto[6]), (datos_trayecto[9], datos_trayecto[10])]]
 
 	centroide=obtenerCentroideCoordenadas(coordenadas_trayectos)
+
+	numero_tramos=len(datos_trayectos)
+
+	multitramo=True if numero_tramos>1 else False
 
 	try:
 
@@ -678,30 +607,53 @@ def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->
 
 		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
 
-		constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200"],
-									"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50"]}
+		constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200", "destino", "/static/imagenes/iconos/", "50"],
+									"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50", "destino", "/static/imagenes/iconos/", "50"],
+									"IV":["ffdd73", "orange", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200", "destino", "/static/imagenes/iconos/", "50"]}
 
 		for datos_trayecto in datos_trayectos:
 
-			tipo, transporte=datos_trayecto[0], datos_trayecto[1]
-			ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[2], datos_trayecto[3], datos_trayecto[4]
-			ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[5], datos_trayecto[6], datos_trayecto[7]
-			imagen_origen, imagen_destino=datos_trayecto[8], datos_trayecto[9]
+			tramo_actual=int(datos_trayecto[0][-1])
+			tipo, transporte=datos_trayecto[1], datos_trayecto[2]
+			ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[3], datos_trayecto[5], datos_trayecto[6]
+			ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[7], datos_trayecto[9], datos_trayecto[10]
+			imagen_origen, imagen_destino=datos_trayecto[11], datos_trayecto[12]
 
-			constante_tipo_trayecto=constantes_tipo_trayecto[tipo]
+			aplicar_multitramo=True if multitramo and tramo_actual!=1 else False
 
-			popup_origen_html=f"""
-								<div style="text-align: center;">
-									<h4>{ciudad_origen}</h4>
-									<img src="{constante_tipo_trayecto[4]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[6]}px;">
-								</div>
-								"""
+			tipo_trayecto=tipo if not ida_vuelta else "IV"
 
-			icono_origen_html=f"""
-								<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
-									<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
-								</div>
-								"""
+			constante_tipo_trayecto=constantes_tipo_trayecto[tipo_trayecto]
+
+			if aplicar_multitramo:
+
+					popup_origen_html=f"""
+										<div style="text-align: center;">
+											<h4>{ciudad_origen}</h4>
+											<img src="{constante_tipo_trayecto[9]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[10]}px;">
+										</div>
+										"""
+
+					icono_origen_html=f"""
+										<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+											<img src="/static/imagenes/iconos/{constante_tipo_trayecto[8]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+										</div>
+										"""
+
+			else:
+
+				popup_origen_html=f"""
+									<div style="text-align: center;">
+										<h4>{ciudad_origen}</h4>
+										<img src="{constante_tipo_trayecto[4]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo_trayecto}" style="width:{constante_tipo_trayecto[6]}px;">
+									</div>
+									"""
+
+				icono_origen_html=f"""
+									<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+										<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+									</div>
+									"""
 
 			folium.Marker(location=[latitud_origen, longitud_origen],
 							popup=folium.Popup(popup_origen_html, max_width=400),
@@ -710,7 +662,7 @@ def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->
 			popup_destino_html=f"""
 								<div style="text-align: center;">
 									<h4>{ciudad_destino}</h4>
-									<img src="{constante_tipo_trayecto[5]}{imagen_destino}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[7]}px;">
+									<img src="{constante_tipo_trayecto[5]}{imagen_destino}.png" alt="Estadio_Transporte_{tipo_trayecto}" style="width:{constante_tipo_trayecto[7]}px;">
 								</div>
 								"""
 
@@ -744,19 +696,125 @@ def crearMapaTrayectos(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->
 
 		raise Exception("Error al crear el mapa")
 
-def crearMapaTrayectosIdaVuelta(ruta:str, datos_trayectos:List[tuple], nombre_mapa:str)->None:
+def crearMapaTrayectos(ruta:str, datos_trayectos_ida_vuelta:List[List], nombre_mapa:str)->None:
 
-	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos for par in [(datos_trayecto[3], datos_trayecto[4]), (datos_trayecto[6], datos_trayecto[7])]]
+	coordenadas_trayectos=[par for datos_trayecto in datos_trayectos_ida_vuelta for par in [(datos_trayecto[0][5], datos_trayecto[0][6]), (datos_trayecto[0][9], datos_trayecto[0][10])]]
 
-	ida_vuelta_igual=True if len(set(coordenadas_trayectos))<len(coordenadas_trayectos)-1 else False
+	centroide=obtenerCentroideCoordenadas(coordenadas_trayectos)
+
+	try:
+
+		zoom=calcularZoomMapa(coordenadas_trayectos)
+
+		mapa=folium.Map(location=[centroide[0], centroide[1]], zoom_start=zoom)
+
+		constantes_tipo_trayecto={"I":["ffcccc", "red", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200", "destino", "/static/imagenes/iconos/", "50"],
+									"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50", "destino", "/static/imagenes/iconos/", "50"]}
+
+		for datos_trayectos in datos_trayectos_ida_vuelta:
+
+			numero_tramos=len(datos_trayectos)
+
+			multitramo=True if numero_tramos>1 else False
+
+			for datos_trayecto in datos_trayectos:
+
+				tramo_actual=int(datos_trayecto[0][-1])
+				tipo, transporte=datos_trayecto[1], datos_trayecto[2]
+				ciudad_origen, latitud_origen, longitud_origen=datos_trayecto[3], datos_trayecto[5], datos_trayecto[6]
+				ciudad_destino, latitud_destino, longitud_destino=datos_trayecto[7], datos_trayecto[9], datos_trayecto[10]
+				imagen_origen, imagen_destino=datos_trayecto[11], datos_trayecto[12]
+
+				aplicar_multitramo=True if multitramo and tramo_actual!=1 else False
+
+				constante_tipo_trayecto=constantes_tipo_trayecto[tipo]
+
+				if aplicar_multitramo:
+
+					popup_origen_html=f"""
+										<div style="text-align: center;">
+											<h4>{ciudad_origen}</h4>
+											<img src="{constante_tipo_trayecto[9]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[10]}px;">
+										</div>
+										"""
+
+					icono_origen_html=f"""
+										<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+											<img src="/static/imagenes/iconos/{constante_tipo_trayecto[8]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+										</div>
+										"""
+
+				else:
+
+					popup_origen_html=f"""
+										<div style="text-align: center;">
+											<h4>{ciudad_origen}</h4>
+											<img src="{constante_tipo_trayecto[4]}{imagen_origen}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[6]}px;">
+										</div>
+										"""
+
+					icono_origen_html=f"""
+									<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+										<img src="/static/imagenes/iconos/{constante_tipo_trayecto[2]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+									</div>
+									"""
+
+				folium.Marker(location=[latitud_origen, longitud_origen],
+								popup=folium.Popup(popup_origen_html, max_width=400),
+								icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
+
+				popup_destino_html=f"""
+									<div style="text-align: center;">
+										<h4>{ciudad_destino}</h4>
+										<img src="{constante_tipo_trayecto[5]}{imagen_destino}.png" alt="Estadio_Transporte_{tipo}" style="width:{constante_tipo_trayecto[7]}px;">
+									</div>
+									"""
+
+				icono_destino_html=f"""
+									<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px;"">
+										<img src="/static/imagenes/iconos/{constante_tipo_trayecto[3]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+									</div>
+									"""
+
+				folium.Marker(location=[latitud_destino, longitud_destino],
+								popup=folium.Popup(popup_destino_html, max_width=400),
+								icon=folium.DivIcon(html=icono_destino_html)).add_to(mapa)
+
+				folium.PolyLine(locations=[[latitud_origen, longitud_origen], [latitud_destino, longitud_destino]], color=constante_tipo_trayecto[1], weight=2.5, opacity=1).add_to(mapa)
+
+				angulo=obtenerAngulo([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+				centroide_trayecto_simple=obtenerCentroideCoordenadas([(latitud_origen, longitud_origen), (latitud_destino, longitud_destino)])
+
+				folium.RegularPolygonMarker(location=(centroide_trayecto_simple[0], centroide_trayecto_simple[1]),
+											fill_color=constante_tipo_trayecto[1],
+											color=constante_tipo_trayecto[1],
+											fill_opacity=1,
+											number_of_sides=3,
+											radius=10,
+											rotation=angulo).add_to(mapa)
+
+		mapa.save(os.path.join(ruta, nombre_mapa))
+
+	except Exception as e:
+
+		raise Exception("Error al crear el mapa")
+
+def crearMapaTrayectosIdaVuelta(ruta:str, datos_trayectos_ida_vuelta:List[List], nombre_mapa:str)->None:
+
+	coordenadas_trayectos_ida=[par for datos_trayecto in datos_trayectos_ida_vuelta[0] for par in [(datos_trayecto[5], datos_trayecto[6]), (datos_trayecto[9], datos_trayecto[10])]]
+
+	coordenadas_trayectos_vuelta=[par for datos_trayecto in datos_trayectos_ida_vuelta[1] for par in [(datos_trayecto[5], datos_trayecto[6]), (datos_trayecto[9], datos_trayecto[10])]]
+
+	ida_vuelta_igual=True if set(coordenadas_trayectos_ida)==set(coordenadas_trayectos_vuelta) else False
 
 	if ida_vuelta_igual:
 
-		crearMapaTrayecto(ruta, datos_trayectos[0], nombre_mapa, True)
+		crearMapaTrayecto(ruta, datos_trayectos_ida_vuelta[0], nombre_mapa, True)
 
 	else:
 
-		crearMapaTrayectos(ruta, datos_trayectos, nombre_mapa)
+		crearMapaTrayectos(ruta, datos_trayectos_ida_vuelta, nombre_mapa)
 
 def distancia_maxima_coordenadas(coordenadas:List[tuple])->int:
 	
@@ -1208,8 +1266,8 @@ def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asisti
 
 def generarWrappedAnnio(hoy:datetime)->bool:
 
-    limite_inferior=datetime(hoy.year, 12, 15)
+	limite_inferior=datetime(hoy.year, 12, 15)
 
-    limite_superior=datetime(hoy.year, 12, 31)
+	limite_superior=datetime(hoy.year, 12, 31)
 
-    return limite_inferior<=hoy<=limite_superior
+	return limite_inferior<=hoy<=limite_superior

@@ -841,3 +841,139 @@ def test_pagina_mapa_partido_asistido_mapa_trayecto_ida_vuelta_existe(cliente, c
 		assert "background-color: #ffcccc" not in contenido
 		assert "background-color: #95ebf7" not in contenido
 		assert "background-color: #ffdd73" in contenido
+
+def test_pagina_partido_asistido_mapas_trayectos_multitramo(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":"Malaga", "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":"Metro", "ciudad-vuelta":"Barcelona", "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":"Autobus", "teletrabajo":True, "transporte-parada-ida[]":["Autobus", "Coche", "Tren"], "pais-parada-ida[]":["España", "España", "España"], 
+			"ciudad-parada-ida[]":["Murcia", "Alicante", "Alcorcon"], "transporte-parada-vuelta[]":["Metro"], "pais-parada-vuelta[]":["España"], "ciudad-parada-vuelta[]":["Getafe"]}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/partido/20190622/asistido")
+
+		contenido=respuesta.data.decode()
+ 
+		respuesta.status_code==200
+		assert '<div class="tarjeta-mapa-trayecto-ida-vuelta-total"' in contenido
+		assert "iframe" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_vuelta_user_" in contenido
+		assert '<div id="ventana-emergente-mapa" class="ventana-emergente-mapa"' in contenido
+		assert '<div class="contenido-ventana-emergente-mapa"' in contenido
+		assert '<div class="botones-mapa-detalle-ida-vuelta">' in contenido
+		assert '<div class="contenedor-mapa-ida-vuelta-detalle">' in contenido
+		assert "iframe" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_ida_user_" in contenido
+		assert "/partido/20190622/asistido/trayecto/mapa/mapa_trayecto_vuelta_user_" in contenido
+		assert '<img class="no-mapa"' not in contenido
+
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "trayectos")
+ 
+		ruta_mapa_ida_vuelta=os.path.join(ruta_carpeta_mapas, "mapa_trayecto_ida_vuelta_user_nacho98.html")
+ 
+		assert os.path.exists(ruta_mapa_ida_vuelta)
+ 
+		with open(ruta_mapa_ida_vuelta, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "Malaga" in contenido
+			assert "Murcia" in contenido
+			assert "Alicante" in contenido
+			assert "Alcorcon" in contenido
+			assert "Barcelona" in contenido
+			assert "Getafe" in contenido
+			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "solid red" in contenido
+			assert "solid blue" in contenido
+			assert "solid orange" not in contenido
+			assert '"color": "red"' in contenido
+			assert '"color": "blue"' in contenido
+			assert '"color": "orange"' not in contenido
+			assert "background-color: #ffcccc" in contenido
+			assert "background-color: #95ebf7" in contenido
+			assert "background-color: #ffdd73" not in contenido
+ 
+		ruta_carpeta_mapas=os.path.join(os.path.abspath(".."), "src", "templates", "mapas", "trayectos")
+ 
+		ruta_mapa_ida=os.path.join(ruta_carpeta_mapas, "mapa_trayecto_ida_user_nacho98.html")
+ 
+		assert os.path.exists(ruta_mapa_ida)
+ 
+		with open(ruta_mapa_ida, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "Malaga" in contenido
+			assert "Murcia" in contenido
+			assert "Alicante" in contenido
+			assert "Alcorcon" in contenido
+			assert "Barcelona" not in contenido
+			assert "Getafe" not in contenido
+			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "solid red" in contenido
+			assert "solid blue" not in contenido
+			assert "solid orange" not in contenido
+			assert '"color": "red"' in contenido
+			assert '"color": "blue"' not in contenido
+			assert '"color": "orange"' not in contenido
+			assert "background-color: #ffcccc" in contenido
+			assert "background-color: #95ebf7" not in contenido
+			assert "background-color: #ffdd73" not in contenido
+
+		ruta_mapa_vuelta=os.path.join(ruta_carpeta_mapas, "mapa_trayecto_vuelta_user_nacho98.html")
+ 
+		assert os.path.exists(ruta_mapa_vuelta)
+ 
+		with open(ruta_mapa_vuelta, "r") as mapa:
+ 
+			contenido=mapa.read()
+ 
+			assert '<div class="folium-map" id="map_' in contenido
+			assert "var map_" in contenido
+			assert "L.map" in contenido
+			assert "var marker_" in contenido
+			assert "L.marker" in contenido
+			assert "/static/imagenes/iconos/inicio.png" in contenido
+			assert "Malaga" not in contenido
+			assert "Murcia" not in contenido
+			assert "Alicante" not in contenido
+			assert "Alcorcon" not in contenido
+			assert "Barcelona" in contenido
+			assert "Getafe" in contenido
+			assert "/static/imagenes/iconos/estadio_mapa.png" in contenido
+			assert "Metropolitano" in contenido
+			assert "var poly_line_" in contenido
+			assert "L.polyline" in contenido
+			assert "solid red" not in contenido
+			assert "solid blue" in contenido
+			assert "solid orange" not in contenido
+			assert '"color": "red"' not in contenido
+			assert '"color": "blue"' in contenido
+			assert '"color": "orange"' not in contenido
+			assert "background-color: #ffcccc" not in contenido
+			assert "background-color: #95ebf7" in contenido
+			assert "background-color: #ffdd73" not in contenido
