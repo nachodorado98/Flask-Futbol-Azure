@@ -243,6 +243,47 @@
 
         </div>
 
+        <div class="tarjeta-dato" onclick="abrirVentana('ventana-emergente-transportes-usados')">
+
+            <p><strong>Trans. Mas Usado</strong></p>
+
+            <div class="valor-dato">
+
+                {% if transporte_mas_usado_annio %}
+
+                    <img class="transporte-mas-usado" src="{{ url_for('static', filename='imagenes/iconos/'+transporte_mas_usado_annio[1]+'.png') }}" alt="Transporte Icon">
+
+                    <h4>{{ transporte_mas_usado_annio[2] }}</h4>
+
+                {% else %}
+
+                    <h4>-</h4>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="tarjeta-dato" onclick="abrirVentana('ventana-emergente-ciudades-visitadas')">
+
+            <p><strong>Ciudades</strong></p>
+
+            <div class="valor-dato">
+                <h4>{{ numero_ciudades_visitadas_trayectos_annio }}</h4>
+                
+                {% if numero_ciudades_visitadas_trayectos_annio>numero_ciudades_visitadas_trayectos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+                {% elif  numero_ciudades_visitadas_trayectos_annio==numero_ciudades_visitadas_trayectos_annio_anterior %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+                {% else %}
+                    <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+                {% endif %}
+
+            </div>
+
+        </div>
+
     </div>
 
     <div class="fila-datos">
@@ -262,6 +303,26 @@
 {% endblock principal %}
 
 {% block contenedor_lateral_der %}
+
+<div class="contenedor-lateral contenedor-lateral-der">
+
+    <div class="circulo-goles-vistos">
+        <p class="titulo-circulo-goles-vistos">Goles Vistos</p>
+        
+        <div class="valor-dato">
+            <p class="valor-circulo-goles-vistos"><strong>{{ goles_vistos_annio }}</strong></p>
+
+            {% if goles_vistos_annio>goles_vistos_annio_anterior %}
+                <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/subida.png') }}" alt="Estado Icon">
+            {% elif  goles_vistos_annio==goles_vistos_annio_anterior %}
+                <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/igual.png') }}" alt="Estado Icon">
+            {% else %}
+                <img class="estado" src="{{ url_for('static', filename='imagenes/iconos/bajada.png') }}" alt="Estado Icon">
+            {% endif %}
+        </div>
+    </div>
+
+</div>
 
 <!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
 <div id="ventana-emergente-partidos" class="ventana-emergente">
@@ -439,28 +500,28 @@
 
             {% for equipo in equipos_vistos_annio %}
 
-            <div class="tarjeta-equipo-visto" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
+                <div class="tarjeta-equipo-visto" onclick="window.location.href='/equipo/{{ equipo[0] }}'">
 
-                <div class="info-equipo-visto">
+                    <div class="info-equipo-visto">
 
-                    {% if equipo[1]==-1 %}
-                        <img class="escudo-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
-                    {% else %}
-                        <img class="escudo-equipo-visto" src="{{ url_imagen_escudo }}{{ equipo[1] }}.png" alt="Escudo Icon">
-                    {% endif %}
+                        {% if equipo[1]==-1 %}
+                            <img class="escudo-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_escudo.png') }}" alt="Escudo Icon">
+                        {% else %}
+                            <img class="escudo-equipo-visto" src="{{ url_imagen_escudo }}{{ equipo[1] }}.png" alt="Escudo Icon">
+                        {% endif %}
 
-                    <h4>{{ equipo[2] }}</h4>
+                        <h4>{{ equipo[2] }}</h4>
 
-                    {% if equipo[3]=='-1' %}
-                        <img class="pais-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
-                    {% else %}
-                        <img class="pais-equipo-visto" src="{{ url_imagen_pais }}{{ equipo[3] }}.png" alt="Pais Icon">
-                    {% endif %}
+                        {% if equipo[3]=='-1' %}
+                            <img class="pais-equipo-visto" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                        {% else %}
+                            <img class="pais-equipo-visto" src="{{ url_imagen_pais }}{{ equipo[3] }}.png" alt="Pais Icon">
+                        {% endif %}
 
-                    <h4>{{ equipo[4] }} veces</h4>
+                        <h4>{{ equipo[4] }} veces</h4>
 
+                    </div>
                 </div>
-            </div>
 
             {% endfor %}
 
@@ -775,6 +836,68 @@
             </div>
 
         {% endif %}
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-transportes-usados" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-transportes-usados')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Transportes Usados {{ annio }}</strong></p>
+
+        <div class="tarjetas-transportes-usados">
+            <div class="tarjetas-transportes-usados-wrapper">
+
+            {% for transporte in transportes_usados_trayectos_annio %}
+
+                <div class="tarjeta-transporte-usado">
+
+                    <div class="info-transporte-usado">
+
+                        <img class="transporte-usado" src="{{ url_for('static', filename='imagenes/iconos/'+transporte[1]+'.png') }}" alt="Transporte Usado Icon">
+
+                        <h4>{{ transporte[2] }} veces</h4>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Sale de aqui la ventana emergente (es curioso porque deberia estar junto con el boton que la hace desplegarse) para evitar solapamiento con los contenedores laterales -->
+<div id="ventana-emergente-ciudades-visitadas" class="ventana-emergente">
+    <div class="contenido-ventana-emergente">
+        <span class="cerrar" onclick="cerrarVentana('ventana-emergente-ciudades-visitadas')">&times;</span>
+
+        <p class="titulo-ventana"><strong>Ciudades Visitadas {{ annio }}</strong></p>
+
+        <div class="tarjetas-ciudades-visitadas">
+            <div class="tarjetas-ciudades-visitadas-wrapper">
+
+            {% for ciudad_pais in ciudades_visitadas_trayectos_annio %}
+
+                <div class="tarjeta-ciudad-visitada">
+
+                    <div class="info-ciudad-visitada">
+
+                        <h4>{{ ciudad_pais[0] }} ({{ ciudad_pais[1] }}) - </h4>
+
+                        <h4>{{ ciudad_pais[2] }} veces</h4>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+            </div>
+        </div>
 
     </div>
 </div>

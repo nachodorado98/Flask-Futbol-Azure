@@ -611,7 +611,7 @@ def crearMapaTrayecto(ruta:str, datos_trayectos:tuple, nombre_mapa:str, ida_vuel
 									"V":["95ebf7", "blue", "estadio_mapa", "inicio", URL_DATALAKE_ESTADIOS, "/static/imagenes/iconos/", "200", "50", "destino", "/static/imagenes/iconos/", "50"],
 									"IV":["ffdd73", "orange", "inicio", "estadio_mapa", "/static/imagenes/iconos/", URL_DATALAKE_ESTADIOS, "50", "200", "destino", "/static/imagenes/iconos/", "50"]}
 
-		for datos_trayecto in datos_trayectos:
+		for numero_tramo, datos_trayecto in enumerate(datos_trayectos):
 
 			tramo_actual=int(datos_trayecto[0][-1])
 			tipo, transporte=datos_trayecto[1], datos_trayecto[2]
@@ -622,6 +622,8 @@ def crearMapaTrayecto(ruta:str, datos_trayectos:tuple, nombre_mapa:str, ida_vuel
 			aplicar_multitramo=True if multitramo and tramo_actual!=1 else False
 
 			tipo_trayecto=tipo if not ida_vuelta else "IV"
+
+			tiene_popup=not (tipo_trayecto=="V" and numero_tramos>1 and numero_tramo>0)
 
 			constante_tipo_trayecto=constantes_tipo_trayecto[tipo_trayecto]
 
@@ -655,9 +657,22 @@ def crearMapaTrayecto(ruta:str, datos_trayectos:tuple, nombre_mapa:str, ida_vuel
 									</div>
 									"""
 
-			folium.Marker(location=[latitud_origen, longitud_origen],
-							popup=folium.Popup(popup_origen_html, max_width=400),
-							icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
+			if tiene_popup:
+
+				folium.Marker(location=[latitud_origen, longitud_origen],
+								popup=folium.Popup(popup_origen_html, max_width=400),
+								icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
+
+			else:
+
+				icono_origen_html=f"""
+									<div style="background-color: #{constante_tipo_trayecto[0]} ; width: 32px; height: 32px; border-radius: 50%; text-align: center; border: 1px solid {constante_tipo_trayecto[1]}; border-width: 1px; pointer-events:none;"">
+										<img src="/static/imagenes/iconos/{constante_tipo_trayecto[8]}.png" style="width: 23px; height: 23px; margin-top: 4px;">
+									</div>
+									"""
+
+				folium.Marker(location=[latitud_origen, longitud_origen],
+								icon=folium.DivIcon(html=icono_origen_html)).add_to(mapa)
 
 			popup_destino_html=f"""
 								<div style="text-align: center;">
@@ -1144,6 +1159,12 @@ def paisesVisitadosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List
 
 	return sorted([(pais_asistido[0], pais_asistido[1], veces) for pais_asistido, veces in paises_asistidos_contados.items()], key=lambda x: (-x[2], x[1]))
 
+def golesVistosWrapped(partidos_asistidos:List[Optional[tuple]])->int:
+
+	goles=[sum(obtenerGolesResultado(partido[1])) for partido in partidos_asistidos]
+
+	return sum(goles)
+
 def obtenerKPISPartidosWrapped(partidos_asistidos:List[Optional[tuple]], equipo:str)->tuple:
 
 	estadios_asistidos=estadiosVisitadosWrappedLimpio(partidos_asistidos)
@@ -1156,7 +1177,9 @@ def obtenerKPISPartidosWrapped(partidos_asistidos:List[Optional[tuple]], equipo:
 
 	paises_asistidos=paisesVisitadosWrappedLimpio(partidos_asistidos)
 
-	return estadios_asistidos, estadios_nuevos, paises_asistidos, equipos_vistos
+	goles_vistos=golesVistosWrapped(partidos_asistidos)
+
+	return estadios_asistidos, estadios_nuevos, paises_asistidos, equipos_vistos, goles_vistos
 
 def coordenadasEstadiosWrappedLimpio(partidos_asistidos:List[Optional[tuple]])->List[Optional[tuple]]:
 
@@ -1252,7 +1275,39 @@ def obtenerTrayectoMasLocuraWrapped(partidos_trayectos:Dict)->Optional[tuple]:
 
 		return ()
 
-def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asistidos:List[Optional[tuple]])->tuple:
+def transportesUsadosTrayectosWrapped(partidos_trayectos:Dict)->List[Optional[tuple]]:
+
+	datos_tramos_trayectos=[(partido_id, [(dato[2], dato[2].lower().replace(" ", "_")) for dato in datos_partido["I"]], [(dato[2], dato[2].lower().replace(" ", "_")) for dato in datos_partido["V"]]) for partido_id, datos_partido in partidos_trayectos.items()]
+
+	datos_transportes_trayectos=[tupla for _, trayectos_1, trayectos_2 in datos_tramos_trayectos for tupla in (trayectos_1+trayectos_2)]
+
+	transportes_contados=Counter(datos_transportes_trayectos)
+
+	return sorted([(transporte[0], transporte[1], veces) for transporte, veces in transportes_contados.items()], key=lambda x: -x[2])
+
+def construirRuta(tramos:List[tuple])->List[tuple]:
+
+	if not tramos:
+
+		return []
+
+	return [(tramos[0][0], tramos[0][1])] + [(c2, p2) for _, _, c2, p2 in tramos]
+
+def ciudadesVisitadasTrayectosWrapped(partidos_trayectos:Dict, ciudad:str, pais:str)->List[Optional[tuple]]:
+
+	datos_tramos_trayectos=[(partido_id, [(dato[16], dato[4], dato[17], dato[8]) for dato in datos_partido["I"]], [(dato[16], dato[4], dato[17], dato[8]) for dato in datos_partido["V"]]) for partido_id, datos_partido in partidos_trayectos.items()]
+
+	datos_rutas_unidas=[construirRuta(ida)+construirRuta(vuelta)[1:] for numero, ida, vuelta in datos_tramos_trayectos]
+
+	datos_rutas_unidas_desempaquetadas=[ciudad_pais for ruta in datos_rutas_unidas for ciudad_pais in ruta]
+
+	ciudades_contadas=Counter(datos_rutas_unidas_desempaquetadas)
+
+	ciudades_paises_veces=[(ciudad[0], ciudad[1], veces) for ciudad, veces in ciudades_contadas.items()]
+
+	return sorted(list(filter(lambda ciudad_pais_veces: not (ciudad_pais_veces[0]==ciudad and ciudad_pais_veces[1]==pais), ciudades_paises_veces)), key=lambda x: (-x[2], x[0]))
+
+def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asistidos:List[Optional[tuple]], ciudad:str, pais:str)->tuple:
 
 	partidos_asistidos_trayectos=obtenerTrayectosDatosPartidosAsistidos(trayectos, partidos_asistidos)
 
@@ -1262,7 +1317,11 @@ def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asisti
 
 	partido_asistido_trayecto_mas_locura=obtenerTrayectoMasLocuraWrapped(partidos_asistidos_trayectos)
 
-	return partidos_asistidos_trayectos, distancia_total_trayectos, partido_asistido_trayecto_mas_lejano, partido_asistido_trayecto_mas_locura
+	transportes_usados=transportesUsadosTrayectosWrapped(partidos_asistidos_trayectos)
+
+	ciudades_visitadas=ciudadesVisitadasTrayectosWrapped(partidos_asistidos_trayectos, ciudad, pais)
+
+	return partidos_asistidos_trayectos, distancia_total_trayectos, partido_asistido_trayecto_mas_lejano, partido_asistido_trayecto_mas_locura, transportes_usados, ciudades_visitadas
 
 def generarWrappedAnnio(hoy:datetime)->bool:
 

@@ -30,6 +30,8 @@ def wrapped_annio(annio:int):
 
 	estadio_equipo=con.estadio_equipo(equipo)
 
+	pais_usuario, ciudad_usuario=con.obtenerPaisCiudadUsuario(current_user.id)
+
 	try:
 
 		partidos_asistidos_annio=con.obtenerPartidosAsistidosUsuarioAnnio(current_user.id, annio)
@@ -46,11 +48,19 @@ def wrapped_annio(annio:int):
 
 		return redirect("/partidos")
 
-	estadios_asistidos_annio, estadios_nuevos_annio, paises_asistidos_annio, equipos_vistos_annio=obtenerKPISPartidosWrapped(partidos_asistidos_annio, equipo)
+	(estadios_asistidos_annio,
+		estadios_nuevos_annio,
+		paises_asistidos_annio,
+		equipos_vistos_annio,
+		goles_vistos_annio)=obtenerKPISPartidosWrapped(partidos_asistidos_annio, equipo)
 
 	partidos_asistidos_annio_anterior=con.obtenerPartidosAsistidosUsuarioAnnio(current_user.id, int(annio)-1)
 
-	estadios_asistidos_annio_anterior, estadios_nuevos_annio_anterior, paises_asistidos_annio_anterior, equipos_vistos_annio_anterior=obtenerKPISPartidosWrapped(partidos_asistidos_annio_anterior, equipo)
+	(estadios_asistidos_annio_anterior,
+		estadios_nuevos_annio_anterior,
+		paises_asistidos_annio_anterior,
+		equipos_vistos_annio_anterior,
+		goles_vistos_annio_anterior)=obtenerKPISPartidosWrapped(partidos_asistidos_annio_anterior, equipo)
 
 	resultados_partidos_asistidos_annio=limpiarResultadosPartidos(partidos_asistidos_annio)
 
@@ -91,11 +101,21 @@ def wrapped_annio(annio:int):
 
 	trayectos_partidos_asistidos_annio=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, annio)
 
-	partidos_asistidos_trayectos_annio, distancia_total_trayectos_annio, partido_asistido_trayecto_mas_lejano_annio, partido_asistido_trayecto_mas_locura_annio=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio, partidos_asistidos_annio)
+	(partidos_asistidos_trayectos_annio,
+		distancia_total_trayectos_annio,
+		partido_asistido_trayecto_mas_lejano_annio,
+		partido_asistido_trayecto_mas_locura_annio,
+		transportes_usados_trayectos_annio,
+		ciudades_visitadas_trayectos_annio)=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio, partidos_asistidos_annio, ciudad_usuario, pais_usuario)
 
 	trayectos_partidos_asistidos_annio_anterior=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, int(annio)-1)
 
-	partidos_asistidos_trayectos_annio_anterior, distancia_total_trayectos_annio_anterior, partido_asistido_trayecto_mas_lejano_annio_anterior, partido_asistido_trayecto_mas_locura_annio_anterior=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio_anterior, partidos_asistidos_annio_anterior)
+	(partidos_asistidos_trayectos_annio_anterior,
+		distancia_total_trayectos_annio_anterior,
+		partido_asistido_trayecto_mas_lejano_annio_anterior,
+		partido_asistido_trayecto_mas_locura_annio_anterior,
+		transportes_usados_trayectos_annio_anterior,
+		ciudades_visitadas_trayectos_annio_anterior)=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio_anterior, partidos_asistidos_annio_anterior, ciudad_usuario, pais_usuario)
 
 	con.cerrarConexion()
 
@@ -133,6 +153,13 @@ def wrapped_annio(annio:int):
 							partido_asistido_trayecto_mas_lejano_annio=partido_asistido_trayecto_mas_lejano_annio,
 							partido_asistido_trayecto_mas_lejano_annio_anterior=partido_asistido_trayecto_mas_lejano_annio_anterior,
 							partido_asistido_trayecto_mas_locura_annio=partido_asistido_trayecto_mas_locura_annio,
+							transportes_usados_trayectos_annio=transportes_usados_trayectos_annio,
+							transporte_mas_usado_annio=transportes_usados_trayectos_annio[0] if transportes_usados_trayectos_annio else None,
+							ciudades_visitadas_trayectos_annio=ciudades_visitadas_trayectos_annio,
+							numero_ciudades_visitadas_trayectos_annio=len(ciudades_visitadas_trayectos_annio),
+							numero_ciudades_visitadas_trayectos_annio_anterior=len(ciudades_visitadas_trayectos_annio_anterior),
+							goles_vistos_annio=goles_vistos_annio,
+							goles_vistos_annio_anterior=goles_vistos_annio_anterior,
 							url_imagen_escudo=URL_DATALAKE_ESCUDOS,
 							url_imagen_estadio=URL_DATALAKE_ESTADIOS,
 							url_imagen_pais=URL_DATALAKE_PAISES,

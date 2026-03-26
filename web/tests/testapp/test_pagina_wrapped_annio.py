@@ -61,6 +61,12 @@ def test_pagina_wrapped_annio(cliente, conexion_entorno_usuario):
 		assert "abrirVentana('ventana-emergente-trayecto-lejano')" in contenido
 		assert '<p><strong>Mas Lejano</strong></p>' in contenido
 		assert '<h4 class="dato-estilo">0 kms</h4>' in contenido
+		assert "abrirVentana('ventana-emergente-trayecto-locura')" in contenido
+		assert '<p><strong>Mas Locura</strong></p>' in contenido
+		assert "abrirVentana('ventana-emergente-transportes-usados')" in contenido
+		assert '<p><strong>Trans. Mas Usado</strong></p>' in contenido
+		assert "abrirVentana('ventana-emergente-ciudades-visitadas')" in contenido
+		assert '<p><strong>Ciudades</strong></p>' in contenido
 		assert '<div id="ventana-emergente-partidos" class="ventana-emergente">' in contenido
 		assert '<div class="tarjetas-partidos-asistidos">' in contenido
 		assert '<div id="ventana-emergente-estadios" class="ventana-emergente">' in contenido
@@ -77,11 +83,17 @@ def test_pagina_wrapped_annio(cliente, conexion_entorno_usuario):
 		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
 		assert '<div id="ventana-emergente-trayecto-locura" class="ventana-emergente">' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' not in contenido
+		assert '<div id="ventana-emergente-transportes-usados" class="ventana-emergente">' in contenido
+		assert '<div class="tarjeta-transporte-usado">' not in contenido
+		assert '<div id="ventana-emergente-ciudades-visitadas" class="ventana-emergente">' in contenido
+		assert '<div class="tarjeta-ciudad-visitada">' not in contenido
 		assert '<div class="contenedor-lateral contenedor-lateral-izq">' in contenido
 		assert '<div class="circulo-partido-mas-goles">' in contenido
 		assert '<div class="tarjeta-partido-mas-goles"' in contenido
 		assert '<div class="circulo-estadisticas-partidos-asistidos">' in contenido
 		assert '<div class="tarjeta-dato-grafica">' in contenido
+		assert '<div class="contenedor-lateral contenedor-lateral-der">' in contenido
+		assert '<div class="circulo-goles-vistos">' in contenido
 		assert '<div id="ventana-emergente-mes" class="ventana-emergente">' in contenido
 		assert '<p class="titulo-ventana" id="titulo-ventana-mes"><strong>Partidos del mes</strong></p>' in contenido
 		assert "iframe" in contenido
@@ -712,6 +724,15 @@ def test_pagina_wrapped_annio_trayecto_simple(cliente, conexion_entorno_usuario,
 		assert "abrirVentana('ventana-emergente-trayecto-lejano')" in contenido
 		assert '<p><strong>Mas Lejano</strong></p>' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' in contenido
+		assert "abrirVentana('ventana-emergente-trayecto-locura')" in contenido
+		assert '<p><strong>Mas Locura</strong></p>' in contenido
+		assert '<div class="tarjeta-trayecto-realizado"' in contenido
+		assert "abrirVentana('ventana-emergente-transportes-usados')" in contenido
+		assert '<p><strong>Trans. Mas Usado</strong></p>' in contenido
+		assert '<div class="tarjeta-transporte-usado">' in contenido
+		assert "abrirVentana('ventana-emergente-ciudades-visitadas')" in contenido
+		assert '<p><strong>Ciudades</strong></p>' in contenido
+		assert '<div class="tarjeta-ciudad-visitada">' in contenido
 		assert '<div class="contenedor-datos-trayecto-realizado">' in contenido
 		assert '<p class="partido-trayecto-realizado"><strong>Partido Asistido:</strong></p>' in contenido
 		assert '<img class="icono-local-trayecto-realizado"' in contenido
@@ -763,6 +784,15 @@ def test_pagina_wrapped_annio_trayecto_complejo(cliente, conexion_entorno_usuari
 		assert "abrirVentana('ventana-emergente-trayecto-lejano')" in contenido
 		assert '<p><strong>Mas Lejano</strong></p>' in contenido
 		assert '<div class="tarjeta-trayecto-realizado"' in contenido
+		assert "abrirVentana('ventana-emergente-trayecto-locura')" in contenido
+		assert '<p><strong>Mas Locura</strong></p>' in contenido
+		assert '<div class="tarjeta-trayecto-realizado"' in contenido
+		assert "abrirVentana('ventana-emergente-transportes-usados')" in contenido
+		assert '<p><strong>Trans. Mas Usado</strong></p>' in contenido
+		assert '<div class="tarjeta-transporte-usado">' in contenido
+		assert "abrirVentana('ventana-emergente-ciudades-visitadas')" in contenido
+		assert '<p><strong>Ciudades</strong></p>' in contenido
+		assert '<div class="tarjeta-ciudad-visitada">' in contenido
 		assert '<div class="contenedor-datos-trayecto-realizado">' in contenido
 		assert '<p class="partido-trayecto-realizado"><strong>Partido Asistido:</strong></p>' in contenido
 		assert '<img class="icono-local-trayecto-realizado"' in contenido

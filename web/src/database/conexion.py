@@ -3908,7 +3908,9 @@ class Conexion:
 			    WHEN t.Tipo_Trayecto = 'V' AND t.es_maximo=True
 					THEN 'origen'
 					else 'destino'
-			    END AS Imagen_Tramo_Destino
+			    END AS Imagen_Tramo_Destino,
+			    t.Ciudad_Origen_Ciudad AS Ciudad_Origen_Real,
+			    t.Ciudad_Destino_Ciudad AS Ciudad_Destino_Real
 		FROM trayectos_numerados t
 		ORDER BY fecha DESC, t.Trayecto_Id""",
 		(usuario, annio))
@@ -3930,4 +3932,6 @@ class Conexion:
 											trayecto["imagen_destino"],
 											trayecto["imagen_tramo_origen"],
 											trayecto["imagen_tramo_destino"],
-											trayecto["tipo_trayecto_str"]), trayectos))
+											trayecto["tipo_trayecto_str"],
+											trayecto["ciudad_origen_real"],
+											trayecto["ciudad_destino_real"]), trayectos))
