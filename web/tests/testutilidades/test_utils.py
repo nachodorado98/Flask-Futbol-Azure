@@ -24,7 +24,8 @@ from src.utilidades.utils import validarNumeroGoles, validarGoleadores, validarG
 from src.utilidades.utils import equiposVistosWrappedLimpio, obtenerGolesResultado, partidoMasGolesWrapped, partidosMesWrapped, paisesVisitadosWrappedLimpio
 from src.utilidades.utils import golesVistosWrapped, coordenadasEstadiosWrappedLimpio, agruparTrayectos, obtenerTrayectos, obtenerTrayectosDatosPartidosAsistidos
 from src.utilidades.utils import obtenerDistanciaTotalTrayectosWrapped, obtenerTrayectoMasLejanoWrapped, obtenerTrayectoMasLocuraWrapped, generarWrappedAnnio
-from src.utilidades.utils import transportesUsadosTrayectosWrapped, construirRuta, ciudadesVisitadasTrayectosWrapped, obtenerKPISPartidosWrapped, obtenerKPISTrayectosWrapped
+from src.utilidades.utils import transportesUsadosTrayectosWrapped, construirRuta, ciudadesVisitadasTrayectosWrapped, paisesVisitadosTrayectosWrapped
+from src.utilidades.utils import obtenerKPISPartidosWrapped, obtenerKPISTrayectosWrapped
 
 @pytest.mark.parametrize(["usuario"],
 	[("ana_maria",),("carlos_456",),("",),(None,)]
@@ -3209,26 +3210,26 @@ def test_agrupar_trayectos_vacio():
 
 def test_agrupar_trayectos():
 
-	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche'),
-				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'Madrid'),
-				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes'),
-				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid'),
-				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona'),
-				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich'),
-				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo'),
-				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich'),
-				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona'),
-				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid'),
-				('id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid'),
-				('id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid'),
-				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Sevilla'),
-				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'Madrid'),
-				('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Malaga'),
-				('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Malaga', 'Manchester'),
-				('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida', 'Manchester', 'Liverpool'),
-				('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta', 'Liverpool', 'Manchester'),
-				('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Manchester', 'Barcelona'),
-				('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid')]
+	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es'),
+				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es'),
+				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au'),
+				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo',  'Austria', 'au', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Sevilla','España', 'es'),
+				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Malaga', 'España', 'es'),
+				('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Malaga', 'España', 'es', 'Manchester', 'Inglaterra', 'gb'),
+				('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida', 'Manchester', 'Inglaterra', 'gb', 'Liverpool', 'Inglaterra', 'gb'),
+				('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta', 'Liverpool', 'Inglaterra', 'gb', 'Manchester', 'Inglaterra', 'gb'),
+				('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Manchester', 'Inglaterra', 'gb', 'Barcelona', 'España', 'es'),
+				('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es')]
 
 	trayectos_agrupados=agruparTrayectos(trayectos)
 
@@ -3261,26 +3262,26 @@ def test_obtener_trayectos_vacio():
 
 def test_obtener_trayectos():
 
-	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche'),
-				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'Madrid'),
-				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes'),
-				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid'),
-				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona'),
-				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich'),
-				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo'),
-				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich'),
-				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona'),
-				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid'),
-				('id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid'),
-				('id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid'),
-				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Sevilla'),
-				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'Madrid'),
-				('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Malaga'),
-				('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Malaga', 'Manchester'),
-				('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida', 'Manchester', 'Liverpool'),
-				('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta', 'Liverpool', 'Manchester'),
-				('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Manchester', 'Barcelona'),
-				('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid')]
+	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es'),
+				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es'),
+				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au'),
+				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo',  'Austria', 'au', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Sevilla','España', 'es'),
+				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_2026180091_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Malaga', 'España', 36.7194, -4.42, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Malaga', 'España', 'es'),
+				('id_2026180091_golden_I_2', 'I', 'Avion', 'Malaga', 'España', 36.7194, -4.42, 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Malaga', 'España', 'es', 'Manchester', 'Inglaterra', 'gb'),
+				('id_2026180091_golden_I_3', 'I', 'Autobus', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'autobus', '43', 'destino', 'estadio_mapa', 'Ida', 'Manchester', 'Inglaterra', 'gb', 'Liverpool', 'Inglaterra', 'gb'),
+				('id_2026180091_golden_V_1', 'V', 'Autobus', 'Anfield', 'Inglaterra', 53.4309164, -2.9609314, 'Manchester', 'Reino Unido', 53.4794, -2.2453, '43', 'autobus', 'estadio_mapa', 'destino', 'Vuelta', 'Liverpool', 'Inglaterra', 'gb', 'Manchester', 'Inglaterra', 'gb'),
+				('id_2026180091_golden_V_2', 'V', 'Avion', 'Manchester', 'Reino Unido', 53.4794, -2.2453, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Manchester', 'Inglaterra', 'gb', 'Barcelona', 'España', 'es'),
+				('id_2026180091_golden_V_3', 'V', 'Autobus', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'autobus', 'autobus', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es')]
 
 	trayectos_con_distancia=obtenerTrayectos(trayectos)
 
@@ -3332,18 +3333,18 @@ def test_obtener_trayectos_datos_partidos_asistidos():
 			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 'Italia', 40, True, 40.3, -6.7),
 			('202430481', '1-0', '11/02/2024', 'Primera', 1102, 369, 'Sevilla', 'Atlético', 'sevilla', 'atletico-madrid', 'es', 'es', 'ramon-sanchez-pizjuan-36', 'Ramón Sánchez-Pizjuán', 'es', 'España', 36, True, 40.3, -7.7)]
 
-	trayectos=[('id_20256478_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche'),
-				('id_20256478_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'Madrid'),
-				('id_20256422_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes'),
-				('id_20256422_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid'),
-				('id_2025162171_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona'),
-				('id_2025162171_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich'),
-				('id_2025162171_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo'),
-				('id_2025162171_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich'),
-				('id_2025162171_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona'),
-				('id_2025162171_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid'),
-				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Sevilla'),
-				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'Madrid')]
+	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es'),
+				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es'),
+				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au'),
+				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo',  'Austria', 'au', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Sevilla','España', 'es'),
+				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'España', 'es', 'Madrid', 'España', 'es')]
 
 	partidos_asistidos_trayectos=obtenerTrayectosDatosPartidosAsistidos(trayectos, partidos)
 
@@ -3400,33 +3401,33 @@ def test_obtener_distancia_total_trayectos_wrapped_vacio():
 def test_obtener_distancia_total_trayectos_wrapped(distancia_parcial, distancia):
 
 	partidos_trayectos={2025246563:
-						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche', 354.45]],
-						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Elche', 354.45]],
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es', 354.45]],
 						'Distancia_I': 354,
 						'Distancia_V': 354,
 						'Distancia_Total': 708,
 						'Datos_Partido':('0-4', 1, 1)},
 						20256495:
-						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes', 13.6]],
-						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid', 13.6]],
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es', 13.6]],
 						'Distancia_I': 14,
 						'Distancia_V': 14,
 						'Distancia_Total': 28,
 						'Datos_Partido':('1-1', 1, 1)},
 						2025162158:
-						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona', 503.66],
-								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich', 1055.47],
-								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo', 112.09]],
-						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich', 112.09],
-								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona', 1055.47],
-								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid', 503.66]],
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Austria', 'au', 'Munich', 'Alemania', 'ge', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es', 503.66]],
 						'Distancia_I': 1671,
 						'Distancia_V': 1671,
 						'Distancia_Total': 3342,
 						'Datos_Partido':('1-4', 1, 1)},
 						20256280:
-						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid', 1.81]],
-						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid', 1.81]],
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
 						'Distancia_I': 2,
 						'Distancia_V': 2,
 						'Distancia_Total': distancia_parcial,
@@ -3446,33 +3447,33 @@ def test_obtener_trayecto_mas_lejano_wrapped_vacio():
 def test_obtener_trayecto_mas_lejano_wrapped(distancia_parcial, partido_id):
 
 	partidos_trayectos={2025246563:
-						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche', 354.45]],
-						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Elche', 354.45]],
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es', 354.45]],
 						'Distancia_I': 354,
 						'Distancia_V': 354,
 						'Distancia_Total': 708,
 						'Datos_Partido':('0-4', 1, 1)},
 						20256495:
-						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes', 13.6]],
-						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid', 13.6]],
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es', 13.6]],
 						'Distancia_I': 14,
 						'Distancia_V': 14,
 						'Distancia_Total': 28,
 						'Datos_Partido':('1-1', 1, 1)},
 						2025162158:
-						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona', 503.66],
-								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich', 1055.47],
-								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo', 112.09]],
-						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich', 112.09],
-								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona', 1055.47],
-								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid', 503.66]],
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Austria', 'au', 'Munich', 'Alemania', 'ge', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es', 503.66]],
 						'Distancia_I': 1671,
 						'Distancia_V': 1671,
 						'Distancia_Total': 3342,
 						'Datos_Partido':('1-4', 1, 1)},
 						20256280:
-						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid', 1.81]],
-						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid', 1.81]],
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
 						'Distancia_I': 2,
 						'Distancia_V': 2,
 						'Distancia_Total': distancia_parcial,
@@ -3489,33 +3490,33 @@ def test_obtener_trayecto_mas_locura_wrapped_vacio():
 def test_obtener_trayecto_mas_locura_wrapped():
 
 	partidos_trayectos={2025246563:
-						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche', 354.45]],
-						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Elche', 354.45]],
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es', 354.45]],
 						'Distancia_I': 354,
 						'Distancia_V': 354,
 						'Distancia_Total': 708,
 						'Datos_Partido':('0-4', 1, 1)},
 						20256495:
-						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes', 13.6]],
-						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid', 13.6]],
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es', 13.6]],
 						'Distancia_I': 14,
 						'Distancia_V': 14,
 						'Distancia_Total': 28,
 						'Datos_Partido':('1-1', 1, 1)},
 						2025162158:
-						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona', 503.66],
-								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich', 1055.47],
-								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo', 112.09]],
-						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich', 112.09],
-								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona', 1055.47],
-								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid', 503.66]],
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Austria', 'au', 'Munich', 'Alemania', 'ge', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es', 503.66]],
 						'Distancia_I': 1671,
 						'Distancia_V': 1671,
 						'Distancia_Total': 3342,
 						'Datos_Partido':('1-4', 1, 1)},
 						20256280:
-						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid', 1.81]],
-						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid', 1.81]],
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
 						'Distancia_I': 2,
 						'Distancia_V': 2,
 						'Distancia_Total': 4,
@@ -3532,33 +3533,33 @@ def test_transportes_usados_trayectos_wrapped_vacio():
 def test_transportes_usados_trayectos_wrapped():
 
 	partidos_trayectos={2025246563:
-						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche', 354.45]],
-						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Elche', 354.45]],
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es', 354.45]],
 						'Distancia_I': 354,
 						'Distancia_V': 354,
 						'Distancia_Total': 708,
 						'Datos_Partido':('0-4', 1, 1)},
 						20256495:
-						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes', 13.6]],
-						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid', 13.6]],
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es', 13.6]],
 						'Distancia_I': 14,
 						'Distancia_V': 14,
 						'Distancia_Total': 28,
 						'Datos_Partido':('1-1', 1, 1)},
 						2025162158:
-						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona', 503.66],
-								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich', 1055.47],
-								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo', 112.09]],
-						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich', 112.09],
-								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona', 1055.47],
-								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid', 503.66]],
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Austria', 'au', 'Munich', 'Alemania', 'ge', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es', 503.66]],
 						'Distancia_I': 1671,
 						'Distancia_V': 1671,
 						'Distancia_Total': 3342,
 						'Datos_Partido':('1-4', 1, 1)},
 						20256280:
-						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid', 1.81]],
-						'V':[['id_20256280_golden_V_0', 'V', 'Metro', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid', 1.81]],
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Metro', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'metro', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
 						'Distancia_I': 2,
 						'Distancia_V': 2,
 						'Distancia_Total': 4,
@@ -3578,9 +3579,9 @@ def test_construir_ruta_vacia():
 
 @pytest.mark.parametrize(["tramos", "numero_ciudades"],
 	[
-		([('Madrid', 'España', 'Elche', 'España')], 2),
-		([('Leganes', 'España', 'Madrid', 'España')], 2),
-		([('Madrid', 'España', 'Barcelona', 'España'), ('Barcelona', 'España', 'Munich', 'Alemania'), ('Munich', 'Alemania', 'Salzburgo', 'Austria')], 4)
+		([('Madrid', 'España', 'es', 'Elche', 'España', 'es')], 2),
+		([('Leganes', 'España', 'es', 'Madrid', 'España', 'es')], 2),
+		([('Madrid', 'España', 'es', 'Barcelona', 'España', 'es'), ('Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge'), ('Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au')], 4)
 	]
 )
 def test_construir_ruta(tramos, numero_ciudades):
@@ -3596,33 +3597,33 @@ def test_ciudades_visitadas_trayectos_wrapped_vacio():
 def test_ciudades_visitadas_trayectos_wrapped():
 
 	partidos_trayectos={2025246563:
-						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche', 354.45]],
-						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'Madrid', 354.45]],
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es', 354.45]],
 						'Distancia_I': 354,
 						'Distancia_V': 354,
 						'Distancia_Total': 708,
 						'Datos_Partido':('0-4', 1, 1)},
 						20256495:
-						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes', 13.6]],
-						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid', 13.6]],
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es', 13.6]],
 						'Distancia_I': 14,
 						'Distancia_V': 14,
 						'Distancia_Total': 28,
 						'Datos_Partido':('1-1', 1, 1)},
 						2025162158:
-						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona', 503.66],
-								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich', 1055.47],
-								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo', 112.09]],
-						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich', 112.09],
-								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona', 1055.47],
-								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid', 503.66]],
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Austria', 'au', 'Munich', 'Alemania', 'ge', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es', 503.66]],
 						'Distancia_I': 1671,
 						'Distancia_V': 1671,
 						'Distancia_Total': 3342,
 						'Datos_Partido':('1-4', 1, 1)},
 						20256280:
-						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Madrid', 1.81]],
-						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'Madrid', 1.81]],
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
 						'Distancia_I': 2,
 						'Distancia_V': 2,
 						'Distancia_Total': 4,
@@ -3634,7 +3635,54 @@ def test_ciudades_visitadas_trayectos_wrapped():
 
 	for ciudad in ciudades_visitadas:
 
-		assert len(ciudad)==3
+		assert len(ciudad)==4
+
+def test_paises_visitados_trayectos_wrapped_vacio():
+
+	assert not paisesVisitadosTrayectosWrapped({}, "Madrid", "España")
+
+def test_paises_visitados_trayectos_wrapped():
+
+	partidos_trayectos={2025246563:
+						{'I':[['id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es', 354.45]],
+						'V':[['id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es', 354.45]],
+						'Distancia_I': 354,
+						'Distancia_V': 354,
+						'Distancia_Total': 708,
+						'Datos_Partido':('0-4', 1, 1)},
+						20256495:
+						{'I':[['id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es', 13.6]],
+						'V':[['id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es', 13.6]],
+						'Distancia_I': 14,
+						'Distancia_V': 14,
+						'Distancia_Total': 28,
+						'Datos_Partido':('1-1', 1, 1)},
+						2025162158:
+						{'I':[['id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es', 503.66],
+								['id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge', 1055.47],
+								['id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au', 112.09]],
+						'V':[['id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Austria', 'au', 'Munich', 'Alemania', 'ge', 112.09],
+								['id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es', 1055.47],
+								['id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es', 503.66]],
+						'Distancia_I': 1671,
+						'Distancia_V': 1671,
+						'Distancia_Total': 3342,
+						'Datos_Partido':('1-4', 1, 1)},
+						20256280:
+						{'I':[['id_20256280_golden_I_0', 'I', 'Pie', 'Madrid', 'España', 40.443, -3.6732, 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'pie', '19', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'V':[['id_20256280_golden_V_0', 'V', 'Pie', 'Santiago Bernabéu', 'España', 40.4523667, -3.6907254, 'Madrid', 'España', 40.443, -3.6732, '19', 'pie', 'estadio_mapa', 'origen', 'Vuelta', 'Madrid', 'España', 'es', 'Madrid', 'España', 'es', 1.81]],
+						'Distancia_I': 2,
+						'Distancia_V': 2,
+						'Distancia_Total': 4,
+						'Datos_Partido':('2-1', 1, 1)}}
+
+	paises_visitados=paisesVisitadosTrayectosWrapped(partidos_trayectos, "Madrid", "España")
+
+	assert len(paises_visitados)!=len(partidos_trayectos)
+
+	for pais in paises_visitados:
+
+		assert len(pais)==3
 
 @pytest.mark.parametrize(["hoy"],
 	[(datetime(2025, 12, 14),),(datetime(2026, 1, 1),),(datetime(2025, 8, 6),)]
@@ -3684,13 +3732,13 @@ def test_obtener_kpis_trayectos_wrapped_vacio():
 
 	kpis=obtenerKPISTrayectosWrapped([], [], "Madrid", "España")
 
-	assert len(kpis)==6
+	assert len(kpis)==7
 
 	for kpi in kpis[:2]:
 
 		assert not kpi
 
-	assert kpis[-4]
+	assert kpis[-5]
 
 def test_obtener_kpis_trayectos_wrapped():
 
@@ -3704,22 +3752,22 @@ def test_obtener_kpis_trayectos_wrapped():
 			('2024645008', '1-0', '20/02/2024', 'Champions', 1381, 369, 'Inter', 'Atlético', 'internazionale', 'atletico-madrid', 'it', 'es', 'giuseppe-meazza-40', 'Giuseppe Meazza', 'it', 'Italia', 40, True, 40.3, -6.7),
 			('202430481', '1-0', '11/02/2024', 'Primera', 1102, 369, 'Sevilla', 'Atlético', 'sevilla', 'atletico-madrid', 'es', 'es', 'ramon-sanchez-pizjuan-36', 'Ramón Sánchez-Pizjuán', 'es', 'España', 36, True, 40.3, -7.7)]
 
-	trayectos=[('id_20256478_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Elche'),
-				('id_20256478_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'Madrid'),
-				('id_20256422_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Leganes'),
-				('id_20256422_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'Madrid'),
-				('id_2025162171_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'Barcelona'),
-				('id_2025162171_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'Munich'),
-				('id_2025162171_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Salzburgo'),
-				('id_2025162171_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo', 'Munich'),
-				('id_2025162171_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Barcelona'),
-				('id_2025162171_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'Madrid'),
-				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'Sevilla'),
-				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'Madrid')]
+	trayectos=[('id_2025246563_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'tren', '460', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Elche', 'España', 'es'),
+				('id_2025246563_golden_V_0', 'V', 'Tren', 'Estadio Martínez Valero', 'España', 38.2670445, -0.6633051, 'Madrid', 'España', 40.443, -3.6732, '460', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Elche', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256495_golden_I_0', 'I', 'Autobus Interurbano', 'Madrid', 'España', 40.443, -3.6732, 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'autobus_interurbano', '24', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Leganes', 'España', 'es'),
+				('id_20256495_golden_V_0', 'V', 'Autobus Interurbano', 'Municipal de Butarque', 'España', 40.3403747, -3.7606512, 'Madrid', 'España', 40.443, -3.6732, '24', 'autobus_interurbano', 'estadio_mapa', 'origen', 'Vuelta', 'Leganes', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_2025162158_golden_I_1', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Barcelona', 'España', 41.3825, 2.1769, 'tren', 'tren', 'origen', 'destino', 'Ida', 'Madrid', 'España', 'es', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_I_2', 'I', 'Avion', 'Barcelona', 'España', 41.3825, 2.1769, 'Munich', 'Alemania', 48.1375, 11.575, 'avion', 'avion', 'destino', 'destino', 'Ida', 'Barcelona', 'España', 'es', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_I_3', 'I', 'Tren', 'Munich', 'Alemania', 48.1375, 11.575, 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'tren', '123', 'destino', 'estadio_mapa', 'Ida', 'Munich', 'Alemania', 'ge', 'Salzburgo', 'Austria', 'au'),
+				('id_2025162158_golden_V_1', 'V', 'Tren', 'Red Bull Arena (Salzburgo)', 'Austria', 47.8163956, 12.9982439, 'Munich', 'Alemania', 48.1375, 11.575, '123', 'tren', 'estadio_mapa', 'destino', 'Vuelta', 'Salzburgo',  'Austria', 'au', 'Munich', 'Alemania', 'ge'),
+				('id_2025162158_golden_V_2', 'V', 'Avion', 'Munich', 'Alemania', 48.1375, 11.575, 'Barcelona', 'España', 41.3825, 2.1769, 'avion', 'avion', 'destino', 'destino', 'Vuelta', 'Munich', 'Alemania', 'ge', 'Barcelona', 'España', 'es'),
+				('id_2025162158_golden_V_3', 'V', 'Tren', 'Barcelona', 'España', 41.3825, 2.1769, 'Madrid', 'España', 40.443, -3.6732, 'tren', 'tren', 'destino', 'origen', 'Vuelta', 'Barcelona', 'España', 'es', 'Madrid', 'España', 'es'),
+				('id_20256599_golden_I_0', 'I', 'Tren', 'Madrid', 'España', 40.443, -3.6732, 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'tren', '36', 'origen', 'estadio_mapa', 'Ida', 'Madrid', 'España', 'es', 'Sevilla','España', 'es'),
+				('id_20256599_golden_V_0', 'V', 'Tren', 'Ramón Sánchez-Pizjuán', 'España', 37.3846337, -5.9711558, 'Madrid', 'España', 40.443, -3.6732, '36', 'tren', 'estadio_mapa', 'origen', 'Vuelta', 'Sevilla', 'España', 'es', 'Madrid', 'España', 'es')]
 
 	kpis=obtenerKPISTrayectosWrapped(trayectos, partidos, "Madrid", "España")
 
-	assert len(kpis)==6
+	assert len(kpis)==7
 
 	for kpi in kpis:
 

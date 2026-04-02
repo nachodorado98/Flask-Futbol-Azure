@@ -3854,9 +3854,10 @@ class Conexion:
 							JOIN estadios e
 							ON pe.estadio_id=e.estadio_id
 							WHERE t.Usuario=%s
-							AND EXTRACT(YEAR FROM p.fecha)=%s)
+							AND EXTRACT(YEAR FROM p.fecha)=%s),
 
-		SELECT t.Trayecto_Id, t.Tipo_Trayecto, t.Transporte, t.num_trayecto, t.es_maximo, t.es_minimo, t.Tipo_Trayecto_Str,
+		trayectos_tratados AS (
+			SELECT t.Trayecto_Id, t.Tipo_Trayecto, t.Transporte, t.num_trayecto, t.es_maximo, t.es_minimo, t.Tipo_Trayecto_Str,
 			    CASE WHEN t.Tipo_Trayecto = 'V' AND t.es_minimo=True
 					THEN t.Estadio_Nombre
 					ELSE t.Ciudad_Origen_Ciudad
@@ -3909,10 +3910,26 @@ class Conexion:
 					THEN 'origen'
 					else 'destino'
 			    END AS Imagen_Tramo_Destino,
+			    				t.Fecha,
 			    t.Ciudad_Origen_Ciudad AS Ciudad_Origen_Real,
 			    t.Ciudad_Destino_Ciudad AS Ciudad_Destino_Real
-		FROM trayectos_numerados t
-		ORDER BY fecha DESC, t.Trayecto_Id""",
+		FROM trayectos_numerados t)
+		SELECT tt.*,
+				tt.Pais_Origen AS Pais_Origen_Real, tt.Pais_Destino AS Pais_Destino_Real,
+				CASE WHEN p1.codigo_pais IS NULL
+						THEN '-1'
+						ELSE p1.codigo_pais
+				END AS Codigo_Pais_Origen,
+				CASE WHEN p2.codigo_pais IS NULL
+						THEN '-1'
+						ELSE p2.codigo_pais
+				END AS Codigo_Pais_Destino
+		FROM trayectos_tratados tt
+		LEFT JOIN paises p1
+		ON tt.Pais_Origen=p1.Pais
+		LEFT JOIN paises p2
+		ON tt.Pais_Destino=p2.Pais
+		ORDER BY tt.Fecha DESC, tt.Trayecto_Id""",
 		(usuario, annio))
 
 		trayectos=self.c.fetchall()
@@ -3934,4 +3951,8 @@ class Conexion:
 											trayecto["imagen_tramo_destino"],
 											trayecto["tipo_trayecto_str"],
 											trayecto["ciudad_origen_real"],
-											trayecto["ciudad_destino_real"]), trayectos))
+											trayecto["pais_origen_real"],
+											trayecto["codigo_pais_origen"],
+											trayecto["ciudad_destino_real"],
+											trayecto["pais_destino_real"],
+											trayecto["codigo_pais_destino"]), trayectos))

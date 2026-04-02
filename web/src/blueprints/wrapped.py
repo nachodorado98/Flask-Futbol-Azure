@@ -106,7 +106,8 @@ def wrapped_annio(annio:int):
 		partido_asistido_trayecto_mas_lejano_annio,
 		partido_asistido_trayecto_mas_locura_annio,
 		transportes_usados_trayectos_annio,
-		ciudades_visitadas_trayectos_annio)=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio, partidos_asistidos_annio, ciudad_usuario, pais_usuario)
+		ciudades_visitadas_trayectos_annio,
+		paises_visitados_trayectos_annio)=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio, partidos_asistidos_annio, ciudad_usuario, pais_usuario)
 
 	trayectos_partidos_asistidos_annio_anterior=con.obtenerTrayectosPartidosAsistidosAnnio(current_user.id, int(annio)-1)
 
@@ -115,7 +116,13 @@ def wrapped_annio(annio:int):
 		partido_asistido_trayecto_mas_lejano_annio_anterior,
 		partido_asistido_trayecto_mas_locura_annio_anterior,
 		transportes_usados_trayectos_annio_anterior,
-		ciudades_visitadas_trayectos_annio_anterior)=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio_anterior, partidos_asistidos_annio_anterior, ciudad_usuario, pais_usuario)
+		ciudades_visitadas_trayectos_annio_anterior,
+		paises_visitados_trayectos_annio_anterior)=obtenerKPISTrayectosWrapped(trayectos_partidos_asistidos_annio_anterior, partidos_asistidos_annio_anterior, ciudad_usuario, pais_usuario)
+
+	if partidos_asistidos_trayectos_annio:
+
+		paises_asistidos_annio=paises_visitados_trayectos_annio
+		paises_asistidos_annio_anterior=paises_visitados_trayectos_annio_anterior
 
 	con.cerrarConexion()
 

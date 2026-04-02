@@ -887,9 +887,15 @@
 
                     <div class="info-ciudad-visitada">
 
-                        <h4>{{ ciudad_pais[0] }} ({{ ciudad_pais[1] }}) - </h4>
+                        <h4>{{ ciudad_pais[0] }}</h4>
 
-                        <h4>{{ ciudad_pais[2] }} veces</h4>
+                        {% if ciudad_pais[2]=='-1' %}
+                            <img class="pais-ciudad" src="{{ url_for('static', filename='imagenes/iconos/no_pais.png') }}" alt="Pais Icon">
+                        {% else %}
+                            <img class="pais-ciudad" src="{{ url_imagen_pais }}{{ ciudad_pais[2] }}.png" alt="Pais Icon">
+                        {% endif %}
+
+                        <h4>{{ ciudad_pais[3] }} veces</h4>
 
                     </div>
                 </div>

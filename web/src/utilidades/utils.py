@@ -1291,21 +1291,39 @@ def construirRuta(tramos:List[tuple])->List[tuple]:
 
 		return []
 
-	return [(tramos[0][0], tramos[0][1])] + [(c2, p2) for _, _, c2, p2 in tramos]
+	return [(tramos[0][0], tramos[0][1], tramos[0][2])] + [(c2, p2, cp2) for _, _, _, c2, p2, cp2 in tramos]
 
 def ciudadesVisitadasTrayectosWrapped(partidos_trayectos:Dict, ciudad:str, pais:str)->List[Optional[tuple]]:
 
-	datos_tramos_trayectos=[(partido_id, [(dato[16], dato[4], dato[17], dato[8]) for dato in datos_partido["I"]], [(dato[16], dato[4], dato[17], dato[8]) for dato in datos_partido["V"]]) for partido_id, datos_partido in partidos_trayectos.items()]
+	datos_tramos_trayectos=[(partido_id, [(dato[16], dato[17], dato[18], dato[19], dato[20], dato[21]) for dato in datos_partido["I"]], [(dato[16], dato[17], dato[18], dato[19], dato[20], dato[21]) for dato in datos_partido["V"]]) for partido_id, datos_partido in partidos_trayectos.items()]
 
 	datos_rutas_unidas=[construirRuta(ida)+construirRuta(vuelta)[1:] for numero, ida, vuelta in datos_tramos_trayectos]
 
-	datos_rutas_unidas_desempaquetadas=[ciudad_pais for ruta in datos_rutas_unidas for ciudad_pais in ruta]
+	datos_rutas_unidas_desempaquetadas=[ciudad_pais_codigo for ruta in datos_rutas_unidas for ciudad_pais_codigo in ruta]
 
 	ciudades_contadas=Counter(datos_rutas_unidas_desempaquetadas)
 
-	ciudades_paises_veces=[(ciudad[0], ciudad[1], veces) for ciudad, veces in ciudades_contadas.items()]
+	ciudades_paises_veces=[(ciudad[0], ciudad[1], ciudad[2], veces) for ciudad, veces in ciudades_contadas.items()]
 
-	return sorted(list(filter(lambda ciudad_pais_veces: not (ciudad_pais_veces[0]==ciudad and ciudad_pais_veces[1]==pais), ciudades_paises_veces)), key=lambda x: (-x[2], x[0]))
+	return sorted(list(filter(lambda ciudad_pais_veces: not (ciudad_pais_veces[0]==ciudad and ciudad_pais_veces[1]==pais), ciudades_paises_veces)), key=lambda x: (-x[3], x[0]))
+
+def paisesVisitadosTrayectosWrapped(partidos_trayectos:Dict, ciudad:str, pais:str)->List[Optional[tuple]]:
+
+	datos_tramos_trayectos=[(partido_id, [(dato[16], dato[17], dato[18], dato[19], dato[20], dato[21]) for dato in datos_partido["I"]], [(dato[16], dato[17], dato[18], dato[19], dato[20], dato[21]) for dato in datos_partido["V"]]) for partido_id, datos_partido in partidos_trayectos.items()]
+
+	datos_rutas_unidas=[construirRuta(ida)+construirRuta(vuelta)[1:] for numero, ida, vuelta in datos_tramos_trayectos]
+
+	datos_rutas_unidas_desempaquetadas=[ciudad_pais_codigo for ruta in datos_rutas_unidas for ciudad_pais_codigo in ruta]
+
+	datos_rutas_filtradas=(list(filter(lambda ciudad_pais: not (ciudad_pais[0]==ciudad and ciudad_pais[1]==pais), datos_rutas_unidas_desempaquetadas)))
+
+	datos_rutas_ordenadas=[(codigo, pais) for ciudad, pais, codigo in datos_rutas_filtradas]
+
+	paises_contados=Counter(datos_rutas_ordenadas)
+
+	paises_veces=[(pais[0], pais[1], veces) for pais, veces in paises_contados.items()]
+
+	return sorted(paises_veces, key=lambda x: (-x[2], x[0]))
 
 def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asistidos:List[Optional[tuple]], ciudad:str, pais:str)->tuple:
 
@@ -1321,7 +1339,9 @@ def obtenerKPISTrayectosWrapped(trayectos:List[Optional[tuple]], partidos_asisti
 
 	ciudades_visitadas=ciudadesVisitadasTrayectosWrapped(partidos_asistidos_trayectos, ciudad, pais)
 
-	return partidos_asistidos_trayectos, distancia_total_trayectos, partido_asistido_trayecto_mas_lejano, partido_asistido_trayecto_mas_locura, transportes_usados, ciudades_visitadas
+	paises_visitados=paisesVisitadosTrayectosWrapped(partidos_asistidos_trayectos, ciudad, pais)
+
+	return partidos_asistidos_trayectos, distancia_total_trayectos, partido_asistido_trayecto_mas_lejano, partido_asistido_trayecto_mas_locura, transportes_usados, ciudades_visitadas, paises_visitados
 
 def generarWrappedAnnio(hoy:datetime)->bool:
 

@@ -826,3 +826,54 @@ def test_pagina_wrapped_annio_trayecto_complejo(cliente, conexion_entorno_usuari
 			assert f'<img src="/static/imagenes/iconos/{transporte.lower()}.png" alt="Transporte Icon" class="icono-transporte">' in contenido
 
 		assert '<p class="texto-origen-destino"><strong>Metropolitano</strong></p>' in contenido
+
+def test_pagina_wrapped_annio_paises_partidos(cliente, conexion_entorno_usuario):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"Comentario"}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+		assert '<h4>España</h4>' in contenido
+
+@pytest.mark.parametrize(["ciudad_ida", "transporte_ida", "ciudad_vuelta", "transporte_vuelta", "transportes_ida", "paises_ida", "ciudades_ida", "transportes_vuelta", "paises_vuelta", "ciudades_vuelta", "paises_visitados_kpi"],
+	[
+		("Barcelona", "Cercanias", "Barcelona", "Avion", ["Avion", "Cercanias"], ["España", "España"], ["Getafe", "Leganés"], ["Metro", "Avion"], ["España", "Francia"], ["Getafe", "Paris"], ["España", "Francia"]),
+		("Malaga", "Metro", "Barcelona", "Autobus", ["Autobus", "Coche", "Tren"], ["España", "España", "España"], ["Murcia", "Alicante", "Alcorcon"], ["Metro"], ["España"], ["Getafe"], ["España"]),
+		("Barcelona", "Cercanias", "Barcelona", "Autobus", ["Avion"], ["España"], ["Getafe"], ["Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "España"], ["Londres", "Berlin", "Palma"], ["Reino Unido", "Alemania", "España"]),
+		("Malaga", "Metro", "Barcelona", "Avion", ["Autobus", "Coche", "Tren", "Cercanias"], ["España", "España", "España", "España"], ["Murcia", "Alicante", "Alcorcon", "Getafe"], ["Avion", "Tren", "Avion", "Tren"], ["Alemania", "Alemania", "Francia", "Bélgica"], ["Munich", "Berlin", "Paris", "Bruselas"], ["España", "Alemania", "Francia", "Bélgica"]),
+		("Barcelona", "Avion", "Barcelona", "Tren", ["Avion", "Avion"], ["Reino Unido", "Francia"], ["Glasgow", "Marsella"], ["Avion", "Avion", "Avion", "Avion"], ["Reino Unido", "Alemania", "Francia", "España"], ["Londres", "Berlin", "Paris", "Alicante"], ["Reino Unido", "Alemania", "Francia", "España"]),
+		("Barcelona", "Avion", "Valencia", "Tren", ["Avion", "Tren"], ["Italia", "Italia"], ["Milan", "Verona"], ["Coche"], ["España"], ["Alicante"], ["Italia", "España"])
+	]
+)
+def test_pagina_wrapped_annio_paises_trayectos(cliente, conexion_entorno_usuario, ciudad_ida, transporte_ida, ciudad_vuelta, transporte_vuelta, transportes_ida, 
+												paises_ida, ciudades_ida, transportes_vuelta, paises_vuelta, ciudades_vuelta, paises_visitados_kpi):
+
+	with cliente as cliente_abierto:
+
+		cliente_abierto.post("/login", data={"usuario": "nacho98", "contrasena": "Ab!CdEfGhIJK3LMN"}, follow_redirects=True)
+
+		data={"partido_anadir":"20190622", "comentario":"comentario","ciudad-ida":ciudad_ida, "pais-ida":"España", "ciudad-ida-estadio":"Madrid",
+			"fecha-ida":"2019-06-22", "transporte-ida":transporte_ida, "ciudad-vuelta":ciudad_vuelta, "pais-vuelta":"España", "ciudad-vuelta-estadio":"Madrid",
+			"fecha-vuelta":"2019-06-22", "transporte-vuelta":transporte_vuelta, "teletrabajo":True, "transporte-parada-ida[]":transportes_ida, "pais-parada-ida[]":paises_ida, 
+			"ciudad-parada-ida[]":ciudades_ida, "transporte-parada-vuelta[]":transportes_vuelta, "pais-parada-vuelta[]":paises_vuelta, "ciudad-parada-vuelta[]":ciudades_vuelta}
+
+		cliente_abierto.post("/insertar_partido_asistido", data=data)
+
+		respuesta=cliente_abierto.get("/wrapped/annio/2019")
+
+		contenido=respuesta.data.decode()
+
+		respuesta.status_code==200
+
+		for pais in paises_visitados_kpi:
+
+			assert f'<h4>{pais}</h4>' in contenido

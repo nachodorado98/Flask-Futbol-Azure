@@ -853,6 +853,15 @@
     color: var(--color-secundario) 
 }
 
+.info-ciudad-visitada .pais-ciudad {
+    margin-right: 10px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 70px;
+    height: 45px;
+}
+
 .tarjeta-dato-grafica {
     width:730px;
     height:200px;
